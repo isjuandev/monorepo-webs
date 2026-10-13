@@ -27,7 +27,7 @@ Para mantener consistencia absoluta entre todos los desarrolladores y LLMs, **NO
   - **PROHIBIDO** crear archivos `package-lock.json`, `yarn.lock` o `bun.lockb` en ninguna carpeta del monorepo.
 - **Orquestador de monorepo:** `Turborepo` (`turbo.json`).
 - **Framework principal:** `Astro 7` (`output: "static"`) + `@astrojs/sitemap`.
-- **Framework de UI interactiva (Islas):** `Preact 10` (`@astrojs/preact`).
+- **Framework de UI interactiva (Islas):** `Preact 11` (`@astrojs/preact`).
   - **PROHIBIDO** instalar `react` o `react-dom`. Si se necesita una librería externa para una isla interactiva, debe ser nativa de Preact o vanilla TS/JS sin dependencias pesadas.
 - **Iconos:** SVGs inline/extraídos como componentes `.astro`/`.tsx`, o `lucide-preact` si se requiere un set de iconos.
 - **Animaciones y Scroll:**
