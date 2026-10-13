@@ -1,5 +1,5 @@
-import { type Review, UI_LABELS } from "@/data/content";
 import { useState } from "preact/hooks";
+import { type Review, UI_LABELS } from "@/data/content";
 
 export interface ReviewsCarouselProps {
   reviews: Review[];
@@ -19,7 +19,7 @@ export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
   };
 
   return (
-    <div class="reviews-card" aria-roledescription="carousel" aria-label={UI_LABELS.reviews}>
+    <section class="reviews-card" aria-roledescription="carousel" aria-label={UI_LABELS.reviews}>
       <div class="reviews-card__review" aria-live="polite">
         <p class={active === 0 ? "reviews-card__quote is-display" : "reviews-card__quote"}>
           {review.quote}
@@ -45,6 +45,6 @@ export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
           />
         ))}
       </div>
-    </div>
+    </section>
   );
 }

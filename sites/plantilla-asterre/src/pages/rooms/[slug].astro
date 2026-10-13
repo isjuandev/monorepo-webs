@@ -1,4 +1,5 @@
 ---
+import type { GetStaticPaths } from "astro";
 import ClosingCta from "@/components/ClosingCta.astro";
 import LinkButton from "@/components/LinkButton.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
@@ -10,7 +11,6 @@ import RoomsSlider from "@/components/sections/RoomsSlider.astro";
 import { siteConfig } from "@/config/site";
 import { IMAGES, PAGES, ROOMS, type Room, STAY_INFO, UI_LABELS } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import type { GetStaticPaths } from "astro";
 
 export const getStaticPaths = (() =>
   ROOMS.map((room) => ({ params: { slug: room.slug }, props: { room } }))) satisfies GetStaticPaths;

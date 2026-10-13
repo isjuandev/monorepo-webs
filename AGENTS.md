@@ -21,12 +21,12 @@ Este repositorio (`monorepo-webs`) es la fábrica colaborativa de sitios web de 
 
 Para mantener consistencia absoluta entre todos los desarrolladores y LLMs, **NO instales librerías fuera de este stack sin autorización explícita del usuario**:
 
-- **Entorno de ejecución:** `Node.js >= 20.0.0` (recomendado `22 LTS` en `.nvmrc`).
+- **Entorno de ejecución:** `Node.js >= 22.12.0` (recomendado `22 LTS` en `.nvmrc`).
 - **Gestor de paquetes (OBLIGATORIO):** `pnpm` (`9.15.0`) con `pnpm-workspace.yaml` y `pnpm-lock.yaml` versionado.
   - **PROHIBIDO** ejecutar `npm install`, `npx`, `yarn` o `bun`.
   - **PROHIBIDO** crear archivos `package-lock.json`, `yarn.lock` o `bun.lockb` en ninguna carpeta del monorepo.
 - **Orquestador de monorepo:** `Turborepo` (`turbo.json`).
-- **Framework principal:** `Astro 5` (`output: "static"`) + `@astrojs/sitemap`.
+- **Framework principal:** `Astro 7` (`output: "static"`) + `@astrojs/sitemap`.
 - **Framework de UI interactiva (Islas):** `Preact 10` (`@astrojs/preact`).
   - **PROHIBIDO** instalar `react` o `react-dom`. Si se necesita una librería externa para una isla interactiva, debe ser nativa de Preact o vanilla TS/JS sin dependencias pesadas.
 - **Iconos:** SVGs inline/extraídos como componentes `.astro`/`.tsx`, o `lucide-preact` si se requiere un set de iconos.

@@ -1,6 +1,6 @@
+import { useState } from "preact/hooks";
 import { UiIcon } from "@/components/UiIcon";
 import type { FaqItem } from "@/data/content";
-import { useState } from "preact/hooks";
 
 export interface FaqAccordionProps {
   items: FaqItem[];

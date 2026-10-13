@@ -19,11 +19,11 @@
   },
   "dependencies": {
     "@repo/utils": "workspace:*",
-    "preact": "^10.25.0"
+    "preact": "^11.0.1"
   },
   "devDependencies": {
     "@repo/tsconfig": "workspace:*",
-    "astro": "^5.1.0",
+    "astro": "^7.3.8",
     "typescript": "^5.7.0"
   }
 }

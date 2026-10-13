@@ -21,14 +21,14 @@
     "clean": "turbo run clean && rm -rf node_modules playwright-report test-results"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.5.15",
     "@playwright/test": "^1.64.0",
     "@types/node": "^26.6.5",
     "turbo": "^2.3.0",
     "typescript": "^5.7.0"
   },
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=22.12.0",
     "pnpm": ">=9.0.0"
   }
 }

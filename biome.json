@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -7,13 +7,16 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": [
-      "dist/**",
-      ".astro/**",
-      ".turbo/**",
-      "node_modules/**",
-      "playwright-report/**",
-      "test-results/**"
+    "includes": [
+      "**",
+      "!**/dist",
+      "!**/.astro",
+      "!**/.turbo",
+      "!**/node_modules",
+      "!**/playwright-report",
+      "!**/test-results",
+      "!docs/design-references",
+      "!**/*.svg"
     ]
   },
   "formatter": {
@@ -23,23 +26,32 @@
     "lineWidth": 100,
     "lineEnding": "lf"
   },
-  "organizeImports": {
-    "enabled": true
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "correctness": {
         "noUnusedVariables": "error",
         "noUnusedImports": "error"
       },
       "suspicious": {
-        "noExplicitAny": "error"
+        "noExplicitAny": "error",
+        "noUndeclaredEnvVars": "off"
       },
       "style": {
         "useConst": "error",
-        "useImportType": "error"
+        "useImportType": "error",
+        "noDescendingSpecificity": "off"
+      },
+      "complexity": {
+        "noImportantStyles": "off"
       }
     }
   },
@@ -53,7 +65,7 @@
   },
   "overrides": [
     {
-      "include": ["**/*.astro"],
+      "includes": ["**/*.astro"],
       "linter": {
         "rules": {
           "correctness": {
