@@ -1,0 +1,107 @@
+---
+import { IMAGES, TICKER_OFFERS } from "@/data/content";
+
+// Cuatro copias del grupo para cubrir pantallas anchas; la animación recorre una copia (-25 %).
+const COPIES = 4;
+---
+
+<section class="ticker" aria-label="Offers">
+  <div class="ticker__viewport">
+    <ul class="ticker__track">
+      {
+        Array.from({ length: COPIES }).map((_, copy) =>
+          TICKER_OFFERS.map((offer) => (
+            <>
+              <li class="ticker__item" aria-hidden={copy > 0 ? "true" : undefined}>
+                <a href="/" class="ticker__logo" tabindex={copy > 0 ? -1 : undefined}>
+                  <img src={IMAGES.logoBlack} alt="Hotellia" width="133" height="29" />
+                </a>
+              </li>
+              <li class="ticker__item" aria-hidden={copy > 0 ? "true" : undefined}>
+                <a href={offer.href} class="ticker__offer" tabindex={copy > 0 ? -1 : undefined}>
+                  <span class="ticker__title">{offer.title}</span>
+                  <span class="ticker__text">{offer.text}</span>
+                </a>
+              </li>
+            </>
+          ))
+        )
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .ticker {
+    position: relative;
+    background: var(--color-bg);
+    padding: var(--section-pad) 0;
+  }
+
+  .ticker__viewport {
+    overflow: hidden;
+  }
+
+  .ticker__track {
+    display: flex;
+    align-items: center;
+    gap: 64px;
+    width: max-content;
+    list-style: none;
+    animation: ticker 24.2s linear infinite;
+  }
+
+  /* El gap entre copias forma parte del recorrido: -25 % del ancho menos tres cuartos de gap. */
+  @keyframes ticker {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(calc(-25% - 48px));
+    }
+  }
+
+  .ticker__item {
+    flex: none;
+  }
+
+  .ticker__logo {
+    display: block;
+    width: 133px;
+    height: 29px;
+  }
+
+  .ticker__logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ticker__offer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    color: #000000;
+  }
+
+  .ticker__title {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  .ticker__text {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticker__track {
+      animation: none;
+    }
+  }
+</style>

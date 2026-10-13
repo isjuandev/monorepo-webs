@@ -1,0 +1,163 @@
+---
+import RoomPrice from "@/components/RoomPrice.astro";
+import RoomProperty from "@/components/RoomProperty.astro";
+import SectionIntro from "@/components/SectionIntro.astro";
+import { type SectionIntro as Intro, ROOMS } from "@/data/content";
+
+export interface Props {
+  intro: Intro;
+}
+
+const { intro } = Astro.props;
+---
+
+<section class="section rooms">
+  <div class="wrapper rooms__wrapper">
+    <SectionIntro {...intro} />
+    <div class="rooms__grid">
+      {
+        ROOMS.map((room) => (
+          <a class="room-card" href={`/rooms/${room.slug}`}>
+            <span class="room-card__media">
+              <img src={room.image.src} alt={room.image.alt} width="1168" height="784" loading="lazy" />
+            </span>
+            <span class="room-card__body">
+              <span class="t-h4 room-card__title">{room.name}</span>
+              <span class="t-small room-card__summary">{room.summary}</span>
+              <span class="room-card__extra">
+                <span class="room-card__extra-inner">
+                  <span class="room-card__props">
+                    {room.properties.map((prop) => (
+                      <RoomProperty {...prop} />
+                    ))}
+                  </span>
+                  <RoomPrice price={room.price} />
+                </span>
+              </span>
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .rooms__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .rooms__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .room-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 540px;
+    overflow: hidden;
+    background: #ffffff;
+    color: #000000;
+  }
+
+  .room-card__media {
+    display: block;
+    flex: none;
+    width: 100%;
+    height: 390px;
+    overflow: hidden;
+    transition:
+      width 0.6s var(--ease-layout),
+      height 0.6s var(--ease-layout);
+  }
+
+  .room-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .room-card__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 32px;
+    text-align: center;
+    transition: padding 0.6s var(--ease-layout);
+  }
+
+  .room-card__extra {
+    display: grid;
+    grid-template-rows: 0fr;
+    width: 100%;
+    margin-top: -10px;
+    opacity: 0;
+    transition:
+      grid-template-rows 0.6s var(--ease-layout),
+      opacity 0.4s ease;
+  }
+
+  .room-card__extra-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    min-height: 0;
+    padding-top: 10px;
+    overflow: hidden;
+  }
+
+  .room-card__props {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 10px;
+  }
+
+  @media (hover: hover) and (min-width: 1200px) {
+    .room-card:hover .room-card__media {
+      width: 70%;
+      height: 273px;
+    }
+
+    .room-card:hover .room-card__extra {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+  }
+
+  /* Tablet y móvil muestran siempre la variante expandida (propiedades y precio visibles). */
+  @media (max-width: 1199.98px) {
+    .room-card {
+      height: auto;
+    }
+
+    .room-card__media {
+      width: 70%;
+      height: auto;
+      aspect-ratio: 245 / 169;
+    }
+
+    .room-card__extra {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+
+    .room-card__body {
+      padding: 32px 20px;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .rooms__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

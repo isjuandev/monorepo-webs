@@ -1,0 +1,143 @@
+---
+import SectionIntro from "@/components/SectionIntro.astro";
+import type { ImageAsset } from "@/data/content";
+
+export interface Props {
+  title: string;
+  text: string;
+  feature?: ImageAsset;
+  images: ImageAsset[];
+  /**
+   * Reproduce la fuente en móvil: la cuadrícula conserva 2 columnas fijas de 361 px que
+   * desbordan el viewport (la segunda columna queda recortada por el contenedor).
+   */
+  fixedMobileGrid?: boolean;
+}
+
+const { title, text, feature, images, fixedMobileGrid = false } = Astro.props;
+---
+
+<section class="section gallery-split">
+  <div class="wrapper gallery-split__wrapper">
+    <div class="gallery-split__intro">
+      <SectionIntro title={title} text={text} align="left" />
+    </div>
+    <div class="gallery-split__media">
+      {
+        feature && (
+          <div class="gallery-split__feature">
+            <img src={feature.src} alt={feature.alt} width="1168" height="784" loading="lazy" />
+          </div>
+        )
+      }
+      <div class:list={["gallery-split__grid", { "gallery-split__grid--fixed": fixedMobileGrid }]}>
+        {
+          images.map((image) => (
+            <div class="gallery-split__item">
+              <img src={image.src} alt={image.alt} width="1168" height="784" loading="lazy" />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gallery-split__wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 64px;
+  }
+
+  .gallery-split__intro {
+    position: sticky;
+    top: 90px;
+    flex: none;
+    width: 345px;
+  }
+
+  .gallery-split__media {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+  }
+
+  .gallery-split__feature {
+    height: 446px;
+    overflow: hidden;
+  }
+
+  .gallery-split__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .gallery-split__item {
+    height: 313px;
+    overflow: hidden;
+  }
+
+  .gallery-split img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Tablet: la intro pasa arriba (60 % de ancho) y la galería conserva su ancho de 741 px. */
+  @media (max-width: 1199.98px) {
+    .gallery-split__wrapper {
+      flex-direction: column;
+    }
+
+    .gallery-split__intro {
+      position: static;
+      width: 60%;
+    }
+
+    .gallery-split__media {
+      flex: none;
+      width: 741px;
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .gallery-split__wrapper {
+      flex-direction: column;
+    }
+
+    .gallery-split__intro {
+      position: static;
+      width: 100%;
+    }
+
+    .gallery-split__media {
+      width: 100%;
+    }
+
+    .gallery-split__feature {
+      height: 211px;
+    }
+
+    .gallery-split__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .gallery-split__item {
+      height: 304px;
+    }
+
+    .gallery-split__grid--fixed {
+      grid-template-columns: 361px 361px;
+      width: 741px;
+    }
+
+    .gallery-split__grid--fixed .gallery-split__item {
+      height: 313px;
+    }
+  }
+</style>

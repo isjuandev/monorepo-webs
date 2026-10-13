@@ -1,0 +1,74 @@
+---
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import { pageTitle, siteConfig } from "@/config/site";
+import SEO from "@repo/ui/astro/SEO.astro";
+import "@/styles/global.css";
+
+export interface Props {
+  /** Nombre de la página; se compone como "Página - Hotellia - ..." igual que la fuente */
+  page?: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const {
+  page,
+  description = siteConfig.description,
+  ogImage = siteConfig.ogImage,
+  noindex = false,
+} = Astro.props;
+
+const title = pageTitle(page);
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Hotel",
+  name: siteConfig.name,
+  url: siteConfig.url,
+  description: siteConfig.description,
+  telephone: siteConfig.contact.phone,
+  email: siteConfig.contact.email,
+  image: new URL(siteConfig.ogImage ?? "/images/og-image.png", siteConfig.url).href,
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SEO
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      locale={siteConfig.locale}
+      siteName={siteConfig.name}
+      noindex={noindex}
+    />
+    <link rel="icon" type="image/png" href="/favicon.png" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/png" href="/favicon-dark.png" media="(prefers-color-scheme: dark)" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preload" href="/fonts/libre-baskerville-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#1c3d2d" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a href="#contenido" class="skip-link">Skip to content</a>
+    <SiteHeader />
+    <main id="contenido" class="site-main">
+      <slot />
+    </main>
+    <SiteFooter />
+    <script>
+      import "@/scripts/motion";
+    </script>
+  </body>
+</html>
+
+<style>
+  .site-main {
+    position: relative;
+    background: #ffffff;
+    overflow-x: clip;
+  }
+</style>

@@ -1,0 +1,14 @@
+---
+import GalleryGrid from "@/components/sections/GalleryGrid.astro";
+import GallerySplit from "@/components/sections/GallerySplit.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import { GALLERY_PAGE, HERO_TITLES } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout page="Gallery">
+  <PageHero title={HERO_TITLES.gallery} />
+  <GallerySplit {...GALLERY_PAGE.outdoors} />
+  <GallerySplit {...GALLERY_PAGE.dine} fixedMobileGrid />
+  <GalleryGrid {...GALLERY_PAGE.events} />
+</BaseLayout>

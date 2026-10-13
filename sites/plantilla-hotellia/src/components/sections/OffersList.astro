@@ -1,0 +1,99 @@
+---
+import SectionIntro from "@/components/SectionIntro.astro";
+import { OFFERS, OFFERS_INTRO } from "@/data/content";
+---
+
+<section class="section offers">
+  <div class="wrapper offers__wrapper">
+    <SectionIntro {...OFFERS_INTRO} />
+    <div class="offers__list">
+      {
+        OFFERS.map((offer) => (
+          <article class="offer-card">
+            <div class="offer-card__content">
+              <div class="offer-card__text">
+                <h3 class="t-h4">{offer.title}</h3>
+                <p class="t-body">{offer.summary}</p>
+              </div>
+              <a class="pill pill--dark" href={`/offers/${offer.slug}`}>
+                Read More<span class="visually-hidden">: {offer.title}</span>
+              </a>
+            </div>
+            <div class="offer-card__media">
+              <img src={offer.image.src} alt={offer.image.alt} width="1168" height="784" loading="lazy" />
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .offers__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .offers__list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .offer-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 32px;
+    height: 260px;
+    padding: 20px;
+    background: #ffffff;
+  }
+
+  .offer-card__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .offer-card__text {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 447px;
+    text-wrap: balance;
+  }
+
+  .offer-card__media {
+    flex: none;
+    width: 333px;
+    height: 220px;
+    overflow: hidden;
+  }
+
+  .offer-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 809.98px) {
+    .offer-card {
+      flex-direction: column-reverse;
+      justify-content: flex-start;
+      height: auto;
+      gap: 32px;
+    }
+
+    .offer-card__content {
+      gap: 20px;
+    }
+
+    .offer-card__media {
+      width: 100%;
+      height: 180px;
+    }
+  }
+</style>

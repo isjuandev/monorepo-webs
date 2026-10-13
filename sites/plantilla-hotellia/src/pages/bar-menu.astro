@@ -1,0 +1,11 @@
+---
+import MenuList from "@/components/sections/MenuList.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import { HERO_TITLES } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout page="Bar Menu">
+  <PageHero title={HERO_TITLES.barMenu} />
+  <MenuList />
+</BaseLayout>

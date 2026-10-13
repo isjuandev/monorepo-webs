@@ -1,0 +1,132 @@
+---
+import Icon from "@/components/Icon.astro";
+import SectionIntro from "@/components/SectionIntro.astro";
+import { FAQS, type SectionIntro as Intro } from "@/data/content";
+
+export interface Props {
+  intro: Intro;
+  textWidth?: number;
+}
+
+const { intro, textWidth } = Astro.props;
+---
+
+<section class="section faq">
+  <div class="wrapper faq__wrapper">
+    <SectionIntro {...intro} textWidth={textWidth} />
+    <div class="faq__list" data-faq>
+      {
+        FAQS.map((item, index) => (
+          <div class="faq-item">
+            <h3 class="faq-item__heading">
+              <button
+                class="faq-item__question"
+                type="button"
+                aria-expanded="false"
+                aria-controls={`faq-answer-${index}`}
+                id={`faq-question-${index}`}
+              >
+                <span>{item.question}</span>
+                <Icon name="plus" size={24} class="faq-item__icon" />
+              </button>
+            </h3>
+            <div
+              class="faq-item__answer"
+              id={`faq-answer-${index}`}
+              role="region"
+              aria-labelledby={`faq-question-${index}`}
+            >
+              <div class="faq-item__answer-inner">
+                <p class="t-body">{item.answer}</p>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .faq__list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .faq-item {
+    background: #ffffff;
+  }
+
+  .faq-item__heading {
+    font: inherit;
+  }
+
+  .faq-item__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 13px 12px 12.6px;
+    border: 0;
+    background: none;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+    text-align: left;
+    color: #000000;
+    cursor: pointer;
+  }
+
+  .faq-item__question :global(.faq-item__icon) {
+    flex: none;
+    margin: -1px 0;
+    color: var(--color-ink);
+    transition: transform 0.4s var(--ease-layout);
+  }
+
+  .faq-item__question[aria-expanded="true"] :global(.faq-item__icon) {
+    transform: rotate(45deg);
+  }
+
+  .faq-item__answer {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.45s var(--ease-layout);
+  }
+
+  .faq-item__question[aria-expanded="true"] + .faq-item__answer,
+  .faq-item__heading:has([aria-expanded="true"]) + .faq-item__answer {
+    grid-template-rows: 1fr;
+  }
+
+  .faq-item__answer-inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .faq-item__answer p {
+    max-width: 882px;
+    margin: 7.4px 12px 13px;
+    padding-left: 20px;
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+  }
+</style>
+
+<script>
+  for (const list of document.querySelectorAll<HTMLElement>("[data-faq]")) {
+    list.addEventListener("click", (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>(".faq-item__question");
+      if (!button) return;
+      button.setAttribute("aria-expanded", String(button.getAttribute("aria-expanded") !== "true"));
+    });
+  }
+</script>

@@ -1,0 +1,163 @@
+---
+import FitTitle from "@/components/FitTitle.astro";
+import Icon from "@/components/Icon.astro";
+import { FOOTER_PRIMARY_LINKS, FOOTER_SECONDARY_LINKS, siteConfig } from "@/config/site";
+import { FOOTER_TAGLINE, HERO_TITLES } from "@/data/content";
+import type { IconName } from "@/data/icons";
+
+const contactLinks: { icon: IconName; label: string; href: string }[] = [
+  { icon: "phone", label: siteConfig.contact.phone, href: siteConfig.contact.phoneHref },
+  { icon: "at", label: siteConfig.contact.email, href: `mailto:${siteConfig.contact.email}` },
+  { icon: "facebook", label: "Follow us on Facebook", href: siteConfig.socials.facebook },
+  { icon: "instagram", label: "Our Instagram", href: siteConfig.socials.instagram },
+];
+---
+
+<footer class="site-footer">
+  <div class="site-footer__content">
+    <p class="site-footer__tagline t-h4">{FOOTER_TAGLINE}</p>
+    <div class="site-footer__links">
+      <nav class="site-footer__nav" aria-label="Pie de página">
+        <ul>
+          {
+            FOOTER_PRIMARY_LINKS.map((link) => (
+              <li>
+                <a class="site-footer__link t-small" href={link.href}>
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <ul>
+          {
+            FOOTER_SECONDARY_LINKS.map((link) => (
+              <li>
+                <a class="site-footer__link t-small" href={link.href}>
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <ul class="site-footer__contact">
+        {
+          contactLinks.map((item) => (
+            <li>
+              <a class="site-footer__contact-link" href={item.href} target="_blank" rel="noopener">
+                <Icon name={item.icon} size={24} />
+                <span class="t-small">{item.label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+  <div class="site-footer__brand">
+    <FitTitle {...HERO_TITLES.brand} tag="p" />
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    position: relative;
+    background: var(--color-primary);
+    color: var(--color-muted);
+    padding-top: var(--section-pad);
+  }
+
+  .site-footer__content {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    box-sizing: content-box;
+  }
+
+  .site-footer__tagline {
+    max-width: 460px;
+    color: var(--color-footer-text);
+  }
+
+  .site-footer__links {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    width: 352px;
+  }
+
+  .site-footer__nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .site-footer__nav ul,
+  .site-footer__contact {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+  }
+
+  .site-footer__nav ul {
+    gap: 10px;
+  }
+
+  .site-footer__nav li,
+  .site-footer__contact li {
+    display: flex;
+  }
+
+  .site-footer__contact {
+    gap: 8px;
+  }
+
+  .site-footer__link {
+    display: inline-block;
+    transition: color 0.3s ease;
+  }
+
+  .site-footer__contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    transition: color 0.3s ease;
+  }
+
+  .site-footer__link:hover,
+  .site-footer__contact-link:hover {
+    color: #ffffff;
+  }
+
+  .site-footer__brand {
+    padding: 64px var(--gutter) 0;
+  }
+
+  @media (max-width: 809.98px) {
+    .site-footer__content {
+      flex-direction: column;
+      gap: 64px;
+    }
+
+    .site-footer__tagline {
+      max-width: none;
+    }
+
+    .site-footer__links {
+      width: 184px;
+    }
+
+    .site-footer__nav {
+      grid-template-columns: 1fr;
+      gap: 51px;
+    }
+
+    .site-footer__contact {
+      order: -1;
+    }
+  }
+</style>

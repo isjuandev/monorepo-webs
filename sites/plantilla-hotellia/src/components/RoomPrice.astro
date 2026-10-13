@@ -1,0 +1,20 @@
+---
+export interface Props {
+  price: string;
+}
+
+const { price } = Astro.props;
+---
+
+<span class="room-price">
+  <span class="t-h2 room-price__value">{price}</span>
+  <span class="t-body">/night</span>
+</span>
+
+<style>
+  .room-price {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+</style>

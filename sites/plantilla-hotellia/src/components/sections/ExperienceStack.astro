@@ -1,0 +1,111 @@
+---
+import SectionIntro from "@/components/SectionIntro.astro";
+import { EXPERIENCES, EXPERIENCES_INTRO } from "@/data/content";
+---
+
+<section class="section experiences">
+  <div class="wrapper experiences__wrapper">
+    <SectionIntro {...EXPERIENCES_INTRO} />
+    <ul class="experiences__list">
+      {
+        EXPERIENCES.map((item) => (
+          <li class="experience">
+            <h3 class="t-h4 experience__title">{item.title}</h3>
+            <div class="experience__media">
+              <img src={item.image.src} alt={item.image.alt} width="1168" height="784" loading="lazy" />
+            </div>
+            <p class="t-body experience__text">{item.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .experiences__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .experiences__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none;
+  }
+
+  /* Tarjetas pegajosas que se apilan al hacer scroll (sticky top 80 px). */
+  .experience {
+    position: sticky;
+    top: 80px;
+    display: grid;
+    grid-template-columns: 350px 300px 1fr;
+    align-items: start;
+    height: 340px;
+    padding: 20px;
+    background: #ffffff;
+  }
+
+  .experience:last-child {
+    position: relative;
+    top: 0;
+  }
+
+  .experience__title {
+    color: #000000;
+  }
+
+  .experience__media {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+  }
+
+  .experience__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .experience__text {
+    justify-self: end;
+    width: 333px;
+    max-width: 100%;
+    text-wrap: balance;
+  }
+
+  @media (max-width: 1199.98px) {
+    .experience {
+      grid-template-columns: 184px 300px 1fr;
+      column-gap: 80px;
+    }
+
+    .experience__text {
+      width: auto;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .experiences__list {
+      gap: 64px;
+    }
+
+    .experience {
+      grid-template-columns: 1fr;
+      height: auto;
+      gap: 20px;
+    }
+
+    .experience__media {
+      order: -1;
+      width: 100%;
+    }
+
+    .experience__text {
+      justify-self: start;
+      width: auto;
+    }
+  }
+</style>

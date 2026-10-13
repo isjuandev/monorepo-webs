@@ -1,0 +1,112 @@
+---
+import { LEGAL_UPDATED, type LegalBlock } from "@/data/content";
+
+export interface Props {
+  blocks: LegalBlock[];
+}
+
+const { blocks } = Astro.props;
+const words = LEGAL_UPDATED.split(" ");
+---
+
+<section class="section legal">
+  <div class="legal__content appear-fade" style="--appear-delay:0.8s">
+    {
+      blocks.map((block) => (
+        <div class="legal__block">
+          <h2 class="t-h4">{block.title}</h2>
+          <div class="legal__body t-body">
+            {block.paragraphs?.map((text) => <p>{text}</p>)}
+            {block.list && (
+              <ul>
+                {block.list.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            )}
+            {block.contact && (
+              <div class="legal__contact">
+                {block.contact.map((item) => (
+                  <p>
+                    <strong>{item.label}</strong> <a href={item.href}>{item.value}</a>
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      ))
+    }
+    <p class="t-body legal__updated" aria-label={LEGAL_UPDATED}>
+      {
+        words.map((word, index) => (
+          <span aria-hidden="true" style={`--word-delay:${(1.05 + index * 0.08).toFixed(2)}s`}>
+            {word}
+          </span>
+        ))
+      }
+    </p>
+  </div>
+</section>
+
+<style>
+  .legal {
+    padding-bottom: 160px;
+  }
+
+  .legal__content {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .legal__block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .legal__body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .legal__body ul {
+    padding-left: 20px;
+  }
+
+  .legal__contact {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: -10px;
+  }
+
+  .legal__body a {
+    text-decoration: underline;
+  }
+
+  .legal__updated {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 4px;
+  }
+
+  .legal__updated span {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: legal-word 1s var(--ease-out) forwards;
+    animation-delay: var(--word-delay);
+  }
+
+  @keyframes legal-word {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

@@ -1,0 +1,97 @@
+---
+import { ReviewsCarousel } from "@/components/ReviewsCarousel";
+import SectionIntro from "@/components/SectionIntro.astro";
+import { type SectionIntro as Intro, REVIEWS } from "@/data/content";
+
+export interface Props {
+  intro: Intro;
+}
+
+const { intro } = Astro.props;
+---
+
+<section class="section reviews">
+  <div class="wrapper reviews__wrapper">
+    <SectionIntro {...intro} />
+    <ReviewsCarousel reviews={REVIEWS} client:visible />
+  </div>
+</section>
+
+<style>
+  .reviews__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .reviews__wrapper :global(.reviews-card) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+    height: 600px;
+    padding: 0 20px;
+    background: #ffffff;
+  }
+
+  .reviews__wrapper :global(.reviews-card__review) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    width: 700px;
+    max-width: 100%;
+    padding: 64px 0;
+    text-align: center;
+  }
+
+  .reviews__wrapper :global(.reviews-card__quote) {
+    font-family: var(--font-sans);
+    font-size: 20px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: #000000;
+  }
+
+  .reviews__wrapper :global(.reviews-card__quote.is-display) {
+    font-family: var(--font-display);
+    line-height: 1.4;
+    text-wrap: balance;
+  }
+
+  .reviews__wrapper :global(.reviews-card__author) {
+    font-size: 16px;
+    line-height: 0.9;
+  }
+
+  .reviews__wrapper :global(.reviews-card__dots) {
+    display: flex;
+    gap: 10px;
+  }
+
+  .reviews__wrapper :global(.reviews-card__dot) {
+    position: relative;
+    width: 16px;
+    height: 17px;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .reviews__wrapper :global(.reviews-card__dot)::after {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    width: 10px;
+    height: 10px;
+    border: 1px solid var(--color-dot);
+    border-radius: 50%;
+  }
+
+  .reviews__wrapper :global(.reviews-card__dot.is-active)::after {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+  }
+</style>
