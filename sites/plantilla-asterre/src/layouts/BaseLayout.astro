@@ -2,7 +2,9 @@
 import SiteFooter from "@/components/SiteFooter.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
 import { siteConfig } from "@/config/site";
+import { UI_LABELS } from "@/data/content";
 import SEO from "@repo/ui/astro/SEO.astro";
+import "@/styles/theme.css";
 import "@/styles/global.css";
 
 export interface Props {
@@ -24,7 +26,7 @@ const {
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={siteConfig.locale?.split("_")[0] ?? "es"}>
   <head>
     <SEO
       title={title}
@@ -36,16 +38,19 @@ const {
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="preload" href="/fonts/forum-400.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/almarai-400.woff2" as="font" type="font/woff2" crossorigin />
-    <meta name="theme-color" content="#e8e0d1" />
+    {
+      siteConfig.preloadFonts.map((href) => (
+        <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />
+      ))
+    }
+    <meta name="theme-color" content={siteConfig.themeColor} />
     <script is:inline>
       // Marca JS antes del primer pintado para que la intro no parpadee.
       document.documentElement.classList.add("js");
     </script>
   </head>
   <body>
-    <a href="#contenido" class="skip-link">Saltar al contenido</a>
+    <a href="#contenido" class="skip-link">{UI_LABELS.skipToContent}</a>
     <SiteHeader tone={headerTone} />
     <main id="contenido">
       <slot />

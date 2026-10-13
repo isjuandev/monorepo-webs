@@ -2,6 +2,7 @@
 import SplitText from "@/components/SplitText.astro";
 import Stars from "@/components/Stars.astro";
 import { siteConfig } from "@/config/site";
+import { UI_LABELS } from "@/data/content";
 
 export interface Props {
   image: string;
@@ -42,7 +43,7 @@ const { rating } = siteConfig;
           <div class="home-hero__badge" data-reveal style="--reveal-delay: 1.3s">
             <div class="home-hero__badge-head">
               <Stars />
-              <span class="t-label">Reseñas</span>
+              <span class="t-label">{UI_LABELS.reviews}</span>
             </div>
             <div class="home-hero__badge-body">
               <p class="home-hero__score">
@@ -50,8 +51,8 @@ const { rating } = siteConfig;
                 <span class="t-body">/5.0</span>
               </p>
               <p class="home-hero__score-text">
-                <span class="t-body">Excelente</span>
-                <span class="t-small">Basado en {rating.reviews} reseñas</span>
+                <span class="t-body">{UI_LABELS.excellent}</span>
+                <span class="t-small">{UI_LABELS.basedOnReviews(rating.reviews)}</span>
               </p>
             </div>
           </div>

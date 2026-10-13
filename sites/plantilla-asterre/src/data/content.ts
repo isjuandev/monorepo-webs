@@ -1,5 +1,5 @@
 // Contenido de ejemplo de la plantilla. Reemplaza textos e imágenes por los del cliente.
-// Fotos de la plantilla Asterre (usadas con licencia); viven en /public/images.
+// Fotos de la plantilla de origen (usadas con licencia); viven en /public/images.
 
 const img = (name: string) => `/images/${name}.webp`;
 
@@ -328,3 +328,354 @@ export const DISTANCES = [
   { label: "Centro del pueblo", value: "15 min" },
   { label: "Playa más cercana", value: "20 min" },
 ];
+
+/**
+ * Etiquetas de interfaz (navegación, accesibilidad, formularios y botones).
+ * Cámbialas aquí al traducir o adaptar el sitio; los componentes no contienen texto propio.
+ */
+export const UI_LABELS = {
+  skipToContent: "Saltar al contenido",
+  mainNav: "Principal",
+  footerNav: "Pie de página",
+  menu: "Menú",
+  checkAvailability: "Ver disponibilidad",
+  hours: "Horarios",
+  contact: "Contacto",
+  location: "Ubicación",
+  established: (year: string) => `Est. ${year}`,
+  reviewsCount: (count: number) => `(${count} reseñas)`,
+  allRightsReserved: (year: number) => `© ${year}, Todos los derechos reservados`,
+  menuCtaTitle: "¿Lista tu escapada?",
+  menuCtaText: "Consulta fechas y tarifas en nuestro motor de reservas.",
+  reviews: "Reseñas",
+  excellent: "Excelente",
+  basedOnReviews: (count: number) => `Basado en ${count} reseñas`,
+  viewAllRooms: "Ver todas las habitaciones",
+  roomsCarousel: "Habitaciones",
+  carouselRole: "carrusel",
+  previousRoom: "Habitación anterior",
+  nextRoom: "Habitación siguiente",
+  roomsCount: (count: number) => `${count} habitaciones`,
+  openAllYear: "Abierto todo el año",
+  guests: (count: number) => `${count} huéspedes`,
+  squareMeters: (size: number) => `${size} m²`,
+  fromPerNight: (price: number) => `Desde $${price}/noche`,
+  roomNumber: (number: string) => `Habitación Nº ${number}`,
+  openInMaps: "Abrir en mapas",
+  lastUpdated: "Última actualización:",
+  gallery: "Galería",
+  mapAlt: "Mapa de ubicación",
+  form: {
+    name: "Nombre",
+    namePlaceholder: "Tu nombre completo",
+    email: "Correo",
+    emailPlaceholder: "Tu correo",
+    phone: "Teléfono",
+    phonePlaceholder: "Tu teléfono",
+    enquiryType: "Tipo de consulta",
+    selectOption: "Selecciona una opción",
+    enquiryTypes: ["Reserva", "Experiencias", "Eventos privados", "Prensa", "Otro"],
+    message: "Mensaje",
+    messagePlaceholder: "Cuéntanos cómo podemos ayudarte",
+    consent: "Acepto ser contactado sobre mi consulta.",
+    submit: "Enviar mensaje",
+    missingEmail: "Configura un correo de contacto en src/config/site.ts.",
+    opening: "Abriendo tu aplicación de correo…",
+    mailSubject: (type: string, name: string) => `Consulta: ${type} — ${name}`,
+    mailName: "Nombre",
+    mailEmail: "Correo",
+    mailPhone: "Teléfono",
+  },
+  closingCta: {
+    title: "Tu próxima escapada",
+    sideLeft: "Un retiro privado",
+    sideRight: "Reserva directa",
+  },
+} as const;
+
+export interface LegalSectionCopy {
+  title: string;
+  paragraphs: string[];
+  list?: string[];
+}
+
+/**
+ * Textos de cada página. Las páginas solo componen estos bloques con imágenes y componentes.
+ * Los textos legales son de ejemplo: deben revisarlos los asesores legales del cliente.
+ */
+export const PAGES = {
+  home: {
+    hero: {
+      label: "Un retiro privado",
+      title: "Lejos de todo",
+      sideLeft: "Entre montañas",
+      sideRight: "Ciudad, País",
+      intro: "Una casa de campo restaurada entre colinas y mar, pensada para bajar el ritmo.",
+    },
+    highlights: (roomCount: number) => [
+      { label: "Bienestar", items: ["Piscina exterior", "Spa y masajes"] },
+      {
+        label: "La estancia",
+        items: [UI_LABELS.roomsCount(roomCount), UI_LABELS.openAllYear],
+      },
+    ],
+    slowDown: {
+      title: "Bajar el ritmo",
+      text: "Mañanas lentas, comidas sin reloj y tardes a la sombra: aquí el tiempo se mide de otra manera.",
+      cta: "Conocer el retiro",
+    },
+    wellness: {
+      title: "Pausa necesaria",
+      sideLeft: "Spa al aire libre",
+      sideRight: "Rituales diarios",
+      cta: "Ver bienestar",
+    },
+    rooms: {
+      title: "Dormir bien",
+      text: "Habitaciones y suites con materiales nobles, luz natural y vistas que invitan a quedarse.",
+    },
+    dining: {
+      label: "Cocina de temporada",
+      title: "Mesa compartida",
+      text: "Producto local, pescado del día y vinos de la zona en platos sencillos, pensados para compartir sin prisa.",
+    },
+    experiences: { label: "Experiencias", title: "Salir a descubrir" },
+    ticker: ["Montaña y mar", "Ciudad, País"],
+  },
+  retreat: {
+    meta: {
+      title: "El retiro",
+      description: "La historia, el diseño y la forma de recibir de nuestra casa.",
+    },
+    hero: {
+      label: "Vida en el campo",
+      title: "Nuestra casa",
+      sideLeft: "Cerca de la montaña",
+      sideRight: "Cerca del mar",
+      intro: "Una casa antigua recuperada con respeto por su historia y su paisaje.",
+    },
+    storyTitle: "La historia",
+    storyCaptions: [
+      "La casa original lleva generaciones en estas colinas, rodeada de bancales, árboles frutales y caminos de piedra.",
+      "Hoy es un refugio tranquilo que conserva sus muros, sus materiales y su relación directa con el entorno.",
+    ] as [string, string],
+    design: {
+      label: "Diseño y arquitectura",
+      title: "Hecha para el lugar",
+      text: "La reforma mantiene el carácter de la casa y suma espacios luminosos, materiales honestos y una conexión constante con el exterior.",
+      points: ["Materiales locales", "Espacios abiertos", "Detalles originales"],
+    },
+    ourWay: {
+      title: "Nuestra forma",
+      items: [
+        {
+          title: "Bienvenida personal",
+          text: "Te recibimos sin formularios eternos ni esperas en recepción.",
+        },
+        { title: "Sin horarios", text: "Cada día se organiza a tu medida, sin agendas fijas." },
+        {
+          title: "Consejo local",
+          text: "Recomendaciones de rutas, mesas y rincones que no salen en guías.",
+        },
+        {
+          title: "Atención discreta",
+          text: "Estamos cerca cuando nos necesitas y lejos cuando no.",
+        },
+        {
+          title: "Pequeños gestos",
+          text: "Detalles pensados en cada habitación para que todo sea fácil.",
+        },
+        {
+          title: "Siempre disponibles",
+          text: "Un equipo atento para reservas, planes o peticiones especiales.",
+        },
+      ],
+    },
+    sustainability: {
+      label: "Sostenibilidad",
+      title: "Cuidar la tierra",
+      text: "Tomamos decisiones responsables en todo el retiro, entre ellas:",
+      items: [
+        "Trabajamos con artesanos y proveedores locales",
+        "Cocinamos con producto de temporada",
+        "Ahorramos agua y energía",
+        "Reducimos los plásticos de un solo uso",
+        "Plantamos especies nativas",
+      ],
+    },
+    setting: {
+      label: "El entorno",
+      title: "Cerca del pueblo",
+      text: "La casa está rodeada de naturaleza, con el pueblo, los senderos y la costa a pocos minutos.",
+    },
+    places: {
+      label: "Alrededores",
+      title: "Explorar desde aquí",
+      footer:
+        "Pueblos de montaña, mercados, calas y rincones con historia a un corto trayecto de la casa.",
+      cta: "Explorar la zona",
+    },
+    directions: { label: "Cómo llegar", title: "El camino hasta casa" },
+  },
+  experience: {
+    meta: {
+      title: "Experiencias",
+      description: "Bienestar, gastronomía y planes para descubrir la región a tu ritmo.",
+    },
+    hero: {
+      title: "Días a tu ritmo",
+      sideLeft: "Descansar",
+      sideRight: "Explorar",
+      text: "Nadar, comer bien, descansar o salir a explorar: tú decides cómo se llena cada día.",
+    },
+    private: { label: "Experiencias privadas", title: "Hecho a tu medida" },
+  },
+  contact: {
+    meta: {
+      title: "Contacto",
+      description: "Escríbenos para reservas, experiencias o cualquier consulta sobre tu estancia.",
+    },
+    hero: {
+      label: "Estamos para ayudarte",
+      title: "Hablemos",
+      sideLeft: "Consejo local",
+      sideRight: "Planes a medida",
+    },
+    form: {
+      label: "Envíanos una nota",
+      title: "¿En qué podemos ayudarte?",
+      text: "Desde experiencias en la zona hasta peticiones especiales, resolvemos tus dudas antes de llegar.",
+    },
+    reach: {
+      title: "Contacto directo",
+      call: { title: "Llámanos", text: "Atendemos todos los días de 8:00 a 20:00.", cta: "Llamar" },
+      write: {
+        title: "Escríbenos",
+        text: "Respondemos en menos de 24 horas.",
+        cta: "Enviar correo",
+      },
+      visit: { title: "Encuéntranos", cta: "Abrir en mapas" },
+    },
+    directions: { label: "Cómo llegar", title: "El camino hasta aquí", cta: "Ver ruta" },
+  },
+  rooms: {
+    meta: {
+      title: "Habitaciones y suites",
+      description:
+        "Habitaciones y suites con materiales naturales, luz abundante y vistas abiertas.",
+    },
+    hero: { label: "Habitaciones y suites", title: "Elige tu rincón" },
+    overview: {
+      title: "Pensado para el lugar",
+      text: "Interiores cálidos, rincones exteriores propios y vistas que acompañan cada momento del día.",
+    },
+    included: { title: "Todo incluido" },
+    info: { label: "Antes de llegar", title: "Información útil" },
+    yourStay: (name: string) => `Tu estancia en ${name}`,
+  },
+  room: {
+    details: {
+      label: "Los detalles",
+      title: "Todo sobre la habitación",
+      text: "Una mirada cercana a los espacios, materiales y comodidades preparados para tu llegada.",
+    },
+    moreTitle: "Ver más",
+  },
+  notFound: {
+    title: "Página no encontrada",
+    label: "Error 404",
+    heading: "Camino perdido",
+    text: "La página que buscas no existe o fue movida.",
+    cta: "Volver al inicio",
+  },
+  privacy: {
+    meta: (name: string) => ({
+      title: "Política de privacidad",
+      description: `Cómo ${name} recopila, usa y protege tus datos personales.`,
+    }),
+    hero: { label: "Cómo usamos tus datos", title: "Privacidad" },
+    updated: "enero de 2026",
+    intro: (name: string) =>
+      `${name} respeta tu privacidad. Esta política explica qué información recopilamos, cómo la usamos y qué opciones tienes al visitar el sitio, enviar una consulta o reservar.`,
+    sections: (email?: string): LegalSectionCopy[] => [
+      {
+        title: "Datos que recopilamos",
+        paragraphs: [
+          "Podemos tratar los datos que nos facilitas al contactarnos o reservar, como:",
+        ],
+        list: [
+          "Nombre, correo electrónico y teléfono",
+          "Fechas de estancia y preferencias",
+          "Mensajes enviados a través del formulario",
+          "Datos técnicos básicos de navegación",
+        ],
+      },
+      {
+        title: "Para qué los usamos",
+        paragraphs: [
+          "Usamos tus datos para responder consultas, gestionar reservas, mejorar el sitio web y, si lo autorizas, enviarte información relevante sobre tu estancia.",
+        ],
+      },
+      {
+        title: "Con quién los compartimos",
+        paragraphs: [
+          "Solo compartimos datos con proveedores necesarios para prestar el servicio (por ejemplo, motor de reservas o alojamiento web) y cuando la ley lo exige.",
+        ],
+      },
+      {
+        title: "Conservación",
+        paragraphs: [
+          "Conservamos los datos durante el tiempo necesario para la finalidad indicada y los plazos legales aplicables.",
+        ],
+      },
+      {
+        title: "Tus derechos",
+        paragraphs: [
+          `Puedes solicitar acceso, rectificación o eliminación de tus datos escribiendo a ${email ?? "nuestro correo de contacto"}.`,
+        ],
+      },
+    ],
+  },
+  terms: {
+    meta: (name: string) => ({
+      title: "Términos de uso",
+      description: `Condiciones de uso del sitio web de ${name}.`,
+    }),
+    hero: { label: "Condiciones del sitio", title: "Términos de uso" },
+    updated: "enero de 2026",
+    intro: (name: string) =>
+      `Estos términos regulan el uso del sitio web de ${name}. Te recomendamos leerlos antes de navegar o reservar.`,
+    sections: [
+      {
+        title: "Uso del sitio",
+        paragraphs: [
+          "Este sitio ofrece información sobre el alojamiento, sus servicios y experiencias. Al usarlo aceptas hacerlo de forma lícita y respetuosa.",
+        ],
+      },
+      {
+        title: "Reservas",
+        paragraphs: [
+          "Las reservas se gestionan a través de nuestro motor de reservas o de forma directa. Las condiciones de pago y cancelación se indican en cada confirmación.",
+        ],
+      },
+      {
+        title: "Contenido",
+        paragraphs: [
+          "Textos, fotografías y diseño son propiedad del alojamiento o se usan con licencia. No está permitido reutilizarlos sin autorización.",
+        ],
+      },
+      {
+        title: "Enlaces externos",
+        paragraphs: [
+          "El sitio puede enlazar a servicios de terceros (mapas, reservas, redes sociales). No somos responsables de su contenido ni de sus políticas.",
+        ],
+      },
+      {
+        title: "Cambios",
+        paragraphs: [
+          "Podemos actualizar estos términos en cualquier momento. La versión vigente es siempre la publicada en esta página.",
+        ],
+      },
+    ] satisfies LegalSectionCopy[],
+  },
+};

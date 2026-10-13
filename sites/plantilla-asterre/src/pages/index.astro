@@ -9,13 +9,11 @@ import ImageStatement from "@/components/sections/ImageStatement.astro";
 import RoomsSlider from "@/components/sections/RoomsSlider.astro";
 import StaggeredGallery from "@/components/sections/StaggeredGallery.astro";
 import Ticker from "@/components/sections/Ticker.astro";
-import { EXPERIENCES, IMAGES, ROOMS } from "@/data/content";
+import { EXPERIENCES, IMAGES, PAGES, ROOMS } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
-const highlights = [
-  { label: "Bienestar", items: ["Piscina exterior", "Spa y masajes"] },
-  { label: "La estancia", items: [`${ROOMS.length} habitaciones`, "Abierto todo el año"] },
-];
+const page = PAGES.home;
+const highlights = page.highlights(ROOMS.length);
 
 const showcase = EXPERIENCES.filter((exp) => ["montana", "mar", "vida-local"].includes(exp.id));
 ---
@@ -23,11 +21,11 @@ const showcase = EXPERIENCES.filter((exp) => ["montana", "mar", "vida-local"].in
 <BaseLayout>
   <HomeHero
     image={IMAGES.homeHero}
-    label="Un retiro privado"
-    title="Lejos de todo"
-    sideLeft="Entre montañas"
-    sideRight="Ciudad, País"
-    intro="Una casa de campo restaurada entre colinas y mar, pensada para bajar el ritmo."
+    label={page.hero.label}
+    title={page.hero.title}
+    sideLeft={page.hero.sideLeft}
+    sideRight={page.hero.sideRight}
+    intro={page.hero.intro}
   />
 
   <ImageStatement image={IMAGES.homeIntro} align="spread">
@@ -46,36 +44,39 @@ const showcase = EXPERIENCES.filter((exp) => ["montana", "mar", "vida-local"].in
         ))
       }
     </div>
-    <SectionHeading
-      title="Bajar el ritmo"
-      text="Mañanas lentas, comidas sin reloj y tardes a la sombra: aquí el tiempo se mide de otra manera."
-    >
-      <LinkButton href="/retreat" variant="primary" blockMobile>Conocer el retiro</LinkButton>
+    <SectionHeading title={page.slowDown.title} text={page.slowDown.text}>
+      <LinkButton href="/retreat" variant="primary" blockMobile>{page.slowDown.cta}</LinkButton>
     </SectionHeading>
   </ImageStatement>
 
   <ImageStatement image={IMAGES.homeWellness}>
-    <SectionHeading title="Pausa necesaria" sideLeft="Spa al aire libre" sideRight="Rituales diarios">
-      <LinkButton href="/experience#bienestar" variant="primary" blockMobile>Ver bienestar</LinkButton>
+    <SectionHeading
+      title={page.wellness.title}
+      sideLeft={page.wellness.sideLeft}
+      sideRight={page.wellness.sideRight}
+    >
+      <LinkButton href="/experience#bienestar" variant="primary" blockMobile>
+        {page.wellness.cta}
+      </LinkButton>
     </SectionHeading>
   </ImageStatement>
 
   <RoomsSlider
     rooms={ROOMS}
-    title="Dormir bien"
-    text="Habitaciones y suites con materiales nobles, luz natural y vistas que invitan a quedarse."
+    title={page.rooms.title}
+    text={page.rooms.text}
   />
 
   <StaggeredGallery
-    label="Cocina de temporada"
-    title="Mesa compartida"
-    text="Producto local, pescado del día y vinos de la zona en platos sencillos, pensados para compartir sin prisa."
+    label={page.dining.label}
+    title={page.dining.title}
+    text={page.dining.text}
     images={IMAGES.homeDining}
   />
 
   <ExperienceShowcase
-    label="Experiencias"
-    title="Salir a descubrir"
+    label={page.experiences.label}
+    title={page.experiences.title}
     image={IMAGES.homeExperiences}
     hoverImages={IMAGES.homeExperiencesHover}
     experiences={showcase}
@@ -83,8 +84,8 @@ const showcase = EXPERIENCES.filter((exp) => ["montana", "mar", "vida-local"].in
 
   <Ticker
     rows={[
-      { text: "Montaña y mar", image: IMAGES.ticker[0] },
-      { text: "Ciudad, País", image: IMAGES.ticker[1] },
+      { text: page.ticker[0], image: IMAGES.ticker[0] },
+      { text: page.ticker[1], image: IMAGES.ticker[1] },
     ]}
   />
 

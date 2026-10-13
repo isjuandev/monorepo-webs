@@ -1,4 +1,5 @@
 ---
+import { siteConfig } from "@/config/site";
 import { IMAGES, MANAGER_NOTE } from "@/data/content";
 ---
 
@@ -6,7 +7,7 @@ import { IMAGES, MANAGER_NOTE } from "@/data/content";
   <div class="wrapper note__wrapper">
     <div class="note__sheet note__sheet--top">
       <div class="note__inner">
-        <a class="note__logo" href="/" aria-label="Hotellia">
+        <a class="note__logo" href="/" aria-label={siteConfig.name}>
           <img src={IMAGES.logoBlack} alt="" width="139" height="31" loading="lazy" />
         </a>
         <div class="note__letter">

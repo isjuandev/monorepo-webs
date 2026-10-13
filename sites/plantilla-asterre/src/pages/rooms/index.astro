@@ -7,20 +7,22 @@ import FeatureGrid from "@/components/sections/FeatureGrid.astro";
 import InfoGrid from "@/components/sections/InfoGrid.astro";
 import PageHero from "@/components/sections/PageHero.astro";
 import { siteConfig } from "@/config/site";
-import { IMAGES, INCLUDED, ROOMS, STAY_INFO } from "@/data/content";
+import { IMAGES, INCLUDED, PAGES, ROOMS, STAY_INFO, UI_LABELS } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const page = PAGES.rooms;
 ---
 
 <BaseLayout
-  title={`Habitaciones y suites | ${siteConfig.name}`}
-  description="Habitaciones y suites con materiales naturales, luz abundante y vistas abiertas."
+  title={`${page.meta.title} | ${siteConfig.name}`}
+  description={page.meta.description}
   headerTone="dark"
 >
   <PageHero
-    label="Habitaciones y suites"
-    title="Elige tu rincón"
-    sideLeft={`${ROOMS.length} habitaciones`}
-    sideRight="Abierto todo el año"
+    label={page.hero.label}
+    title={page.hero.title}
+    sideLeft={UI_LABELS.roomsCount(ROOMS.length)}
+    sideRight={UI_LABELS.openAllYear}
   />
 
   <section class="rooms-grid">
@@ -36,7 +38,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
                 <div class="room-card__body">
                   <h2 class="t-h3">{room.name}</h2>
                   <RoomMeta room={room} />
-                  <p class="t-lead room-card__price">Desde ${room.price}/noche</p>
+                  <p class="t-lead room-card__price">{UI_LABELS.fromPerNight(room.price)}</p>
                 </div>
               </a>
             </li>
@@ -48,25 +50,25 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
   <section class="section rooms-overview">
     <div class="container rooms-overview__inner">
-      <SectionHeading label={`Tu estancia en ${siteConfig.name}`} title="Pensado para el lugar" />
+      <SectionHeading label={page.yourStay(siteConfig.name)} title={page.overview.title} />
       <div class="media rooms-overview__image" data-reveal>
         <img src={IMAGES.roomsOverview} alt="" loading="lazy" />
       </div>
       <p class="t-lead rooms-overview__text" data-reveal>
-        Interiores cálidos, rincones exteriores propios y vistas que acompañan cada momento del día.
+        {page.overview.text}
       </p>
       <div data-reveal>
-        <LinkButton href="booking">Ver disponibilidad</LinkButton>
+        <LinkButton href="booking">{UI_LABELS.checkAvailability}</LinkButton>
       </div>
     </div>
   </section>
 
-  <FeatureGrid title="Todo incluido" items={INCLUDED} numbered />
+  <FeatureGrid title={page.included.title} items={INCLUDED} numbered />
 
   <InfoGrid
     tone="brown"
-    label="Antes de llegar"
-    title="Información útil"
+    label={page.info.label}
+    title={page.info.title}
     items={STAY_INFO}
     image={IMAGES.roomsInfo}
   />

@@ -1,46 +1,47 @@
 ---
 import ArrowIcon from "@/components/ArrowIcon.astro";
 import { siteConfig } from "@/config/site";
+import { UI_LABELS } from "@/data/content";
 
-const ENQUIRY_TYPES = ["Reserva", "Experiencias", "Eventos privados", "Prensa", "Otro"];
+const { form: copy } = UI_LABELS;
 ---
 
 <form class="contact-form" data-contact-form data-email={siteConfig.contact.email ?? ""}>
   <div class="contact-form__grid">
     <label class="contact-form__field">
-      <span class="t-small">Nombre</span>
-      <input type="text" name="name" placeholder="Tu nombre completo" autocomplete="name" required />
+      <span class="t-small">{copy.name}</span>
+      <input type="text" name="name" placeholder={copy.namePlaceholder} autocomplete="name" required />
     </label>
     <label class="contact-form__field">
-      <span class="t-small">Correo</span>
-      <input type="email" name="email" placeholder="Tu correo" autocomplete="email" required />
+      <span class="t-small">{copy.email}</span>
+      <input type="email" name="email" placeholder={copy.emailPlaceholder} autocomplete="email" required />
     </label>
     <label class="contact-form__field">
-      <span class="t-small">Teléfono</span>
-      <input type="tel" name="phone" placeholder="Tu teléfono" autocomplete="tel" />
+      <span class="t-small">{copy.phone}</span>
+      <input type="tel" name="phone" placeholder={copy.phonePlaceholder} autocomplete="tel" />
     </label>
     <label class="contact-form__field contact-form__field--select">
-      <span class="t-small">Tipo de consulta</span>
+      <span class="t-small">{copy.enquiryType}</span>
       <select name="type" required>
-        <option value="" disabled selected>Selecciona una opción</option>
-        {ENQUIRY_TYPES.map((type) => <option value={type}>{type}</option>)}
+        <option value="" disabled selected>{copy.selectOption}</option>
+        {copy.enquiryTypes.map((type) => <option value={type}>{type}</option>)}
       </select>
       <svg viewBox="0 0 12 12" aria-hidden="true">
         <path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" />
       </svg>
     </label>
     <label class="contact-form__field contact-form__field--full">
-      <span class="t-small">Mensaje</span>
-      <textarea name="message" rows="4" placeholder="Cuéntanos cómo podemos ayudarte" required
+      <span class="t-small">{copy.message}</span>
+      <textarea name="message" rows="4" placeholder={copy.messagePlaceholder} required
       ></textarea>
     </label>
   </div>
   <label class="contact-form__consent t-small">
     <input type="checkbox" name="consent" required />
-    <span>Acepto ser contactado sobre mi consulta.</span>
+    <span>{copy.consent}</span>
   </label>
   <button type="submit" class="btn btn--primary btn--dark contact-form__submit">
-    Enviar mensaje
+    {copy.submit}
     <ArrowIcon direction="right" />
   </button>
   <p class="t-small contact-form__status" data-form-status aria-live="polite"></p>
@@ -155,6 +156,8 @@ const ENQUIRY_TYPES = ["Reserva", "Experiencias", "Eventos privados", "Prensa", 
 </style>
 
 <script>
+  import { UI_LABELS } from "@/data/content";
+
   // Sitio estático: el formulario abre el cliente de correo con la consulta ya redactada.
   // Para un backend real, reemplaza este handler por un servicio de formularios.
   for (const form of document.querySelectorAll<HTMLFormElement>("[data-contact-form]")) {
@@ -163,21 +166,21 @@ const ENQUIRY_TYPES = ["Reserva", "Experiencias", "Eventos privados", "Prensa", 
       event.preventDefault();
       const email = form.dataset.email;
       if (!email) {
-        if (status) status.textContent = "Configura un correo de contacto en src/config/site.ts.";
+        if (status) status.textContent = UI_LABELS.form.missingEmail;
         return;
       }
       const data = new FormData(form);
       const value = (key: string) => String(data.get(key) ?? "").trim();
-      const subject = `Consulta: ${value("type")} — ${value("name")}`;
+      const subject = UI_LABELS.form.mailSubject(value("type"), value("name"));
       const body = [
         value("message"),
         "",
-        `Nombre: ${value("name")}`,
-        `Correo: ${value("email")}`,
-        `Teléfono: ${value("phone") || "—"}`,
+        `${UI_LABELS.form.mailName}: ${value("name")}`,
+        `${UI_LABELS.form.mailEmail}: ${value("email")}`,
+        `${UI_LABELS.form.mailPhone}: ${value("phone") || "—"}`,
       ].join("\n");
       window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      if (status) status.textContent = "Abriendo tu aplicación de correo…";
+      if (status) status.textContent = UI_LABELS.form.opening;
     });
   }
 </script>
