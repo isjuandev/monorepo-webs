@@ -15,10 +15,12 @@ export interface Props {
   text?: string;
   /** Sin padding superior (cuando sigue a otro bloque de la misma sección) */
   compact?: boolean;
+  /** Muestra un índice "01", "02"… sobre cada título */
+  numbered?: boolean;
   id?: string;
 }
 
-const { items, title, label, text, compact = false, id } = Astro.props;
+const { items, title, label, text, compact = false, numbered = false, id } = Astro.props;
 ---
 
 <section class:list={["section features", compact && "features--compact"]} id={id}>
@@ -28,6 +30,9 @@ const { items, title, label, text, compact = false, id } = Astro.props;
       {
         items.map((item, i) => (
           <li class="features__item" data-reveal style={`--reveal-delay: ${(i % 3) * 0.1}s`}>
+            {numbered && (
+              <span class="t-body t-muted features__index">{String(i + 1).padStart(2, "0")}</span>
+            )}
             <h3 class="t-h3 features__title">{item.title}</h3>
             {item.text && <p class="t-body features__text">{item.text}</p>}
             {item.link && <LinkButton href={item.link.href}>{item.link.label}</LinkButton>}
@@ -65,6 +70,10 @@ const { items, title, label, text, compact = false, id } = Astro.props;
 
   .features__item:not(:nth-child(3n + 1)) {
     border-left: 1px solid var(--color-line-dark);
+  }
+
+  .features__index {
+    margin-bottom: 12px;
   }
 
   .features__title {

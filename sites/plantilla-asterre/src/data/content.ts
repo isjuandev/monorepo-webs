@@ -22,6 +22,9 @@ export const IMAGES = {
   retreatSustainability: img("retreat-sustainability"),
   retreatSetting: img("retreat-setting"),
   retreatMap: "/images/retreat-map.svg",
+  retreatRoad: img("retreat-road"),
+  roomsOverview: img("rooms-overview"),
+  roomsInfo: img("rooms-info"),
   roomShared: img("room-shared"),
   experienceHero: img("experience-hero"),
   contactHero: img("contact-hero"),
@@ -303,4 +306,25 @@ export const STAY_INFO = [
   { label: "Traslados", value: "Bajo solicitud" },
   { label: "Niños", value: "Habitaciones familiares" },
   { label: "Mascotas", value: "Consultar" },
+];
+
+export const INCLUDED: FeatureItem[] = [
+  { title: "Desayuno", text: "Pan del día, fruta de temporada y café recién hecho cada mañana." },
+  { title: "Bienestar", text: "Piscina exterior, sauna y espacios para estirar sin horario." },
+  {
+    title: "Limpieza diaria",
+    text: "Habitaciones ordenadas y ropa de cama fresca durante tu estancia.",
+  },
+  { title: "Despensa", text: "Agua, café y pequeños productos locales siempre a mano." },
+  {
+    title: "Conserjería",
+    text: "Ayuda con planes, reservas en restaurantes, traslados y excursiones.",
+  },
+  { title: "Wi-Fi", text: "Conexión estable de alta velocidad en toda la propiedad." },
+];
+
+export const DISTANCES = [
+  { label: "Aeropuerto", value: "45 min" },
+  { label: "Centro del pueblo", value: "15 min" },
+  { label: "Playa más cercana", value: "20 min" },
 ];

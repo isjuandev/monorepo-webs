@@ -5,9 +5,10 @@ import LinkButton from "@/components/LinkButton.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 import FeatureGrid from "@/components/sections/FeatureGrid.astro";
 import HomeHero from "@/components/sections/HomeHero.astro";
+import InfoGrid from "@/components/sections/InfoGrid.astro";
 import StaggeredGallery from "@/components/sections/StaggeredGallery.astro";
 import { siteConfig } from "@/config/site";
-import { IMAGES, PLACES } from "@/data/content";
+import { DISTANCES, IMAGES, PLACES } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const designPoints = ["Materiales locales", "Espacios abiertos", "Detalles originales"];
@@ -167,6 +168,16 @@ const sustainability = [
       </div>
     </div>
   </section>
+
+  <InfoGrid
+    tone="brown"
+    label="Cómo llegar"
+    title="El camino hasta casa"
+    items={DISTANCES}
+    image={IMAGES.retreatRoad}
+    imageSize="medium"
+    large
+  />
 
   <ClosingCta />
 </BaseLayout>

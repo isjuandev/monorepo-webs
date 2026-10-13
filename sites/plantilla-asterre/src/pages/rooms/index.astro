@@ -1,9 +1,13 @@
 ---
 import ClosingCta from "@/components/ClosingCta.astro";
+import LinkButton from "@/components/LinkButton.astro";
 import RoomMeta from "@/components/RoomMeta.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import FeatureGrid from "@/components/sections/FeatureGrid.astro";
+import InfoGrid from "@/components/sections/InfoGrid.astro";
 import PageHero from "@/components/sections/PageHero.astro";
 import { siteConfig } from "@/config/site";
-import { ROOMS } from "@/data/content";
+import { IMAGES, INCLUDED, ROOMS, STAY_INFO } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
@@ -42,12 +46,62 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     </div>
   </section>
 
+  <section class="section rooms-overview">
+    <div class="container rooms-overview__inner">
+      <SectionHeading label={`Tu estancia en ${siteConfig.name}`} title="Pensado para el lugar" />
+      <div class="media rooms-overview__image" data-reveal>
+        <img src={IMAGES.roomsOverview} alt="" loading="lazy" />
+      </div>
+      <p class="t-lead rooms-overview__text" data-reveal>
+        Interiores cálidos, rincones exteriores propios y vistas que acompañan cada momento del día.
+      </p>
+      <div data-reveal>
+        <LinkButton href="booking">Ver disponibilidad</LinkButton>
+      </div>
+    </div>
+  </section>
+
+  <FeatureGrid title="Todo incluido" items={INCLUDED} numbered />
+
+  <InfoGrid
+    tone="brown"
+    label="Antes de llegar"
+    title="Información útil"
+    items={STAY_INFO}
+    image={IMAGES.roomsInfo}
+  />
+
   <ClosingCta />
 </BaseLayout>
 
 <style>
   .rooms-grid {
-    padding-bottom: 240px;
+    padding-bottom: 0;
+  }
+
+  .rooms-overview {
+    padding-bottom: 0;
+  }
+
+  .rooms-overview__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .rooms-overview__image {
+    position: relative;
+    z-index: -1;
+    width: 640px;
+    max-width: 100%;
+    aspect-ratio: 640 / 440;
+    margin-top: -16px;
+  }
+
+  .rooms-overview__text {
+    max-width: 480px;
+    margin: 64px 0 24px;
   }
 
   .rooms-grid__list {
@@ -86,8 +140,13 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
   }
 
   @media (max-width: 809px) {
-    .rooms-grid {
-      padding-bottom: 120px;
+    .rooms-overview__image {
+      margin-top: 32px;
+      z-index: auto;
+    }
+
+    .rooms-overview__text {
+      margin-top: 40px;
     }
 
     .rooms-grid__list {
