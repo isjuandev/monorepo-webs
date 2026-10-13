@@ -16,6 +16,18 @@
     "plantilla-hotellia": {
       "brands": ["Hotellia", "Ember", "Grove & Grain", "Marco Delacroix"],
       "placeholders": ["022 5259-5200", "02252595200", "welcome@hotellia.com"]
+    },
+    "plantilla-pinevalley": {
+      "brands": ["Pine Valley", "PINE VALLEY"],
+      "placeholders": [
+        "+1 (555) 123-4567",
+        "+15551234567",
+        "hello@example.com",
+        "123 Example Road",
+        "Your City, Region",
+        "Aspen, Colorado",
+        "Aspen%2C%20Colorado"
+      ]
     }
   }
 }

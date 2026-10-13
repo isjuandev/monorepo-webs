@@ -59,7 +59,8 @@ monorepo-webs/
 │   ├── _template/                  # Plantilla base genérica e intocable
 │   ├── motel-boutique/             # Motel/hotel boutique en español
 │   ├── plantilla-asterre/          # Plantilla de retiro boutique (clon de asterre.framer.website)
-│   └── plantilla-hotellia/         # Plantilla de hotel boutique (clon de hotellia.framer.website)
+│   ├── plantilla-hotellia/         # Plantilla de hotel boutique (clon de hotellia.framer.website)
+│   └── plantilla-pinevalley/       # Plantilla de villa/casa de campo, landing de una página (clon de pinevalley.framer.website)
 ├── packages/                       # Paquetes compartidos entre todos los sitios
 │   ├── ui/                         # Componentes Astro (SEO, Section, Footer) y Preact (Button) (@repo/ui)
 │   ├── utils/                      # Helpers de dominio, robots.txt, WhatsApp y cn (@repo/utils)
@@ -83,6 +84,7 @@ monorepo-webs/
 | `sites/motel-boutique` | `@sites/motel-boutique` | Motel/hotel boutique: home, suites, restaurante y contacto | es |
 | `sites/plantilla-asterre` | `@sites/plantilla-asterre` | Retiro boutique: home, rooms, retreat, experience, contact y legales | en |
 | `sites/plantilla-hotellia` | `@sites/plantilla-hotellia` | Hotel boutique: rooms, offers, wine & dine, menús, gallery, reserve y legales (smooth-scroll con `lenis`) | en |
+| `sites/plantilla-pinevalley` | `@sites/plantilla-pinevalley` | Villa / casa de campo de una página: hero con profundidad, galería con visor, carrusel coverflow, reseñas, mapa, reserva y FAQ (smooth-scroll con `lenis`) | en |
 
 ---
 
@@ -125,7 +127,7 @@ Opciones adicionales: `--from`, `--title`, `--locale` (por defecto `es_CO`), `--
 
 ## Personalizar un Sitio de Cliente (4 puntos)
 
-Cada plantilla (`_template`, `plantilla-asterre`, `plantilla-hotellia`) se personaliza editando **solo cuatro puntos**; los componentes y páginas no contienen marca, textos ni contactos:
+Cada plantilla (`_template`, `plantilla-asterre`, `plantilla-hotellia`, `plantilla-pinevalley`) se personaliza editando **solo cuatro puntos**; los componentes y páginas no contienen marca, textos ni contactos:
 
 | # | Qué cambia | Archivo | Contenido |
 | :-- | :-- | :-- | :-- |

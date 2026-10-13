@@ -1,0 +1,36 @@
+---
+import IconCard from "@/components/IconCard.astro";
+import SectionIntro from "@/components/SectionIntro.astro";
+import { AMENITIES } from "@/data/content";
+---
+
+<section class="section amenities" id={AMENITIES.intro.id}>
+  <div class="section__inner">
+    <div data-reveal>
+      <SectionIntro intro={AMENITIES.intro} />
+    </div>
+    <ul class="amenities__grid">
+      {AMENITIES.items.map((item) => <IconCard icon={item.icon} label={item.label} />)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .amenities__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  @media (max-width: 1199px) {
+    .amenities__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 809px) {
+    .amenities__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

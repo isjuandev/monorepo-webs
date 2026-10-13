@@ -1,0 +1,26 @@
+---
+import Button from "@/components/Button.astro";
+import { NOT_FOUND } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout page={NOT_FOUND.title} noindex solidHeader>
+  <section class="not-found">
+    <div class="intro">
+      <p class="intro__label">{NOT_FOUND.label}</p>
+      <h1 class="intro__title">{NOT_FOUND.title}</h1>
+      <p class="intro__text">{NOT_FOUND.text}</p>
+      <Button href="/" label={NOT_FOUND.cta} variant="dark" />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    padding: 160px var(--gutter) 96px;
+  }
+</style>

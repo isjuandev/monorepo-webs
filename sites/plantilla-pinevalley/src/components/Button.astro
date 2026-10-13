@@ -1,0 +1,97 @@
+---
+export interface Props {
+  href: string;
+  label: string;
+  /** light: fondo claro y relleno oscuro al hover; dark: lo contrario */
+  variant?: "light" | "dark";
+  external?: boolean;
+  class?: string;
+}
+
+const { href, label, variant = "light", external = false, class: className } = Astro.props;
+---
+
+<a
+  class:list={["btn", `btn--${variant}`, className]}
+  href={href}
+  target={external ? "_blank" : undefined}
+  rel={external ? "noopener noreferrer" : undefined}
+  data-btn-fill
+>
+  <span class="btn__fill" aria-hidden="true"></span>
+  <span class="btn__text">{label}</span>
+</a>
+
+<style>
+  /* Botón de Framer: un punto de 8 px crece desde el puntero y rellena el botón invirtiendo colores */
+  .btn {
+    --btn-bg: var(--color-on-image);
+    --btn-fg: var(--color-primary);
+    --btn-fill: var(--color-primary);
+    --btn-fill-fg: var(--color-on-primary);
+    --fill-x: 50%;
+    --fill-y: 50%;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    font-family: var(--font-button);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  .btn--dark {
+    --btn-bg: var(--color-primary);
+    --btn-fg: var(--color-on-primary);
+    --btn-fill: var(--color-on-image);
+    --btn-fill-fg: var(--color-primary);
+  }
+
+  .btn__fill {
+    position: absolute;
+    left: var(--fill-x);
+    top: var(--fill-y);
+    z-index: -1;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--btn-fill);
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+    transition:
+      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.2s ease;
+  }
+
+  .btn__text {
+    padding: 0 4px;
+    transition: color 0.3s ease;
+  }
+
+  @media (hover: hover) {
+    .btn:hover .btn__fill {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(42);
+    }
+
+    .btn:hover .btn__text {
+      color: var(--btn-fill-fg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn__fill,
+    .btn__text {
+      transition: none;
+    }
+  }
+</style>

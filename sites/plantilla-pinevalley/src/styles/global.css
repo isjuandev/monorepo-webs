@@ -1,0 +1,231 @@
+/* Estilos base y utilidades compartidas. Consume solo variables de theme.css. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+}
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 100;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Sección estándar: 96 / 72 / 48 px de padding vertical y gutter de 24 px */
+.section {
+  position: relative;
+  background: var(--color-bg);
+  scroll-margin-top: 0;
+}
+
+.section__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 96px var(--gutter);
+}
+
+@media (max-width: 1199px) {
+  .section__inner {
+    padding-block: 72px;
+  }
+}
+
+@media (max-width: 809px) {
+  .section__inner {
+    padding-block: 48px;
+  }
+}
+
+/* Encabezado de sección: etiqueta + título + texto */
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.intro__label {
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-muted);
+}
+
+.intro__title {
+  max-width: 600px;
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.intro__text {
+  max-width: 520px;
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--color-muted);
+  text-wrap: balance;
+}
+
+.intro--light .intro__label,
+.intro--light .intro__title,
+.intro--light .intro__text {
+  color: var(--color-on-image);
+}
+
+@media (max-width: 1199px) {
+  .intro__title {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 809px) {
+  .intro__title {
+    font-size: 28px;
+  }
+
+  .intro__text {
+    font-size: 14px;
+  }
+}
+
+/* Tarjeta con borde fino (características, servicios, cercanías, FAQ, reseñas) */
+.card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+/* Aparición al hacer scroll (whileInView de Framer: opacity 0 → 1, y 50 → 0, resorte) */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s
+    cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Entrada al cargar (appear de Framer en el hero: resorte con 0.4 s de retardo) */
+.js [data-appear] {
+  opacity: 0;
+  translate: 0 50px;
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), translate 0.8s
+    cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.js [data-appear].is-visible {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.tr-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-appear] {
+    opacity: 1;
+    translate: 0 0;
+    transition: none;
+  }
+}
+
+/* Saltos de línea de la fuente (componente Lines): en mobile el texto fluye libre */
+@media (max-width: 809px) {
+  .lb:not(.lb--keep) {
+    display: none;
+  }
+}

@@ -1,0 +1,186 @@
+---
+import { GalleryLightbox } from "@/components/GalleryLightbox";
+import SectionIntro from "@/components/SectionIntro.astro";
+import { GALLERY, UI_LABELS } from "@/data/content";
+
+const labels = {
+  cta: GALLERY.cta,
+  openImage: UI_LABELS.openImage,
+  dialog: UI_LABELS.lightbox,
+  close: UI_LABELS.closeLightbox,
+  previous: UI_LABELS.previousImage,
+  next: UI_LABELS.nextImage,
+  counter: UI_LABELS.imageCounter,
+};
+---
+
+<section class="section gallery-section" id={GALLERY.intro.id}>
+  <div class="section__inner">
+    <div data-reveal>
+      <SectionIntro intro={GALLERY.intro} />
+    </div>
+    <GalleryLightbox client:visible images={GALLERY.images} labels={labels} />
+  </div>
+</section>
+
+<style>
+  .gallery-section :global(.gallery) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+
+  /* Masonry por columnas: 3 en desktop/tablet, 2 en mobile (mismo orden que la fuente) */
+  .gallery-section :global(.gallery__grid) {
+    width: 100%;
+    columns: 3;
+    column-gap: 12px;
+  }
+
+  .gallery-section :global(.gallery__item) {
+    break-inside: avoid;
+    margin-bottom: 12px;
+  }
+
+  .gallery-section :global(.gallery__thumb) {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background: var(--color-placeholder);
+  }
+
+  .gallery-section :global(.gallery__item--landscape .gallery__thumb) {
+    aspect-ratio: 456 / 340;
+  }
+
+  .gallery-section :global(.gallery__item--portrait .gallery__thumb) {
+    aspect-ratio: 456 / 611;
+  }
+
+  .gallery-section :global(.gallery__thumb img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .gallery-section :global(.gallery__thumb:hover img) {
+    transform: scale(1.05);
+  }
+
+  .gallery-section :global(.gallery__cta) {
+    margin-top: -12px;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    transition: opacity 0.2s ease;
+  }
+
+  .gallery-section :global(.gallery__cta:hover) {
+    opacity: 0.85;
+  }
+
+  /* Visor */
+  .gallery-section :global(.lightbox) {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    border: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 54px 80px;
+    background: var(--color-lightbox);
+    color: var(--color-on-primary);
+    animation: lightbox-in 0.3s ease;
+  }
+
+  .gallery-section :global(.lightbox__image) {
+    max-width: min(1060px, 100%);
+    max-height: 100%;
+    border-radius: var(--radius-md);
+    object-fit: contain;
+    animation: lightbox-in 0.35s ease;
+  }
+
+  .gallery-section :global(.lightbox__counter) {
+    position: absolute;
+    top: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+  }
+
+  .gallery-section :global(.lightbox__close) {
+    position: absolute;
+    top: 26px;
+    right: 26px;
+    display: flex;
+    color: inherit;
+  }
+
+  .gallery-section :global(.lightbox__nav) {
+    position: absolute;
+    top: 50%;
+    display: flex;
+    padding: 8px;
+    color: inherit;
+    transform: translateY(-50%);
+  }
+
+  .gallery-section :global(.lightbox__nav--prev) {
+    left: 22px;
+  }
+
+  .gallery-section :global(.lightbox__nav--next) {
+    right: 22px;
+  }
+
+  @keyframes lightbox-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .gallery-section :global(.gallery__grid) {
+      columns: 2;
+    }
+
+    .gallery-section :global(.gallery__item--landscape .gallery__thumb) {
+      aspect-ratio: 165 / 123;
+    }
+
+    .gallery-section :global(.gallery__item--portrait .gallery__thumb) {
+      aspect-ratio: 165 / 221;
+    }
+
+    .gallery-section :global(.lightbox) {
+      padding: 64px 16px;
+    }
+
+    .gallery-section :global(.lightbox__nav) {
+      top: auto;
+      bottom: 16px;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-section :global(.lightbox),
+    .gallery-section :global(.lightbox__image) {
+      animation: none;
+    }
+  }
+</style>
