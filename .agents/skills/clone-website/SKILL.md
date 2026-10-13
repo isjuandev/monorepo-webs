@@ -16,6 +16,9 @@ Always follow the common monorepo rules defined in [AGENTS.md](../../../AGENTS.m
   - `url(s)`: Target website URL(s) to clone.
   - `slug-cliente`: Kebab-case identifier for the client folder (`sites/<slug-cliente>`).
   - `domain` (optional): Production domain for the client (configured in `src/config/site.ts`).
+  - `content mode` (optional): **A — Plantilla** (default: real structure, layout, styles and behavior, but placeholder text, prices, contact data and images) or **B — Fiel** (real text and assets, only when the user confirms they have the owner's permission).
+
+**Mandatory reference:** read [the full clone checklist](./references/full-clone-checklist.md) before starting. It defines the complete inventory (routes, sections, measured styles, animations, assets, SEO), build rules, comparison, validation, Git delivery and the final verification list. Do not report the clone as complete until that list is satisfied with evidence.
 
 ## 1. Map the work
 
@@ -25,6 +28,8 @@ If `sites/<slug-cliente>/` does not exist yet, scaffold it using the official ge
 ```bash
 pnpm new-client-site <slug-cliente> --name "<Nombre>" --domain "<dominio.com>"
 ```
+
+Discover **every** route before building: read the source `/sitemap.xml` and `/robots.txt`, and extract internal links from the menu, header, footer and body. Never assume a one-page site; subpages left out must be approved by the user and recorded in the brief.
 
 Record a short source-to-local route map and the files each page owns:
 - Target client folder: `sites/<slug-cliente>/`.
@@ -46,6 +51,8 @@ Finish when every requested URL has a destination inside `sites/<slug-cliente>/`
 ## 2. Observe before building
 
 Inspect the whole page at desktop and mobile widths. Scroll top to bottom to load lazy media and reveal sticky/pinned scenes. Then exercise menus, tabs, accordions, carousels, hover states, and primary links. Distinguish changes driven by **scroll, click, hover, or time**; a click imitation of a scroll-driven section is a different product.
+
+Build an **animation and interaction inventory** (one row each: element, trigger, changed properties, duration, easing, delay, repeat/reversible) covering load fades, scroll reveals, parallax/sticky, header behavior, menus, carousels, lightboxes, hovers, marquees (measure real speed) and background video. Read keyframes, transitions and `data-animation*` attributes rather than inferring from screenshots; mark inconclusive measurements as "no verificado". Every row must end up implemented or explicitly justified.
 
 Treat each observation as one sample of a **rule**. Read declared values (computed styles, CSS variables, a library's live options) rather than inferring them from one rendering, and vary viewport width (including wider than the design), viewport height, input, and state until you know what drives each change. Drive the page with the inputs visitors use (wheel, touch, keyboard, pointer); scripted scrolling bypasses behavior attached to them, such as smooth scrolling.
 
@@ -81,8 +88,10 @@ pnpm --filter @sites/<slug-cliente> check
 pnpm --filter @sites/<slug-cliente> build
 SITE_FOLDER=<slug-cliente> pnpm test:visual
 ```
-Completion requires a successful build, passing isolation/lint/type checks, **and** rendered comparison. State remaining differences precisely instead of calling an unchecked result pixel-perfect.
+Run the QA suite over **all** cloned routes (`QA_ROUTES="/,/ruta-2,..."`), and test interactions and `prefers-reduced-motion` with Playwright.
+
+Completion requires a successful build, passing isolation/lint/type checks, rendered comparison, **and** the final verification list in [the full clone checklist](./references/full-clone-checklist.md). State remaining differences precisely instead of calling an unchecked result pixel-perfect.
 
 ## Deliver
 
-Return preview/run instructions (`pnpm --filter @sites/<slug-cliente> dev`), the source-to-local route map, configured client domain in `src/config/site.ts`, representative desktop/mobile comparisons, checks actually run, and remaining visual/functional gaps.
+Return, in the format defined by the checklist (route table, animation table, known differences, commands run with results, PR link): preview/run instructions (`pnpm --filter @sites/<slug-cliente> dev`), the source-to-local route map, configured client domain in `src/config/site.ts`, representative desktop/mobile comparisons, checks actually run, and remaining visual/functional gaps.
