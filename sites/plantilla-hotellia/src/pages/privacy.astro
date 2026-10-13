@@ -1,0 +1,11 @@
+---
+import LegalContent from "@/components/sections/LegalContent.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import { HERO_TITLES, PRIVACY } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout page="Privacy Policy">
+  <PageHero title={HERO_TITLES.privacy} />
+  <LegalContent blocks={PRIVACY} />
+</BaseLayout>

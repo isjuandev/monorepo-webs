@@ -1,0 +1,249 @@
+---
+import Icon from "@/components/Icon.astro";
+import { MENU_LINKS, siteConfig } from "@/config/site";
+import { IMAGES } from "@/data/content";
+
+const splitWords = (label: string) => label.split(" ");
+---
+
+<header class="site-header" data-header>
+  <nav class="site-header__bar" aria-label="Principal">
+    <a class="site-header__logo" href="/" aria-label={`${siteConfig.name} — inicio`}>
+      <img src={IMAGES.logoWhite} alt="" width="109" height="24" />
+    </a>
+    <div class="site-header__actions">
+      <a class="site-header__icon" href="/reserve" aria-label="Reserve">
+        <Icon name="bell" size={22} />
+      </a>
+      <button
+        class="site-header__toggle pill pill--light"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-menu"
+        data-menu-toggle
+      >
+        <span data-menu-label>Menu</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="site-menu" id="site-menu" data-menu hidden>
+    <ul class="site-menu__list">
+      {
+        MENU_LINKS.map((link, linkIndex) => {
+          let charIndex = 0;
+          return (
+            <li>
+              <a class="site-menu__link t-h2" href={link.href} aria-label={link.label}>
+                {splitWords(link.label).map((word) => (
+                  <span class="site-menu__word" aria-hidden="true">
+                    {[...word].map((char) => (
+                      <span
+                        class="site-menu__char"
+                        style={`--char-delay:${(linkIndex * 0.08 + charIndex++ * 0.03).toFixed(2)}s`}
+                      >
+                        {char}
+                      </span>
+                    ))}
+                  </span>
+                ))}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</header>
+<div class="header-blur" aria-hidden="true"></div>
+
+<style>
+  .site-header {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 10;
+  }
+
+  .site-header__bar {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px var(--gutter);
+  }
+
+  .site-header__logo {
+    display: block;
+    width: 109px;
+    height: 24px;
+    mix-blend-mode: difference;
+  }
+
+  .site-header__logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .site-header__icon {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-pill);
+    background: #ffffff;
+    color: #000000;
+    transition: background-color 0.3s ease;
+  }
+
+  .site-header__icon:hover {
+    background: var(--color-bg);
+  }
+
+  .site-header__toggle {
+    min-width: 55px;
+  }
+
+  .site-header.is-open .site-header__toggle {
+    background: var(--color-bg);
+  }
+
+  .site-header.is-open .site-header__toggle:hover {
+    background: #ffffff;
+  }
+
+  .site-header.is-open .site-header__logo {
+    mix-blend-mode: normal;
+  }
+
+  .site-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    /* El bloque de enlaces de la fuente ocupa 900 px desde y=51: su centro queda 51 px más abajo. */
+    padding-top: 102px;
+    background: var(--color-primary-overlay);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .site-menu[hidden] {
+    display: none;
+  }
+
+  .site-header.is-open .site-menu {
+    opacity: 1;
+  }
+
+  .site-menu__list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+  }
+
+  .site-menu__link {
+    display: inline-flex;
+    gap: 10px;
+    height: 48px;
+    padding: 0 10px;
+    border-radius: 50px;
+    color: #ffffff;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  .site-menu__link:hover,
+  .site-menu__link:focus-visible {
+    background: #ffffff;
+    color: var(--color-primary);
+  }
+
+  .site-menu__word {
+    display: inline-flex;
+  }
+
+  .site-menu__char {
+    display: inline-block;
+    opacity: 0;
+    filter: blur(10px);
+  }
+
+  .site-header.is-open .site-menu__char {
+    animation: menu-char 0.6s var(--ease-out) forwards;
+    animation-delay: calc(0.15s + var(--char-delay));
+  }
+
+  @keyframes menu-char {
+    to {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
+
+  .header-blur {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 9;
+    height: 55px;
+    pointer-events: none;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    mask-image: linear-gradient(#000 0%, transparent 100%);
+    -webkit-mask-image: linear-gradient(#000 0%, transparent 100%);
+  }
+</style>
+
+<script>
+  import { setScrollLocked } from "@/scripts/motion";
+
+  const header = document.querySelector<HTMLElement>("[data-header]");
+  const toggle = header?.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+  const label = header?.querySelector<HTMLElement>("[data-menu-label]");
+  const menu = header?.querySelector<HTMLElement>("[data-menu]");
+
+  if (header && toggle && label && menu) {
+    let closeTimer = 0;
+
+    const setOpen = (open: boolean) => {
+      window.clearTimeout(closeTimer);
+      toggle.setAttribute("aria-expanded", String(open));
+      label.textContent = open ? "Close" : "Menu";
+      setScrollLocked(open);
+      if (open) {
+        menu.hidden = false;
+        requestAnimationFrame(() => header.classList.add("is-open"));
+        menu.querySelector<HTMLAnchorElement>("a")?.focus({ preventScroll: true });
+      } else {
+        header.classList.remove("is-open");
+        closeTimer = window.setTimeout(() => {
+          menu.hidden = true;
+        }, 400);
+      }
+    };
+
+    toggle.addEventListener("click", () => {
+      setOpen(toggle.getAttribute("aria-expanded") !== "true");
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>

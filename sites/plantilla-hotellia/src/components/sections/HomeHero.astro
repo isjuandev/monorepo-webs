@@ -1,0 +1,117 @@
+---
+import FitTitle from "@/components/FitTitle.astro";
+import { HERO_TITLES, HOME_HERO, IMAGES } from "@/data/content";
+---
+
+<section class="home-hero" aria-label="Hotellia">
+  <div class="home-hero__content" data-scroll-shift="0.352" data-scroll-max="300">
+    <div class="home-hero__media">
+      <img
+        src={IMAGES.homeHero.src}
+        alt={IMAGES.homeHero.alt}
+        width="2596"
+        height="1742"
+        fetchpriority="high"
+      />
+    </div>
+    <div class="home-hero__overlay appear-fade" style="--appear-delay:0.3s;--appear-to:0.2"></div>
+    <div class="home-hero__branding">
+      <div class="home-hero__texts">
+        <p class="home-hero__text appear-up" style="--appear-delay:0.8s">{HOME_HERO.left}</p>
+        <p class="home-hero__text appear-up" style="--appear-delay:0.8s">{HOME_HERO.right}</p>
+      </div>
+      <div class="home-hero__brand appear-up" style="--appear-delay:0.8s">
+        <FitTitle {...HERO_TITLES.brand} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-hero {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .home-hero__content {
+    position: relative;
+    height: 100%;
+    will-change: transform;
+  }
+
+  .home-hero__media {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    transform: scale(1.1);
+    animation: hero-zoom 2s var(--ease-hero) forwards;
+  }
+
+  .home-hero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @keyframes hero-zoom {
+    to {
+      transform: scale(1);
+    }
+  }
+
+  .home-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: #000000;
+  }
+
+  .home-hero__branding {
+    position: absolute;
+    inset: auto 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .home-hero__texts {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    padding: 0 var(--gutter);
+  }
+
+  .home-hero__text {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.4;
+    letter-spacing: -0.04em;
+    color: #ffffff;
+  }
+
+  @media (max-width: 809.98px) {
+    .home-hero {
+      height: 80vh;
+    }
+
+    .home-hero__branding {
+      bottom: 40px;
+      gap: 10px;
+    }
+
+    .home-hero__texts {
+      align-items: center;
+    }
+
+    .home-hero__text:first-child {
+      max-width: 210px;
+    }
+
+    .home-hero__text:last-child {
+      white-space: nowrap;
+    }
+  }
+</style>

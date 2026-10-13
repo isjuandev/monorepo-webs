@@ -1,0 +1,221 @@
+---
+import SectionIntro from "@/components/SectionIntro.astro";
+import { siteConfig } from "@/config/site";
+import { RESERVE_PAGE } from "@/data/content";
+---
+
+<section class="section reserve">
+  <div class="reserve__wrapper">
+    <SectionIntro {...RESERVE_PAGE.intro} textWidth={600} />
+    <form class="reserve__form" data-reserve-form data-email={siteConfig.contact.email} novalidate>
+      <div class="reserve__row">
+        <label class="field">
+          <span class="field__label t-small">First Name</span>
+          <span class="field__box">
+            <input name="First Name" type="text" placeholder="Jane" required autocomplete="given-name" />
+          </span>
+        </label>
+        <label class="field">
+          <span class="field__label t-small">Last Name</span>
+          <span class="field__box">
+            <input name="Last Name" type="text" placeholder="Smith" required autocomplete="family-name" />
+          </span>
+        </label>
+      </div>
+      <div class="reserve__row">
+        <label class="field">
+          <span class="field__label t-small">Email</span>
+          <span class="field__box">
+            <input name="Email" type="email" placeholder="jane@framer.com" required autocomplete="email" />
+          </span>
+        </label>
+        <label class="field">
+          <span class="field__label t-small">Phone</span>
+          <span class="field__box">
+            <input name="Phone" type="tel" placeholder="+34 201 500 155" required autocomplete="tel" />
+          </span>
+        </label>
+      </div>
+      <label class="field">
+        <span class="field__label t-small">Room Type</span>
+        <span class="field__box field__box--select">
+          <select name="Room Type" required>
+            <option value="" disabled selected>Select…</option>
+            {RESERVE_PAGE.roomOptions.map((option) => <option value={option}>{option}</option>)}
+          </select>
+        </span>
+      </label>
+      <div class="reserve__row">
+        <label class="field">
+          <span class="field__label t-small">Check in</span>
+          <span class="field__box field__box--date">
+            <input name="Check in" type="date" required data-empty />
+          </span>
+        </label>
+        <label class="field">
+          <span class="field__label t-small">Check out</span>
+          <span class="field__box field__box--date">
+            <input name="Check out" type="date" required data-empty />
+          </span>
+        </label>
+      </div>
+      <button type="submit" class="reserve__submit t-small is-incomplete">Submit</button>
+      <p class="reserve__status t-small" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<style>
+  .reserve__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .reserve__form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .reserve__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .field__box {
+    position: relative;
+    display: flex;
+    height: 48px;
+    background: #ffffff;
+  }
+
+  .field__box input,
+  .field__box select {
+    width: 100%;
+    padding: 12px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    color: #000000;
+    appearance: none;
+    outline: none;
+  }
+
+  .field__box:focus-within {
+    box-shadow: inset 0 0 0 1px #000000;
+  }
+
+  .field__box input::placeholder {
+    color: #999999;
+  }
+
+  .field__box select:invalid,
+  .field__box input[data-empty]::-webkit-datetime-edit {
+    color: #999999;
+  }
+
+  /* Iconos del formulario de Framer (chevron y calendario, 16 px, #999). */
+  .field__box--select::after,
+  .field__box--date::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    width: 16px;
+    height: 16px;
+    margin-top: -8px;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    pointer-events: none;
+  }
+
+  .field__box--select::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M3.5 6 8 10.5 12.5 6' fill='none' stroke-width='1.5' stroke='%23999' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+
+  .field__box--date::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath fill='%23999' d='M3 5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2H3Z' opacity='.3'/%3E%3Cpath fill='none' stroke='%23999' stroke-width='1.5' d='M3.25 5.25a2 2 0 0 1 2-2h5.5a2 2 0 0 1 2 2v5.5a2 2 0 0 1-2 2h-5.5a2 2 0 0 1-2-2ZM3 6.75h9.5'/%3E%3C/svg%3E");
+  }
+
+  .field__box input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40px;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .reserve__submit {
+    height: 35px;
+    border: 0;
+    border-radius: 24px;
+    background: #000000;
+    color: #ffffff;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+  }
+
+  .reserve__submit.is-incomplete {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .reserve__status:empty {
+    display: none;
+  }
+
+  @media (max-width: 809.98px) {
+    .reserve__form {
+      padding: 20px 0;
+    }
+
+    .reserve__row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Sitio estático: el envío abre el cliente de correo con la solicitud redactada.
+  for (const form of document.querySelectorAll<HTMLFormElement>("[data-reserve-form]")) {
+    const submit = form.querySelector<HTMLButtonElement>("button[type=submit]");
+    const status = form.querySelector<HTMLElement>(".reserve__status");
+    const sync = () => {
+      for (const input of form.querySelectorAll<HTMLInputElement>("input[type=date]")) {
+        input.toggleAttribute("data-empty", input.value === "");
+      }
+      // Como en la fuente, el botón luce deshabilitado hasta que el formulario es válido.
+      submit?.classList.toggle("is-incomplete", !form.checkValidity());
+    };
+    form.addEventListener("input", sync);
+    form.addEventListener("change", sync);
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      const lines = [...new FormData(form).entries()].map(([key, value]) => `${key}: ${String(value)}`);
+      const email = form.dataset.email ?? "";
+      const subject = encodeURIComponent("Reservation request");
+      window.location.href = `mailto:${email}?subject=${subject}&body=${encodeURIComponent(lines.join("\n"))}`;
+      if (status) status.textContent = "Thank you! Your email app will open to send the request.";
+    });
+  }
+</script>

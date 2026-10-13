@@ -1,0 +1,52 @@
+---
+export interface Props {
+  title: string;
+  text: string;
+  /** Ancho máximo del párrafo (690 px por defecto, 600 px en reservas y FAQ secundarias). */
+  textWidth?: number;
+  align?: "center" | "left";
+  as?: "h1" | "h2";
+}
+
+const { title, text, textWidth = 690, align = "center", as: Tag = "h2" } = Astro.props;
+---
+
+<div class:list={["intro", `intro--${align}`]}>
+  <Tag class="t-h2">{title}</Tag>
+  <p class="t-body intro__text" style={`--intro-width:${textWidth}px`}>{text}</p>
+</div>
+
+<style>
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .intro--center {
+    align-items: center;
+    text-align: center;
+  }
+
+  .intro--left {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  /* El párrafo ocupa el 60 % del contenedor (690 px a 1150 px), con tope por sección. */
+  .intro__text {
+    width: 100%;
+    max-width: min(var(--intro-width), 60%);
+  }
+
+  .intro--left .intro__text {
+    max-width: var(--intro-width);
+  }
+
+  @media (max-width: 809.98px) {
+    .intro__text,
+    .intro--left .intro__text {
+      max-width: none;
+    }
+  }
+</style>

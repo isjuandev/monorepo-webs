@@ -1,0 +1,72 @@
+---
+import Icon from "@/components/Icon.astro";
+import SectionIntro from "@/components/SectionIntro.astro";
+import type { Amenity, SectionIntro as Intro } from "@/data/content";
+
+export interface Props {
+  intro: Intro;
+  items: Amenity[];
+  /** Columnas en móvil: 2 en /rooms, 1 en el detalle de habitación (como la fuente). */
+  mobileColumns?: 1 | 2;
+}
+
+const { intro, items, mobileColumns = 2 } = Astro.props;
+---
+
+<section class="section amenities">
+  <div class="wrapper amenities__wrapper">
+    <SectionIntro {...intro} />
+    <ul class:list={["amenities__grid", { "amenities__grid--single": mobileColumns === 1 }]}>
+      {
+        items.map((item) => (
+          <li class="amenity">
+            <Icon name={item.icon} size={64} />
+            <span class="t-body">{item.label}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .amenities__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .amenities__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    list-style: none;
+  }
+
+  .amenity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    height: 200px;
+    padding-top: 48px;
+    background: #ffffff;
+    text-align: center;
+  }
+
+  @media (max-width: 1199.98px) {
+    .amenities__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .amenities__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .amenities__grid--single {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

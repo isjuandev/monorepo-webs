@@ -1,0 +1,154 @@
+---
+import RoomPrice from "@/components/RoomPrice.astro";
+import RoomProperty from "@/components/RoomProperty.astro";
+import AmenityGrid from "@/components/sections/AmenityGrid.astro";
+import MediaHero from "@/components/sections/MediaHero.astro";
+import Reviews from "@/components/sections/Reviews.astro";
+import {
+  REVIEWS_INTRO_SHORT,
+  ROOMS,
+  ROOM_AMENITIES,
+  ROOM_AMENITIES_INTRO,
+  type Room,
+} from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+export function getStaticPaths() {
+  return ROOMS.map((room) => ({ params: { slug: room.slug }, props: { room } }));
+}
+
+interface Props {
+  room: Room;
+}
+
+const { room } = Astro.props;
+---
+
+<BaseLayout page={room.name} ogImage={room.image.src}>
+  <MediaHero image={room.image} sticky />
+  <section class="section room-detail">
+    <div class="wrapper">
+      <div class="room-detail__head">
+        <h1 class="t-h1">{room.name}</h1>
+        <p class="t-lead room-detail__lead">{room.summary}</p>
+        <div class="room-detail__meta">
+          <div class="room-detail__props">
+            {room.properties.map((prop) => <RoomProperty {...prop} />)}
+          </div>
+          <RoomPrice price={room.price} />
+        </div>
+      </div>
+      <div class="room-detail__photos">
+        {
+          room.photos.map((photo) => (
+            <div class="room-detail__photo">
+              <img
+                src={photo.src}
+                alt={photo.alt}
+                width="1168"
+                height="784"
+                loading="lazy"
+                data-parallax-y="46"
+              />
+            </div>
+          ))
+        }
+      </div>
+      <div class="room-detail__description t-body">
+        <p>{room.intro}</p>
+        <ul>
+          {room.highlights.map((item) => <li>{item}</li>)}
+        </ul>
+        <p>{room.description}</p>
+      </div>
+    </div>
+  </section>
+  <AmenityGrid intro={ROOM_AMENITIES_INTRO} items={ROOM_AMENITIES} mobileColumns={1} />
+  <Reviews intro={REVIEWS_INTRO_SHORT} />
+</BaseLayout>
+
+<style>
+  .room-detail {
+    padding-bottom: 0;
+  }
+
+  .room-detail__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .room-detail__lead {
+    max-width: 550px;
+  }
+
+  .room-detail__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    padding-top: 20px;
+    border-top: 1px solid #000000;
+  }
+
+  .room-detail__props {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .room-detail__photos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 64px;
+  }
+
+  .room-detail__photo {
+    height: 491px;
+    overflow: hidden;
+  }
+
+  .room-detail__photo img {
+    width: 100%;
+    height: calc(100% + 46px);
+    object-fit: cover;
+    will-change: transform;
+  }
+
+  .room-detail__description {
+    max-width: 750px;
+    margin: 0 auto;
+    padding: 32px 0 64px;
+  }
+
+  .room-detail__description ul {
+    padding-left: 20px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 1199.98px) {
+    .room-detail__photo {
+      height: auto;
+      aspect-ratio: 565 / 491;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .room-detail__meta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .room-detail__photos {
+      grid-template-columns: 1fr;
+    }
+
+    .room-detail__photo {
+      height: 304px;
+    }
+  }
+</style>

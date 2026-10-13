@@ -1,0 +1,113 @@
+---
+import { IMAGES, MANAGER_NOTE } from "@/data/content";
+---
+
+<section class="section note">
+  <div class="wrapper note__wrapper">
+    <div class="note__sheet note__sheet--top">
+      <div class="note__inner">
+        <a class="note__logo" href="/" aria-label="Hotellia">
+          <img src={IMAGES.logoBlack} alt="" width="139" height="31" loading="lazy" />
+        </a>
+        <div class="note__letter">
+          <p class="note__greeting">{MANAGER_NOTE.greeting}</p>
+          {MANAGER_NOTE.paragraphs.map((text) => <p>{text}</p>)}
+        </div>
+      </div>
+    </div>
+    <div class="note__sheet note__sheet--bottom" data-fold>
+      <div class="note__signature">
+        <img
+          src={IMAGES.signature}
+          alt={MANAGER_NOTE.signatureAlt}
+          width="1536"
+          height="1024"
+          loading="lazy"
+        />
+        <p>{MANAGER_NOTE.signedBy}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .note__wrapper {
+    perspective: 1200px;
+  }
+
+  .note__sheet {
+    height: 600px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  .note__sheet--bottom {
+    position: relative;
+    transform-origin: 50% 0;
+    transform: perspective(1200px) rotateX(-90deg);
+    will-change: transform;
+  }
+
+  .note__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 128px;
+    padding: 64px;
+  }
+
+  .note__logo {
+    display: block;
+    width: 139px;
+    height: 31px;
+  }
+
+  .note__logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .note__letter {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 613px;
+    max-width: 100%;
+    font-family: var(--font-ui);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .note__greeting {
+    color: var(--color-ink);
+    padding-bottom: 24px;
+  }
+
+  .note__signature {
+    position: absolute;
+    inset: auto 64px 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    font-size: 16px;
+    line-height: 1.5;
+    text-align: right;
+  }
+
+  .note__signature img {
+    flex: none;
+    width: 244px;
+    max-width: none;
+    height: 109px;
+    object-fit: cover;
+  }
+
+  @media (max-width: 809.98px) {
+    .note__inner {
+      padding: 64px 20px;
+    }
+  }
+</style>

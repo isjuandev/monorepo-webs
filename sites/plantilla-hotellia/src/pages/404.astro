@@ -1,0 +1,36 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout page="404" noindex>
+  <section class="not-found">
+    <h1 class="t-h1">Oops!</h1>
+    <p class="t-body">Looks like this page doesn’t exist.</p>
+    <a class="pill pill--light" href="/">HOME</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 140px var(--gutter);
+    background: var(--color-primary);
+    color: #ffffff;
+    text-align: center;
+  }
+
+  @media (max-width: 1199.98px) {
+    .not-found .t-h1 {
+      font-size: 80px;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .not-found .t-h1 {
+      font-size: 40px;
+    }
+  }
+</style>

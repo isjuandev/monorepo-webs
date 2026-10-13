@@ -1,0 +1,69 @@
+---
+import SectionIntro from "@/components/SectionIntro.astro";
+import type { ImageAsset } from "@/data/content";
+
+export interface Props {
+  title: string;
+  text: string;
+  images: ImageAsset[];
+}
+
+const { title, text, images } = Astro.props;
+---
+
+<section class="section gallery-grid">
+  <div class="wrapper gallery-grid__wrapper">
+    <SectionIntro title={title} text={text} />
+    <div class="gallery-grid__items">
+      {
+        images.map((image) => (
+          <div class="gallery-grid__item">
+            <img src={image.src} alt={image.alt} width="1168" height="784" loading="lazy" />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .gallery-grid__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .gallery-grid__items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .gallery-grid__item {
+    height: 491px;
+    overflow: hidden;
+  }
+
+  .gallery-grid__item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 1199.98px) {
+    .gallery-grid__item {
+      height: auto;
+      aspect-ratio: 565 / 491;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .gallery-grid__items {
+      grid-template-columns: 1fr;
+    }
+
+    .gallery-grid__item {
+      height: 304px;
+    }
+  }
+</style>

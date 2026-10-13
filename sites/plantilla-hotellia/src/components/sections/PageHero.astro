@@ -1,0 +1,31 @@
+---
+import FitTitle from "@/components/FitTitle.astro";
+
+export interface Props {
+  title: { text: string; width: number; height: number };
+}
+
+const { title } = Astro.props;
+---
+
+<section class="page-hero">
+  <div class="page-hero__title appear-up">
+    <FitTitle {...title} />
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: flex-end;
+    height: 60vh;
+    overflow: hidden;
+    background: var(--color-primary);
+  }
+
+  .page-hero__title {
+    width: 100%;
+  }
+</style>

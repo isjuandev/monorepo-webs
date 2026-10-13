@@ -1,0 +1,85 @@
+---
+import SectionIntro from "@/components/SectionIntro.astro";
+import { Slideshow } from "@/components/Slideshow";
+import DineSplit from "@/components/sections/DineSplit.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import Reviews from "@/components/sections/Reviews.astro";
+import { HERO_TITLES, REVIEWS_INTRO_SHORT, WINE_DINE_PAGE } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout page="Wine & Dine">
+  <PageHero title={HERO_TITLES.wineDine} />
+  <section class="section wine-intro">
+    <div class="wrapper wine-intro__wrapper">
+      <SectionIntro {...WINE_DINE_PAGE.intro} />
+      <Slideshow
+        slides={WINE_DINE_PAGE.slides}
+        prevIcon="/images/arrow-left.png"
+        nextIcon="/images/arrow-right.png"
+        client:visible
+      />
+    </div>
+  </section>
+  <DineSplit {...WINE_DINE_PAGE.bar} imageSide="end" />
+  <Reviews intro={REVIEWS_INTRO_SHORT} />
+  <DineSplit {...WINE_DINE_PAGE.restaurant} imageSide="start" />
+</BaseLayout>
+
+<style>
+  .wine-intro__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .wine-intro__wrapper :global(.slideshow) {
+    position: relative;
+    height: 600px;
+    overflow: hidden;
+  }
+
+  .wine-intro__wrapper :global(.slideshow__track) {
+    display: flex;
+    gap: 10px;
+    height: 100%;
+    list-style: none;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .wine-intro__wrapper :global(.slideshow__slide) {
+    flex: none;
+    width: 100%;
+    height: 100%;
+  }
+
+  .wine-intro__wrapper :global(.slideshow__slide img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .wine-intro__wrapper :global(.slideshow__controls) {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .wine-intro__wrapper :global(.slideshow__button) {
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 40px;
+    background: #ffffff;
+    cursor: pointer;
+  }
+
+  @media (max-width: 809.98px) {
+    .wine-intro__wrapper :global(.slideshow) {
+      height: 400px;
+    }
+  }
+</style>

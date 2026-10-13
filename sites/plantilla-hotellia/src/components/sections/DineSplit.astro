@@ -1,0 +1,91 @@
+---
+import type { ImageAsset } from "@/data/content";
+
+export interface Props {
+  title: string;
+  text: string;
+  href: string;
+  image: ImageAsset;
+  /** "end": imagen a la derecha (Bar Ember); "start": imagen a la izquierda (restaurante). */
+  imageSide?: "start" | "end";
+}
+
+const { title, text, href, image, imageSide = "end" } = Astro.props;
+---
+
+<section class:list={["section dine-split", `dine-split--image-${imageSide}`]}>
+  <div class="wrapper dine-split__wrapper">
+    <div class="dine-split__text">
+      <h2 class="t-h2">{title}</h2>
+      <p class="t-body">{text}</p>
+      <a class="pill pill--dark" href={href}>View Menu</a>
+    </div>
+    <div class="dine-split__media">
+      <img src={image.src} alt={image.alt} width="1168" height="784" loading="lazy" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .dine-split__wrapper {
+    display: grid;
+    grid-template-columns: 570px 1fr;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .dine-split--image-start .dine-split__wrapper {
+    grid-template-columns: 575px 1fr;
+    gap: 64px;
+  }
+
+  .dine-split--image-start .dine-split__media {
+    order: -1;
+  }
+
+  .dine-split__text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    max-width: 456px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .dine-split--image-start .dine-split__text {
+    max-width: 409px;
+  }
+
+  .dine-split__media {
+    height: 491px;
+    overflow: hidden;
+  }
+
+  .dine-split__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 1199.98px) {
+    .dine-split__wrapper,
+    .dine-split--image-start .dine-split__wrapper {
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 809.98px) {
+    .dine-split__wrapper,
+    .dine-split--image-start .dine-split__wrapper {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .dine-split__media {
+      order: -1;
+      height: 304px;
+    }
+  }
+</style>

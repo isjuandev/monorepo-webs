@@ -1,0 +1,45 @@
+---
+import type { ImageAsset } from "@/data/content";
+
+export interface Props {
+  image: ImageAsset;
+  /** Hero pegajoso que sube a 0,2× la velocidad del scroll (habitaciones). */
+  sticky?: boolean;
+}
+
+const { image, sticky = false } = Astro.props;
+---
+
+<section
+  class:list={["media-hero", { "media-hero--sticky": sticky }]}
+  data-scroll-shift={sticky ? "0.2" : undefined}
+  data-scroll-max={sticky ? "180" : undefined}
+>
+  <img src={image.src} alt={image.alt} width="1168" height="784" fetchpriority="high" />
+  <div class="media-hero__overlay appear-fade" style="--appear-delay:0.3s;--appear-to:0.04"></div>
+</section>
+
+<style>
+  .media-hero {
+    position: relative;
+    height: 60vh;
+    overflow: hidden;
+  }
+
+  .media-hero--sticky {
+    position: sticky;
+    top: 0;
+  }
+
+  .media-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .media-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: #000000;
+  }
+</style>

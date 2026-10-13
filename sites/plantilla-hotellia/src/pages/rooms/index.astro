@@ -1,0 +1,15 @@
+---
+import AmenityGrid from "@/components/sections/AmenityGrid.astro";
+import FaqList from "@/components/sections/FaqList.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import RoomCards from "@/components/sections/RoomCards.astro";
+import { FAQ_INTRO_SHORT, HERO_TITLES, ROOMS_AMENITIES, ROOMS_PAGE } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout page="Rooms">
+  <PageHero title={HERO_TITLES.rooms} />
+  <RoomCards intro={ROOMS_PAGE.intro} />
+  <AmenityGrid intro={ROOMS_PAGE.amenities} items={ROOMS_AMENITIES} />
+  <FaqList intro={FAQ_INTRO_SHORT} />
+</BaseLayout>

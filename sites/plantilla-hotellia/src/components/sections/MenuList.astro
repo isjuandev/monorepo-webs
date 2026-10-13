@@ -1,0 +1,63 @@
+---
+import { MENU } from "@/data/content";
+---
+
+<section class="section menu-list">
+  <div class="wrapper menu-list__wrapper">
+    {
+      MENU.map((category) => (
+        <div class="menu-category">
+          <h2 class="t-h3">{category.title}</h2>
+          <ul class="menu-category__items">
+            {category.items.map((item) => (
+              <li class="menu-item">
+                <div class="menu-item__text">
+                  <p class="t-body">{item.name}</p>
+                  <p class="t-small">{item.description}</p>
+                </div>
+                <p class="t-body menu-item__price">{item.price}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .menu-list__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 128px;
+  }
+
+  .menu-category {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .menu-category__items {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    list-style: none;
+  }
+
+  .menu-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .menu-item__text {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .menu-item__price {
+    flex: none;
+  }
+</style>

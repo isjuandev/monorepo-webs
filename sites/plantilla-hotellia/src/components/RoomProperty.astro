@@ -1,0 +1,27 @@
+---
+import Icon from "@/components/Icon.astro";
+import type { IconName } from "@/data/icons";
+
+export interface Props {
+  icon: IconName;
+  label: string;
+}
+
+const { icon, label } = Astro.props;
+---
+
+<span class="room-property t-small">
+  <Icon name={icon} size={16} />
+  {label}
+</span>
+
+<style>
+  .room-property {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 8px;
+    background: #ffffff;
+    color: #000000;
+  }
+</style>
