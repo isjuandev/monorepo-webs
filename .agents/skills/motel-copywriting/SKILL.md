@@ -15,6 +15,28 @@ Sistema de comunicación para sitios web de moteles. Gobierna **toda la página*
 - **Idioma por defecto:** español neutro; ajusta léxico al país si el usuario lo indica (usa `locale` de `siteConfig` cuando exista).
 - **Dentro de este monorepo:** el texto vive en `sites/<slug>/src/data/content.ts` y los contactos en `src/config/site.ts` (ver [AGENTS.md §6](../../../AGENTS.md)). No hardcodees marca, textos ni contactos en componentes. Los enlaces se generan con `buildWhatsAppUrl` de `@repo/utils`.
 
+## 1.1. Fuente de datos: `recursos/<slug-cliente>/` (modo monorepo)
+
+Dentro de este monorepo la skill **no depende de datos pegados en el prompt**: la fuente única es la carpeta `recursos/<slug-cliente>/` (ver [recursos/README.md](../../../recursos/README.md)), y el único dato que recibe es el slug.
+
+| Dato | Dónde lo lee |
+| :-- | :-- |
+| Estilo (1-10), tono principal, tono secundario, persona gramatical, público objetivo | Sección "Tono" de `brief.md` |
+| Nombre, contacto, WhatsApp, dirección, horarios, pagos, políticas | `brief.md` (secciones Contacto y Horarios) |
+| Habitaciones, tarifas, duración, capacidad, equipamiento | Tabla "Habitaciones / servicios" de `brief.md` |
+| FAQ, promociones, notas | `brief.md` y archivos de `textos/` |
+| Textos previos del cliente | `textos/` (úsalos como base, respeta los datos reales) |
+| Identidad visual y fotos (para `alt` y coherencia) | `marca/` y `fotos/` |
+| Inspiración | `referencias/` (solo referencia, nunca copiar textos ajenos) |
+
+Reglas del modo monorepo:
+- **Solo lectura:** no modifiques ni borres nada en `recursos/`.
+- **Campo vacío = pendiente:** aplica la tabla del §9 (marcadores `[..._PENDIENTE]`); no inventes.
+- **Si el estilo o el tono no están en `brief.md`**, aplica el flujo de §5 (tono conservador) y declara el supuesto; no preguntes salvo conflicto entre fuentes o falta total de servicios.
+- **Si el tono principal y el secundario son incompatibles** (ver combinaciones seguras en §5), avisa y propón la alternativa más cercana antes de redactar.
+- **Guía de voz (paso 3):** guárdala en `docs/research/<slug-cliente>/guia-de-voz.md` (no en `recursos/`).
+- **Si falta `recursos/<slug-cliente>/brief.md`**, detente y avisa. Si el usuario da datos por chat, tienen prioridad sobre el brief, pero señala la contradicción.
+
 ## 2. Archivos de la skill (cuándo consultar cada uno)
 
 | Archivo | Consúltalo cuando… |
@@ -54,7 +76,7 @@ Los ejemplos de los archivos usan `[…]` para datos que **deben salir del negoc
 
 Usa las fuentes en este orden de prioridad:
 
-1. **Estilo de motel indicado expresamente por el usuario.**
+1. **Estilo de motel indicado expresamente** por el usuario o en la sección "Tono" de `recursos/<slug-cliente>/brief.md`.
 2. **Información comercial e identidad de marca** proporcionadas (nombre, eslogan, paleta, textos previos, referencias).
 3. **Servicios, instalaciones, precios y experiencia reales** (qué existe de verdad).
 4. **Público objetivo declarado.**
@@ -69,7 +91,7 @@ Reglas:
 
 ## 6. Flujo de trabajo (7 pasos)
 
-1. **Analizar.** Extrae: estilo de motel, nombre, ciudad/zona, habitaciones (nombres, tarifas, duración, capacidad, equipamiento), instalaciones, servicios, horarios, formas de pago, políticas, WhatsApp, dirección/mapa, público objetivo, restricciones legales/de plataforma. Marca lo ausente como `_PENDIENTE`.
+1. **Analizar.** Lee `recursos/<slug-cliente>/` (§1.1) y extrae: estilo de motel, nombre, ciudad/zona, habitaciones (nombres, tarifas, duración, capacidad, equipamiento), instalaciones, servicios, horarios, formas de pago, políticas, WhatsApp, dirección/mapa, público objetivo, restricciones legales/de plataforma. Marca lo ausente como `_PENDIENTE`.
 2. **Seleccionar.** Aplica el flujo de §5; registra tono principal (y secundario).
 3. **Establecer.** Crea la **guía de voz** (plantilla en §7) y úsala como referencia en cada sección.
 4. **Redactar.** Escribe cada sección según [secciones.md](./references/secciones.md), con atributos reales y un único mensaje por sección (sin repetir promesas).
