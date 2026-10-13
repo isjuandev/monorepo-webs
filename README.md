@@ -39,9 +39,10 @@ monorepo-webs/
 │       ├── review-monorepo/        # Auditoría de PR, aislamiento e impacto en paquetes
 │       ├── seo-audit/              # Auditoría de SEO técnico, canonicals, OG, sitemap y robots.txt
 │       ├── deploy-client/          # Preparación y validación de despliegue en VPS/Docker
-│       └── codebase-context/       # Contexto del repo desde el grafo de codebase-memory (ahorra tokens)
+│       ├── codebase-context/       # Contexto del repo desde el grafo de codebase-memory (ahorra tokens)
+│       └── motel-copywriting/      # Tonos de marca, redacción de la web y CTA a WhatsApp/visita para moteles (50 tonos, 10 estilos)
 ├── .claude/
-│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, /seo-audit, /deploy-client, /codebase-context)
+│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, /seo-audit, /deploy-client, /codebase-context, /motel-copywriting)
 ├── docs/
 │   ├── governance.md               # Protección de main y reglas para packages/, _template y docker/
 │   ├── deploy-coolify.md           # Flujo local → GitHub → Coolify (una app por cliente)
@@ -193,6 +194,7 @@ En CI (`ci.yml`) la suite se ejecuta sobre `_template`.
 | **`seo-audit`** | [`.agents/skills/seo-audit/SKILL.md`](./.agents/skills/seo-audit/SKILL.md) | `/seo-audit <cliente>` | Auditar SEO técnico, canonicals, OpenGraph, jerarquía de encabezados, sitemap y `robots.txt` |
 | **`deploy-client`** | [`.agents/skills/deploy-client/SKILL.md`](./.agents/skills/deploy-client/SKILL.md) | `/deploy-client <cliente>` | Validar poda con `turbo prune` y preparar ficha de despliegue para VPS (Coolify/Dokploy/Docker) |
 | **`codebase-context`** | [`.agents/skills/codebase-context/SKILL.md`](./.agents/skills/codebase-context/SKILL.md) | `/codebase-context [pregunta]` | Cargar contexto del repo desde el grafo de codebase-memory (indexa solo si hace falta) y ahorrar tokens |
+| **`motel-copywriting`** | [`.agents/skills/motel-copywriting/SKILL.md`](./.agents/skills/motel-copywriting/SKILL.md) | `/motel-copywriting <slug-cliente> [estilo o tono]` | Elegir tono de marca (50 tonos, 10 estilos) y redactar la web de un motel con CTA a WhatsApp y visita, sin inventar datos |
 
 ---
 

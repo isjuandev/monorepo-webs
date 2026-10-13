@@ -67,9 +67,10 @@ monorepo-webs/
 │       ├── review-monorepo/        # Auditoría de PR, aislamiento e impacto en paquetes
 │       ├── seo-audit/              # Auditoría de SEO técnico, canonicals, OG, sitemap y robots.txt
 │       ├── deploy-client/          # Preparación y validación de despliegue en VPS/Docker
-│       └── codebase-context/       # Contexto del repo desde el grafo de codebase-memory (ahorra tokens)
+│       ├── codebase-context/       # Contexto del repo desde el grafo de codebase-memory (ahorra tokens)
+│       └── motel-copywriting/      # Tonos de marca, redacción de la web y CTA a WhatsApp/visita para moteles (50 tonos, 10 estilos)
 ├── .claude/
-│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, /seo-audit, /deploy-client, /codebase-context)
+│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, /seo-audit, /deploy-client, /codebase-context, /motel-copywriting)
 ├── docs/
 │   ├── governance.md               # Reglas de protección de main y cambios en núcleo compartido
 │   ├── deploy-coolify.md           # Flujo local → GitHub → Coolify (una app por cliente)
@@ -237,6 +238,7 @@ Antes de ejecutar tareas especializadas, lee la skill correspondiente:
 - **`seo-audit`** ([`.agents/skills/seo-audit/SKILL.md`](./.agents/skills/seo-audit/SKILL.md)): Auditar SEO técnico, canonicals, OpenGraph, jerarquía de encabezados, `robots.txt` y `sitemap-index.xml`.
 - **`deploy-client`** ([`.agents/skills/deploy-client/SKILL.md`](./.agents/skills/deploy-client/SKILL.md)): Validar la poda con `turbo prune` y preparar la ficha de despliegue para VPS (Coolify / Dokploy / Docker + Nginx) sin ejecutar despliegues no autorizados.
 - **`codebase-context`** ([`.agents/skills/codebase-context/SKILL.md`](./.agents/skills/codebase-context/SKILL.md)): Obtener contexto del repo desde el grafo de `codebase-memory-mcp` (índice, arquitectura, símbolos y relaciones) en vez de releer archivos. **Úsala al iniciar una sesión y antes de explorar código.**
+- **`motel-copywriting`** ([`.agents/skills/motel-copywriting/SKILL.md`](./.agents/skills/motel-copywriting/SKILL.md)): Elegir el tono de marca y redactar todos los textos de sitios de moteles (hero, habitaciones, tarifas, FAQ, microcopy) con CTA a reserva por WhatsApp y visita presencial, sin inventar datos. Úsala siempre que escribas o revises copy de un motel.
 
 ---
 
