@@ -31,12 +31,13 @@ Para mantener consistencia absoluta entre todos los desarrolladores y LLMs, **NO
   - **PROHIBIDO** instalar `react` o `react-dom`. Si se necesita una librería externa para una isla interactiva, debe ser nativa de Preact o vanilla TS/JS sin dependencias pesadas.
 - **Iconos:** SVGs inline/extraídos como componentes `.astro`/`.tsx`, o `lucide-preact` si se requiere un set de iconos.
 - **Animaciones y Scroll:**
-  - Preferir **CSS puro** (`@keyframes`, `transition`, `IntersectionObserver` + clases CSS) para animaciones de entrada y hover.
-  - Si un sitio requiere smooth-scroll o animaciones avanzadas (ej. clones de Framer), usar `lenis` de forma ligera y limpiando siempre los listeners en el ciclo de vida del componente.
+  - Preferir **CSS puro** (`@keyframes`, `transition`, `IntersectionObserver` + clases CSS) para animaciones de entrada y hover. Los sitios existentes concentran esta lógica en `src/scripts/` (`reveal.ts` en `motel-boutique`, `motion.ts` en `plantilla-asterre` y `plantilla-hotellia`).
+  - Si un sitio requiere smooth-scroll o animaciones avanzadas (ej. clones de Framer), usar `lenis` de forma ligera y limpiando siempre los listeners en el ciclo de vida del componente. Hoy lo usa únicamente `sites/plantilla-hotellia` (dependencia propia del sitio, nunca en `packages/*`).
 - **Lenguaje:** `TypeScript` en modo `strict` (`@repo/tsconfig`).
 - **Linter y Formateador:** `Biome` (`@biomejs/biome` configurado en `biome.json`) + `astro check` + `.editorconfig`.
 - **Control de calidad visual y funcional:** `Playwright` (`@playwright/test` en `playwright.config.ts` y `tests/visual-qa.spec.ts`).
-- **Servidor de producción:** `Nginx` sobre Docker multi-stage con `turbo prune` (`docker/Dockerfile` y `docker/nginx.conf`).
+- **Servidor de producción:** `Nginx` sobre Docker multi-stage con `turbo prune` (`docker/Dockerfile` y `docker/nginx.conf`, con `/healthz`, caché inmutable en `/_astro/` y cabeceras de seguridad básicas).
+- **Plataforma de despliegue:** Coolify en VPS (una aplicación por cliente), ver [`docs/deploy-coolify.md`](./docs/deploy-coolify.md).
 
 ---
 
@@ -49,8 +50,11 @@ monorepo-webs/
 ├── README.md                       # Documentación general de uso, skills y despliegue
 ├── .nvmrc                          # Versión de Node.js recomendada (22 LTS)
 ├── .editorconfig                   # Reglas de formato de archivo universales
+├── .dockerignore                   # Exclusiones del contexto de build de Docker
 ├── biome.json                      # Configuración estricta de Linter y Formatter (Biome)
 ├── playwright.config.ts            # Configuración compartida de pruebas visuales/funcionales
+├── .githooks/
+│   └── pre-push                    # Ejecuta `pnpm verify` antes de cada push (activar con core.hooksPath)
 ├── .github/
 │   ├── CODEOWNERS                  # Propietarios de código del núcleo compartido
 │   ├── PULL_REQUEST_TEMPLATE.md    # Plantilla de PR con checklist de calidad
@@ -58,19 +62,22 @@ monorepo-webs/
 │       └── ci.yml                  # Pipeline de CI (lockfile, aislamiento, lint, check, build, visual QA)
 ├── .agents/
 │   └── skills/                     # Skills especializadas para agentes de IA
-│       ├── clone-website/          # Clonar/reconstruir sitios web en sites/<cliente>
+│       ├── clone-website/          # Clonar/reconstruir sitios web en sites/<cliente> (incluye references/)
 │       ├── visual-qa/              # Validación visual/funcional desktop y mobile con Playwright
 │       ├── review-monorepo/        # Auditoría de PR, aislamiento e impacto en paquetes
 │       ├── seo-audit/              # Auditoría de SEO técnico, canonicals, OG, sitemap y robots.txt
 │       └── deploy-client/          # Preparación y validación de despliegue en VPS/Docker
 ├── .claude/
-│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, etc.)
+│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, /seo-audit, /deploy-client)
 ├── docs/
 │   ├── governance.md               # Reglas de protección de main y cambios en núcleo compartido
+│   ├── deploy-coolify.md           # Flujo local → GitHub → Coolify (una app por cliente)
 │   ├── research/                   # Briefs de inspección y reportes de QA por cliente
 │   └── design-references/          # Capturas de referencia y comparación visual por cliente
 ├── scripts/
-│   ├── new-client-site.mjs         # Generador automatizado de nuevos sitios de clientes
+│   ├── new-client-site.mjs         # Generador automatizado de nuevos sitios de clientes (admite --from <plantilla>)
+│   ├── customize-check.mjs         # Auditoría de restos de plantilla en un sitio de cliente
+│   ├── template-brands.json        # Marcas y datos de ejemplo de cada plantilla (usado por customize-check)
 │   ├── verify-isolation.mjs        # Verificador de aislamiento entre clientes y gobernanza
 │   └── visual-qa-summary.mjs       # Generador de informe Markdown de Visual QA
 ├── tests/
@@ -81,15 +88,24 @@ monorepo-webs/
 ├── turbo.json                      # Pipeline de tareas (dev, build, preview, check, clean)
 ├── docker/
 │   ├── Dockerfile                  # Build multi-stage con turbo prune y pnpm --frozen-lockfile
-│   └── nginx.conf                  # Configuración Nginx con caché y compresión Gzip
+│   └── nginx.conf                  # Nginx: gzip, caché, cabeceras de seguridad y /healthz
 ├── packages/
-│   ├── ui/                         # (@repo/ui) Componentes Astro y Preact compartidos
-│   ├── utils/                      # (@repo/utils) Helpers puros (dominios, robots.txt, WhatsApp, cn)
+│   ├── ui/                         # (@repo/ui) src/astro: SEO, Section, Footer · src/preact: Button
+│   ├── utils/                      # (@repo/utils) normalizeSiteUrl, generateRobotsTxt, buildWhatsAppUrl, cn, SiteMetadata
 │   └── tsconfig/                   # (@repo/tsconfig) Configs base de TS (base, astro, preact)
 └── sites/
     ├── _template/                  # Plantilla maestra genérica (intocable salvo mejoras globales)
-    └── <slug-cliente>/             # Carpeta individual por cada cliente real
+    ├── motel-boutique/             # Motel/hotel boutique en español (home, nuestras-suites, restaurante, contacto); aún sin theme.css ni CUSTOMIZE.md
+    ├── plantilla-asterre/          # Retiro boutique en inglés, clon de asterre.framer.website (rooms/[slug], retreat, experience, contact, legales)
+    └── plantilla-hotellia/         # Hotel boutique en inglés, clon de hotellia.framer.website (rooms, offers, wine-dine, menús, gallery, reserve, legales; usa lenis)
 ```
+
+### Sitios existentes y convenciones observadas
+- Todos los sitios exponen `src/config/site.ts`, `src/layouts/BaseLayout.astro`, `src/pages/robots.txt.ts`, `src/pages/404.astro` y `src/styles/global.css`; `_template`, `plantilla-asterre` y `plantilla-hotellia` además separan los tokens de marca en `src/styles/theme.css` y traen un `CUSTOMIZE.md` (ver sección 6).
+- Los sitios clonados (`motel-boutique`, `plantilla-*`) concentran su contenido en `src/data/content.ts`, mantienen secciones en `src/components/sections/` (o directamente en `src/components/`) y usan `src/scripts/*.ts` para animaciones de entrada.
+- Páginas dinámicas (`rooms/[slug].astro`, `offers/[slug].astro`) se generan estáticamente a partir de `src/data/content.ts`.
+- Las plantillas (`plantilla-*`) usan dominios de ejemplo (`*.example.com`); se reemplazan al entregar a un cliente real.
+- Los reportes y capturas en `docs/research/<cliente>/` y `docs/design-references/<cliente>/` (`current-*.png`, `visual-qa-report.*`) son artefactos generados e ignorados por Git; solo se versionan las referencias fuente (`source/`, `local/`, `snapshots/`) y los briefs.
 
 ---
 
@@ -120,7 +136,7 @@ Todo código generado por cualquier LLM debe ser **indistinguible** del resto de
 - **Funciones, variables y helpers (`.ts`):** `camelCase` (ej. `buildWhatsAppUrl`, `normalizeSiteUrl`, `siteConfig`).
 - **Interfaces y Tipos:** `PascalCase` (ej. `SiteMetadata`, `ClientSiteConfig`).
 - **Constantes de configuración:** `UPPER_SNAKE_CASE` (ej. `CLIENT_DOMAIN`).
-- **Variables CSS:** En `:root` con prefijos semánticos en `kebab-case`:
+- **Variables CSS:** En `:root` (archivo `src/styles/theme.css`) con prefijos semánticos en `kebab-case`:
   - Colores: `--color-primary`, `--color-accent`, `--color-bg`, `--color-surface`, `--color-text`, `--color-muted`.
   - Tipografía: `--font-sans`, `--font-display`.
   - Layout: `--max-width`, `--radius-md`.
@@ -130,7 +146,7 @@ Respeta siempre este orden de imports en `.astro`, `.ts` y `.tsx`:
 1. Paquetes del framework / externos (`astro:*`, `preact`, `preact/hooks`).
 2. Paquetes compartidos del monorepo (`@repo/ui`, `@repo/ui/astro/*`, `@repo/utils`).
 3. Archivos internos del sitio usando el alias `@/` (`@/layouts/...`, `@/components/...`, `@/config/site`).
-4. Hojas de estilo (`@/styles/global.css`).
+4. Hojas de estilo (`@/styles/theme.css` y después `@/styles/global.css`).
 
 > **Regla:** Dentro de `sites/<cliente>/src/`, usa siempre el alias `@/...` en lugar de rutas relativas encadenadas (`../../components/...`).
 
@@ -169,29 +185,47 @@ Respeta siempre este orden de imports en `.astro`, `.ts` y `.tsx`:
 
 ---
 
-## 6. Flujo Paso a Paso para Crear un Sitio de Cliente Nuevo
+## 6. Capa de Personalización por Cliente (obligatoria en todo sitio)
+
+Un sitio de cliente se personaliza editando **solo 4 puntos**, sin tocar componentes ni páginas:
+
+| # | Qué cambia | Archivo | Contenido |
+| :-- | :-- | :-- | :-- |
+| 1 | Identidad y contacto | `src/config/site.ts` | `CLIENT_DOMAIN`, nombre, SEO, `locale`, teléfono, correo, dirección, redes, enlaces de reservas/mapas, `themeColor`, `preloadFonts`, menús de navegación y footer |
+| 2 | Marca visual | `src/styles/theme.css` | variables `:root` (`--color-*`, `--font-*`, medidas) y `@font-face` |
+| 3 | Textos y datos | `src/data/content.ts` | copys por página (`PAGES`/secciones), listas (habitaciones, ofertas, menús, reseñas, FAQ), alt de imágenes y etiquetas de interfaz `UI_LABELS` (botones, ARIA, formularios, 404) |
+| 4 | Activos | `public/` | logos, fotos, favicon, og-image y fuentes `.woff2` |
+
+**Reglas para cualquier LLM o desarrollador:**
+- **PROHIBIDO** escribir en componentes `.astro`/`.tsx` o páginas nombres de marca, nombres de personas, teléfonos, correos, dominios o textos visibles para el usuario (incluidos `aria-label`, `alt`, `placeholder` y mensajes de formulario). Léelos de `siteConfig` (`@/config/site`) o de `@/data/content`.
+- Los valores de color y tipografía viven solo en `theme.css`; `global.css` y los `<style>` de componentes consumen `var(--...)`.
+- Cada plantilla (`_template`, `plantilla-*`) incluye un `CUSTOMIZE.md` en su raíz con los 4 puntos, tamaños de imagen sugeridos, páginas opcionales y checklist de entrega. Un clon nuevo debe nacer con esta convención y su `CUSTOMIZE.md`.
+- `pnpm customize:check <slug-cliente>` audita un sitio de cliente (dominio de ejemplo, marcas de la plantilla de origen, contactos placeholder e imágenes idénticas) usando `scripts/template-brands.json`; con `--strict` falla si hay hallazgos. Al agregar una plantilla nueva, registra sus marcas y datos de ejemplo en ese JSON. Es obligatorio en verde antes de entregar un cliente real y no aplica a las plantillas.
+
+---
+
+## 7. Flujo Paso a Paso para Crear un Sitio de Cliente Nuevo
 
 Cuando el usuario pida crear la web de un nuevo cliente, utiliza el generador oficial `new-client-site` (no inventes teléfonos, correos ni direcciones que el usuario no haya proporcionado):
 
 1. **Ejecutar el generador:**
    ```bash
    pnpm new-client-site <slug-cliente> --name "<Nombre Comercial>" --domain "<dominio.com>"
+   pnpm new-client-site <slug-cliente> --from plantilla-hotellia --name "<Nombre Comercial>" --domain "<dominio.com>"
    ```
-   *(El generador valida el `kebab-case`, se detiene si el sitio ya existe, copia `sites/_template` sin modificarla, configura `@sites/<slug-cliente>` y `src/config/site.ts`, crea las carpetas en `docs/` y ejecuta las comprobaciones iniciales).*
-2. **Personalizar estilos de marca (`src/styles/global.css`):**
-   Ajusta las variables CSS en `:root` (`--color-primary`, `--color-accent`, `--color-bg`, `--color-text`, fuentes) según la identidad visual del cliente.
-3. **Construir las páginas y secciones:**
-   Desarrolla las secciones en `sites/<slug-cliente>/src/components/` y ensámblalas en `sites/<slug-cliente>/src/pages/index.astro` reutilizando `BaseLayout.astro` y `@repo/ui`.
-4. **Validar calidad, aislamiento y QA visual antes de entregar:**
-   - `pnpm verify:isolation`
-   - `pnpm lint`
-   - `pnpm --filter @sites/<slug-cliente> check`
-   - `pnpm --filter @sites/<slug-cliente> build`
-   - `SITE_FOLDER=<slug-cliente> pnpm test:visual`
+   *(El generador valida el `kebab-case`, se detiene si el sitio ya existe, copia `sites/_template` (o la plantilla indicada con `--from`) sin modificar el origen, configura `@sites/<slug-cliente>` y `src/config/site.ts`, crea las carpetas en `docs/` y ejecuta las comprobaciones iniciales. Con `--from` conserva diseño, páginas y contenido de la plantilla, solo ajusta paquete, dominio y los campos `name/title/description/locale` pasados, registra el origen en `.template-origin` y muestra un resumen de `customize:check`. Nunca copies sitios a mano).*
+2. **Personalizar los 4 puntos** descritos en la sección 6, en este orden: `site.ts` → `theme.css` → `content.ts` → `public/`. Sigue el `CUSTOMIZE.md` del sitio. No inventes datos que el usuario no haya dado: deja visibles como pendientes los que falten.
+3. **Construir las páginas y secciones** que la plantilla no cubra: desarrolla las secciones en `sites/<slug-cliente>/src/components/` y ensámblalas en `src/pages/` reutilizando `BaseLayout.astro` y `@repo/ui`, respetando las reglas de la sección 6.
+4. **Auditar restos de plantilla** (solo clientes reales): `pnpm customize:check <slug-cliente> --strict`.
+5. **Validar calidad, aislamiento y QA visual antes de entregar:**
+   - `pnpm verify` (equivale a `verify:isolation` + `lint` + `check` + `build`, igual que CI y el hook `pre-push`)
+   - O por separado: `pnpm verify:isolation`, `pnpm lint`, `pnpm --filter @sites/<slug-cliente> check`, `pnpm --filter @sites/<slug-cliente> build`
+   - `SITE_FOLDER=<slug-cliente> QA_ROUTES="/,/otra-ruta" pnpm test:visual`
+6. **Desplegar:** una aplicación de Coolify por cliente con `docker/Dockerfile`, `SITE_FOLDER` y `SITE_URL` (ver [`docs/deploy-coolify.md`](./docs/deploy-coolify.md)). Activa el hook una vez por clon: `git config core.hooksPath .githooks`.
 
 ---
 
-## 7. Catálogo de Skills del Monorepo (`.agents/skills/`)
+## 8. Catálogo de Skills del Monorepo (`.agents/skills/`)
 
 Antes de ejecutar tareas especializadas, lee la skill correspondiente:
 
@@ -203,7 +237,7 @@ Antes de ejecutar tareas especializadas, lee la skill correspondiente:
 
 ---
 
-## 8. Comandos Oficiales del Monorepo (Solo `pnpm`)
+## 9. Comandos Oficiales del Monorepo (Solo `pnpm`)
 
 Ejecuta siempre los comandos desde la raíz del monorepo (`/monorepo-webs`):
 
@@ -215,6 +249,16 @@ Ejecuta siempre los comandos desde la raíz del monorepo (`/monorepo-webs`):
 - **Crear un nuevo sitio de cliente:**
   ```bash
   pnpm new-client-site <slug-cliente> --name "<Nombre>" --domain "<dominio.com>"
+  pnpm new-client-site <slug-cliente> --from plantilla-hotellia --name "<Nombre>" --domain "<dominio.com>"
+  ```
+- **Auditar restos de plantilla en un sitio de cliente:**
+  ```bash
+  pnpm customize:check <slug-cliente>
+  pnpm customize:check <slug-cliente> --strict   # falla si hay hallazgos
+  ```
+- **Verificación completa (aislamiento + lint + check + build, lo mismo que CI):**
+  ```bash
+  pnpm verify
   ```
 - **Verificar aislamiento entre clientes y gobernanza:**
   ```bash
@@ -224,9 +268,10 @@ Ejecuta siempre los comandos desde la raíz del monorepo (`/monorepo-webs`):
   ```bash
   pnpm --filter @sites/<slug-cliente> dev
   ```
-- **Compilar un único cliente para producción:**
+- **Compilar un único cliente para producción / previsualizar el build:**
   ```bash
   pnpm --filter @sites/<slug-cliente> build
+  pnpm --filter @sites/<slug-cliente> preview
   ```
 - **Verificar tipos y diagnósticos de Astro/TS:**
   ```bash
@@ -242,9 +287,13 @@ Ejecuta siempre los comandos desde la raíz del monorepo (`/monorepo-webs`):
 - **Ejecutar pruebas funcionales y de calidad visual con Playwright:**
   ```bash
   SITE_FOLDER=<slug-cliente> pnpm test:visual
+  SITE_FOLDER=<slug-cliente> QA_ROUTES="/,/rooms" pnpm test:visual   # rutas específicas
   SITE_FOLDER=<slug-cliente> pnpm test:visual:update
   ```
+  Sin `SITE_FOLDER` se prueba `_template`. Variables opcionales: `QA_PORT` (por defecto `4321`) y `BASE_URL` (usa un servidor ya levantado).
 - **Construir imagen Docker de producción para un cliente específico:**
   ```bash
   docker build -f docker/Dockerfile --build-arg SITE_FOLDER=<slug-cliente> -t web-<slug-cliente> .
+  docker run --rm -p 8080:80 web-<slug-cliente>   # http://localhost:8080 y /healthz
   ```
+- **Limpiar artefactos:** `pnpm clean`
