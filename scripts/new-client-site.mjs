@@ -6,15 +6,21 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const TEMPLATE_DIR = path.join(ROOT_DIR, "sites", "_template");
+const SITES_DIR = path.join(ROOT_DIR, "sites");
 
 function printUsage() {
   console.log(`
 Uso:
   pnpm new-client-site <slug-cliente> [opciones]
 
+Ejemplos:
+  pnpm new-client-site cafe-aurora --name "Café Aurora" --domain "cafeaurora.co"
+  pnpm new-client-site hotel-sol --from plantilla-hotellia --name "Hotel Sol" --domain "hotelsol.co"
+
 Opciones:
   --slug <slug>              Identificador en kebab-case (ej: cafe-aurora)
+  --from <sitio>             Carpeta de sites/ a copiar en lugar de _template
+                             (ej: plantilla-hotellia). Conserva diseño, páginas y contenido.
   --name "<Nombre>"          Nombre comercial del cliente
   --domain "<dominio.com>"   Dominio del cliente (sin protocolo)
   --title "<Título SEO>"     Título SEO principal
@@ -37,10 +43,11 @@ function parseArgs(argv) {
   const result = {
     slug: "",
     name: "",
+    from: "_template",
     domain: "",
     title: "",
     description: "",
-    locale: "es_CO",
+    locale: "",
     phone: "",
     whatsapp: "",
     email: "",
@@ -123,10 +130,19 @@ if (!KEBAB_CASE_REGEX.test(args.slug) || args.slug === "template") {
   process.exit(1);
 }
 
-if (!fs.existsSync(TEMPLATE_DIR)) {
-  console.error(`\x1b[31m✖ Error: No se encontró la plantilla base en ${TEMPLATE_DIR}.\x1b[0m`);
+if (!KEBAB_CASE_REGEX.test(args.from) && args.from !== "_template") {
+  console.error(`\x1b[31m✖ Error: El valor de --from "${args.from}" no es válido.\x1b[0m`);
   process.exit(1);
 }
+
+const sourceDir = path.join(SITES_DIR, args.from);
+if (args.from === args.slug || !fs.existsSync(path.join(sourceDir, "package.json"))) {
+  console.error(
+    `\x1b[31m✖ Error: No se encontró un sitio de origen válido en sites/${args.from}.\x1b[0m`
+  );
+  process.exit(1);
+}
+const fromTemplate = args.from === "_template";
 
 const targetSiteDir = path.join(ROOT_DIR, "sites", args.slug);
 if (fs.existsSync(targetSiteDir)) {
@@ -146,8 +162,11 @@ const packageName = `@sites/${args.slug}`;
 
 console.log(`\n▶ Creando nuevo sitio de cliente en sites/${args.slug}...`);
 
-// 1. Copiar sites/_template intacta hacia sites/<slug>
-copyTemplateDir(TEMPLATE_DIR, targetSiteDir);
+// 1. Copiar el sitio de origen (por defecto sites/_template, que queda intacto) hacia sites/<slug>
+copyTemplateDir(sourceDir, targetSiteDir);
+
+// Registra la plantilla de origen para que `pnpm customize:check` sepa qué restos buscar
+fs.writeFileSync(path.join(targetSiteDir, ".template-origin"), `${args.from}\n`, "utf8");
 
 // 2. Actualizar package.json del nuevo cliente
 const pkgJsonPath = path.join(targetSiteDir, "package.json");
@@ -155,7 +174,33 @@ const pkgJson = JSON.parse(fs.readFileSync(pkgJsonPath, "utf8"));
 pkgJson.name = packageName;
 fs.writeFileSync(pkgJsonPath, `${JSON.stringify(pkgJson, null, 2)}\n`, "utf8");
 
-// 3. Generar src/config/site.ts sin inventar datos comerciales no suministrados
+// 3. Generar o ajustar src/config/site.ts sin inventar datos comerciales no suministrados
+const siteConfigPath = path.join(targetSiteDir, "src", "config", "site.ts");
+
+/**
+ * Ajusta el site.ts copiado de otra plantilla: el dominio siempre, y el resto de campos
+ * de nivel superior solo si se pasaron explícitamente. Devuelve los campos no ajustados.
+ */
+function patchCopiedSiteConfig() {
+  let content = fs.readFileSync(siteConfigPath, "utf8");
+  const pending = [];
+  const patch = (label, regex, value) => {
+    if (!regex.test(content)) {
+      pending.push(label);
+      return;
+    }
+    content = content.replace(regex, (_m, prefix) => `${prefix} ${JSON.stringify(value)}`);
+  };
+  patch("CLIENT_DOMAIN", /^(const CLIENT_DOMAIN =)\s*"[^"]*"/m, clientDomain);
+  if (args.name) patch("name", /^( {2}name:)\s*"(?:[^"\\]|\\.)*"/m, brandName);
+  if (args.title) patch("title", /^( {2}title:)\s*"(?:[^"\\]|\\.)*"/m, siteTitle);
+  if (args.description) {
+    patch("description", /^( {2}description:)\s*"(?:[^"\\]|\\.)*"/m, siteDescription);
+  }
+  if (args.locale) patch("locale", /^( {2}locale:)\s*"(?:[^"\\]|\\.)*"/m, args.locale);
+  fs.writeFileSync(siteConfigPath, content, "utf8");
+  return pending;
+}
 const contactLines = [];
 if (args.phone) {
   contactLines.push(`    phone: ${JSON.stringify(args.phone)},`);
@@ -173,7 +218,8 @@ if (args.address) {
 const contactBlock =
   contactLines.length > 0 ? `  contact: {\n${contactLines.join("\n")}\n  },` : "  contact: {},";
 
-const siteConfigContent = `import { type SiteMetadata, normalizeSiteUrl } from "@repo/utils";
+const siteConfigContent = fromTemplate
+  ? `import { type SiteMetadata, normalizeSiteUrl } from "@repo/utils";
 
 export interface ClientSiteConfig extends SiteMetadata {
   contact: {
@@ -198,13 +244,24 @@ export const siteConfig: ClientSiteConfig = {
   url: normalizeSiteUrl(CLIENT_DOMAIN),
   title: ${JSON.stringify(siteTitle)},
   description: ${JSON.stringify(siteDescription)},
-  locale: ${JSON.stringify(args.locale)},
+  locale: ${JSON.stringify(args.locale || "es_CO")},
 ${contactBlock}
   socials: {},
 };
-`;
+`
+  : "";
 
-fs.writeFileSync(path.join(targetSiteDir, "src", "config", "site.ts"), siteConfigContent, "utf8");
+let unpatchedFields = [];
+if (fromTemplate) {
+  fs.writeFileSync(siteConfigPath, siteConfigContent, "utf8");
+} else {
+  unpatchedFields = patchCopiedSiteConfig();
+  // Mantiene el formato de Biome tras reemplazar valores largos
+  execSync(`pnpm exec biome format --write sites/${args.slug}/src/config/site.ts`, {
+    cwd: ROOT_DIR,
+    stdio: "inherit",
+  });
+}
 
 // 4. Crear carpetas de documentación e investigación del cliente
 const researchDir = path.join(ROOT_DIR, "docs", "research", args.slug);
@@ -232,12 +289,25 @@ if (!args.skipChecks) {
   execSync(`pnpm --filter ${packageName} build`, { cwd: ROOT_DIR, stdio: "inherit" });
 }
 
+if (!fromTemplate) {
+  console.log(`
+\x1b[33m⚠ Sitio copiado desde sites/${args.from}. Personalízalo en 4 puntos (ver sites/${args.slug}/CUSTOMIZE.md):\x1b[0m
+  1. Identidad y contacto: sites/${args.slug}/src/config/site.ts${
+    unpatchedFields.length > 0 ? ` (no se pudo ajustar: ${unpatchedFields.join(", ")})` : ""
+  }
+  2. Marca visual:         sites/${args.slug}/src/styles/theme.css
+  3. Textos y datos:       sites/${args.slug}/src/data/content.ts
+  4. Imágenes y logos:     sites/${args.slug}/public/
+Cuando termines: pnpm customize:check ${args.slug} --strict`);
+  execSync(`node scripts/customize-check.mjs ${args.slug}`, { cwd: ROOT_DIR, stdio: "inherit" });
+}
+
 console.log(`
 \x1b[32m✔ Sitio "${brandName}" (${packageName}) creado y verificado con éxito.\x1b[0m
 
 Archivos principales:
   - Configuración de dominio y SEO: sites/${args.slug}/src/config/site.ts
-  - Estilos y variables de marca:   sites/${args.slug}/src/styles/global.css
+  - Estilos y variables de marca:   sites/${args.slug}/src/styles/theme.css
   - Página de inicio:               sites/${args.slug}/src/pages/index.astro
   - Investigación / Referencias:    docs/research/${args.slug}/
 

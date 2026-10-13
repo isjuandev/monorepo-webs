@@ -60,6 +60,7 @@ Además, protege `main` en GitHub (ver [governance.md](./governance.md)) y traba
 ## 4. Checklist por cliente nuevo
 
 - [ ] `pnpm new-client-site <slug> --name "..." --domain "..."`
+- [ ] Si se creó con `--from <plantilla>`: editados los 4 puntos de personalización (ver `sites/<slug>/CUSTOMIZE.md`) y `pnpm customize:check <slug> --strict` sin hallazgos
 - [ ] `pnpm verify` y `SITE_FOLDER=<slug> pnpm test:visual` en verde
 - [ ] Push a `main` (vía PR)
 - [ ] App creada en Coolify con los valores de la sección 2
