@@ -22,6 +22,10 @@ export interface ClientSiteConfig extends SiteMetadata {
     score: string;
     reviews: number;
   };
+  /** Color de la barra del navegador en móvil (meta theme-color) */
+  themeColor: string;
+  /** Fuentes de /public/fonts precargadas en <head>; deben coincidir con theme.css */
+  preloadFonts: string[];
 }
 
 // Plantilla: reemplaza el dominio, la marca y los datos de contacto por los del cliente real.
@@ -53,6 +57,8 @@ export const siteConfig: ClientSiteConfig = {
     score: "4.9",
     reviews: 120,
   },
+  themeColor: "#e8e0d1",
+  preloadFonts: ["/fonts/forum-400.woff2", "/fonts/almarai-400.woff2"],
 };
 
 export const NAV_LINKS = [

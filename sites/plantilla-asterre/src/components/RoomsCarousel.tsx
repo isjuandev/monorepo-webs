@@ -1,3 +1,4 @@
+import { UI_LABELS } from "@/data/content";
 import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 
 export interface CarouselRoom {
@@ -111,8 +112,8 @@ export function RoomsCarousel({ rooms, basePath = "/rooms", startIndex = 0 }: Ro
   return (
     <section
       class="rc"
-      aria-roledescription="carrusel"
-      aria-label="Habitaciones"
+      aria-roledescription={UI_LABELS.carouselRole}
+      aria-label={UI_LABELS.roomsCarousel}
       onKeyDown={onKeyDown}
     >
       <div
@@ -164,10 +165,11 @@ export function RoomsCarousel({ rooms, basePath = "/rooms", startIndex = 0 }: Ro
                   <span class="rc__name-group">
                     <span class="t-h3 rc__name">{room.name}</span>
                     <span class="t-body rc__meta">
-                      {room.guests} huéspedes <i /> {room.size} m² <i /> {room.view}
+                      {UI_LABELS.guests(room.guests)} <i /> {UI_LABELS.squareMeters(room.size)}{" "}
+                      <i /> {room.view}
                     </span>
                   </span>
-                  <span class="t-lead rc__price">Desde ${room.price}/noche</span>
+                  <span class="t-lead rc__price">{UI_LABELS.fromPerNight(room.price)}</span>
                 </span>
               </a>
             </div>
@@ -178,7 +180,7 @@ export function RoomsCarousel({ rooms, basePath = "/rooms", startIndex = 0 }: Ro
         type="button"
         class="rc__arrow rc__arrow--prev"
         onClick={() => go(-1)}
-        aria-label="Habitación anterior"
+        aria-label={UI_LABELS.previousRoom}
       >
         <Arrow direction="left" />
       </button>
@@ -186,7 +188,7 @@ export function RoomsCarousel({ rooms, basePath = "/rooms", startIndex = 0 }: Ro
         type="button"
         class="rc__arrow rc__arrow--next"
         onClick={() => go(1)}
-        aria-label="Habitación siguiente"
+        aria-label={UI_LABELS.nextRoom}
       >
         <Arrow direction="right" />
       </button>

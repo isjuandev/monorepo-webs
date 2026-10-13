@@ -656,3 +656,48 @@ export const HERO_TITLES = {
   privacy: { text: "PRIVACY POLICY", width: 1200, height: 127 },
   brand: { text: "HOTELLIA", width: 1408, height: 234 },
 };
+
+/**
+ * Etiquetas de interfaz (navegación, accesibilidad, formularios y botones).
+ * Cámbialas aquí al traducir o adaptar el sitio; los componentes no contienen texto propio.
+ */
+export const UI_LABELS = {
+  skipToContent: "Skip to content",
+  mainNav: "Main",
+  footerNav: "Footer",
+  menu: "Menu",
+  home: "home",
+  reserve: "Reserve",
+  offers: "Offers",
+  perNight: "/night",
+  viewMenu: "View Menu",
+  followFacebook: "Follow us on Facebook",
+  followInstagram: "Our Instagram",
+  reviews: "Visitor reviews",
+  selectReview: "Select review",
+  slideshow: "Wine & Dine",
+  previousSlide: "Previous slide",
+  nextSlide: "Next slide",
+  form: {
+    firstName: "First Name",
+    lastName: "Last Name",
+    email: "Email",
+    phone: "Phone",
+    roomType: "Room Type",
+    checkIn: "Check in",
+    checkOut: "Check out",
+    firstNamePlaceholder: "Jane",
+    lastNamePlaceholder: "Smith",
+    emailPlaceholder: "jane@example.com",
+    phonePlaceholder: "+00 000 000 000",
+    select: "Select…",
+    submit: "Submit",
+  },
+} as const;
+
+/** Página 404. */
+export const NOT_FOUND = {
+  title: "Oops!",
+  text: "Looks like this page doesn’t exist.",
+  cta: "HOME",
+} as const;

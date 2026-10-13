@@ -8,57 +8,28 @@ import HomeHero from "@/components/sections/HomeHero.astro";
 import InfoGrid from "@/components/sections/InfoGrid.astro";
 import StaggeredGallery from "@/components/sections/StaggeredGallery.astro";
 import { siteConfig } from "@/config/site";
-import { DISTANCES, IMAGES, PLACES } from "@/data/content";
+import { DISTANCES, IMAGES, PAGES, PLACES, UI_LABELS } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
-const designPoints = ["Materiales locales", "Espacios abiertos", "Detalles originales"];
-
-const ourWay = [
-  {
-    title: "Bienvenida personal",
-    text: "Te recibimos sin formularios eternos ni esperas en recepción.",
-  },
-  { title: "Sin horarios", text: "Cada día se organiza a tu medida, sin agendas fijas." },
-  {
-    title: "Consejo local",
-    text: "Recomendaciones de rutas, mesas y rincones que no salen en guías.",
-  },
-  { title: "Atención discreta", text: "Estamos cerca cuando nos necesitas y lejos cuando no." },
-  {
-    title: "Pequeños gestos",
-    text: "Detalles pensados en cada habitación para que todo sea fácil.",
-  },
-  {
-    title: "Siempre disponibles",
-    text: "Un equipo atento para reservas, planes o peticiones especiales.",
-  },
-];
-
-const sustainability = [
-  "Trabajamos con artesanos y proveedores locales",
-  "Cocinamos con producto de temporada",
-  "Ahorramos agua y energía",
-  "Reducimos los plásticos de un solo uso",
-  "Plantamos especies nativas",
-];
+const page = PAGES.retreat;
 ---
 
 <BaseLayout
-  title={`El retiro | ${siteConfig.name}`}
-  description="La historia, el diseño y la forma de recibir de nuestra casa."
+  title={`${page.meta.title} | ${siteConfig.name}`}
+  description={page.meta.description}
 >
   <HomeHero
     image={IMAGES.retreatHero}
-    label="Vida en el campo"
-    title="Nuestra casa"
-    sideLeft="Cerca de la montaña"
-    sideRight="Cerca del mar"
-    intro="Una casa antigua recuperada con respeto por su historia y su paisaje."
+    label={page.hero.label}
+    title={page.hero.title}
+    sideLeft={page.hero.sideLeft}
+    sideRight={page.hero.sideRight}
+    intro={page.hero.intro}
   />
 
   <section class="section story">
     <div class="container">
-      <SectionHeading title="La historia" />
+      <SectionHeading title={page.storyTitle} />
       <div class="story__mark" data-reveal>
         <BrandMark />
       </div>
@@ -67,21 +38,18 @@ const sustainability = [
 
   <StaggeredGallery
     images={IMAGES.retreatStory}
-    captions={[
-      "La casa original lleva generaciones en estas colinas, rodeada de bancales, árboles frutales y caminos de piedra.",
-      "Hoy es un refugio tranquilo que conserva sus muros, sus materiales y su relación directa con el entorno.",
-    ]}
+    captions={page.storyCaptions}
   />
 
   <section class="section design">
     <div class="container">
       <SectionHeading
-        label="Diseño y arquitectura"
-        title="Hecha para el lugar"
-        text="La reforma mantiene el carácter de la casa y suma espacios luminosos, materiales honestos y una conexión constante con el exterior."
+        label={page.design.label}
+        title={page.design.title}
+        text={page.design.text}
       />
       <ul class="design__points" data-reveal>
-        {designPoints.map((point) => <li class="t-lead">{point}</li>)}
+        {page.design.points.map((point) => <li class="t-lead">{point}</li>)}
       </ul>
       <div class="design__images">
         <div class="media design__img design__img--a" data-reveal>
@@ -97,20 +65,20 @@ const sustainability = [
     </div>
   </section>
 
-  <FeatureGrid title="Nuestra forma" items={ourWay} />
+  <FeatureGrid title={page.ourWay.title} items={page.ourWay.items} />
 
   <section class="setting">
     <div class="setting__block setting__block--left">
       <div class="setting__text">
         <SectionHeading
           align="left"
-          label="Sostenibilidad"
-          title="Cuidar la tierra"
-          text="Tomamos decisiones responsables en todo el retiro, entre ellas:"
+          label={page.sustainability.label}
+          title={page.sustainability.title}
+          text={page.sustainability.text}
         />
         <ul class="setting__list" data-reveal>
           {
-            sustainability.map((item) => (
+            page.sustainability.items.map((item) => (
               <li class="t-lead">
                 <svg viewBox="0 0 12 12" aria-hidden="true">
                   <path d="m2 6.5 2.5 2.5L10 3.5" fill="none" stroke="currentColor" />
@@ -132,18 +100,18 @@ const sustainability = [
       <div class="setting__text setting__text--right">
         <SectionHeading
           align="left"
-          label="El entorno"
-          title="Cerca del pueblo"
-          text="La casa está rodeada de naturaleza, con el pueblo, los senderos y la costa a pocos minutos."
+          label={page.setting.label}
+          title={page.setting.title}
+          text={page.setting.text}
         />
-        <img src={IMAGES.retreatMap} alt="Mapa de ubicación" class="setting__map" loading="lazy" />
+        <img src={IMAGES.retreatMap} alt={UI_LABELS.mapAlt} class="setting__map" loading="lazy" />
       </div>
     </div>
   </section>
 
   <section class="section places">
     <div class="container">
-      <SectionHeading label="Alrededores" title="Explorar desde aquí" />
+      <SectionHeading label={page.places.label} title={page.places.title} />
       <ul class="places__list">
         {
           PLACES.map((place) => (
@@ -154,25 +122,23 @@ const sustainability = [
               <p class="t-display places__name">{place.name}</p>
               <div class="places__info">
                 <p class="t-body">{place.text}</p>
-                <LinkButton href="maps">Abrir en mapas</LinkButton>
+                <LinkButton href="maps">{UI_LABELS.openInMaps}</LinkButton>
               </div>
             </li>
           ))
         }
       </ul>
       <div class="places__footer" data-reveal>
-        <p class="t-lead">
-          Pueblos de montaña, mercados, calas y rincones con historia a un corto trayecto de la casa.
-        </p>
-        <LinkButton href="maps">Explorar la zona</LinkButton>
+        <p class="t-lead">{page.places.footer}</p>
+        <LinkButton href="maps">{page.places.cta}</LinkButton>
       </div>
     </div>
   </section>
 
   <InfoGrid
     tone="brown"
-    label="Cómo llegar"
-    title="El camino hasta casa"
+    label={page.directions.label}
+    title={page.directions.title}
     items={DISTANCES}
     image={IMAGES.retreatRoad}
     imageSize="medium"

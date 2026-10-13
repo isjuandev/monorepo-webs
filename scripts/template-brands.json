@@ -1,0 +1,21 @@
+{
+  "global": {
+    "domains": ["example.com", "nexobite.com"],
+    "placeholders": ["573000000000", "+57 300 000 0000", "reservas@example.com"]
+  },
+  "templates": {
+    "_template": { "brands": [], "placeholders": [] },
+    "motel-boutique": {
+      "brands": ["Motel Boutique"],
+      "placeholders": ["+57 600 000 0000", "hoteles-template"]
+    },
+    "plantilla-asterre": {
+      "brands": ["Casa Serena", "Asterre"],
+      "placeholders": ["Dirección del alojamiento"]
+    },
+    "plantilla-hotellia": {
+      "brands": ["Hotellia", "Ember", "Grove & Grain", "Marco Delacroix"],
+      "placeholders": ["022 5259-5200", "02252595200", "welcome@hotellia.com"]
+    }
+  }
+}

@@ -1,7 +1,7 @@
 ---
 import SectionIntro from "@/components/SectionIntro.astro";
 import { siteConfig } from "@/config/site";
-import { RESERVE_PAGE } from "@/data/content";
+import { RESERVE_PAGE, UI_LABELS } from "@/data/content";
 ---
 
 <section class="section reserve">
@@ -10,56 +10,56 @@ import { RESERVE_PAGE } from "@/data/content";
     <form class="reserve__form" data-reserve-form data-email={siteConfig.contact.email} novalidate>
       <div class="reserve__row">
         <label class="field">
-          <span class="field__label t-small">First Name</span>
+          <span class="field__label t-small">{UI_LABELS.form.firstName}</span>
           <span class="field__box">
-            <input name="First Name" type="text" placeholder="Jane" required autocomplete="given-name" />
+            <input name="First Name" type="text" placeholder={UI_LABELS.form.firstNamePlaceholder} required autocomplete="given-name" />
           </span>
         </label>
         <label class="field">
-          <span class="field__label t-small">Last Name</span>
+          <span class="field__label t-small">{UI_LABELS.form.lastName}</span>
           <span class="field__box">
-            <input name="Last Name" type="text" placeholder="Smith" required autocomplete="family-name" />
+            <input name="Last Name" type="text" placeholder={UI_LABELS.form.lastNamePlaceholder} required autocomplete="family-name" />
           </span>
         </label>
       </div>
       <div class="reserve__row">
         <label class="field">
-          <span class="field__label t-small">Email</span>
+          <span class="field__label t-small">{UI_LABELS.form.email}</span>
           <span class="field__box">
-            <input name="Email" type="email" placeholder="jane@framer.com" required autocomplete="email" />
+            <input name="Email" type="email" placeholder={UI_LABELS.form.emailPlaceholder} required autocomplete="email" />
           </span>
         </label>
         <label class="field">
-          <span class="field__label t-small">Phone</span>
+          <span class="field__label t-small">{UI_LABELS.form.phone}</span>
           <span class="field__box">
-            <input name="Phone" type="tel" placeholder="+34 201 500 155" required autocomplete="tel" />
+            <input name="Phone" type="tel" placeholder={UI_LABELS.form.phonePlaceholder} required autocomplete="tel" />
           </span>
         </label>
       </div>
       <label class="field">
-        <span class="field__label t-small">Room Type</span>
+        <span class="field__label t-small">{UI_LABELS.form.roomType}</span>
         <span class="field__box field__box--select">
           <select name="Room Type" required>
-            <option value="" disabled selected>Select…</option>
+            <option value="" disabled selected>{UI_LABELS.form.select}</option>
             {RESERVE_PAGE.roomOptions.map((option) => <option value={option}>{option}</option>)}
           </select>
         </span>
       </label>
       <div class="reserve__row">
         <label class="field">
-          <span class="field__label t-small">Check in</span>
+          <span class="field__label t-small">{UI_LABELS.form.checkIn}</span>
           <span class="field__box field__box--date">
             <input name="Check in" type="date" required data-empty />
           </span>
         </label>
         <label class="field">
-          <span class="field__label t-small">Check out</span>
+          <span class="field__label t-small">{UI_LABELS.form.checkOut}</span>
           <span class="field__box field__box--date">
             <input name="Check out" type="date" required data-empty />
           </span>
         </label>
       </div>
-      <button type="submit" class="reserve__submit t-small is-incomplete">Submit</button>
+      <button type="submit" class="reserve__submit t-small is-incomplete">{UI_LABELS.form.submit}</button>
       <p class="reserve__status t-small" role="status" aria-live="polite"></p>
     </form>
   </div>

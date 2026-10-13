@@ -2,7 +2,7 @@
 
 Monorepo colaborativo para desarrollar, clonar con fidelidad visual, mantener y desplegar múltiples sitios web estáticos/frontend para clientes (cada uno con su propio dominio) usando **Astro 5 + Preact**, **pnpm workspaces**, **Turborepo**, **Biome** y **Playwright**.
 
-> **Para Agentes de IA y Desarrolladores:** Antes de realizar cualquier cambio, lee [AGENTS.md](./AGENTS.md) y [docs/governance.md](./docs/governance.md), donde se definen las reglas obligatorias de arquitectura, aislamiento entre clientes, estilo de código, skills y gobernanza.
+> **Para Agentes de IA y Desarrolladores:** Antes de realizar cualquier cambio, lee [AGENTS.md](./AGENTS.md), [docs/governance.md](./docs/governance.md) y, para publicar, [docs/deploy-coolify.md](./docs/deploy-coolify.md), donde se definen las reglas obligatorias de arquitectura, aislamiento entre clientes, estilo de código, skills y gobernanza.
 
 ---
 
@@ -22,8 +22,11 @@ monorepo-webs/
 ├── README.md                       # Documentación general del proyecto
 ├── .nvmrc                          # Versión de Node.js (22 LTS)
 ├── .editorconfig                   # Configuración universal de formato
+├── .dockerignore                   # Exclusiones del contexto de build de Docker
 ├── biome.json                      # Linter y formateador estricto (Biome)
 ├── playwright.config.ts            # Configuración compartida de Visual QA (Desktop + Mobile)
+├── .githooks/
+│   └── pre-push                    # Ejecuta `pnpm verify` antes de cada push
 ├── .github/
 │   ├── CODEOWNERS                  # Propietarios del núcleo compartido
 │   ├── PULL_REQUEST_TEMPLATE.md    # Plantilla de revisión para Pull Requests
@@ -37,31 +40,48 @@ monorepo-webs/
 │       ├── seo-audit/              # Auditoría de SEO técnico, canonicals, OG, sitemap y robots.txt
 │       └── deploy-client/          # Preparación y validación de despliegue en VPS/Docker
 ├── .claude/
-│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, etc.)
+│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, /seo-audit, /deploy-client)
 ├── docs/
 │   ├── governance.md               # Protección de main y reglas para packages/, _template y docker/
+│   ├── deploy-coolify.md           # Flujo local → GitHub → Coolify (una app por cliente)
 │   ├── research/                   # Briefs de inspección y reportes de QA por cliente
 │   └── design-references/          # Capturas de referencia y comparación visual por cliente
 ├── scripts/
-│   ├── new-client-site.mjs         # Generador CLI para nuevos clientes (pnpm new-client-site)
+│   ├── new-client-site.mjs         # Generador CLI para nuevos clientes (pnpm new-client-site, admite --from)
+│   ├── customize-check.mjs         # Auditoría de restos de plantilla (pnpm customize:check)
+│   ├── template-brands.json        # Marcas y datos de ejemplo de cada plantilla
 │   ├── verify-isolation.mjs        # Verificador de aislamiento entre clientes (pnpm verify:isolation)
 │   └── visual-qa-summary.mjs       # Generador de reporte Markdown de Visual QA
 ├── tests/
 │   └── visual-qa.spec.ts           # Suite Playwright de rutas, recursos, SEO y overflow
-├── sites/                          # Sitios web individuales de cada cliente
-│   └── _template/                  # Plantilla base genérica e intocable
+├── sites/                          # Sitios web individuales
+│   ├── _template/                  # Plantilla base genérica e intocable
+│   ├── motel-boutique/             # Motel/hotel boutique en español
+│   ├── plantilla-asterre/          # Plantilla de retiro boutique (clon de asterre.framer.website)
+│   └── plantilla-hotellia/         # Plantilla de hotel boutique (clon de hotellia.framer.website)
 ├── packages/                       # Paquetes compartidos entre todos los sitios
-│   ├── ui/                         # Componentes compartidos Astro y Preact (@repo/ui)
-│   ├── utils/                      # Helpers de dominio, SEO, WhatsApp y utilidades (@repo/utils)
+│   ├── ui/                         # Componentes Astro (SEO, Section, Footer) y Preact (Button) (@repo/ui)
+│   ├── utils/                      # Helpers de dominio, robots.txt, WhatsApp y cn (@repo/utils)
 │   └── tsconfig/                   # Configuraciones base de TypeScript (@repo/tsconfig)
 ├── docker/                         # Despliegue en VPS (Coolify / Dokploy / Docker + Nginx)
 │   ├── Dockerfile                  # Dockerfile multi-stage con turbo prune y frozen lockfile
-│   └── nginx.conf                  # Configuración Nginx optimizada para sitios estáticos Astro
+│   └── nginx.conf                  # Nginx para sitios estáticos Astro (gzip, caché, /healthz)
 ├── package.json
 ├── pnpm-lock.yaml
 ├── pnpm-workspace.yaml
 └── turbo.json
 ```
+
+---
+
+## Sitios Actuales
+
+| Carpeta | Paquete | Descripción | Idioma |
+| :--- | :--- | :--- | :--- |
+| `sites/_template` | `@sites/_template` | Plantilla base mínima para nuevos clientes | es |
+| `sites/motel-boutique` | `@sites/motel-boutique` | Motel/hotel boutique: home, suites, restaurante y contacto | es |
+| `sites/plantilla-asterre` | `@sites/plantilla-asterre` | Retiro boutique: home, rooms, retreat, experience, contact y legales | en |
+| `sites/plantilla-hotellia` | `@sites/plantilla-hotellia` | Hotel boutique: rooms, offers, wine & dine, menús, gallery, reserve y legales (smooth-scroll con `lenis`) | en |
 
 ---
 
@@ -83,7 +103,53 @@ El comando realiza automáticamente:
 2. Copia `sites/_template` a `sites/<slug>` sin tocar la plantilla.
 3. Configura `"name": "@sites/<slug>"` en `package.json` y escribe `src/config/site.ts` con el dominio, SEO y datos de contacto reales suministrados (sin inventar datos faltantes).
 4. Crea las carpetas de trabajo en `docs/research/<slug>` y `docs/design-references/<slug>`.
-5. Ejecuta `pnpm install`, `pnpm verify:isolation`, `pnpm lint`, `astro check` y `astro build`.
+5. Ejecuta `pnpm install`, `pnpm verify:isolation`, `pnpm lint`, `astro check` y `astro build` (omitible con `--skip-checks`).
+
+### Partir de otra plantilla (`--from`)
+
+Por defecto se copia `sites/_template`. Para reutilizar el diseño, las páginas y el contenido de otro sitio existente usa `--from`:
+
+```bash
+pnpm new-client-site hotel-sol \
+  --from plantilla-hotellia \
+  --name "Hotel Sol" \
+  --domain "hotelsol.co"
+```
+
+Con `--from` el script copia ese sitio, renombra el paquete a `@sites/<slug>`, ajusta `CLIENT_DOMAIN` (y `name`, `title`, `description`, `locale` si los pasas), registra la plantilla de origen en `.template-origin` y al terminar muestra un resumen de `customize:check`. **No** reescribe contacto, redes, textos, imágenes ni colores: siguen siendo los de la plantilla y se reemplazan en los 4 puntos de la siguiente sección.
+
+Opciones adicionales: `--from`, `--title`, `--locale` (por defecto `es_CO`), `--phone` y `--address`.
+
+---
+
+## Personalizar un Sitio de Cliente (4 puntos)
+
+Cada plantilla (`_template`, `plantilla-asterre`, `plantilla-hotellia`) se personaliza editando **solo cuatro puntos**; los componentes y páginas no contienen marca, textos ni contactos:
+
+| # | Qué cambia | Archivo | Contenido |
+| :-- | :-- | :-- | :-- |
+| 1 | Identidad y contacto | `src/config/site.ts` | dominio (`CLIENT_DOMAIN`), nombre, SEO, `locale`, teléfono, correo, dirección, redes, enlaces de reservas/mapas, `themeColor`, fuentes precargadas, menús |
+| 2 | Marca visual | `src/styles/theme.css` | colores (`--color-*`), tipografías (`--font-*`, `@font-face`), anchos y espaciados |
+| 3 | Textos y datos | `src/data/content.ts` | copys por página, habitaciones/ofertas/menús/reseñas/FAQ, alt de imágenes y `UI_LABELS` (botones, ARIA, formularios, 404) |
+| 4 | Activos | `public/` | logos, fotos, favicon, og-image y fuentes |
+
+Flujo recomendado para un cliente nuevo desde una plantilla:
+
+```bash
+# 1. Crear el sitio desde la plantilla
+pnpm new-client-site hotel-sol --from plantilla-hotellia --name "Hotel Sol" --domain "hotelsol.co"
+
+# 2. Editar los 4 puntos (guía y tamaños de imagen en sites/hotel-sol/CUSTOMIZE.md)
+
+# 3. Detectar lo que siga siendo de la plantilla (dominio de ejemplo, marcas, contactos, imágenes idénticas)
+pnpm customize:check hotel-sol           # informativo
+pnpm customize:check hotel-sol --strict  # falla si hay hallazgos (obligatorio antes de entregar)
+
+# 4. Validar
+pnpm verify && SITE_FOLDER=hotel-sol pnpm test:visual
+```
+
+`customize:check` usa `scripts/template-brands.json` (marcas y datos de ejemplo de cada plantilla); al agregar una plantilla nueva, regístrala allí. `motel-boutique` aún no sigue esta convención (sin `theme.css` ni `CUSTOMIZE.md`).
 
 ---
 
@@ -98,6 +164,8 @@ pnpm test:visual
 # Ejecutar pruebas en un cliente y rutas específicas
 SITE_FOLDER=cafe-aurora QA_ROUTES="/,/menu,/contacto" pnpm test:visual
 
+# Variables opcionales: QA_PORT (por defecto 4321) y BASE_URL (usar un servidor ya levantado)
+
 # Guardar/actualizar capturas base de referencia (snapshots)
 SITE_FOLDER=cafe-aurora pnpm test:visual:update
 ```
@@ -106,7 +174,9 @@ Qué verifica automáticamente:
 - Respuesta HTTP `200` y ausencia de errores en `console.error`, `pageerror` o activos rotos (`HTTP >= 400`).
 - Presencia de `<title>`, `<meta name="description">`, `<link rel="canonical">`, `/robots.txt` y `/sitemap-index.xml`.
 - **Cero desbordamiento horizontal** (`document.documentElement.scrollWidth <= window.innerWidth`) tanto en desktop como en mobile.
-- Capturas reproducibles en `docs/design-references/<cliente>/current-{desktop|mobile}-<ruta>.png`, comparación contra snapshots de referencia (si existen) y generación de informe en `docs/research/<cliente>/visual-qa-report.md`.
+- Capturas reproducibles en `docs/design-references/<cliente>/current-{desktop|mobile}-<ruta>.png`, comparación contra snapshots de referencia (si existen) y generación de informe en `docs/research/<cliente>/visual-qa-report.md`. Las capturas `current-*` y los informes son artefactos ignorados por Git.
+
+En CI (`ci.yml`) la suite se ejecuta sobre `_template`.
 
 ---
 
@@ -124,20 +194,29 @@ Qué verifica automáticamente:
 
 ## Despliegue en VPS (Coolify / Dokploy / Docker + Nginx)
 
-Cada sitio del monorepo se despliega como una aplicación estática independiente conectada al dominio del cliente:
+Cada sitio se despliega como una aplicación estática independiente conectada al dominio del cliente. La guía completa (flujo local → GitHub → Coolify, Watch Paths, Auto Deploy y checklist por cliente) está en [`docs/deploy-coolify.md`](./docs/deploy-coolify.md).
 
-### Opción A: Usando el Dockerfile reproducible (`docker/Dockerfile`)
-El [`docker/Dockerfile`](./docker/Dockerfile) utiliza `turbo prune` y `pnpm install --frozen-lockfile` para aislar y compilar únicamente el sitio indicado:
-- **Dockerfile Location:** `/docker/Dockerfile`
+Activa una vez por clon el hook que ejecuta `pnpm verify` antes de cada push:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+### Opción A: Dockerfile reproducible (`docker/Dockerfile`, recomendada)
+Usa `turbo prune` y `pnpm install --frozen-lockfile` para compilar solo el sitio indicado y servirlo con Nginx (puerto `80`, health check en `/healthz`):
+- **Dockerfile Location:** `/docker/Dockerfile` (Base Directory `/`)
 - **Build Argument:** `SITE_FOLDER=cliente-x`
-- **Build Argument opcional:** `SITE_URL=https://clientex.com`
-- **Dominio asignado:** `https://clientex.com`
+- **Build Argument:** `SITE_URL=https://clientex.com` (debe coincidir con `CLIENT_DOMAIN`)
 
-### Opción B: Usando Nixpacks / Static Buildpack
+```bash
+docker build -f docker/Dockerfile --build-arg SITE_FOLDER=cliente-x -t web-cliente-x .
+docker run --rm -p 8080:80 web-cliente-x
+```
+
+### Opción B: Nixpacks / Static Buildpack
 - **Install Command:** `pnpm install --frozen-lockfile`
 - **Build Command:** `pnpm --filter @sites/cliente-x build`
 - **Publish Directory:** `sites/cliente-x/dist`
-- **Dominio asignado:** `https://clientex.com`
 
 ---
 
@@ -148,14 +227,18 @@ El [`docker/Dockerfile`](./docker/Dockerfile) utiliza `turbo prune` y `pnpm inst
 | `pnpm install` | Instala las dependencias de todos los workspaces |
 | `pnpm install --frozen-lockfile` | Instalación determinista para CI y producción |
 | `pnpm new-client-site <slug>` | Crea y verifica un nuevo sitio de cliente a partir de `_template` |
+| `pnpm verify` | Aislamiento + lint + check + build (lo mismo que CI y el hook `pre-push`) |
+| `pnpm customize:check <slug>` | Audita restos de plantilla en un sitio de cliente (`--strict` falla si hay hallazgos) |
 | `pnpm verify:isolation` | Verifica aislamiento estricto entre clientes y reglas del monorepo |
 | `pnpm dev` | Inicia todos los sitios en modo desarrollo |
 | `pnpm --filter @sites/<cliente> dev` | Inicia únicamente el sitio de un cliente específico |
 | `pnpm build` | Compila todos los sitios para producción |
+| `pnpm preview` | Sirve el build de los sitios (`astro preview`) |
 | `pnpm --filter @sites/<cliente> build` | Compila únicamente el sitio de un cliente específico |
 | `pnpm check` | Ejecuta validación de tipos (`tsc` + `astro check`) en todo el monorepo |
 | `pnpm lint` | Valida formato, imports y reglas de código con Biome |
 | `pnpm lint:fix` | Corrige automáticamente formato e imports con Biome |
 | `pnpm test:visual` | Ejecuta la suite de Playwright (desktop + mobile) y genera el reporte |
 | `pnpm test:visual:update` | Actualiza las capturas base de referencia de Playwright |
+| `pnpm format` | Formatea todo el repositorio con Biome |
 | `pnpm clean` | Limpia las carpetas `dist`, `.astro`, `.turbo`, reportes y `node_modules` |

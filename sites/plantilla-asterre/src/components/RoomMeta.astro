@@ -1,5 +1,5 @@
 ---
-import type { Room } from "@/data/content";
+import { type Room, UI_LABELS } from "@/data/content";
 
 export interface Props {
   room: Pick<Room, "guests" | "size" | "view">;
@@ -10,9 +10,9 @@ const { room, showView = true } = Astro.props;
 ---
 
 <span class="room-meta t-body">
-  <span>{room.guests} huéspedes</span>
+  <span>{UI_LABELS.guests(room.guests)}</span>
   <i aria-hidden="true"></i>
-  <span>{room.size} m²</span>
+  <span>{UI_LABELS.squareMeters(room.size)}</span>
   {
     showView && (
       <>

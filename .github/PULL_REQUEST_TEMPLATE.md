@@ -20,6 +20,7 @@
 - [ ] `pnpm check` (`tsc --noEmit` + `astro check`) pasa sin errores ni advertencias.
 - [ ] `pnpm build` compila todos los sitios afectados (`output: "static"`, `robots.txt` y `sitemap-index.xml`).
 - [ ] `SITE_FOLDER=<slug-cliente> pnpm test:visual` ejecutado (sin errores de consola, activos rotos ni overflow horizontal en desktop/mobile).
+- [ ] Si es un sitio de cliente real (no plantilla): `pnpm customize:check <slug-cliente> --strict` sin hallazgos (sin marca, textos, contactos ni imágenes de la plantilla de origen).
 - [ ] No se incluyen credenciales, archivos `.env` reales ni secretos en el commit.
 
 ---

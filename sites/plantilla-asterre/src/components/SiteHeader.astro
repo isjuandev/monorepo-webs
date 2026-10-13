@@ -2,7 +2,7 @@
 import ArrowIcon from "@/components/ArrowIcon.astro";
 import Stars from "@/components/Stars.astro";
 import { NAV_LINKS, siteConfig } from "@/config/site";
-import { STAY_INFO } from "@/data/content";
+import { STAY_INFO, UI_LABELS } from "@/data/content";
 
 export interface Props {
   /** Color del texto sobre el hero de la página antes de hacer scroll */
@@ -27,7 +27,7 @@ const year = new Date().getFullYear();
         <span></span>
         <span></span>
       </span>
-      <span class="menu-toggle__label" data-menu-label>Menú</span>
+      <span class="menu-toggle__label" data-menu-label>{UI_LABELS.menu}</span>
     </button>
     <a href="/" class="t-logo site-header__logo">{siteConfig.name}</a>
     <a
@@ -36,14 +36,14 @@ const year = new Date().getFullYear();
       target="_blank"
       rel="noopener noreferrer"
     >
-      Ver disponibilidad
+      {UI_LABELS.checkAvailability}
       <ArrowIcon direction="external" />
     </a>
   </div>
 
   <div class="site-menu" id="site-menu" data-menu aria-hidden="true">
     <div class="site-menu__panel site-menu__panel--nav">
-      <nav aria-label="Principal">
+      <nav aria-label={UI_LABELS.mainNav}>
         <ul class="site-menu__links">
           {
             NAV_LINKS.map((link, i) => (
@@ -62,17 +62,17 @@ const year = new Date().getFullYear();
             <div class="site-menu__rating">
               <Stars />
               <span>{rating.score}</span>
-              <span class="t-muted">({rating.reviews} reseñas)</span>
+              <span class="t-muted">{UI_LABELS.reviewsCount(rating.reviews)}</span>
             </div>
           )
         }
-        <p class="t-label t-muted">© {year}, Todos los derechos reservados</p>
+        <p class="t-label t-muted">{UI_LABELS.allRightsReserved(year)}</p>
       </div>
     </div>
 
     <div class="site-menu__panel site-menu__panel--info">
       <div class="site-menu__block">
-        <p class="t-label t-muted">Horarios</p>
+        <p class="t-label t-muted">{UI_LABELS.hours}</p>
         <ul class="site-menu__hours">
           {
             STAY_INFO.slice(0, 2).map((item) => (
@@ -86,7 +86,7 @@ const year = new Date().getFullYear();
       </div>
       <div class="site-menu__block">
         <div class="site-menu__group">
-          <p class="t-label t-muted">Contacto</p>
+          <p class="t-label t-muted">{UI_LABELS.contact}</p>
           {contact.email && <a href={`mailto:${contact.email}`} class="t-lead">{contact.email}</a>}
           {
             contact.phone && (
@@ -99,7 +99,7 @@ const year = new Date().getFullYear();
         {
           contact.address && (
             <div class="site-menu__group">
-              <p class="t-label t-muted">Ubicación</p>
+              <p class="t-label t-muted">{UI_LABELS.location}</p>
               <a
                 href={siteConfig.mapsUrl}
                 class="t-lead site-menu__address"
@@ -115,15 +115,15 @@ const year = new Date().getFullYear();
     </div>
 
     <div class="site-menu__panel site-menu__panel--cta">
-      <p class="t-h3">¿Lista tu escapada?</p>
-      <p class="t-lead">Consulta fechas y tarifas en nuestro motor de reservas.</p>
+      <p class="t-h3">{UI_LABELS.menuCtaTitle}</p>
+      <p class="t-lead">{UI_LABELS.menuCtaText}</p>
       <a
         href={siteConfig.bookingUrl}
         class="btn btn--secondary"
         target="_blank"
         rel="noopener noreferrer"
       >
-        Ver disponibilidad
+        {UI_LABELS.checkAvailability}
         <ArrowIcon direction="external" />
       </a>
     </div>

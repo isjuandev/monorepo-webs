@@ -10,6 +10,10 @@ export interface ClientSiteConfig extends SiteMetadata {
     facebook: string;
     instagram: string;
   };
+  /** Color de la barra del navegador en móvil (meta theme-color) */
+  themeColor: string;
+  /** Fuentes de /public/fonts precargadas en <head>; deben coincidir con theme.css */
+  preloadFonts: string[];
 }
 
 // Plantilla: reemplaza el dominio, la marca y los datos de contacto por los del cliente real.
@@ -33,9 +37,11 @@ export const siteConfig: ClientSiteConfig = {
     facebook: "https://facebook.com",
     instagram: "https://instagram.com",
   },
+  themeColor: "#1c3d2d",
+  preloadFonts: ["/fonts/libre-baskerville-400.woff2", "/fonts/inter-400.woff2"],
 };
 
-/** Título de página con el sufijo de marca, igual que la fuente ("Página - Hotellia - ..."). */
+/** Título de página con el sufijo de marca ("Página - <título SEO del sitio>"). */
 export function pageTitle(page?: string): string {
   return page ? `${page} - ${siteConfig.title}` : siteConfig.title;
 }

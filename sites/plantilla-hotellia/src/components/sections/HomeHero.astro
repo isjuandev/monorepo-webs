@@ -1,9 +1,10 @@
 ---
 import FitTitle from "@/components/FitTitle.astro";
+import { siteConfig } from "@/config/site";
 import { HERO_TITLES, HOME_HERO, IMAGES } from "@/data/content";
 ---
 
-<section class="home-hero" aria-label="Hotellia">
+<section class="home-hero" aria-label={siteConfig.name}>
   <div class="home-hero__content" data-scroll-shift="0.352" data-scroll-max="300">
     <div class="home-hero__media">
       <img
