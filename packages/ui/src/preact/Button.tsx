@@ -1,5 +1,5 @@
-import type { ComponentChildren, JSX } from "preact";
 import { cn } from "@repo/utils";
+import type { ComponentChildren, JSX } from "preact";
 
 export interface ButtonProps extends JSX.HTMLAttributes<HTMLButtonElement> {
   children: ComponentChildren;

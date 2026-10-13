@@ -1,4 +1,4 @@
-import { normalizeSiteUrl, type SiteMetadata } from "@repo/utils";
+import { type SiteMetadata, normalizeSiteUrl } from "@repo/utils";
 
 export interface ClientSiteConfig extends SiteMetadata {
   contact: {

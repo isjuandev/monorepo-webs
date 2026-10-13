@@ -1,0 +1,63 @@
+name: CI — Monorepo Webs
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-and-build:
+    name: Lockfile, Isolation, Lint, Check, Build & Visual QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install dependencies (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify client isolation and governance
+        run: pnpm verify:isolation
+
+      - name: Run Biome linter and formatting check
+        run: pnpm lint
+
+      - name: Run TypeScript and Astro diagnostics
+        run: pnpm check
+
+      - name: Build all workspaces and client sites
+        run: pnpm build
+
+      - name: Install Playwright Chromium browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run Playwright Visual QA & Functional Suite
+        run: pnpm test:visual
+
+      - name: Upload Visual QA report and screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-visual-qa-artifacts
+          path: |
+            playwright-report/
+            test-results/
+            docs/design-references/
+            docs/research/
+          retention-days: 7

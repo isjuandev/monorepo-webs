@@ -1,0 +1,20 @@
+# Propietarios por defecto del monorepo
+* @isjuandev
+
+# Núcleo compartido y arquitectura (requieren revisión obligatoria del propietario principal)
+/AGENTS.md @isjuandev
+/CLAUDE.md @isjuandev
+/package.json @isjuandev
+/pnpm-lock.yaml @isjuandev
+/pnpm-workspace.yaml @isjuandev
+/turbo.json @isjuandev
+/biome.json @isjuandev
+/playwright.config.ts @isjuandev
+/packages/ @isjuandev
+/sites/_template/ @isjuandev
+/docker/ @isjuandev
+/scripts/ @isjuandev
+/tests/ @isjuandev
+/.github/ @isjuandev
+/.agents/ @isjuandev
+/.claude/ @isjuandev

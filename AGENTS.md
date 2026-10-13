@@ -1,13 +1,13 @@
 # AGENTS.md — Guía de Contexto y Reglas para LLMs y Agentes de IA
 
 > **IMPORTANTE PARA TODOS LOS LLMs (Antigravity, Gemini, Claude, Cursor, Copilot, Codex, Windsurf):**  
-> Lee y respeta este documento antes de proponer, crear o modificar código en este repositorio. Este archivo es la fuente única de verdad sobre la arquitectura, librerías aprobadas, estilo de código, linting y flujo de trabajo obligatorio del monorepo colaborativo.
+> Lee y respeta este documento antes de proponer, crear o modificar código en este repositorio. Este archivo es la fuente única de verdad sobre la arquitectura, librerías aprobadas, estilo de código, linting, pruebas visuales y flujo de trabajo obligatorio del monorepo colaborativo.
 
 ---
 
 ## 1. Contexto General del Proyecto
 
-Este repositorio (`monorepo-webs`) es el monorepo oficial y colaborativo de **Nexobite** para crear, mantener y desplegar **múltiples páginas web para múltiples clientes**.
+Este repositorio (`monorepo-webs`) es la fábrica colaborativa de sitios web de **Nexobite** para desarrollar, clonar con fidelidad visual, mantener y desplegar **múltiples páginas web independientes para múltiples clientes**.
 
 ### Principios clave del negocio y arquitectura:
 1. **100% Estático / Sin Backend inicialmente:** Todos los sitios se compilan como sitios estáticos (`output: "static"` en Astro) para máxima velocidad, seguridad, SEO y bajo costo de infraestructura.
@@ -21,9 +21,10 @@ Este repositorio (`monorepo-webs`) es el monorepo oficial y colaborativo de **Ne
 
 Para mantener consistencia absoluta entre todos los desarrolladores y LLMs, **NO instales librerías fuera de este stack sin autorización explícita del usuario**:
 
-- **Gestor de paquetes (OBLIGATORIO):** `pnpm` (`>=9.0.0`) con `pnpm-workspace.yaml`.
+- **Entorno de ejecución:** `Node.js >= 20.0.0` (recomendado `22 LTS` en `.nvmrc`).
+- **Gestor de paquetes (OBLIGATORIO):** `pnpm` (`9.15.0`) con `pnpm-workspace.yaml` y `pnpm-lock.yaml` versionado.
   - **PROHIBIDO** ejecutar `npm install`, `npx`, `yarn` o `bun`.
-  - **PROHIBIDO** crear archivos `package-lock.json` o `yarn.lock` en ninguna carpeta del monorepo.
+  - **PROHIBIDO** crear archivos `package-lock.json`, `yarn.lock` o `bun.lockb` en ninguna carpeta del monorepo.
 - **Orquestador de monorepo:** `Turborepo` (`turbo.json`).
 - **Framework principal:** `Astro 5` (`output: "static"`) + `@astrojs/sitemap`.
 - **Framework de UI interactiva (Islas):** `Preact 10` (`@astrojs/preact`).
@@ -34,7 +35,8 @@ Para mantener consistencia absoluta entre todos los desarrolladores y LLMs, **NO
   - Si un sitio requiere smooth-scroll o animaciones avanzadas (ej. clones de Framer), usar `lenis` de forma ligera y limpiando siempre los listeners en el ciclo de vida del componente.
 - **Lenguaje:** `TypeScript` en modo `strict` (`@repo/tsconfig`).
 - **Linter y Formateador:** `Biome` (`@biomejs/biome` configurado en `biome.json`) + `astro check` + `.editorconfig`.
-- **Servidor de producción:** `Nginx` sobre Docker (`docker/Dockerfile` y `docker/nginx.conf`).
+- **Control de calidad visual y funcional:** `Playwright` (`@playwright/test` en `playwright.config.ts` y `tests/visual-qa.spec.ts`).
+- **Servidor de producción:** `Nginx` sobre Docker multi-stage con `turbo prune` (`docker/Dockerfile` y `docker/nginx.conf`).
 
 ---
 
@@ -45,52 +47,48 @@ monorepo-webs/
 ├── AGENTS.md                       # Este documento de contexto y reglas para LLMs
 ├── CLAUDE.md                       # Puntero a AGENTS.md para Claude Code
 ├── README.md                       # Documentación general de uso, skills y despliegue
+├── .nvmrc                          # Versión de Node.js recomendada (22 LTS)
 ├── .editorconfig                   # Reglas de formato de archivo universales
 ├── biome.json                      # Configuración estricta de Linter y Formatter (Biome)
+├── playwright.config.ts            # Configuración compartida de pruebas visuales/funcionales
+├── .github/
+│   ├── CODEOWNERS                  # Propietarios de código del núcleo compartido
+│   ├── PULL_REQUEST_TEMPLATE.md    # Plantilla de PR con checklist de calidad
+│   └── workflows/
+│       └── ci.yml                  # Pipeline de CI (lockfile, aislamiento, lint, check, build, visual QA)
 ├── .agents/
-│   └── skills/
-│       └── clone-website/          # Skill canónica para clonar/reconstruir sitios web en sites/<cliente>
-│           ├── SKILL.md
-│           └── references/
-│               ├── inspection-guide.md
-│               └── framer-and-motion.md
+│   └── skills/                     # Skills especializadas para agentes de IA
+│       ├── clone-website/          # Clonar/reconstruir sitios web en sites/<cliente>
+│       ├── visual-qa/              # Validación visual/funcional desktop y mobile con Playwright
+│       ├── review-monorepo/        # Auditoría de PR, aislamiento e impacto en paquetes
+│       ├── seo-audit/              # Auditoría de SEO técnico, canonicals, OG, sitemap y robots.txt
+│       └── deploy-client/          # Preparación y validación de despliegue en VPS/Docker
 ├── .claude/
-│   └── commands/
-│       └── clone-website.md        # Comando /clone-website para Claude Code
+│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, etc.)
 ├── docs/
-│   ├── research/                   # Briefs de inspección y mapeo de activos por cliente
+│   ├── governance.md               # Reglas de protección de main y cambios en núcleo compartido
+│   ├── research/                   # Briefs de inspección y reportes de QA por cliente
 │   └── design-references/          # Capturas de referencia y comparación visual por cliente
-├── package.json                    # Scripts globales con Turborepo y Biome
+├── scripts/
+│   ├── new-client-site.mjs         # Generador automatizado de nuevos sitios de clientes
+│   ├── verify-isolation.mjs        # Verificador de aislamiento entre clientes y gobernanza
+│   └── visual-qa-summary.mjs       # Generador de informe Markdown de Visual QA
+├── tests/
+│   └── visual-qa.spec.ts           # Suite compartida de Playwright (desktop y mobile)
+├── package.json                    # Scripts globales con Turborepo, Biome y Playwright
+├── pnpm-lock.yaml                  # Lockfile único y reproducible del workspace
 ├── pnpm-workspace.yaml             # Define los workspaces: sites/* y packages/*
-├── turbo.json                      # Pipeline de tareas (dev, build, preview, check, lint)
+├── turbo.json                      # Pipeline de tareas (dev, build, preview, check, clean)
 ├── docker/
-│   ├── Dockerfile                  # Build multi-stage parametrizado con ARG SITE_FOLDER
+│   ├── Dockerfile                  # Build multi-stage con turbo prune y pnpm --frozen-lockfile
 │   └── nginx.conf                  # Configuración Nginx con caché y compresión Gzip
 ├── packages/
 │   ├── ui/                         # (@repo/ui) Componentes Astro y Preact compartidos
-│   │   └── src/
-│   │       ├── astro/              # Componentes estáticos .astro (SEO, Section, Footer)
-│   │       └── preact/             # Islas interactivas .tsx (Button, etc.)
 │   ├── utils/                      # (@repo/utils) Helpers puros (dominios, robots.txt, WhatsApp, cn)
 │   └── tsconfig/                   # (@repo/tsconfig) Configs base de TS (base, astro, preact)
 └── sites/
-    ├── _template/                  # Plantilla maestra para clonar al crear nuevos clientes
+    ├── _template/                  # Plantilla maestra genérica (intocable salvo mejoras globales)
     └── <slug-cliente>/             # Carpeta individual por cada cliente real
-        ├── astro.config.mjs        # Configura Astro site URL, Preact y Sitemap
-        ├── package.json            # Nombre del paquete: @sites/<slug-cliente>
-        ├── public/                 # Archivos públicos sin procesar (favicon, fuentes, imágenes)
-        └── src/
-            ├── assets/             # Imágenes optimizadas por Astro
-            ├── components/         # Componentes exclusivos de este cliente
-            ├── config/
-            │   └── site.ts         # Fuente única de verdad del cliente (dominio, SEO, contacto)
-            ├── layouts/
-            │   └── BaseLayout.astro
-            ├── pages/
-            │   ├── index.astro
-            │   └── robots.txt.ts   # Endpoint estático que genera /robots.txt con su dominio
-            └── styles/
-                └── global.css      # Variables de color, tipografía y estilos del cliente
 ```
 
 ---
@@ -109,7 +107,7 @@ Todo código generado por cualquier LLM debe ser **indistinguible** del resto de
 
 ### 4.2. TypeScript Estricto
 - **Cero `any`:** Está **PROHIBIDO** usar `any`, `@ts-ignore` o `@ts-expect-error`. Define siempre interfaces o tipos explícitos.
-- **Type Imports:** Usa siempre `import type { ... }` cuando importes únicamente tipos o interfaces (`useImportType: "error"` en Biome).
+- **Type Imports:** Usa siempre `import type { ... }` o `{ type ... }` cuando importes únicamente tipos o interfaces (`useImportType: "error"` en Biome).
 - **Sin código muerto:** No dejes variables, parámetros ni imports sin utilizar (`noUnusedVariables` y `noUnusedImports` son errores de compilación).
 - **Tipado de Props:**
   - En componentes `.astro`: declara `export interface Props { ... }` en el frontmatter.
@@ -138,12 +136,13 @@ Respeta siempre este orden de imports en `.astro`, `.ts` y `.tsx`:
 
 ---
 
-## 5. Reglas Arquitectónicas (Do's & Don'ts)
+## 5. Reglas Arquitectónicas y de Gobernanza (Do's & Don'ts)
 
-### 5.1. Aislamiento estricto entre clientes
+### 5.1. Aislamiento estricto entre clientes (verificado por `pnpm verify:isolation`)
 - **PROHIBIDO** importar código, imágenes o estilos desde `sites/cliente-a` hacia `sites/cliente-b`.
 - **PROHIBIDO** guardar logos, textos comerciales, teléfonos o colores específicos de un cliente dentro de `packages/ui` o `packages/utils`.
-- **No uses `sites/_template` para un cliente específico:** `sites/_template` debe mantenerse limpio como plantilla base. Solo modifícalo cuando se quiera mejorar la base para todos los futuros clientes.
+- **No uses `sites/_template` para un cliente específico:** `sites/_template` debe mantenerse limpio como plantilla base.
+- **Cero secretos en Git:** Nunca almacenes tokens, claves SSH ni archivos `.env` reales en el repositorio.
 
 ### 5.2. Dónde crear cada componente (`packages/ui` vs `sites/<cliente>`)
 - **En `packages/ui` (`@repo/ui`):**
@@ -172,31 +171,35 @@ Respeta siempre este orden de imports en `.astro`, `.ts` y `.tsx`:
 
 ## 6. Flujo Paso a Paso para Crear un Sitio de Cliente Nuevo
 
-Cuando el usuario pida crear la web de un nuevo cliente (ej. *"Crea el sitio para el cliente Café Aurora con dominio cafeaurora.co"*), sigue exactamente estos pasos:
+Cuando el usuario pida crear la web de un nuevo cliente, utiliza el generador oficial `new-client-site` (no inventes teléfonos, correos ni direcciones que el usuario no haya proporcionado):
 
-1. **Clonar la plantilla:**
-   Copia `sites/_template` a `sites/<slug-cliente>` (usando `kebab-case`, ej. `sites/cafe-aurora`).
-2. **Configurar `package.json` del sitio:**
-   Cambia `"name"` en `sites/<slug-cliente>/package.json` a `"@sites/<slug-cliente>"`.
-3. **Configurar `src/config/site.ts`:**
-   Actualiza `CLIENT_DOMAIN`, `name`, `title`, `description`, `locale`, `contact` y `socials`.
-4. **Personalizar estilos de marca (`src/styles/global.css`):**
+1. **Ejecutar el generador:**
+   ```bash
+   pnpm new-client-site <slug-cliente> --name "<Nombre Comercial>" --domain "<dominio.com>"
+   ```
+   *(El generador valida el `kebab-case`, se detiene si el sitio ya existe, copia `sites/_template` sin modificarla, configura `@sites/<slug-cliente>` y `src/config/site.ts`, crea las carpetas en `docs/` y ejecuta las comprobaciones iniciales).*
+2. **Personalizar estilos de marca (`src/styles/global.css`):**
    Ajusta las variables CSS en `:root` (`--color-primary`, `--color-accent`, `--color-bg`, `--color-text`, fuentes) según la identidad visual del cliente.
-5. **Construir las páginas y secciones:**
+3. **Construir las páginas y secciones:**
    Desarrolla las secciones en `sites/<slug-cliente>/src/components/` y ensámblalas en `sites/<slug-cliente>/src/pages/index.astro` reutilizando `BaseLayout.astro` y `@repo/ui`.
-6. **Validar calidad, linting y compilación antes de entregar:**
-   Ejecuta obligatoriamente:
-   - `pnpm lint` (verifica estilo y reglas de Biome)
-   - `pnpm --filter @sites/<slug-cliente> check` (verifica tipos de Astro y TypeScript)
-   - `pnpm --filter @sites/<slug-cliente> build` (verifica generación de HTML estático, `robots.txt` y `sitemap-index.xml`)
+4. **Validar calidad, aislamiento y QA visual antes de entregar:**
+   - `pnpm verify:isolation`
+   - `pnpm lint`
+   - `pnpm --filter @sites/<slug-cliente> check`
+   - `pnpm --filter @sites/<slug-cliente> build`
+   - `SITE_FOLDER=<slug-cliente> pnpm test:visual`
 
 ---
 
-## 7. Skill de Clonación de Sitios Web (`clone-website`)
+## 7. Catálogo de Skills del Monorepo (`.agents/skills/`)
 
-El monorepo cuenta con la skill canónica `.agents/skills/clone-website/SKILL.md` (y el comando `.claude/commands/clone-website.md` para `/clone-website <url>`):
-- Cuando el usuario pida clonar, replicar o hacer ingeniería inversa de una web existente para un cliente, **lee primero `.agents/skills/clone-website/SKILL.md`** junto con sus guías en `.agents/skills/clone-website/references/`.
-- Sigue el flujo de 4 fases (*1. Map*, *2. Observe*, *3. Build*, *4. Compare & Deliver*) construyendo el sitio dentro de `sites/<slug-cliente>/` y guardando las notas de inspección en `docs/research/<slug-cliente>/` y las capturas en `docs/design-references/<slug-cliente>/`.
+Antes de ejecutar tareas especializadas, lee la skill correspondiente:
+
+- **`clone-website`** ([`.agents/skills/clone-website/SKILL.md`](./.agents/skills/clone-website/SKILL.md)): Clonar o reconstruir sitios web existentes (incluyendo Framer y páginas animadas) dentro de `sites/<slug-cliente>/`.
+- **`visual-qa`** ([`.agents/skills/visual-qa/SKILL.md`](./.agents/skills/visual-qa/SKILL.md)): Ejecutar pruebas funcionales y visuales con Playwright en desktop (`1440x900`) y mobile (`390x844`), detectar overflow horizontal, guardar capturas y comparar contra referencias.
+- **`review-monorepo`** ([`.agents/skills/review-monorepo/SKILL.md`](./.agents/skills/review-monorepo/SKILL.md)): Auditar ramas antes de un PR verificando aislamiento entre clientes, impacto en paquetes compartidos, linting, tipos y build.
+- **`seo-audit`** ([`.agents/skills/seo-audit/SKILL.md`](./.agents/skills/seo-audit/SKILL.md)): Auditar SEO técnico, canonicals, OpenGraph, jerarquía de encabezados, `robots.txt` y `sitemap-index.xml`.
+- **`deploy-client`** ([`.agents/skills/deploy-client/SKILL.md`](./.agents/skills/deploy-client/SKILL.md)): Validar la poda con `turbo prune` y preparar la ficha de despliegue para VPS (Coolify / Dokploy / Docker + Nginx) sin ejecutar despliegues no autorizados.
 
 ---
 
@@ -204,9 +207,18 @@ El monorepo cuenta con la skill canónica `.agents/skills/clone-website/SKILL.md
 
 Ejecuta siempre los comandos desde la raíz del monorepo (`/monorepo-webs`):
 
-- **Instalar dependencias en todo el workspace:**
+- **Instalar dependencias (respetando lockfile):**
   ```bash
   pnpm install
+  pnpm install --frozen-lockfile
+  ```
+- **Crear un nuevo sitio de cliente:**
+  ```bash
+  pnpm new-client-site <slug-cliente> --name "<Nombre>" --domain "<dominio.com>"
+  ```
+- **Verificar aislamiento entre clientes y gobernanza:**
+  ```bash
+  pnpm verify:isolation
   ```
 - **Levantar servidor de desarrollo de un único cliente:**
   ```bash
@@ -216,8 +228,9 @@ Ejecuta siempre los comandos desde la raíz del monorepo (`/monorepo-webs`):
   ```bash
   pnpm --filter @sites/<slug-cliente> build
   ```
-- **Verificar tipos y diagnósticos de Astro en un cliente:**
+- **Verificar tipos y diagnósticos de Astro/TS:**
   ```bash
+  pnpm check
   pnpm --filter @sites/<slug-cliente> check
   ```
 - **Ejecutar linter y formato en todo el monorepo (Biome):**
@@ -226,17 +239,10 @@ Ejecuta siempre los comandos desde la raíz del monorepo (`/monorepo-webs`):
   pnpm lint:fix
   pnpm format
   ```
-- **Compilar todos los sitios del monorepo (CI / verificación global):**
+- **Ejecutar pruebas funcionales y de calidad visual con Playwright:**
   ```bash
-  pnpm build
-  ```
-- **Agregar una dependencia aprobada solo a un sitio específico:**
-  ```bash
-  pnpm --filter @sites/<slug-cliente> add <paquete>
-  ```
-- **Agregar una dependencia aprobada al paquete compartido de UI:**
-  ```bash
-  pnpm --filter @repo/ui add <paquete>
+  SITE_FOLDER=<slug-cliente> pnpm test:visual
+  SITE_FOLDER=<slug-cliente> pnpm test:visual:update
   ```
 - **Construir imagen Docker de producción para un cliente específico:**
   ```bash

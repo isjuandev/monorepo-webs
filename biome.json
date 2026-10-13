@@ -7,7 +7,14 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["dist/**", ".astro/**", ".turbo/**", "node_modules/**"]
+    "ignore": [
+      "dist/**",
+      ".astro/**",
+      ".turbo/**",
+      "node_modules/**",
+      "playwright-report/**",
+      "test-results/**"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -43,5 +50,18 @@
       "semicolons": "always",
       "trailingCommas": "es5"
     }
-  }
+  },
+  "overrides": [
+    {
+      "include": ["**/*.astro"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedImports": "off"
+          }
+        }
+      }
+    }
+  ]
 }

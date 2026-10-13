@@ -2,9 +2,5 @@
   "name": "@repo/tsconfig",
   "version": "0.1.0",
   "private": true,
-  "files": [
-    "base.json",
-    "astro.json",
-    "preact.json"
-  ]
+  "files": ["base.json", "astro.json", "preact.json"]
 }

@@ -31,13 +31,7 @@ export function normalizeSiteUrl(domainOrUrl: string): string {
  */
 export function generateRobotsTxt(siteUrl: string): string {
   const baseUrl = normalizeSiteUrl(siteUrl);
-  return [
-    "User-agent: *",
-    "Allow: /",
-    "",
-    `Sitemap: ${baseUrl}/sitemap-index.xml`,
-    "",
-  ].join("\n");
+  return ["User-agent: *", "Allow: /", "", `Sitemap: ${baseUrl}/sitemap-index.xml`, ""].join("\n");
 }
 
 /**
