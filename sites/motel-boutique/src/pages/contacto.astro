@@ -1,0 +1,14 @@
+---
+import Contact from "@/components/Contact.astro";
+import PageHero from "@/components/PageHero.astro";
+import { siteConfig } from "@/config/site";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title={`Contacto | ${siteConfig.name}`}
+  description="Datos de contacto y ubicación para reservaciones y preguntas."
+>
+  <PageHero title="Contacto" subtitle="Escríbenos o llámanos para reservar." />
+  <Contact />
+</BaseLayout>

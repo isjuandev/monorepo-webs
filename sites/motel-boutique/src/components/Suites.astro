@@ -1,9 +1,5 @@
 ---
-import { siteConfig } from "@/config/site";
 import { SUITES } from "@/data/content";
-import { buildWhatsAppUrl } from "@repo/utils";
-
-const whatsapp = siteConfig.contact.whatsapp;
 ---
 
 <section id="suites" class="suites">
@@ -18,13 +14,9 @@ const whatsapp = siteConfig.contact.whatsapp;
             <p class="suite__price">{suite.price}</p>
             <p class="suite__extra">Hora adicional: {suite.extraHour}</p>
             <p class="suite__extra">Persona adicional: {suite.extraPerson}</p>
-            {
-              whatsapp && (
-                <a class="ui-btn" href={buildWhatsAppUrl(whatsapp, `Hola, quiero información de ${suite.name}`)} target="_blank" rel="noopener noreferrer">
-                  Más información
-                </a>
-              )
-            }
+            <a class="ui-btn" href={`/nuestras-suites#${suite.slug}`}>
+              Más información
+            </a>
           </article>
         ))
       }
