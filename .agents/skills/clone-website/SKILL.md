@@ -11,7 +11,7 @@ Always follow the common monorepo rules defined in [AGENTS.md](../../../AGENTS.m
 
 ## Purpose & Inputs
 
-- **Purpose:** Reverse-engineer one or more target URLs into an isolated Astro 5 + Preact client site under `sites/<slug-cliente>/`.
+- **Purpose:** Reverse-engineer one or more target URLs into an isolated Astro 7 + Preact client site under `sites/<slug-cliente>/`.
 - **Inputs:**
   - `url(s)`: Target website URL(s) to clone.
   - `slug-cliente`: Kebab-case identifier for the client folder (`sites/<slug-cliente>`).

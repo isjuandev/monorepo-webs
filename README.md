@@ -1,6 +1,6 @@
 # Monorepo Webs — Nexobite (AI-Assisted Website Factory)
 
-Monorepo colaborativo para desarrollar, clonar con fidelidad visual, mantener y desplegar múltiples sitios web estáticos/frontend para clientes (cada uno con su propio dominio) usando **Astro 5 + Preact**, **pnpm workspaces**, **Turborepo**, **Biome** y **Playwright**.
+Monorepo colaborativo para desarrollar, clonar con fidelidad visual, mantener y desplegar múltiples sitios web estáticos/frontend para clientes (cada uno con su propio dominio) usando **Astro 7 + Preact**, **pnpm workspaces**, **Turborepo**, **Biome** y **Playwright**.
 
 > **Para Agentes de IA y Desarrolladores:** Antes de realizar cualquier cambio, lee [AGENTS.md](./AGENTS.md), [docs/governance.md](./docs/governance.md) y, para publicar, [docs/deploy-coolify.md](./docs/deploy-coolify.md), donde se definen las reglas obligatorias de arquitectura, aislamiento entre clientes, estilo de código, skills y gobernanza.
 
@@ -8,7 +8,7 @@ Monorepo colaborativo para desarrollar, clonar con fidelidad visual, mantener y 
 
 ## Requisitos del Entorno
 
-- **Node.js:** `>= 20.0.0` (recomendado `22 LTS`, definido en [`.nvmrc`](./.nvmrc))
+- **Node.js:** `>= 22.12.0` (recomendado `22 LTS`, definido en [`.nvmrc`](./.nvmrc))
 - **Gestor de paquetes:** `pnpm@9.15.0` (habilitado mediante `corepack enable`)
 
 ---
