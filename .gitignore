@@ -16,6 +16,12 @@ docs/design-references/*/current-*.png
 docs/research/*/visual-qa-report.json
 docs/research/*/visual-qa-report.md
 
+# Recursos manuales por cliente (solo se versiona README y _plantilla-cliente)
+recursos/*
+!recursos/README.md
+!recursos/_plantilla-cliente/
+!recursos/_plantilla-cliente/**
+
 # Environment variables
 .env
 .env.*
