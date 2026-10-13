@@ -17,7 +17,7 @@
     "@repo/utils": "workspace:*",
     "astro": "^7.3.8",
     "lenis": "^1.1.0",
-    "preact": "^10.25.0"
+    "preact": "^11.0.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

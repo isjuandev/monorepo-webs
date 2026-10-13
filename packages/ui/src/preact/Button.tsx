@@ -1,7 +1,7 @@
 import { cn } from "@repo/utils";
-import type { ComponentChildren, JSX } from "preact";
+import type { ButtonHTMLAttributes, ComponentChildren } from "preact";
 
-export interface ButtonProps extends JSX.HTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ComponentChildren;
   variant?: "primary" | "secondary" | "outline";
   size?: "sm" | "md" | "lg";
