@@ -1,0 +1,31 @@
+---
+export interface Props {
+  title: string;
+  subtitle?: string;
+}
+
+const { title, subtitle } = Astro.props;
+---
+
+<section class="page-hero">
+  <h1>{title}</h1>
+  {subtitle && <p>{subtitle}</p>}
+</section>
+
+<style>
+  .page-hero {
+    padding: 6rem 1.5rem 3rem;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 0%, #1c0f14 0%, #000 70%);
+  }
+  .page-hero h1 {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .page-hero p {
+    max-width: 640px;
+    margin: 1rem auto 0;
+    color: #d4d4d4;
+  }
+</style>

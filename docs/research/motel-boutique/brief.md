@@ -6,7 +6,11 @@ Fuente: https://www.lasuitemotel.com/ (Squarespace, una sola página con anclas)
 | Fuente | Local |
 |---|---|
 | `/` | `sites/motel-boutique/src/pages/index.astro` |
-| `/nuestras-suites`, `/restaurante-lasuite`, `/new-page-3` | Fuera de alcance (secciones ancla `#suites`, `#servicios`, `#contacto`) |
+| `/nuestras-suites` | `src/pages/nuestras-suites.astro` (detalle por suite, tarifas, política de estadía) |
+| `/restaurante-lasuite` | `src/pages/restaurante.astro` (carta: desayunos, platos fuertes, bebidas) |
+| `/new-page-3` (contacto + galería) | `src/pages/contacto.astro` |
+
+Los slugs locales se simplificaron (`/restaurante`, `/contacto`) porque los de origen no son descriptivos.
 
 ## Secciones (orden)
 1. Header fijo: logo, nav (Inicio, Suites, Servicios, Contacto), redes. Menú móvil = isla Preact.
@@ -25,5 +29,5 @@ Fondo negro, texto blanco, acento rojo `#e8554e`, botones con borde blanco. Tít
 - Dominio: `hoteles-template.nexobite.com`.
 
 ## Diferencias conocidas
-- Sin fotos ni video de hero, sin mapa de Google ni galería.
+- Sin fotos ni video de hero, sin mapa de Google ni galería (en `/contacto` solo van los datos de contacto).
 - Sin comparación píxel a píxel contra la fuente (no hay snapshots de referencia).
