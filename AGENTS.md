@@ -34,7 +34,21 @@ Este repositorio (`monorepo-webs`) es el monorepo oficial de **Nexobite** para c
 ```text
 monorepo-webs/
 ├── AGENTS.md                       # Este documento de contexto para agentes e IA
+├── CLAUDE.md                       # Puntero a AGENTS.md para Claude Code
 ├── README.md                       # Documentación general de uso y despliegue
+├── .agents/
+│   └── skills/
+│       └── clone-website/          # Skill canónica para clonar/reconstruir sitios web en sites/<cliente>
+│           ├── SKILL.md
+│           └── references/
+│               ├── inspection-guide.md
+│               └── framer-and-motion.md
+├── .claude/
+│   └── commands/
+│       └── clone-website.md        # Comando /clone-website para Claude Code
+├── docs/
+│   ├── research/                   # Briefs de inspección y mapeo de activos por cliente
+│   └── design-references/          # Capturas de referencia y comparación visual por cliente
 ├── package.json                    # Scripts globales con Turborepo
 ├── pnpm-workspace.yaml             # Define los workspaces: sites/* y packages/*
 ├── turbo.json                      # Pipeline de tareas (dev, build, preview, check, lint)
@@ -125,7 +139,15 @@ Cuando el usuario pida crear la web de un nuevo cliente (ej. *"Crea el sitio par
 
 ---
 
-## 6. Comandos de Trabajo en el Monorepo
+## 6. Skill de Clonación de Sitios Web (`clone-website`)
+
+El monorepo cuenta con la skill canónica `.agents/skills/clone-website/SKILL.md` (y el comando `.claude/commands/clone-website.md` para `/clone-website <url>`):
+- Cuando el usuario pida clonar, replicar o hacer ingeniería inversa de una web existente para un cliente, lee y sigue `.agents/skills/clone-website/SKILL.md` junto con sus guías en `.agents/skills/clone-website/references/`.
+- Todo sitio clonado se construye dentro de `sites/<slug-cliente>/` usando Astro + Preact y guarda sus notas de investigación en `docs/research/<slug-cliente>/` y capturas en `docs/design-references/<slug-cliente>/`.
+
+---
+
+## 7. Comandos de Trabajo en el Monorepo
 
 Ejecuta siempre los comandos desde la raíz del monorepo (`/monorepo-webs`):
 
