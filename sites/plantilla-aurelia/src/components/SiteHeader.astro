@@ -85,8 +85,9 @@ const { currentPath = Astro.url.pathname, theme = "transparent" } = Astro.props;
         aria-expanded="false"
         aria-controls="mobile-nav-drawer"
       >
-        <span class="bar bar-1"></span>
-        <span class="bar bar-2"></span>
+        <span class="bar bar-top"></span>
+        <span class="bar bar-mid"></span>
+        <span class="bar bar-bot"></span>
       </button>
     </div>
   </div>
@@ -145,6 +146,7 @@ const { currentPath = Astro.url.pathname, theme = "transparent" } = Astro.props;
 
   function openMenu() {
     drawer?.classList.add("is-open");
+    toggleBtn?.classList.add("is-active");
     toggleBtn?.setAttribute("aria-expanded", "true");
     drawer?.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
@@ -152,6 +154,7 @@ const { currentPath = Astro.url.pathname, theme = "transparent" } = Astro.props;
 
   function closeMenu() {
     drawer?.classList.remove("is-open");
+    toggleBtn?.classList.remove("is-active");
     toggleBtn?.setAttribute("aria-expanded", "false");
     drawer?.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
@@ -229,6 +232,7 @@ const { currentPath = Astro.url.pathname, theme = "transparent" } = Astro.props;
     color: rgba(255, 255, 255, 0.85);
     position: relative;
     padding-bottom: 0.25rem;
+    display: inline-block;
   }
 
   .nav-link:hover,
@@ -236,14 +240,23 @@ const { currentPath = Astro.url.pathname, theme = "transparent" } = Astro.props;
     color: #ffffff;
   }
 
-  .nav-link.is-active::after {
+  .nav-link::after {
     content: "";
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
+    right: 0;
     height: 1px;
-    background-color: var(--color-accent);
+    background-color: #ffffff;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .nav-link:hover::after,
+  .nav-link.is-active::after {
+    transform: scaleX(1);
+    transform-origin: left center;
   }
 
   /* Desktop Meta Info */
@@ -283,18 +296,19 @@ const { currentPath = Astro.url.pathname, theme = "transparent" } = Astro.props;
     stroke: var(--color-accent);
   }
 
-  /* Hamburger */
+  /* Hamburger animado 1:1 Framer */
   .hamburger-btn {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 6px;
     width: 44px;
     height: 44px;
     background: transparent;
     border: none;
     color: #ffffff;
+    position: relative;
+    cursor: pointer;
   }
 
   @media (min-width: 900px) {
@@ -304,10 +318,38 @@ const { currentPath = Astro.url.pathname, theme = "transparent" } = Astro.props;
   }
 
   .hamburger-btn .bar {
-    width: 24px;
-    height: 2px;
+    width: 22px;
+    height: 1.5px;
     background-color: #ffffff;
-    transition: transform var(--transition-fast);
+    border-radius: 4px;
+    position: absolute;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.25s ease;
+  }
+
+  .hamburger-btn .bar-top {
+    transform: translateY(-5px);
+  }
+
+  .hamburger-btn .bar-mid {
+    transform: translateY(0);
+  }
+
+  .hamburger-btn .bar-bot {
+    transform: translateY(5px);
+  }
+
+  .hamburger-btn.is-active .bar-top {
+    transform: translateY(0) rotate(45deg);
+  }
+
+  .hamburger-btn.is-active .bar-mid {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  .hamburger-btn.is-active .bar-bot {
+    transform: translateY(0) rotate(-45deg);
   }
 
   /* Mobile Drawer */
@@ -315,12 +357,21 @@ const { currentPath = Astro.url.pathname, theme = "transparent" } = Astro.props;
     position: fixed;
     inset: 0;
     z-index: 100;
+    display: none;
     visibility: hidden;
+    overflow: hidden;
     transition: visibility var(--transition-normal);
   }
 
   .mobile-drawer.is-open {
+    display: block;
     visibility: visible;
+  }
+
+  @media (min-width: 900px) {
+    .mobile-drawer {
+      display: none !important;
+    }
   }
 
   .mobile-drawer-backdrop {

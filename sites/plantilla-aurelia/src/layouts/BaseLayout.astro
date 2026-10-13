@@ -50,20 +50,30 @@ const {
     <slot />
 
     <script>
-      // Scroll reveal script with IntersectionObserver
+      // Activar clase js-ready para permitir animaciones de entrada progresivas
+      document.documentElement.classList.add("js-ready");
+
+      // Scroll reveal script con IntersectionObserver
       const observer = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
             if (entry.isIntersecting) {
               entry.target.classList.add("is-revealed");
+              observer.unobserve(entry.target);
             }
           }
         },
-        { rootMargin: "0px 0px -40px 0px", threshold: 0.1 }
+        { rootMargin: "0px 0px -40px 0px", threshold: 0.08 }
       );
 
       document.querySelectorAll(".reveal").forEach((el) => {
-        observer.observe(el);
+        const rect = el.getBoundingClientRect();
+        // Si el elemento ya está dentro de la ventana inicial, revelarlo de inmediato
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add("is-revealed");
+        } else {
+          observer.observe(el);
+        }
       });
     </script>
   </body>

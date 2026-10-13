@@ -1,7 +1,5 @@
 ---
 import { reviews } from "@/data/content";
-
-const currentReview = reviews[0];
 ---
 
 <section class="section-testimonial-hero">
@@ -17,29 +15,80 @@ const currentReview = reviews[0];
   </div>
 
   <div class="container testimonial-inner reveal">
-    <blockquote class="testimonial-quote">
-      “{currentReview.quote}”
-    </blockquote>
-
-    <div class="testimonial-stars" aria-label="5 out of 5 stars">
-      <span class="star">&#9733;</span>
-      <span class="star">&#9733;</span>
-      <span class="star">&#9733;</span>
-      <span class="star">&#9733;</span>
-      <span class="star">&#9733;</span>
+    <div class="testimonial-slides" id="testimonial-slides">
+      {
+        reviews.map((rev, idx) => (
+          <div
+            class={`testimonial-slide ${idx === 0 ? "active" : ""}`}
+            data-slide-index={idx}
+          >
+            <blockquote class="testimonial-quote">“{rev.quote}”</blockquote>
+            <div class="testimonial-stars" aria-label="5 out of 5 stars">
+              <span class="star">&#9733;</span>
+              <span class="star">&#9733;</span>
+              <span class="star">&#9733;</span>
+              <span class="star">&#9733;</span>
+              <span class="star">&#9733;</span>
+            </div>
+            <div class="testimonial-author">
+              {rev.author} – {rev.source}
+            </div>
+          </div>
+        ))
+      }
     </div>
 
-    <div class="testimonial-author">
-      {currentReview.author} – {currentReview.source}
-    </div>
-
-    <div class="testimonial-dots" aria-hidden="true">
-      <span class="dot"></span>
-      <span class="dot active"></span>
-      <span class="dot"></span>
+    <div class="testimonial-dots" role="tablist" aria-label="Testimonial slides">
+      {
+        reviews.map((_, idx) => (
+          <button
+            type="button"
+            class={`dot ${idx === 0 ? "active" : ""}`}
+            data-dot-index={idx}
+            aria-label={`Go to slide ${idx + 1}`}
+          />
+        ))
+      }
     </div>
   </div>
 </section>
+
+<script>
+  const slides = document.querySelectorAll(".testimonial-slide");
+  const dots = document.querySelectorAll(".testimonial-dots .dot");
+  let currentIdx = 0;
+  let timer: ReturnType<typeof setInterval> | null = null;
+
+  function setSlide(idx: number) {
+    currentIdx = idx;
+    slides.forEach((s, i) => {
+      s.classList.toggle("active", i === idx);
+    });
+    dots.forEach((d, i) => {
+      d.classList.toggle("active", i === idx);
+    });
+  }
+
+  dots.forEach((dot, idx) => {
+    dot.addEventListener("click", () => {
+      setSlide(idx);
+      resetAuto();
+    });
+  });
+
+  function startAuto() {
+    timer = setInterval(() => {
+      setSlide((currentIdx + 1) % slides.length);
+    }, 6000);
+  }
+
+  function resetAuto() {
+    if (timer) clearInterval(timer);
+    startAuto();
+  }
+
+  startAuto();
+</script>
 
 <style>
   .section-testimonial-hero {
@@ -81,6 +130,32 @@ const currentReview = reviews[0];
     margin-right: auto;
   }
 
+  .testimonial-slides {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+  }
+
+  .testimonial-slide {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px) scale(0.98);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      visibility 0.6s ease;
+    pointer-events: none;
+  }
+
+  .testimonial-slide.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
   .testimonial-quote {
     font-family: var(--font-display);
     font-size: clamp(1.6rem, 3.2vw, 2.75rem);
@@ -117,15 +192,24 @@ const currentReview = reviews[0];
   }
 
   .dot {
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
+    padding: 0;
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, 0.5);
     background: transparent;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .dot:hover {
+    border-color: #ffffff;
+    transform: scale(1.2);
   }
 
   .dot.active {
     background-color: #ffffff;
     border-color: #ffffff;
+    transform: scale(1.25);
   }
 </style>

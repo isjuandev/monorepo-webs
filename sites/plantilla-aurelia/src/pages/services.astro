@@ -19,7 +19,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
       <img
         src="/images/aEzPtSmyulvvzrKdrPYZwF9X5R8.png"
         alt="Aurelia Resort entrance and hospitality"
-        class="services-hero-img"
+        class="services-hero-img animate-ken-burns"
         width="1920"
         height="1080"
         fetchpriority="high"
@@ -30,13 +30,13 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     <SiteHeader currentPath="/services" theme="transparent" />
 
     <div class="container services-hero-inner">
-      <div class="services-hero-text reveal">
-        <span class="hero-badge">&#9734; WELCOME TO AURELIA &#9734;</span>
-        <h1 class="heading-display services-hero-title">
+      <div class="services-hero-text">
+        <span class="hero-badge animate-badge">&#9734; WELCOME TO AURELIA &#9734;</span>
+        <h1 class="heading-display services-hero-title animate-title">
           Where Luxury <br />
           Feels Natural
         </h1>
-        <p class="services-hero-subtitle">
+        <p class="services-hero-subtitle animate-sub">
           Nestled along the breathtaking coastline of Ibiza, Aurelia Resort offers a
           refined escape where contemporary elegance, exceptional hospitality and the
           beauty of nature come together to create unforgettable moments.
@@ -153,12 +153,14 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     justify-content: space-between;
     color: #ffffff;
     padding-bottom: 4rem;
+    overflow: hidden;
   }
 
   .services-hero-bg {
     position: absolute;
     inset: 0;
     z-index: 0;
+    overflow: hidden;
   }
 
   .services-hero-img {

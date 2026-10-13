@@ -51,7 +51,7 @@ const {
     font-size: 0.875rem;
     font-weight: 600;
     letter-spacing: 0.05em;
-    transition: opacity var(--transition-fast), gap var(--transition-fast);
+    transition: opacity 0.25s ease, gap 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .cta-link:hover {
@@ -62,5 +62,11 @@ const {
   .cta-arrow {
     font-size: 1.1rem;
     line-height: 1;
+    display: inline-block;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .cta-link:hover .cta-arrow {
+    transform: translateX(4px);
   }
 </style>
