@@ -7,8 +7,8 @@ import { SUITES } from "@/data/content";
     <h2 class="section-title">Las suites</h2>
     <div class="suites__grid">
       {
-        SUITES.map((suite) => (
-          <article class="suite">
+        SUITES.map((suite, index) => (
+          <article class="suite" data-reveal style={`--reveal-delay: ${index * 90}ms`}>
             <h3>{suite.name}</h3>
             <div class="suite__img" style={`background: ${suite.tone}`} role="img" aria-label={`Imagen de ${suite.name}`} />
             <p class="suite__price">{suite.price}</p>
