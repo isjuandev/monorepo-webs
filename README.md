@@ -38,9 +38,10 @@ monorepo-webs/
 │       ├── visual-qa/              # Pruebas visuales/funcionales con Playwright
 │       ├── review-monorepo/        # Auditoría de PR, aislamiento e impacto en paquetes
 │       ├── seo-audit/              # Auditoría de SEO técnico, canonicals, OG, sitemap y robots.txt
-│       └── deploy-client/          # Preparación y validación de despliegue en VPS/Docker
+│       ├── deploy-client/          # Preparación y validación de despliegue en VPS/Docker
+│       └── codebase-context/       # Contexto del repo desde el grafo de codebase-memory (ahorra tokens)
 ├── .claude/
-│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, /seo-audit, /deploy-client)
+│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, /seo-audit, /deploy-client, /codebase-context)
 ├── docs/
 │   ├── governance.md               # Protección de main y reglas para packages/, _template y docker/
 │   ├── deploy-coolify.md           # Flujo local → GitHub → Coolify (una app por cliente)
@@ -189,6 +190,7 @@ En CI (`ci.yml`) la suite se ejecuta sobre `_template`.
 | **`review-monorepo`** | [`.agents/skills/review-monorepo/SKILL.md`](./.agents/skills/review-monorepo/SKILL.md) | `/review-monorepo` | Auditar aislamiento entre clientes, impacto en paquetes compartidos, lint, tipos y build |
 | **`seo-audit`** | [`.agents/skills/seo-audit/SKILL.md`](./.agents/skills/seo-audit/SKILL.md) | `/seo-audit <cliente>` | Auditar SEO técnico, canonicals, OpenGraph, jerarquía de encabezados, sitemap y `robots.txt` |
 | **`deploy-client`** | [`.agents/skills/deploy-client/SKILL.md`](./.agents/skills/deploy-client/SKILL.md) | `/deploy-client <cliente>` | Validar poda con `turbo prune` y preparar ficha de despliegue para VPS (Coolify/Dokploy/Docker) |
+| **`codebase-context`** | [`.agents/skills/codebase-context/SKILL.md`](./.agents/skills/codebase-context/SKILL.md) | `/codebase-context [pregunta]` | Cargar contexto del repo desde el grafo de codebase-memory (indexa solo si hace falta) y ahorrar tokens |
 
 ---
 

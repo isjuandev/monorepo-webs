@@ -66,9 +66,10 @@ monorepo-webs/
 │       ├── visual-qa/              # Validación visual/funcional desktop y mobile con Playwright
 │       ├── review-monorepo/        # Auditoría de PR, aislamiento e impacto en paquetes
 │       ├── seo-audit/              # Auditoría de SEO técnico, canonicals, OG, sitemap y robots.txt
-│       └── deploy-client/          # Preparación y validación de despliegue en VPS/Docker
+│       ├── deploy-client/          # Preparación y validación de despliegue en VPS/Docker
+│       └── codebase-context/       # Contexto del repo desde el grafo de codebase-memory (ahorra tokens)
 ├── .claude/
-│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, /seo-audit, /deploy-client)
+│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, /seo-audit, /deploy-client, /codebase-context)
 ├── docs/
 │   ├── governance.md               # Reglas de protección de main y cambios en núcleo compartido
 │   ├── deploy-coolify.md           # Flujo local → GitHub → Coolify (una app por cliente)
@@ -234,6 +235,7 @@ Antes de ejecutar tareas especializadas, lee la skill correspondiente:
 - **`review-monorepo`** ([`.agents/skills/review-monorepo/SKILL.md`](./.agents/skills/review-monorepo/SKILL.md)): Auditar ramas antes de un PR verificando aislamiento entre clientes, impacto en paquetes compartidos, linting, tipos y build.
 - **`seo-audit`** ([`.agents/skills/seo-audit/SKILL.md`](./.agents/skills/seo-audit/SKILL.md)): Auditar SEO técnico, canonicals, OpenGraph, jerarquía de encabezados, `robots.txt` y `sitemap-index.xml`.
 - **`deploy-client`** ([`.agents/skills/deploy-client/SKILL.md`](./.agents/skills/deploy-client/SKILL.md)): Validar la poda con `turbo prune` y preparar la ficha de despliegue para VPS (Coolify / Dokploy / Docker + Nginx) sin ejecutar despliegues no autorizados.
+- **`codebase-context`** ([`.agents/skills/codebase-context/SKILL.md`](./.agents/skills/codebase-context/SKILL.md)): Obtener contexto del repo desde el grafo de `codebase-memory-mcp` (índice, arquitectura, símbolos y relaciones) en vez de releer archivos. **Úsala al iniciar una sesión y antes de explorar código.**
 
 ---
 
