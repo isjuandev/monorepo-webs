@@ -1,0 +1,406 @@
+---
+import BrandMark from "@/components/BrandMark.astro";
+import ClosingCta from "@/components/ClosingCta.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import FeatureGrid from "@/components/sections/FeatureGrid.astro";
+import HomeHero from "@/components/sections/HomeHero.astro";
+import StaggeredGallery from "@/components/sections/StaggeredGallery.astro";
+import { siteConfig } from "@/config/site";
+import { IMAGES, PLACES } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const designPoints = ["Materiales locales", "Espacios abiertos", "Detalles originales"];
+
+const ourWay = [
+  {
+    title: "Bienvenida personal",
+    text: "Te recibimos sin formularios eternos ni esperas en recepción.",
+  },
+  { title: "Sin horarios", text: "Cada día se organiza a tu medida, sin agendas fijas." },
+  {
+    title: "Consejo local",
+    text: "Recomendaciones de rutas, mesas y rincones que no salen en guías.",
+  },
+  { title: "Atención discreta", text: "Estamos cerca cuando nos necesitas y lejos cuando no." },
+  {
+    title: "Pequeños gestos",
+    text: "Detalles pensados en cada habitación para que todo sea fácil.",
+  },
+  {
+    title: "Siempre disponibles",
+    text: "Un equipo atento para reservas, planes o peticiones especiales.",
+  },
+];
+
+const sustainability = [
+  "Trabajamos con artesanos y proveedores locales",
+  "Cocinamos con producto de temporada",
+  "Ahorramos agua y energía",
+  "Reducimos los plásticos de un solo uso",
+  "Plantamos especies nativas",
+];
+---
+
+<BaseLayout
+  title={`El retiro | ${siteConfig.name}`}
+  description="La historia, el diseño y la forma de recibir de nuestra casa."
+>
+  <HomeHero
+    image={IMAGES.garden}
+    label="Vida en el campo"
+    title="Nuestra casa"
+    sideLeft="Cerca de la montaña"
+    sideRight="Cerca del mar"
+    intro="Una casa antigua recuperada con respeto por su historia y su paisaje."
+  />
+
+  <section class="section story">
+    <div class="container">
+      <SectionHeading title="La historia" />
+      <div class="story__mark" data-reveal>
+        <BrandMark />
+      </div>
+    </div>
+  </section>
+
+  <StaggeredGallery
+    images={[IMAGES.interior, IMAGES.detail]}
+    captions={[
+      "La casa original lleva generaciones en estas colinas, rodeada de bancales, árboles frutales y caminos de piedra.",
+      "Hoy es un refugio tranquilo que conserva sus muros, sus materiales y su relación directa con el entorno.",
+    ]}
+  />
+
+  <section class="section design">
+    <div class="container">
+      <SectionHeading
+        label="Diseño y arquitectura"
+        title="Hecha para el lugar"
+        text="La reforma mantiene el carácter de la casa y suma espacios luminosos, materiales honestos y una conexión constante con el exterior."
+      />
+      <ul class="design__points" data-reveal>
+        {designPoints.map((point) => <li class="t-lead">{point}</li>)}
+      </ul>
+      <div class="design__images">
+        <div class="media design__img design__img--a" data-reveal>
+          <img src={IMAGES.landscape} alt="" loading="lazy" />
+        </div>
+        <div class="media design__img design__img--b" data-reveal style="--reveal-delay: 0.1s">
+          <img src={IMAGES.interior} alt="" loading="lazy" />
+        </div>
+        <div class="media design__img design__img--c" data-reveal style="--reveal-delay: 0.2s">
+          <img src={IMAGES.detail} alt="" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <FeatureGrid title="Nuestra forma" items={ourWay} />
+
+  <section class="setting">
+    <div class="setting__block setting__block--left">
+      <div class="setting__text">
+        <SectionHeading
+          align="left"
+          label="Sostenibilidad"
+          title="Cuidar la tierra"
+          text="Tomamos decisiones responsables en todo el retiro, entre ellas:"
+        />
+        <ul class="setting__list" data-reveal>
+          {
+            sustainability.map((item) => (
+              <li class="t-lead">
+                <svg viewBox="0 0 12 12" aria-hidden="true">
+                  <path d="m2 6.5 2.5 2.5L10 3.5" fill="none" stroke="currentColor" />
+                </svg>
+                {item}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="media setting__img setting__img--left">
+        <img src={IMAGES.garden} alt="" loading="lazy" />
+      </div>
+    </div>
+    <div class="setting__block setting__block--right">
+      <div class="media setting__img setting__img--right">
+        <img src={IMAGES.landscape} alt="" loading="lazy" />
+      </div>
+      <div class="setting__text setting__text--right">
+        <SectionHeading
+          align="left"
+          label="El entorno"
+          title="Cerca del pueblo"
+          text="La casa está rodeada de naturaleza, con el pueblo, los senderos y la costa a pocos minutos."
+        />
+        <img src={IMAGES.map} alt="Mapa de ubicación" class="setting__map" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section places">
+    <div class="container">
+      <SectionHeading label="Alrededores" title="Explorar desde aquí" />
+      <ul class="places__list">
+        {
+          PLACES.map((place) => (
+            <li class="places__item" data-reveal>
+              <div class="media places__img">
+                <img src={place.image} alt="" loading="lazy" />
+              </div>
+              <p class="t-display places__name">{place.name}</p>
+              <div class="places__info">
+                <p class="t-body">{place.text}</p>
+                <LinkButton href="maps">Abrir en mapas</LinkButton>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="places__footer" data-reveal>
+        <p class="t-lead">
+          Pueblos de montaña, mercados, calas y rincones con historia a un corto trayecto de la casa.
+        </p>
+        <LinkButton href="maps">Explorar la zona</LinkButton>
+      </div>
+    </div>
+  </section>
+
+  <ClosingCta />
+</BaseLayout>
+
+<style>
+  .story {
+    padding-bottom: 0;
+  }
+
+  .story__mark {
+    display: flex;
+    justify-content: center;
+    margin-top: 120px;
+    color: var(--color-text);
+  }
+
+  .design {
+    padding-bottom: 0;
+  }
+
+  .design__points {
+    display: flex;
+    justify-content: center;
+    margin-top: 120px;
+  }
+
+  .design__points li {
+    padding: 0 40px;
+  }
+
+  .design__points li + li {
+    border-left: 1px solid var(--color-line-dark);
+  }
+
+  .design__images {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 16px;
+    margin-top: 40px;
+  }
+
+  .design__img--a {
+    aspect-ratio: 4 / 3;
+  }
+
+  .design__img--b {
+    aspect-ratio: 3 / 4;
+  }
+
+  .design__img--c {
+    aspect-ratio: 1 / 1;
+  }
+
+  .setting {
+    padding-top: 120px;
+  }
+
+  .setting__block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .setting__text {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 120px var(--gutter) 120px 148px;
+  }
+
+  .setting__text--right {
+    padding: 120px var(--gutter) 120px 124px;
+  }
+
+  .setting__list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .setting__list li {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .setting__list svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+
+  .setting__img--left {
+    grid-column: 1;
+    grid-row: 2;
+    aspect-ratio: 720 / 1171;
+  }
+
+  .setting__block--left .setting__text {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .setting__block--left {
+    grid-template-rows: auto auto;
+  }
+
+  .setting__block--right {
+    margin-top: -1080px;
+    pointer-events: none;
+  }
+
+  .setting__block--right > * {
+    pointer-events: auto;
+  }
+
+  .setting__img--right {
+    grid-column: 2;
+    width: calc(100% - 120px);
+    margin-left: 120px;
+    aspect-ratio: 600 / 960;
+  }
+
+  .setting__block--right .setting__text {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .setting__map {
+    width: 360px;
+    max-width: 100%;
+    margin-top: 56px;
+  }
+
+  .places__list {
+    margin-top: 80px;
+    border-top: 1px solid var(--color-line-dark);
+  }
+
+  .places__item {
+    display: grid;
+    grid-template-columns: 171px 1fr 280px;
+    align-items: start;
+    gap: 40px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--color-line-dark);
+  }
+
+  .places__img {
+    aspect-ratio: 4 / 3;
+  }
+
+  .places__info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-left: 52px;
+  }
+
+  .places__footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    max-width: 480px;
+    margin: 120px auto 0;
+    text-align: center;
+  }
+
+  @media (max-width: 1199px) {
+    .setting__block,
+    .setting__block--right {
+      grid-template-columns: 1fr;
+      margin-top: 0;
+    }
+
+    .setting__img--left,
+    .setting__img--right {
+      grid-column: 1;
+      grid-row: auto;
+      width: 100%;
+      margin-left: 0;
+      aspect-ratio: 4 / 3;
+    }
+
+    .setting__block--right .setting__text,
+    .setting__block--left .setting__text {
+      grid-column: 1;
+      grid-row: auto;
+    }
+
+    .setting__text,
+    .setting__text--right {
+      padding: 80px var(--gutter);
+    }
+
+    .places__item {
+      grid-template-columns: 120px 1fr;
+    }
+
+    .places__info {
+      grid-column: 2;
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .design__points {
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 56px;
+    }
+
+    .design__points li + li {
+      border-left: 0;
+    }
+
+    .design__images {
+      grid-template-columns: 1fr;
+    }
+
+    .places__item {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .places__img {
+      width: 120px;
+    }
+
+    .places__info {
+      grid-column: 1;
+    }
+  }
+</style>

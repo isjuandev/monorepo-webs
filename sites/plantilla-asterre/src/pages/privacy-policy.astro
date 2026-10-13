@@ -1,0 +1,57 @@
+---
+import LegalContent from "@/components/sections/LegalContent.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import { siteConfig } from "@/config/site";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+// Texto de ejemplo: debe revisarlo el asesor legal del cliente antes de publicar.
+const sections = [
+  {
+    title: "Datos que recopilamos",
+    paragraphs: ["Podemos tratar los datos que nos facilitas al contactarnos o reservar, como:"],
+    list: [
+      "Nombre, correo electrónico y teléfono",
+      "Fechas de estancia y preferencias",
+      "Mensajes enviados a través del formulario",
+      "Datos técnicos básicos de navegación",
+    ],
+  },
+  {
+    title: "Para qué los usamos",
+    paragraphs: [
+      "Usamos tus datos para responder consultas, gestionar reservas, mejorar el sitio web y, si lo autorizas, enviarte información relevante sobre tu estancia.",
+    ],
+  },
+  {
+    title: "Con quién los compartimos",
+    paragraphs: [
+      "Solo compartimos datos con proveedores necesarios para prestar el servicio (por ejemplo, motor de reservas o alojamiento web) y cuando la ley lo exige.",
+    ],
+  },
+  {
+    title: "Conservación",
+    paragraphs: [
+      "Conservamos los datos durante el tiempo necesario para la finalidad indicada y los plazos legales aplicables.",
+    ],
+  },
+  {
+    title: "Tus derechos",
+    paragraphs: [
+      `Puedes solicitar acceso, rectificación o eliminación de tus datos escribiendo a ${siteConfig.contact.email ?? "nuestro correo de contacto"}.`,
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title={`Política de privacidad | ${siteConfig.name}`}
+  description={`Cómo ${siteConfig.name} recopila, usa y protege tus datos personales.`}
+  headerTone="dark"
+>
+  <PageHero label="Cómo usamos tus datos" title="Privacidad" />
+  <LegalContent
+    updated="enero de 2026"
+    intro={`${siteConfig.name} respeta tu privacidad. Esta política explica qué información recopilamos, cómo la usamos y qué opciones tienes al visitar el sitio, enviar una consulta o reservar.`}
+    sections={sections}
+  />
+</BaseLayout>

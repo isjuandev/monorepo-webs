@@ -1,0 +1,54 @@
+---
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import { siteConfig } from "@/config/site";
+import SEO from "@repo/ui/astro/SEO.astro";
+import "@/styles/global.css";
+
+export interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  /** Color del header sobre el hero: "light" para heroes oscuros, "dark" para heroes claros */
+  headerTone?: "light" | "dark";
+}
+
+const {
+  title = siteConfig.title,
+  description = siteConfig.description,
+  ogImage = siteConfig.ogImage,
+  noindex = false,
+  headerTone = "light",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <SEO
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      locale={siteConfig.locale}
+      siteName={siteConfig.name}
+      noindex={noindex}
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preload" href="/fonts/forum-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/almarai-400.woff2" as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#e8e0d1" />
+  </head>
+  <body>
+    <a href="#contenido" class="skip-link">Saltar al contenido</a>
+    <SiteHeader tone={headerTone} />
+    <main id="contenido">
+      <slot />
+    </main>
+    <SiteFooter />
+    <script>
+      import "@/scripts/motion";
+    </script>
+  </body>
+</html>

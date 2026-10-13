@@ -1,0 +1,102 @@
+---
+import ClosingCta from "@/components/ClosingCta.astro";
+import RoomMeta from "@/components/RoomMeta.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import { siteConfig } from "@/config/site";
+import { ROOMS } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title={`Habitaciones y suites | ${siteConfig.name}`}
+  description="Habitaciones y suites con materiales naturales, luz abundante y vistas abiertas."
+  headerTone="dark"
+>
+  <PageHero
+    label="Habitaciones y suites"
+    title="Elige tu rincón"
+    sideLeft={`${ROOMS.length} habitaciones`}
+    sideRight="Abierto todo el año"
+  />
+
+  <section class="rooms-grid">
+    <div class="container">
+      <ul class="rooms-grid__list">
+        {
+          ROOMS.map((room, i) => (
+            <li data-reveal style={`--reveal-delay: ${(i % 2) * 0.1}s`}>
+              <a href={`/rooms/${room.slug}`} class="room-card">
+                <div class="media room-card__media">
+                  <img src={room.image} alt={room.name} loading={i < 2 ? "eager" : "lazy"} />
+                </div>
+                <div class="room-card__body">
+                  <h2 class="t-h3">{room.name}</h2>
+                  <RoomMeta room={room} />
+                  <p class="t-lead room-card__price">Desde ${room.price}/noche</p>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <ClosingCta />
+</BaseLayout>
+
+<style>
+  .rooms-grid {
+    padding-bottom: 240px;
+  }
+
+  .rooms-grid__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 64px 16px;
+  }
+
+  .room-card {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .room-card__media {
+    aspect-ratio: 680 / 510;
+  }
+
+  .room-card__media img {
+    transition: transform 1.2s var(--ease-out);
+  }
+
+  .room-card:hover .room-card__media img {
+    transform: scale(1.04);
+  }
+
+  .room-card__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .room-card__price {
+    margin-top: 12px;
+  }
+
+  @media (max-width: 809px) {
+    .rooms-grid {
+      padding-bottom: 120px;
+    }
+
+    .rooms-grid__list {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .room-card {
+      gap: 24px;
+    }
+  }
+</style>

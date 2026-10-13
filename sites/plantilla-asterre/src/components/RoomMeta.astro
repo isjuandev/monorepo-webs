@@ -1,0 +1,41 @@
+---
+import type { Room } from "@/data/content";
+
+export interface Props {
+  room: Pick<Room, "guests" | "size" | "view">;
+  showView?: boolean;
+}
+
+const { room, showView = true } = Astro.props;
+---
+
+<span class="room-meta t-body">
+  <span>{room.guests} huéspedes</span>
+  <i aria-hidden="true"></i>
+  <span>{room.size} m²</span>
+  {
+    showView && (
+      <>
+        <i aria-hidden="true" />
+        <span>{room.view}</span>
+      </>
+    )
+  }
+</span>
+
+<style>
+  .room-meta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .room-meta i {
+    display: inline-block;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+</style>

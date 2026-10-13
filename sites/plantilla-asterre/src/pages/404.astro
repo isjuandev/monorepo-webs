@@ -1,0 +1,29 @@
+---
+import LinkButton from "@/components/LinkButton.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Página no encontrada" noindex headerTone="dark">
+  <PageHero label="Error 404" title="Camino perdido" />
+  <section class="not-found">
+    <div class="container not-found__inner">
+      <p class="t-lead">La página que buscas no existe o fue movida.</p>
+      <LinkButton href="/" variant="primary" tone="dark">Volver al inicio</LinkButton>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    padding-bottom: 240px;
+  }
+
+  .not-found__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    text-align: center;
+  }
+</style>

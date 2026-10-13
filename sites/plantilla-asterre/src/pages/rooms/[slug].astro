@@ -1,0 +1,251 @@
+---
+import ClosingCta from "@/components/ClosingCta.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import FeatureGrid from "@/components/sections/FeatureGrid.astro";
+import ImageStatement from "@/components/sections/ImageStatement.astro";
+import InfoGrid from "@/components/sections/InfoGrid.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import RoomsSlider from "@/components/sections/RoomsSlider.astro";
+import { siteConfig } from "@/config/site";
+import { IMAGES, ROOMS, type Room, STAY_INFO } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { GetStaticPaths } from "astro";
+
+export const getStaticPaths = (() =>
+  ROOMS.map((room) => ({ params: { slug: room.slug }, props: { room } }))) satisfies GetStaticPaths;
+
+export interface Props {
+  room: Room;
+}
+
+const { room } = Astro.props;
+const [hero, galleryWide, galleryTall, detailInset] = room.gallery;
+const otherRooms = ROOMS.filter((item) => item.slug !== room.slug);
+---
+
+<BaseLayout title={`${room.name} | ${siteConfig.name}`} description={room.tagline}>
+  <PageHero
+    tone="brown"
+    label={`Habitación Nº ${room.number}`}
+    title={room.name}
+    sideLeft={room.view}
+    sideRight={room.bed}
+    text={room.tagline}
+    bottomLeft={`${room.guests} huéspedes · ${room.size} m²`}
+    bottomRight={`Desde $${room.price}/noche`}
+  />
+
+  <ImageStatement image={hero} overlay={false} />
+
+  <section class="section overview">
+    <div class="container overview__inner">
+      <p class="t-big overview__text" data-reveal>{room.overview}</p>
+      <div data-reveal>
+        <LinkButton href="booking">Ver disponibilidad</LinkButton>
+      </div>
+    </div>
+  </section>
+
+  <FeatureGrid items={room.features} compact />
+
+  <section class="collage" aria-label="Galería">
+    <div class="media collage__tall" data-speed="0.1">
+      <img src={galleryTall} alt="" loading="lazy" />
+    </div>
+    <div class="media collage__wide" data-reveal>
+      <img src={galleryWide} alt="" loading="lazy" />
+    </div>
+  </section>
+
+  <section class="details">
+    <div class="details__media">
+      <div class="media details__main">
+        <img src={IMAGES.garden} alt="" loading="lazy" />
+      </div>
+      <div class="media details__inset" data-speed="0.08">
+        <img src={detailInset} alt="" loading="lazy" />
+      </div>
+    </div>
+    <div class="details__content">
+      <SectionHeading
+        align="left"
+        label="Los detalles"
+        title="Todo sobre la habitación"
+        text="Una mirada cercana a los espacios, materiales y comodidades preparados para tu llegada."
+      />
+      <div class="details__groups">
+        {
+          room.details.map((group) => (
+            <div class="details__group" data-reveal>
+              <p class="t-label t-muted">{group.label}</p>
+              <ul>
+                {group.items.map((item) => (
+                  <li class="t-body">{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <InfoGrid label="Antes de llegar" title="Información útil" items={STAY_INFO} />
+
+  <ImageStatement image={IMAGES.landscape} overlay={false} />
+
+  <RoomsSlider rooms={otherRooms} title="Ver más" tone="brown" />
+
+  <ClosingCta />
+</BaseLayout>
+
+<style>
+  .overview {
+    padding-bottom: 80px;
+  }
+
+  .overview__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    text-align: center;
+  }
+
+  .overview__text {
+    max-width: 880px;
+  }
+
+  .collage {
+    position: relative;
+    height: 1320px;
+    padding: 160px 0;
+  }
+
+  .collage__wide {
+    position: absolute;
+    right: 0;
+    top: 360px;
+    width: 66.67%;
+    aspect-ratio: 4 / 3;
+  }
+
+  .collage__tall {
+    position: absolute;
+    left: 10.3%;
+    top: 160px;
+    z-index: 1;
+    width: 448px;
+    aspect-ratio: 3 / 4;
+  }
+
+  .details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 1096px;
+  }
+
+  .details__media {
+    position: relative;
+  }
+
+  .details__main {
+    width: 100%;
+    height: 100%;
+  }
+
+  .details__inset {
+    position: absolute;
+    right: -224px;
+    top: 450px;
+    width: 448px;
+    aspect-ratio: 4 / 3;
+  }
+
+  .details__content {
+    display: flex;
+    flex-direction: column;
+    gap: 120px;
+    padding: 120px var(--gutter) 120px 124px;
+  }
+
+  .details__groups {
+    display: grid;
+    grid-template-columns: repeat(2, 216px);
+    gap: 48px 16px;
+    margin-left: 116px;
+  }
+
+  .details__group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  @media (max-width: 1199px) {
+    .collage {
+      height: auto;
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 16px;
+      padding: 120px var(--gutter);
+    }
+
+    .collage__wide,
+    .collage__tall {
+      position: static;
+      width: auto;
+    }
+
+    .collage__tall {
+      margin-bottom: 160px;
+    }
+
+    .collage__wide {
+      align-self: end;
+    }
+
+    .details__inset {
+      display: none;
+    }
+
+    .details__content {
+      padding: 120px var(--gutter);
+    }
+
+    .details__groups {
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .collage {
+      grid-template-columns: 1fr;
+      padding: 80px var(--gutter);
+    }
+
+    .collage__tall {
+      margin-bottom: 0;
+      width: 70%;
+    }
+
+    .details {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+
+    .details__main {
+      aspect-ratio: 4 / 5;
+    }
+
+    .details__content {
+      gap: 56px;
+      padding: 80px var(--gutter);
+    }
+
+    .details__groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

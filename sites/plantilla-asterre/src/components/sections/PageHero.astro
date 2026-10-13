@@ -1,0 +1,210 @@
+---
+import SplitText from "@/components/SplitText.astro";
+
+export interface Props {
+  title: string;
+  label?: string;
+  sideLeft?: string;
+  sideRight?: string;
+  tone?: "cream" | "brown";
+  /** Imagen pequeña intercalada en el título (antes de la última palabra) */
+  inlineImage?: string;
+  /** Texto centrado bajo el título */
+  text?: string;
+  /** Fila inferior: izquierda y derecha (p. ej. metadatos y precio) */
+  bottomLeft?: string;
+  bottomRight?: string;
+}
+
+const {
+  title,
+  label,
+  sideLeft,
+  sideRight,
+  tone = "cream",
+  inlineImage,
+  text,
+  bottomLeft,
+  bottomRight,
+} = Astro.props;
+
+const words = title.split(" ");
+const lastWord = words.pop() ?? "";
+const leadingText = words.join(" ");
+const hasBottom = Boolean(text || bottomLeft || bottomRight);
+---
+
+<section class:list={["page-hero", tone === "brown" ? "bg-brown" : "tone-dark"]}>
+  <div class="container page-hero__inner">
+    <div class="page-hero__heading">
+      {label && <p class="t-label" data-reveal style="--reveal-delay: 0.4s">{label}</p>}
+      <div class="page-hero__title-row">
+        {sideLeft && <p class="t-label page-hero__side page-hero__side--left">{sideLeft}</p>}
+        {
+          inlineImage ? (
+            <h1 class="t-display page-hero__title" aria-label={title}>
+              <SplitText text={leadingText} as="span" delay={0.1} />{" "}
+              <span class="page-hero__inline-image" data-reveal style="--reveal-delay: 0.5s">
+                <img src={inlineImage} alt="" />
+              </span>{" "}
+              <SplitText text={lastWord} as="span" delay={0.3} />
+            </h1>
+          ) : (
+            <SplitText text={title} as="h1" class="t-display page-hero__title" delay={0.1} />
+          )
+        }
+        {sideRight && <p class="t-label page-hero__side page-hero__side--right">{sideRight}</p>}
+      </div>
+    </div>
+    {
+      hasBottom && (
+        <div class="page-hero__bottom" data-reveal style="--reveal-delay: 0.6s">
+          <p class="t-body page-hero__bottom-left">{bottomLeft}</p>
+          {text && <p class="t-lead page-hero__text">{text}</p>}
+          <p class="t-body page-hero__bottom-right">{bottomRight}</p>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: relative;
+  }
+
+  .page-hero__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 64px;
+    min-height: 665px;
+    padding-top: 200px;
+    padding-bottom: 32px;
+  }
+
+  .page-hero__heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    text-align: center;
+  }
+
+  .page-hero__title-row {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .page-hero__title-row :global(.page-hero__title) {
+    max-width: 680px;
+  }
+
+  .page-hero__inline-image {
+    display: inline-block;
+    width: 224px;
+    height: 126px;
+    margin: 0 4px;
+    overflow: hidden;
+    vertical-align: -6px;
+  }
+
+  .page-hero__inline-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .page-hero__side {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .page-hero__side--left {
+    left: 0;
+  }
+
+  .page-hero__side--right {
+    right: 0;
+  }
+
+  .page-hero__bottom {
+    display: grid;
+    grid-template-columns: 1fr 360px 1fr;
+    align-items: end;
+    gap: 24px;
+  }
+
+  .page-hero__text {
+    grid-column: 2;
+    text-align: center;
+  }
+
+  .page-hero__bottom-left {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .page-hero__bottom-right {
+    grid-column: 3;
+    grid-row: 1;
+    text-align: right;
+  }
+
+  @media (min-width: 1200px) {
+    .page-hero__side--left {
+      left: calc(var(--side-inset, 200px));
+    }
+
+    .page-hero__side--right {
+      right: calc(var(--side-inset, 200px));
+    }
+
+    .bg-brown .page-hero__side--left,
+    .bg-brown .page-hero__side--right {
+      --side-inset: 0px;
+    }
+  }
+
+  @media (max-width: 1199px) {
+    .page-hero__side {
+      display: none;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .page-hero__inner {
+      min-height: 0;
+      padding-top: 160px;
+      gap: 48px;
+    }
+
+    .page-hero__inline-image {
+      width: 96px;
+      height: 54px;
+      vertical-align: -2px;
+    }
+
+    .page-hero__bottom {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .page-hero__text {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+
+    .page-hero__bottom-left {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .page-hero__bottom-right {
+      grid-column: 2;
+      grid-row: 2;
+    }
+  }
+</style>

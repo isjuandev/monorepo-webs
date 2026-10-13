@@ -1,0 +1,197 @@
+---
+import ClosingCta from "@/components/ClosingCta.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import { siteConfig } from "@/config/site";
+import { EXPERIENCES, IMAGES, PRIVATE_EXPERIENCES } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title={`Experiencias | ${siteConfig.name}`}
+  description="Bienestar, gastronomía y planes para descubrir la región a tu ritmo."
+  headerTone="dark"
+>
+  <PageHero
+    title="Días a tu ritmo"
+    inlineImage={IMAGES.sea}
+    sideLeft="Descansar"
+    sideRight="Explorar"
+    text="Nadar, comer bien, descansar o salir a explorar: tú decides cómo se llena cada día."
+  />
+
+  <section class="experiences">
+    {
+      EXPERIENCES.map((exp, i) => (
+        <article
+          class:list={["exp-row", i % 2 === 1 && "exp-row--reverse"]}
+          id={exp.id}
+          aria-labelledby={`${exp.id}-title`}
+        >
+          <div class="exp-row__media">
+            <div class="media exp-row__main">
+              <img src={exp.image} alt="" loading={i === 0 ? "eager" : "lazy"} />
+            </div>
+            <div class="media exp-row__inset" data-speed="0.1">
+              <img src={exp.inset} alt="" loading="lazy" />
+            </div>
+          </div>
+          <div class="exp-row__content">
+            <div class="exp-row__text" id={`${exp.id}-title`}>
+              <SectionHeading align="left" label={exp.label} title={exp.title} text={exp.text}>
+                <LinkButton href={exp.cta.href}>{exp.cta.label}</LinkButton>
+              </SectionHeading>
+            </div>
+          </div>
+        </article>
+      ))
+    }
+  </section>
+
+  <section class="section bg-brown private">
+    <div class="container">
+      <SectionHeading label="Experiencias privadas" title="Hecho a tu medida" />
+      <ul class="private__grid">
+        {
+          PRIVATE_EXPERIENCES.map((item, i) => (
+            <li class="private__item" data-reveal style={`--reveal-delay: ${i * 0.1}s`}>
+              <div class="media private__img" style={`aspect-ratio: ${item.ratio}`}>
+                <img src={item.image} alt="" loading="lazy" />
+              </div>
+              <h3 class="t-h3">{item.title}</h3>
+              <p class="t-body">{item.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <ClosingCta />
+</BaseLayout>
+
+<style>
+  .experiences {
+    margin-top: 0;
+  }
+
+  .exp-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 1080px;
+    scroll-margin-top: 0;
+  }
+
+  .exp-row__media {
+    position: relative;
+  }
+
+  .exp-row__main {
+    position: absolute;
+    inset: 0;
+  }
+
+  .exp-row__inset {
+    position: absolute;
+    left: 33.33%;
+    top: 50%;
+    width: 240px;
+    aspect-ratio: 3 / 4;
+    margin-top: -160px;
+  }
+
+  .exp-row__content {
+    display: flex;
+    align-items: center;
+    padding: 120px var(--gutter) 120px 129px;
+  }
+
+  .exp-row--reverse .exp-row__media {
+    order: 2;
+  }
+
+  .exp-row--reverse .exp-row__content {
+    padding-left: 121px;
+  }
+
+  .exp-row__text {
+    max-width: 400px;
+  }
+
+  .private__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+    gap: 16px;
+    margin-top: 80px;
+  }
+
+  .private__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .private__img {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .private__item h3 {
+    max-width: 200px;
+  }
+
+  .private__item p {
+    max-width: 280px;
+  }
+
+  @media (max-width: 1199px) {
+    .exp-row {
+      min-height: 800px;
+    }
+
+    .exp-row__content,
+    .exp-row--reverse .exp-row__content {
+      padding: 80px var(--gutter) 80px 64px;
+    }
+
+    .private__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 48px 16px;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .exp-row {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+
+    .exp-row__media {
+      aspect-ratio: 4 / 5;
+    }
+
+    .exp-row--reverse .exp-row__media {
+      order: 0;
+    }
+
+    .exp-row__inset {
+      width: 120px;
+      margin-top: -80px;
+      left: auto;
+      right: var(--gutter);
+    }
+
+    .exp-row__content,
+    .exp-row--reverse .exp-row__content {
+      padding: 64px var(--gutter) 96px;
+    }
+
+    .private__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
