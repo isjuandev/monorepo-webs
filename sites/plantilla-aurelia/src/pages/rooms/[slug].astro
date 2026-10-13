@@ -1,5 +1,4 @@
 ---
-import BookingForm from "@/components/BookingForm.astro";
 import CtaBanner from "@/components/CtaBanner.astro";
 import FaqSection from "@/components/FaqSection.astro";
 import ReviewCards from "@/components/ReviewCards.astro";
@@ -21,44 +20,68 @@ export interface Props {
 }
 
 const { room } = Astro.props;
-const otherRooms = allRooms.filter((r) => r.slug !== room.slug).slice(0, 3);
+const otherRooms = [allRooms[5], allRooms[4], allRooms[3]];
 ---
 
 <BaseLayout
-  title={`${room.name} — Aurelia`}
+  title={`${room.name} - Aurelia`}
   description={room.summary}
   ogImage={room.image.src}
 >
-  <SiteHeader currentPath={`/rooms/${room.slug}`} theme="solid" />
+  <SiteHeader currentPath={`/rooms/${room.slug}`} theme="transparent" />
 
   <main>
     <!-- =========================================================================
-         Room Hero & Booking Bar
+         Hero de Habitación con Foto a Pantalla Completa
          ========================================================================= -->
     <section class="room-hero">
-      <div class="container room-hero-grid">
-        <div class="room-hero-intro reveal">
-          <a href="/rooms" class="back-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="m15 18-6-6 6-6"></path>
-            </svg>
-            <span>All Rooms</span>
-          </a>
-          <h1 class="heading-display room-title">{room.name}</h1>
-          <p class="room-hero-summary">{room.summary}</p>
-        </div>
+      <div class="room-hero-bg">
+        <img
+          src={room.image.src}
+          alt={room.name}
+          class="room-hero-img"
+          width="1440"
+          height="700"
+        />
+        <div class="room-hero-overlay"></div>
+      </div>
 
-        <div class="room-hero-sidebar reveal reveal-delay-1">
-          <BookingForm layout="vertical" defaultRoom={room.slug} />
-        </div>
+      <div class="container room-hero-content reveal">
+        <h1 class="room-hero-title">{room.name}</h1>
+        <p class="room-hero-summary">{room.summary}</p>
       </div>
     </section>
 
     <!-- =========================================================================
-         3-Photo Curated Gallery Grid
+         Sección About Room & Galería de 3 Fotos
          ========================================================================= -->
-    <section class="room-gallery-section">
+    <section class="room-about-section">
       <div class="container">
+        <div class="room-about-header reveal">
+          <div class="about-titles-col">
+            <h2 class="badge-overline">— ABOUT —</h2>
+            <h2 class="heading-section about-room-title">About {room.name}</h2>
+            <div class="specs-pills">
+              <div class="pill-item">
+                <img src="/icons/spec-size.svg" alt="" width="16" height="16" />
+                <span class="pill-value">{room.size}</span>
+              </div>
+              <div class="pill-item">
+                <img src="/icons/spec-bed.svg" alt="" width="16" height="16" />
+                <span class="pill-value">{room.bed}</span>
+              </div>
+              <div class="pill-item">
+                <img src="/icons/spec-guests.svg" alt="" width="16" height="16" />
+                <span class="pill-value">{room.guests}</span>
+              </div>
+            </div>
+          </div>
+          <div class="about-price-pill">
+            <span>From {room.price}</span>
+          </div>
+        </div>
+
+        <!-- Galería Curada de 3 Fotos -->
         <div class="room-gallery-grid reveal">
           <div class="gal-left-large">
             <img
@@ -84,71 +107,43 @@ const otherRooms = allRooms.filter((r) => r.slug !== room.slug).slice(0, 3);
             </div>
           </div>
         </div>
+
+        <!-- Textos Descriptivos de la Habitación -->
+        <div class="room-long-desc reveal">
+          <p>{room.description}</p>
+          {room.extendedDescription && <p>{room.extendedDescription}</p>}
+        </div>
       </div>
     </section>
 
     <!-- =========================================================================
-         About Room & Specs
+         Hotel Amenities (Cuadrícula 4x2)
          ========================================================================= -->
-    <section class="room-about-section">
-      <div class="container room-about-layout">
-        <div class="about-room-left reveal">
-          <span class="badge-overline">ABOUT</span>
-          <h2 class="heading-section about-room-title">{room.name}</h2>
-
-          <div class="specs-pills">
-            <div class="pill-item">
-              <span class="pill-label">From</span>
-              <span class="pill-value price-pill">{room.price}</span>
-            </div>
-            <div class="pill-item">
-              <img src="/icons/spec-size.svg" alt="" width="16" height="16" />
-              <span class="pill-value">{room.size}</span>
-            </div>
-            <div class="pill-item">
-              <img src="/icons/spec-bed.svg" alt="" width="16" height="16" />
-              <span class="pill-value">{room.bed}</span>
-            </div>
-            <div class="pill-item">
-              <img src="/icons/spec-guests.svg" alt="" width="16" height="16" />
-              <span class="pill-value">{room.guests}</span>
-            </div>
-          </div>
-
-          <div class="room-long-desc">
-            <p>{room.description}</p>
-            {room.extendedDescription && <p>{room.extendedDescription}</p>}
-          </div>
-        </div>
-
-        <!-- Amenities del Hotel -->
-        <div class="hotel-amenities-wrap reveal reveal-delay-1">
-          <h3 class="amenities-heading">Hotel Amenities</h3>
-          <div class="amenities-grid">
-            {
-              hotelAmenities.map((amenity) => (
-                <div class="amenity-item">
-                  <div class="amenity-icon-box">
-                    <img
-                      src={amenity.icon}
-                      alt=""
-                      class="amenity-svg"
-                      width="20"
-                      height="20"
-                    />
-                  </div>
-                  <span class="amenity-text">{amenity.label}</span>
+    <section class="hotel-amenities-section">
+      <div class="container reveal">
+        <h3 class="amenities-heading">Hotel Amenities</h3>
+        <div class="amenities-grid">
+          {
+            hotelAmenities.map((amenity) => (
+              <div class="amenity-card">
+                <div class="amenity-icon-box">
+                  <img
+                    src={amenity.icon}
+                    alt=""
+                    class="amenity-svg"
+                    width="22"
+                    height="22"
+                  />
                 </div>
-              ))
-            }
-          </div>
+                <span class="amenity-text">{amenity.label}</span>
+              </div>
+            ))
+          }
         </div>
       </div>
     </section>
 
-    <!-- =========================================================================
-         Banner CTA
-         ========================================================================= -->
+    <!-- Banner CTA -->
     <CtaBanner />
 
     <!-- =========================================================================
@@ -158,10 +153,17 @@ const otherRooms = allRooms.filter((r) => r.slug !== room.slug).slice(0, 3);
       <div class="container">
         <div class="other-rooms-header reveal">
           <div>
-            <span class="badge-overline">LUXURY SUITES & VILLAS</span>
+            <span class="badge-overline">— LUXURY SUITES & VILLAS —</span>
             <h2 class="heading-section">Other Rooms</h2>
+            <p class="section-desc-compact">
+              Discover a collection of beautifully designed suites and private villas, each
+              offering breathtaking views for an unforgettable stay.
+            </p>
           </div>
-          <a href="/rooms" class="btn btn-outline-dark">All Rooms</a>
+          <a href="/rooms" class="rooms-all-link">
+            <span>All Rooms</span>
+            <span>&rarr;</span>
+          </a>
         </div>
 
         <div class="other-rooms-grid">
@@ -176,7 +178,7 @@ const otherRooms = allRooms.filter((r) => r.slug !== room.slug).slice(0, 3);
       </div>
     </section>
 
-    <!-- Testimonios -->
+    <!-- Testimonial Hero Twilight -->
     <ReviewCards />
 
     <!-- FAQ -->
@@ -187,73 +189,117 @@ const otherRooms = allRooms.filter((r) => r.slug !== room.slug).slice(0, 3);
 </BaseLayout>
 
 <style>
+  /* Room Hero */
   .room-hero {
-    background-color: var(--color-primary);
+    position: relative;
+    min-height: clamp(480px, 60vh, 680px);
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: clamp(3.5rem, 6vw, 5rem);
     color: #ffffff;
-    padding-top: clamp(3.5rem, 6vw, 5rem);
-    padding-bottom: clamp(4rem, 7vw, 6rem);
+    overflow: hidden;
   }
 
-  .room-hero-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    align-items: center;
+  .room-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
   }
 
-  @media (min-width: 960px) {
-    .room-hero-grid {
-      grid-template-columns: 1.3fr 1fr;
-      gap: 4rem;
-    }
+  .room-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.8125rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-accent);
-    margin-bottom: 1.25rem;
-    transition: color var(--transition-fast);
+  .room-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(15, 22, 18, 0.25) 0%,
+      rgba(15, 22, 18, 0.75) 100%
+    );
   }
 
-  .back-link:hover {
-    color: #ffffff;
+  .room-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
   }
 
-  .back-link svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .room-title {
-    font-size: clamp(2.5rem, 5vw, 4.25rem);
+  .room-hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.75rem, 5.5vw, 4.5rem);
+    font-weight: 500;
     line-height: 1.1;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
+    color: #ffffff;
   }
 
   .room-hero-summary {
-    font-size: 1.125rem;
+    font-size: 1.0625rem;
     line-height: 1.65;
     color: rgba(255, 255, 255, 0.85);
-    max-width: 580px;
   }
 
-  /* Gallery Grid */
-  .room-gallery-section {
-    padding-top: clamp(3rem, 6vw, 4.5rem);
-    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+  /* About Room Section */
+  .room-about-section {
+    padding-top: clamp(4.5rem, 8vw, 7rem);
+    padding-bottom: clamp(4.5rem, 8vw, 7rem);
+    background-color: var(--color-cream);
+  }
+
+  .room-about-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2.5rem;
+    gap: 2rem;
+  }
+
+  .about-room-title {
+    margin-top: 0.5rem;
+    margin-bottom: 1.25rem;
+    color: var(--color-primary);
+  }
+
+  .about-price-pill {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+  }
+
+  .specs-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem;
+  }
+
+  .pill-item {
     background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 0.4rem 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-primary);
   }
 
+  /* 3-Photo Gallery Grid */
   .room-gallery-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1.25rem;
+    margin-bottom: 2.5rem;
   }
 
   @media (min-width: 840px) {
@@ -267,7 +313,6 @@ const otherRooms = allRooms.filter((r) => r.slug !== room.slug).slice(0, 3);
     border-radius: var(--radius-md);
     overflow: hidden;
     aspect-ratio: 16 / 11;
-    background-color: var(--color-sand);
   }
 
   .gal-right-stack {
@@ -287,7 +332,6 @@ const otherRooms = allRooms.filter((r) => r.slug !== room.slug).slice(0, 3);
     border-radius: var(--radius-md);
     overflow: hidden;
     aspect-ratio: 16 / 10;
-    background-color: var(--color-sand);
   }
 
   .room-photo {
@@ -298,121 +342,66 @@ const otherRooms = allRooms.filter((r) => r.slug !== room.slug).slice(0, 3);
   }
 
   .room-photo:hover {
-    transform: scale(1.03);
-  }
-
-  /* About Room Section */
-  .room-about-section {
-    padding-top: clamp(4rem, 7vw, 6rem);
-    padding-bottom: clamp(4rem, 7vw, 6rem);
-    background-color: var(--color-cream);
-  }
-
-  .room-about-layout {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 3.5rem;
-  }
-
-  @media (min-width: 960px) {
-    .room-about-layout {
-      grid-template-columns: 1.4fr 1fr;
-      gap: 5rem;
-      align-items: start;
-    }
-  }
-
-  .about-room-title {
-    margin-bottom: 1.75rem;
-    color: var(--color-primary);
-  }
-
-  .specs-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-bottom: 2rem;
-  }
-
-  .pill-item {
-    background-color: #ffffff;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    padding: 0.5rem 1rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-  }
-
-  .pill-label {
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-  }
-
-  .price-pill {
-    color: var(--color-accent);
-    font-size: 1.0625rem;
-    font-weight: 700;
+    transform: scale(1.025);
   }
 
   .room-long-desc {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-    font-size: 1.0625rem;
+    font-size: 1rem;
     line-height: 1.75;
     color: var(--color-text-muted);
+    max-width: 900px;
   }
 
-  /* Amenities */
-  .hotel-amenities-wrap {
+  /* Hotel Amenities */
+  .hotel-amenities-section {
+    padding-top: clamp(4rem, 7vw, 6rem);
+    padding-bottom: clamp(4rem, 7vw, 6rem);
     background-color: #ffffff;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: 2.25rem 2rem;
-    box-shadow: 0 4px 20px rgba(30, 42, 36, 0.04);
   }
 
   .amenities-heading {
     font-family: var(--font-display);
-    font-size: 1.875rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    font-weight: 500;
+    margin-bottom: 2.5rem;
     color: var(--color-primary);
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 1rem;
   }
 
   .amenities-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.125rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
   }
 
-  @media (min-width: 480px) {
+  @media (min-width: 840px) {
     .amenities-grid {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
     }
   }
 
-  .amenity-item {
+  .amenity-card {
+    background-color: var(--color-cream);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 2rem 1.5rem;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    text-align: center;
+    gap: 1rem;
   }
 
   .amenity-icon-box {
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    background-color: rgba(191, 158, 101, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
   }
 
   .amenity-svg {
@@ -420,23 +409,46 @@ const otherRooms = allRooms.filter((r) => r.slug !== room.slug).slice(0, 3);
   }
 
   .amenity-text {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-text);
+    color: var(--color-primary);
   }
 
   /* Other Rooms Section */
   .other-rooms-section {
     padding-top: clamp(4.5rem, 8vw, 7rem);
     padding-bottom: clamp(4.5rem, 8vw, 7rem);
-    background-color: #ffffff;
+    background-color: var(--color-cream);
   }
 
   .other-rooms-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 3.5rem;
+    margin-bottom: 3rem;
+    gap: 2rem;
+  }
+
+  .section-desc-compact {
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+    max-width: 520px;
+    margin-top: 0.75rem;
+  }
+
+  .rooms-all-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-accent);
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: gap 0.2s;
+  }
+
+  .rooms-all-link:hover {
+    gap: 0.65rem;
   }
 
   .other-rooms-grid {
@@ -448,7 +460,7 @@ const otherRooms = allRooms.filter((r) => r.slug !== room.slug).slice(0, 3);
   @media (min-width: 768px) {
     .other-rooms-grid {
       grid-template-columns: repeat(3, 1fr);
-      gap: 2.25rem;
+      gap: 2rem;
     }
   }
 </style>

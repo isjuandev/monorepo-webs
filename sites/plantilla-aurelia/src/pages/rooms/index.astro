@@ -9,40 +9,54 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
 <BaseLayout
-  title="Our Rooms — Aurelia Resort"
-  description="Discover our collection of beautifully designed luxury suites and private villas in Ibiza, each offering breathtaking Mediterranean views."
+  title="Our Rooms"
+  description="Discover a collection of beautifully designed suites and private villas, each offering breathtaking views for an unforgettable stay."
 >
   <SiteHeader currentPath="/rooms" theme="solid" />
 
   <main>
-    <!-- Header de Página -->
-    <section class="rooms-page-hero">
-      <div class="container text-center reveal">
-        <span class="badge-overline">LUXURY SUITES & VILLAS</span>
-        <h1 class="heading-display rooms-page-title">Our Rooms</h1>
-        <p class="rooms-page-subtitle">
-          Discover a collection of beautifully designed suites and private villas, each
-          offering breathtaking views for an unforgettable stay.
-        </p>
+    <!-- Sección de Habitaciones con Fondo F69ommdMTt9Aqp4dz821ZCCc9Zg.jpg y Overlay Sand -->
+    <section class="rooms-page-wrapper">
+      <div class="rooms-page-bg">
+        <img
+          src="/images/F69ommdMTt9Aqp4dz821ZCCc9Zg.jpg"
+          alt=""
+          class="rooms-bg-img"
+          width="1440"
+          height="1800"
+        />
+        <div class="rooms-bg-overlay"></div>
       </div>
-    </section>
 
-    <!-- Cuadrícula con las 6 Habitaciones -->
-    <section class="rooms-grid-section">
-      <div class="container">
-        <div class="rooms-full-grid">
-          {
-            allRooms.map((room, idx) => (
-              <div class={`reveal reveal-delay-${(idx % 3) + 1}`}>
-                <RoomCard room={room} />
-              </div>
-            ))
-          }
+      <div class="rooms-page-content">
+        <!-- Header de Página -->
+        <header class="rooms-page-hero">
+          <div class="container text-center reveal">
+            <span class="badge-overline">— LUXURY SUITES & VILLAS —</span>
+            <h1 class="heading-display rooms-page-title">Our Rooms</h1>
+            <p class="rooms-page-subtitle">
+              Discover a collection of beautifully designed suites and private villas, each
+              offering breathtaking views for an unforgettable stay.
+            </p>
+          </div>
+        </header>
+
+        <!-- Cuadrícula con las 6 Habitaciones -->
+        <div class="container rooms-grid-container">
+          <div class="rooms-full-grid">
+            {
+              allRooms.map((room, idx) => (
+                <div class={`reveal reveal-delay-${(idx % 3) + 1}`}>
+                  <RoomCard room={room} />
+                </div>
+              ))
+            }
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Testimonios -->
+    <!-- Testimonial Hero -->
     <ReviewCards />
 
     <!-- FAQ -->
@@ -53,12 +67,34 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 </BaseLayout>
 
 <style>
-  .rooms-page-hero {
-    background-color: var(--color-primary);
-    color: #ffffff;
+  .rooms-page-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rooms-page-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .rooms-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .rooms-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(238, 231, 221, 0.75);
+  }
+
+  .rooms-page-content {
+    position: relative;
+    z-index: 1;
     padding-top: clamp(4.5rem, 8vw, 6.5rem);
-    padding-bottom: clamp(4rem, 7vw, 5.5rem);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: clamp(5rem, 9vw, 8rem);
   }
 
   .text-center {
@@ -67,22 +103,19 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
   .rooms-page-title {
     font-size: clamp(2.75rem, 5.5vw, 4.5rem);
+    color: #222222;
+    margin-top: 0.5rem;
     margin-bottom: 1.25rem;
   }
 
   .rooms-page-subtitle {
-    font-size: 1.125rem;
-    line-height: 1.65;
+    font-size: 1.0625rem;
+    line-height: 1.7;
     max-width: 620px;
     margin-left: auto;
     margin-right: auto;
-    color: rgba(255, 255, 255, 0.85);
-  }
-
-  .rooms-grid-section {
-    padding-top: clamp(4.5rem, 8vw, 7rem);
-    padding-bottom: clamp(5rem, 9vw, 8rem);
-    background-color: var(--color-cream);
+    margin-bottom: 4rem;
+    color: var(--color-text-muted);
   }
 
   .rooms-full-grid {

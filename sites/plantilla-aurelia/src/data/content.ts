@@ -265,6 +265,30 @@ export const allRooms: Room[] = [
   },
 ];
 
+export const homeServices = [
+  {
+    title: "Wellness & Spa",
+    badge: "THE AURELIA EXPERIENCE",
+    description:
+      "Reconnect body and mind with holistic treatments, private yoga sessions and oceanfront wellness experiences.",
+    icon: "/icons/service-wellness.svg",
+  },
+  {
+    title: "Sunset Dining",
+    badge: "THE AURELIA EXPERIENCE",
+    description:
+      "Enjoy Mediterranean cuisine and unforgettable evenings overlooking Ibiza’s breathtaking coastline.",
+    icon: "/icons/service-dining.svg",
+  },
+  {
+    title: "Private Experiences",
+    badge: "THE AURELIA EXPERIENCE",
+    description:
+      "Discover hidden beaches, yacht charters and bespoke island adventures curated just for you.",
+    icon: "/icons/service-experiences.svg",
+  },
+];
+
 export const allServices: Service[] = [
   {
     slug: "sunset-dining",
@@ -275,11 +299,11 @@ export const allServices: Service[] = [
     hours: "DINNER: 6:30 PM – 10:30 PM\nSUNSET BAR: 5:00 PM – 11:00 PM",
     icon: "/icons/service-dining.svg",
     imageMain: {
-      src: "/images/B9TgZKFojhZcITmuAoyhovIoabg.jpg",
+      src: "/images/IL7I9spY07pzmieOaLrpBi15g.jpg",
       alt: "Sunset dining table overlooking the Mediterranean sea",
     },
     imageSecondary: {
-      src: "/images/IL7I9spY07pzmieOaLrpBi15g.jpg",
+      src: "/images/B9TgZKFojhZcITmuAoyhovIoabg.jpg",
       alt: "Chef prepared fresh Mediterranean cuisine at Aurelia",
     },
   },
@@ -309,7 +333,7 @@ export const allServices: Service[] = [
     hours: "DAILY: 9:00 AM – 8:00 PM",
     icon: "/icons/service-wellness.svg",
     imageMain: {
-      src: "/images/aEzPtSmyulvvzrKdrPYZwF9X5R8.png",
+      src: "/images/PT8D8xYWi0mjOCBpM6oAxZCvLA.jpg",
       alt: "Aurelia spa wellness treatment pavilion",
     },
     imageSecondary: {

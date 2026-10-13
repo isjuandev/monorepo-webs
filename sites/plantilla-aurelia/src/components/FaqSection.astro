@@ -5,9 +5,16 @@ import { faqList } from "@/data/content";
 export interface Props {
   title?: string;
   badge?: string;
+  btnText?: string;
+  btnHref?: string;
 }
 
-const { title = "Before Your Stay", badge = "FAQ" } = Astro.props;
+const {
+  title = "Before Your Stay",
+  badge = "FAQ",
+  btnText = "Get in Touch",
+  btnHref = "/contact",
+} = Astro.props;
 ---
 
 <section class="section-faq" id="faq">
@@ -22,7 +29,7 @@ const { title = "Before Your Stay", badge = "FAQ" } = Astro.props;
           and resort services before you arrive.
         </p>
         <div class="faq-cta-btn">
-          <a href="/contact" class="btn btn-dark">Get in Touch</a>
+          <a href={btnHref} class="btn btn-tan">{btnText}</a>
         </div>
       </div>
 

@@ -25,9 +25,9 @@ const { room } = Astro.props;
   </div>
 
   <div class="card-body">
-    <h3 class="card-title">
+    <h5 class="card-title">
       <a href={`/rooms/${room.slug}`}>{room.name}</a>
-    </h3>
+    </h5>
 
     <!-- Especificaciones con iconos SVG -->
     <div class="card-specs">
@@ -48,19 +48,7 @@ const { room } = Astro.props;
     <p class="card-summary">{room.summary}</p>
 
     <div class="card-action">
-      <a href={`/rooms/${room.slug}`} class="btn-explore">
-        <span>Explore Room</span>
-        <svg
-          class="arrow-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path d="M5 12h14"></path>
-          <path d="m12 5 7 7-7 7"></path>
-        </svg>
-      </a>
+      <a href={`/rooms/${room.slug}`} class="btn-card-explore">Explore Room</a>
     </div>
   </div>
 </article>
@@ -103,7 +91,7 @@ const { room } = Astro.props;
   .card-price-badge {
     position: absolute;
     top: 1rem;
-    left: 1rem;
+    right: 1rem;
     background-color: rgba(30, 42, 36, 0.85);
     backdrop-filter: blur(6px);
     color: #ffffff;
@@ -138,7 +126,7 @@ const { room } = Astro.props;
   .card-title {
     font-family: var(--font-display);
     font-size: 1.625rem;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1.2;
     color: var(--color-primary);
     margin-bottom: 0.875rem;
@@ -183,30 +171,22 @@ const { room } = Astro.props;
     margin-top: auto;
   }
 
-  .btn-explore {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+  .btn-card-explore {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background-color: #5c6e64;
+    color: #ffffff;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
     font-size: 0.8125rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--color-primary);
-    transition: color var(--transition-fast), gap var(--transition-fast);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: background-color var(--transition-fast);
   }
 
-  .btn-explore:hover {
-    color: var(--color-accent);
-    gap: 0.75rem;
-  }
-
-  .arrow-icon {
-    width: 16px;
-    height: 16px;
-    transition: transform var(--transition-fast);
-  }
-
-  .btn-explore:hover .arrow-icon {
-    transform: translateX(3px);
+  .btn-card-explore:hover {
+    background-color: var(--color-primary);
+    color: #ffffff;
   }
 </style>

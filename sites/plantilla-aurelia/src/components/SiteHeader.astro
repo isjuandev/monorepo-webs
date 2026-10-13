@@ -10,43 +10,6 @@ const { currentPath = Astro.url.pathname, theme = "transparent" } = Astro.props;
 ---
 
 <header class={`site-header ${theme === "solid" ? "header-solid" : ""}`}>
-  <!-- Barra superior secundaria -->
-  <div class="top-bar">
-    <div class="container top-bar-inner">
-      <div class="top-bar-location">
-        <svg
-          class="location-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
-          <circle cx="12" cy="10" r="3"></circle>
-        </svg>
-        <span>Ibiza, Spain</span>
-      </div>
-      <a href="tel:+34971123456" class="top-bar-phone">
-        <svg
-          class="phone-icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path
-            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
-          ></path>
-        </svg>
-        <span>+34 971 123 456</span>
-      </a>
-    </div>
-  </div>
-
   <!-- Barra de navegación principal -->
   <div class="main-nav-bar">
     <div class="container nav-inner">
@@ -78,22 +41,53 @@ const { currentPath = Astro.url.pathname, theme = "transparent" } = Astro.props;
         </ul>
       </nav>
 
-      <div class="nav-actions">
-        <a href="/contact" class="btn btn-primary btn-book">Book Now</a>
-
-        <!-- Botón hamburguesa móvil -->
-        <button
-          type="button"
-          class="hamburger-btn"
-          id="mobile-menu-toggle"
-          aria-label="Toggle navigation menu"
-          aria-expanded="false"
-          aria-controls="mobile-nav-drawer"
-        >
-          <span class="bar bar-1"></span>
-          <span class="bar bar-2"></span>
-        </button>
+      <!-- Meta info desktop: Ubicación & Teléfono -->
+      <div class="nav-meta-desktop">
+        <div class="meta-item">
+          <svg
+            class="meta-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          <span>Ibiza, Spain</span>
+        </div>
+        <a href="tel:+34971123456" class="meta-item meta-phone">
+          <svg
+            class="meta-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+            ></path>
+          </svg>
+          <span>+34 971 123 456</span>
+        </a>
       </div>
+
+      <!-- Botón hamburguesa móvil -->
+      <button
+        type="button"
+        class="hamburger-btn"
+        id="mobile-menu-toggle"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+        aria-controls="mobile-nav-drawer"
+      >
+        <span class="bar bar-1"></span>
+        <span class="bar bar-2"></span>
+      </button>
     </div>
   </div>
 
@@ -186,46 +180,10 @@ const { currentPath = Astro.url.pathname, theme = "transparent" } = Astro.props;
     background-color: var(--color-primary);
   }
 
-  /* Top Bar */
-  .top-bar {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .top-bar-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 0.625rem;
-    padding-bottom: 0.625rem;
-  }
-
-  .top-bar-location,
-  .top-bar-phone {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: rgba(255, 255, 255, 0.85);
-  }
-
-  .top-bar-phone:hover {
-    color: #ffffff;
-  }
-
-  .location-icon,
-  .phone-icon {
-    width: 14px;
-    height: 14px;
-    stroke: var(--color-accent);
-  }
-
   /* Main Nav Bar */
   .main-nav-bar {
-    padding-top: 1.25rem;
-    padding-bottom: 1.25rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
   }
 
   .nav-inner {
@@ -288,15 +246,41 @@ const { currentPath = Astro.url.pathname, theme = "transparent" } = Astro.props;
     background-color: var(--color-accent);
   }
 
-  .nav-actions {
-    display: flex;
+  /* Desktop Meta Info */
+  .nav-meta-desktop {
+    display: none;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
   }
 
-  .btn-book {
-    padding: 0.625rem 1.25rem;
-    font-size: 0.75rem;
+  @media (min-width: 1024px) {
+    .nav-meta-desktop {
+      display: flex;
+    }
+  }
+
+  .meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .meta-phone {
+    color: rgba(255, 255, 255, 0.85);
+    transition: color 0.2s;
+  }
+
+  .meta-phone:hover {
+    color: #ffffff;
+  }
+
+  .meta-icon {
+    width: 15px;
+    height: 15px;
+    stroke: var(--color-accent);
   }
 
   /* Hamburger */

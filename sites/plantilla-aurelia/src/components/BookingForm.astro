@@ -22,7 +22,7 @@ const { layout = "horizontal", defaultRoom = "" } = Astro.props;
         type="text"
         id="book-name"
         name="name"
-        placeholder="Your full name"
+        placeholder="Your Name"
         required
       />
     </div>
@@ -34,7 +34,7 @@ const { layout = "horizontal", defaultRoom = "" } = Astro.props;
         type="email"
         id="book-email"
         name="email"
-        placeholder="your@email.com"
+        placeholder="Your Email"
         required
       />
     </div>
@@ -71,8 +71,8 @@ const { layout = "horizontal", defaultRoom = "" } = Astro.props;
       <div class="form-group">
         <label for="book-adults">Adults</label>
         <select id="book-adults" name="adults">
-          <option value="1">1</option>
-          <option value="2" selected>2</option>
+          <option value="1" selected>1</option>
+          <option value="2">2</option>
           <option value="3">3</option>
           <option value="4">4</option>
         </select>
@@ -89,20 +89,24 @@ const { layout = "horizontal", defaultRoom = "" } = Astro.props;
     </div>
   </div>
 
-  <button type="submit" class="btn btn-primary submit-btn">
+  <button type="submit" class="btn submit-btn">
     Request Booking
   </button>
 </form>
 
 <style>
   .booking-form {
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: var(--radius-md);
-    padding: 1.5rem;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-    color: var(--color-primary);
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Formulario Horizontal (Hero) con fondo oscuro de Framer */
+  .form-horizontal {
+    background-color: rgba(27, 39, 32, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
   }
 
   .form-group {
@@ -111,27 +115,31 @@ const { layout = "horizontal", defaultRoom = "" } = Astro.props;
     gap: 0.35rem;
   }
 
-  .form-group label {
+  .form-horizontal .form-group label {
     font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-text-muted);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.75);
+    letter-spacing: 0.02em;
   }
 
-  .form-group input,
-  .form-group select {
-    padding: 0.625rem 0.875rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    background-color: #ffffff;
-    font-size: 0.875rem;
-    color: var(--color-text);
+  .form-horizontal .form-group input,
+  .form-horizontal .form-group select {
+    padding: 0.5rem 0.75rem;
+    height: 42px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    background-color: #24332b;
+    font-size: 0.8125rem;
+    color: #ffffff;
     transition: border-color var(--transition-fast);
   }
 
-  .form-group input:focus,
-  .form-group select:focus {
+  .form-horizontal .form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .form-horizontal .form-group input:focus,
+  .form-horizontal .form-group select:focus {
     outline: none;
     border-color: var(--color-accent);
   }
@@ -140,32 +148,95 @@ const { layout = "horizontal", defaultRoom = "" } = Astro.props;
   .form-row-guests {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
 
-  /* Horizontal Layout (Hero) */
+  /* Horizontal Layout en Desktop: una sola fila */
   .form-horizontal .form-fields {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-bottom: 1.25rem;
+    gap: 0.875rem;
+    margin-bottom: 1rem;
   }
 
-  @media (min-width: 768px) {
-    .form-horizontal .form-fields {
-      grid-template-columns: 1.2fr 1.2fr 1.4fr 1.6fr 1.2fr;
+  .form-horizontal .submit-btn {
+    background-color: var(--color-accent);
+    color: var(--color-primary);
+    font-weight: 600;
+    border-radius: 6px;
+    height: 42px;
+    padding: 0 1.25rem;
+    width: 100%;
+    transition: background-color var(--transition-fast);
+  }
+
+  .form-horizontal .submit-btn:hover {
+    background-color: #d1b179;
+  }
+
+  @media (min-width: 1024px) {
+    .form-horizontal {
+      display: flex;
       align-items: flex-end;
-      margin-bottom: 1rem;
+      gap: 0.75rem;
+    }
+
+    .form-horizontal .form-fields {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.75rem;
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .form-horizontal .form-group {
+      flex: 1;
+    }
+
+    .form-horizontal .form-row-dates {
+      display: flex;
+      gap: 0.5rem;
+      flex: 1.7;
+    }
+
+    .form-horizontal .form-row-guests {
+      display: flex;
+      gap: 0.5rem;
+      flex: 1.1;
     }
 
     .form-horizontal .submit-btn {
-      width: 100%;
-      padding-top: 1rem;
-      padding-bottom: 1rem;
+      width: auto;
+      white-space: nowrap;
+      margin-bottom: 0;
     }
   }
 
-  /* Vertical Layout (Sidebar) */
+  /* Formulario Vertical (Sidebar) */
+  .form-vertical {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    color: var(--color-primary);
+  }
+
+  .form-vertical .form-group label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+  }
+
+  .form-vertical .form-group input,
+  .form-vertical .form-group select {
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: #ffffff;
+    font-size: 0.875rem;
+    color: var(--color-text);
+  }
+
   .form-vertical .form-fields {
     display: flex;
     flex-direction: column;
@@ -173,7 +244,12 @@ const { layout = "horizontal", defaultRoom = "" } = Astro.props;
     margin-bottom: 1.5rem;
   }
 
-  .submit-btn {
+  .form-vertical .submit-btn {
+    background-color: var(--color-primary);
+    color: #ffffff;
     width: 100%;
+    padding: 0.875rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
   }
 </style>
