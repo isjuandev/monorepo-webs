@@ -1,0 +1,176 @@
+import fs from "node:fs";
+import path from "node:path";
+import { expect, test } from "@playwright/test";
+
+const siteFolder = process.env.SITE_FOLDER || "_template";
+const routes = (process.env.QA_ROUTES || "/")
+  .split(",")
+  .map((r) => r.trim())
+  .filter(Boolean);
+
+function routeToSlug(routePath: string): string {
+  if (routePath === "/" || routePath === "") {
+    return "home";
+  }
+  return routePath.replace(/^\/+|\/+$/g, "").replace(/[^a-zA-Z0-9-_]/g, "-");
+}
+
+test.describe(`Visual QA & Functional Suite — sites/${siteFolder}`, () => {
+  for (const route of routes) {
+    const routeSlug = routeToSlug(route);
+
+    test(`Ruta "${route}": navegación, recursos, desbordamiento horizontal, interacciones y captura reproducible`, async ({
+      page,
+    }, testInfo) => {
+      const consoleErrors: string[] = [];
+      const pageErrors: string[] = [];
+      const failedAssets: string[] = [];
+
+      page.on("console", (msg) => {
+        if (msg.type() === "error") {
+          consoleErrors.push(msg.text());
+        }
+      });
+
+      page.on("pageerror", (err) => {
+        pageErrors.push(err.message);
+      });
+
+      page.on("response", (response) => {
+        const status = response.status();
+        const url = response.url();
+        if (status >= 400 && !url.endsWith("/favicon.ico")) {
+          failedAssets.push(`${status} ${url}`);
+        }
+      });
+
+      const response = await page.goto(route, { waitUntil: "networkidle" });
+      expect(response?.status(), `La ruta ${route} debe responder HTTP 200`).toBe(200);
+
+      // Esperar carga de fuentes y recorrer la página para activar elementos lazy
+      await page.evaluate(async () => {
+        if ("fonts" in document) {
+          await document.fonts.ready;
+        }
+        const totalHeight = document.body.scrollHeight;
+        const step = Math.max(window.innerHeight, 400);
+        for (let y = 0; y <= totalHeight; y += step) {
+          window.scrollTo(0, y);
+          await new Promise((r) => setTimeout(r, 50));
+        }
+        window.scrollTo(0, 0);
+      });
+
+      // Verificar ausencia de errores de ejecución y activos rotos
+      expect(consoleErrors, "No debe haber errores en console.error").toEqual([]);
+      expect(pageErrors, "No debe haber excepciones JS no capturadas").toEqual([]);
+      expect(failedAssets, "No debe haber recursos o imágenes con HTTP >= 400").toEqual([]);
+
+      // Verificar SEO técnico básico en la ruta
+      const title = await page.title();
+      expect(title.trim().length, "El documento debe tener <title> no vacío").toBeGreaterThan(0);
+
+      const metaDescription = await page
+        .locator('meta[name="description"]')
+        .getAttribute("content");
+      expect(
+        metaDescription?.trim().length ?? 0,
+        'Debe existir <meta name="description"> con contenido'
+      ).toBeGreaterThan(0);
+
+      const canonicalHref = await page.locator('link[rel="canonical"]').getAttribute("href");
+      expect(
+        canonicalHref?.startsWith("http"),
+        'Debe existir <link rel="canonical"> con URL absoluta'
+      ).toBe(true);
+
+      // Detectar desbordamiento horizontal (scrollWidth > innerWidth)
+      const overflowInfo = await page.evaluate(() => {
+        const docWidth = document.documentElement.scrollWidth;
+        const winWidth = window.innerWidth;
+        const overflowingSelectors: string[] = [];
+
+        if (docWidth > winWidth) {
+          const allElements = Array.from(document.querySelectorAll("*"));
+          for (const el of allElements) {
+            const rect = el.getBoundingClientRect();
+            if (rect.right > winWidth + 1 || rect.left < -1) {
+              const tag = el.tagName.toLowerCase();
+              const cls =
+                typeof el.className === "string" && el.className.trim()
+                  ? `.${el.className.trim().split(/\s+/).join(".")}`
+                  : "";
+              overflowingSelectors.push(`${tag}${cls} (right=${Math.round(rect.right)}px)`);
+            }
+          }
+        }
+
+        return {
+          docWidth,
+          winWidth,
+          hasOverflow: docWidth > winWidth,
+          overflowingSelectors: overflowingSelectors.slice(0, 10),
+        };
+      });
+
+      expect(
+        overflowInfo.hasOverflow,
+        `Desbordamiento horizontal detectado (${overflowInfo.docWidth}px > ${overflowInfo.winWidth}px). Elementos: ${overflowInfo.overflowingSelectors.join(", ")}`
+      ).toBe(false);
+
+      // Comprobar que los controles interactivos visibles sean accionables
+      const buttons = page.locator("button:visible");
+      const buttonCount = await buttons.count();
+      for (let i = 0; i < buttonCount; i += 1) {
+        const btn = buttons.nth(i);
+        await expect(btn).toBeEnabled();
+        await btn.hover();
+      }
+
+      // Guardar captura reproducible en docs/design-references/<site>/
+      const projectName = testInfo.project.name;
+      const refsDir = path.resolve(process.cwd(), "docs", "design-references", siteFolder);
+      fs.mkdirSync(refsDir, { recursive: true });
+
+      const currentScreenshotPath = path.join(refsDir, `current-${projectName}-${routeSlug}.png`);
+      await page.screenshot({
+        path: currentScreenshotPath,
+        fullPage: true,
+        animations: "disabled",
+      });
+
+      // Si existe captura de referencia en snapshots/, ejecutar comparación visual estricta
+      const snapshotBaselinePath = testInfo.snapshotPath(`${routeSlug}.png`);
+      if (fs.existsSync(snapshotBaselinePath) || process.env.UPDATE_SNAPSHOTS === "true") {
+        await expect(page).toHaveScreenshot(`${routeSlug}.png`, {
+          fullPage: true,
+          animations: "disabled",
+          maxDiffPixelRatio: 0.02,
+        });
+      } else {
+        testInfo.annotations.push({
+          type: "visual-reference-status",
+          description: `Sin captura de referencia previa en ${path.relative(process.cwd(), snapshotBaselinePath)}. Se guardó captura actual en ${path.relative(process.cwd(), currentScreenshotPath)}. No declarar réplica perfecta sin comparar contra referencia.`,
+        });
+      }
+    });
+  }
+
+  test("Endpoints técnicos SEO (/robots.txt y /sitemap-index.xml)", async ({
+    request,
+  }, testInfo) => {
+    // Ejecutar una sola vez en desktop para evitar duplicidad innecesaria
+    test.skip(testInfo.project.name !== "desktop", "Validación de endpoints solo en desktop");
+
+    const robotsRes = await request.get("/robots.txt");
+    expect(robotsRes.status()).toBe(200);
+    const robotsText = await robotsRes.text();
+    expect(robotsText).toContain("User-agent: *");
+    expect(robotsText).toContain("sitemap-index.xml");
+
+    const sitemapRes = await request.get("/sitemap-index.xml");
+    expect(sitemapRes.status()).toBe(200);
+    const sitemapText = await sitemapRes.text();
+    expect(sitemapText).toContain("<sitemapindex");
+  });
+});

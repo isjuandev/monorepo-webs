@@ -1,6 +1,6 @@
-import { defineConfig } from "astro/config";
 import preact from "@astrojs/preact";
 import sitemap from "@astrojs/sitemap";
+import { defineConfig } from "astro/config";
 import { siteConfig } from "./src/config/site";
 
 export default defineConfig({

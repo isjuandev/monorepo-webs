@@ -1,28 +1,36 @@
-# Dockerfile universal para desplegar cualquier sitio del monorepo en Coolify / Dokploy / VPS
-FROM node:22-alpine AS builder
-
-# Nombre de la carpeta dentro de sites/ (ej: SITE_FOLDER=cliente-restaurante)
-ARG SITE_FOLDER=_template
-# Opcional: sobreescribir el dominio en tiempo de build (ej: SITE_URL=https://mirestaurante.com)
-ARG SITE_URL=""
-ENV SITE_URL=${SITE_URL}
-
+# Dockerfile multi-stage reproducible con turbo prune y pnpm --frozen-lockfile
+FROM node:22-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 
+# Etapa 1: Podar el monorepo únicamente para el sitio objetivo con turbo prune
+FROM base AS pruner
+ARG SITE_FOLDER=_template
 WORKDIR /app
 
-# Copiar manifiestos del workspace para aprovechar caché de capas de Docker
-COPY package.json pnpm-workspace.yaml turbo.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 COPY packages ./packages
-COPY sites/${SITE_FOLDER} ./sites/${SITE_FOLDER}
+COPY sites ./sites
 
-# Instalar dependencias y compilar únicamente el sitio del cliente indicado
-RUN pnpm install --no-frozen-lockfile
+RUN PKG_NAME=$(node -p "require('./sites/${SITE_FOLDER}/package.json').name") && \
+    pnpm dlx turbo@2.11.7 prune "${PKG_NAME}" --docker
+
+# Etapa 2: Instalar dependencias con lockfile congelado y compilar el sitio
+FROM base AS builder
+ARG SITE_FOLDER=_template
+ARG SITE_URL=""
+ENV SITE_URL=${SITE_URL}
+WORKDIR /app
+
+COPY --from=pruner /app/out/json/ .
+RUN pnpm install --frozen-lockfile
+
+COPY --from=pruner /app/out/full/ .
 RUN pnpm --filter "./sites/${SITE_FOLDER}" build
 
-# Etapa de producción: servidor ligero Nginx
+# Etapa 3: Servidor ligero de producción con Nginx
 FROM nginx:1.27-alpine AS runner
-
 ARG SITE_FOLDER=_template
 
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf

@@ -7,25 +7,38 @@ description: Rebuild existing web pages as working local code in this Astro + Pr
 
 Recreate the supplied pages as a working client site in `monorepo-webs`. Match the source before adding a new design direction. Deliver working, editable code: screenshots, iframes, and downloaded production bundles are references, not the implementation.
 
+Always follow the common monorepo rules defined in [AGENTS.md](../../../AGENTS.md).
+
+## Purpose & Inputs
+
+- **Purpose:** Reverse-engineer one or more target URLs into an isolated Astro 5 + Preact client site under `sites/<slug-cliente>/`.
+- **Inputs:**
+  - `url(s)`: Target website URL(s) to clone.
+  - `slug-cliente`: Kebab-case identifier for the client folder (`sites/<slug-cliente>`).
+  - `domain` (optional): Production domain for the client (configured in `src/config/site.ts`).
+
 ## 1. Map the work
 
-Read project instructions (`AGENTS.md`), the monorepo workspace packages (`@repo/ui`, `@repo/utils`), and existing client sites under `sites/`. Open the source URLs with the available browser. Prefer direct HTTP, asset tools, or APIs for extraction when practical; use the browser to establish appearance and behavior.
+Read [AGENTS.md](../../../AGENTS.md), workspace packages (`@repo/ui`, `@repo/utils`), and existing client sites under `sites/`. Open the source URLs with the available browser. Prefer direct HTTP, asset tools, or APIs for extraction when practical; use the browser to establish appearance and behavior.
 
-Record a short source-to-local route map and the files each page owns. Follow the monorepo's conventions:
-- Target client folder: `sites/<slug-cliente>/` (created by copying `sites/_template` if the client site does not exist yet, and setting `"name": "@sites/<slug-cliente>"` in `sites/<slug-cliente>/package.json`).
-- Client domain & metadata: `sites/<slug-cliente>/src/config/site.ts` (`CLIENT_DOMAIN`, `name`, `title`, `description`, `contact`, `socials`).
+If `sites/<slug-cliente>/` does not exist yet, scaffold it using the official generator without modifying `sites/_template`:
+```bash
+pnpm new-client-site <slug-cliente> --name "<Nombre>" --domain "<dominio.com>"
+```
+
+Record a short source-to-local route map and the files each page owns:
+- Target client folder: `sites/<slug-cliente>/`.
+- Client domain & metadata: `sites/<slug-cliente>/src/config/site.ts`.
 - Routes/Pages: `sites/<slug-cliente>/src/pages/`.
-- Client-specific components & SVGs: `sites/<slug-cliente>/src/components/` (use `.astro` by default for static structure/sections, and Preact `.tsx` islands only for client-side interactivity).
-- Static assets (images, fonts, videos): `sites/<slug-cliente>/public/` (or `sites/<slug-cliente>/src/assets/`).
+- Client-specific components & SVGs: `sites/<slug-cliente>/src/components/`.
+- Static assets (images, fonts, videos): `sites/<slug-cliente>/public/`.
 - Research & inspection notes: `docs/research/<slug-cliente>/` and `docs/design-references/<slug-cliente>/`.
 
 Rules for mapping:
-- Never modify `sites/_template` directly for a specific client clone; always work inside `sites/<slug-cliente>/`.
-- A first root clone for a client replaces `sites/<slug-cliente>/src/pages/index.astro`.
+- Never modify `sites/_template` directly for a specific client clone.
 - Preserve source pathnames for multiple pages from one origin. Query/fragment variations usually represent states of the same route; reproduce those states.
-- Preserve existing authored routes/assets (`robots.txt.ts`, `sitemap`). Update them when requested; resolve unrequested route collisions before replacing anything.
-- When adding pages to an existing client clone in `sites/<slug-cliente>/`, extend its layout and `src/styles/global.css` without breaking styles used by existing pages.
-- Use separate client folders (`sites/<cliente-a>`, `sites/<cliente-b>`) for different origins/clients. Never cross-import between different client folders.
+- Preserve existing technical routes (`robots.txt.ts`, `sitemap`).
+- Use separate client folders (`sites/<cliente-a>`, `sites/<cliente-b>`) for different origins/clients. Never cross-import between client folders.
 - Escape literal URL segments that conflict with Astro routing syntax (`_`, `[...]`) using supported mechanisms, then verify the actual requested URL.
 
 Finish when every requested URL has a destination inside `sites/<slug-cliente>/` and file ownership is clear.
@@ -36,7 +49,7 @@ Inspect the whole page at desktop and mobile widths. Scroll top to bottom to loa
 
 Treat each observation as one sample of a **rule**. Read declared values (computed styles, CSS variables, a library's live options) rather than inferring them from one rendering, and vary viewport width (including wider than the design), viewport height, input, and state until you know what drives each change. Drive the page with the inputs visitors use (wheel, touch, keyboard, pointer); scripted scrolling bypasses behavior attached to them, such as smooth scrolling.
 
-Save source screenshots labeled with viewport, scroll position, and interaction state under `docs/design-references/<slug-cliente>/`. Capture alternate-state content/assets. Keep one compact page brief in `docs/research/<slug-cliente>/`: section order, typography, layout measurements, asset mapping, and interactions. Add section briefs only when they help independent builders.
+Save source screenshots labeled with viewport, scroll position, and interaction state under `docs/design-references/<slug-cliente>/` (and baseline snapshots under `docs/design-references/<slug-cliente>/snapshots/` when used for automated diffing). Capture alternate-state content/assets. Keep one compact page brief in `docs/research/<slug-cliente>/`: section order, typography, layout measurements, asset mapping, and interactions.
 
 Read [the inspection reference](./references/inspection-guide.md) for extraction and state comparison. For **Framer-generated pages, sticky scenes, reveal animations, or animated media**, read [Framer and motion](./references/framer-and-motion.md).
 
@@ -48,11 +61,11 @@ Finish when every section and meaningful state has enough evidence to build, wit
 
 Establish fonts, page width, colors/CSS variables (`sites/<slug-cliente>/src/styles/global.css`), assets, routes, page-wide behavior, and shared components first. Build each component with every observed state (hover, focus, breakpoints) so builders reuse it as-is. Reuse fitting primitives from `@repo/ui` and helpers from `@repo/utils`. Prefer `.astro` components + CSS for layout/simple motion, and Preact (`.tsx`) islands (`client:load`, `client:visible`, `client:idle`) or an animation library when source behavior needs client-side state.
 
-Build coherent sections with real content. Delegate independent pages/sections after shared files have an owner. Give builders screenshots, relevant measurements/state notes, asset paths, destination files, and a concrete finish line. A concise brief with precise file references is enough; no fixed agent count or per-component paperwork is required.
+Build coherent sections with real content. Delegate independent pages/sections after shared files have an owner. Give builders screenshots, relevant measurements/state notes, asset paths, destination files, and a concrete finish line.
 
 Recreate in-scope interactions. Preserve real outbound destinations. Rewrite links to local routes when those routes are included; leave out-of-scope destinations pointing to the source and disclose them. Visible controls must perform the behavior they promise.
 
-Run the client site check (`pnpm --filter @sites/<slug-cliente> check` and `pnpm --filter @sites/<slug-cliente> build`) after an integrated slice. Finish this pass when every requested section/route renders with actual assets and important controls work.
+Run the client site checks (`pnpm lint`, `pnpm --filter @sites/<slug-cliente> check`, `pnpm --filter @sites/<slug-cliente> build`) after an integrated slice. Finish this pass when every requested section/route renders with actual assets and important controls work.
 
 ## 4. Compare, repair, repeat
 
@@ -60,14 +73,15 @@ Open source/local pages at the **same viewport, scroll position, and state**. Le
 
 Fix the largest visible differences first: geometry, missing sections/layers, typography/wrapping, asset crop, then spacing and motion. Recheck affected views. Compare animated regions in initial, active, and settled states, including reverse scroll when relevant.
 
-Exercise the real local workflow: navigation between cloned routes, mobile menu, tab/accordion states, carousel boundaries, primary actions, media controls, and observed scroll-linked transitions. Check runtime errors, missing assets, and horizontal overflow. When adding pages, verify existing routes still work. Use a few browser checks at these boundaries rather than assertions about class names.
-
-Run the client site's production check:
+Exercise the real local workflow and run the automated visual and functional QA suite:
 ```bash
+pnpm verify:isolation
+pnpm lint
 pnpm --filter @sites/<slug-cliente> check
 pnpm --filter @sites/<slug-cliente> build
+SITE_FOLDER=<slug-cliente> pnpm test:visual
 ```
-Completion requires a successful build **and** rendered comparison. State remaining differences precisely instead of calling an unchecked result pixel-perfect.
+Completion requires a successful build, passing isolation/lint/type checks, **and** rendered comparison. State remaining differences precisely instead of calling an unchecked result pixel-perfect.
 
 ## Deliver
 

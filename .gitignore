@@ -5,11 +5,16 @@ package-lock.json
 yarn.lock
 bun.lockb
 
-# Build outputs
+# Build & Test outputs
 dist/
 .astro/
 .turbo/
 build/
+playwright-report/
+test-results/
+docs/design-references/*/current-*.png
+docs/research/*/visual-qa-report.json
+docs/research/*/visual-qa-report.md
 
 # Environment variables
 .env
