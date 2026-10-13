@@ -1,0 +1,136 @@
+---
+import Button from "@/components/Button.astro";
+import Icon from "@/components/Icon.astro";
+import Lines from "@/components/Lines.astro";
+import SectionIntro from "@/components/SectionIntro.astro";
+import Stars from "@/components/Stars.astro";
+import { siteConfig } from "@/config/site";
+import { BOOKING } from "@/data/content";
+---
+
+<section class="booking" id={BOOKING.intro.id}>
+  <div class="booking__bg">
+    <img
+      src={BOOKING.background.src}
+      alt={BOOKING.background.alt}
+      width="1600"
+      height="1195"
+      loading="lazy"
+      decoding="async"
+      data-parallax
+    />
+  </div>
+  <div class="booking__content" data-reveal>
+    <SectionIntro intro={BOOKING.intro} light />
+    <div class="booking__card">
+      <p class="booking__price">{BOOKING.price}</p>
+      <div class="booking__meta">
+        <Stars count={BOOKING.stars} />
+        <span>{BOOKING.rating}</span>
+      </div>
+      <p class="booking__meta">
+        <Icon name="pin" size={16} />
+        {siteConfig.contact.area}
+      </p>
+      <p class="booking__text"><Lines text={BOOKING.text} /></p>
+      <Button href={siteConfig.bookingUrl} label={BOOKING.cta} variant="dark" external />
+    </div>
+  </div>
+</section>
+
+<style>
+  .booking {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 900px;
+    padding: 48px var(--gutter);
+    overflow: hidden;
+    scroll-margin-top: 0;
+  }
+
+  .booking__bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: var(--color-placeholder);
+  }
+
+  .booking__bg img {
+    position: absolute;
+    inset: 0 0 auto;
+    width: 100%;
+    height: 150%;
+    object-fit: cover;
+    object-position: 50% 100%;
+  }
+
+  .booking__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+    width: 100%;
+  }
+
+  .booking__card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    width: 100%;
+    max-width: 400px;
+    padding: 32px 24px;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  .booking__price {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .booking__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1.2;
+    color: var(--color-muted);
+  }
+
+  .booking__text {
+    max-width: 330px;
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 1199px) {
+    .booking {
+      min-height: 1080px;
+    }
+
+    .booking__price {
+      font-size: 24px;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .booking {
+      min-height: 844px;
+    }
+
+    .booking__card {
+      max-width: none;
+      padding: 24px;
+    }
+
+    .booking__price {
+      font-size: 20px;
+    }
+  }
+</style>

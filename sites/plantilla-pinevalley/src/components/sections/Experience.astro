@@ -1,0 +1,90 @@
+---
+import SectionIntro from "@/components/SectionIntro.astro";
+import { EXPERIENCE } from "@/data/content";
+---
+
+<section class="section experience" id={EXPERIENCE.intro.id}>
+  <div class="section__inner">
+    <div data-reveal>
+      <SectionIntro intro={EXPERIENCE.intro} />
+    </div>
+    <ul class="experience__grid">
+      {
+        EXPERIENCE.cards.map((card) => (
+          <li class="experience__card">
+            <div class="experience__media">
+              <img
+                src={card.image.src}
+                alt={card.image.alt}
+                width="800"
+                height="1200"
+                loading="lazy"
+                decoding="async"
+                data-parallax
+              />
+            </div>
+            <h3 class="experience__title">{card.title}</h3>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .experience__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding-bottom: 16px;
+  }
+
+  .experience__card {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    height: 500px;
+    padding: 16px;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background: var(--color-placeholder);
+  }
+
+  .experience__media {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .experience__media img {
+    position: absolute;
+    inset: 0 0 auto;
+    width: 100%;
+    height: 150%;
+    object-fit: cover;
+  }
+
+  .experience__title {
+    position: relative;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--color-on-image);
+  }
+
+  @media (max-width: 1199px) {
+    .experience__card {
+      height: 416px;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .experience__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .experience__card {
+      height: 400px;
+    }
+  }
+</style>

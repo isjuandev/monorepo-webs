@@ -1,0 +1,137 @@
+---
+import { RoomsCarousel } from "@/components/RoomsCarousel";
+import SectionIntro from "@/components/SectionIntro.astro";
+import { ROOMS, UI_LABELS } from "@/data/content";
+
+const labels = {
+  region: UI_LABELS.rooms,
+  previous: UI_LABELS.previousRoom,
+  next: UI_LABELS.nextRoom,
+};
+---
+
+<section class="section rooms" id={ROOMS.intro.id}>
+  <div class="section__inner">
+    <div data-reveal>
+      <SectionIntro intro={ROOMS.intro} />
+    </div>
+    <RoomsCarousel client:visible slides={ROOMS.items} labels={labels} />
+  </div>
+</section>
+
+<style>
+  .rooms :global(.rooms-carousel) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 0 4px;
+  }
+
+  .rooms :global(.rooms-carousel__stage) {
+    position: relative;
+    width: 100%;
+    height: 400px;
+  }
+
+  .rooms :global(.rooms-carousel__card) {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 550px;
+    height: 400px;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background: var(--color-placeholder);
+    cursor: pointer;
+    transform: translateX(calc(-50% + var(--shift))) scale(var(--scale));
+    transition:
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.6s ease;
+  }
+
+  .rooms :global(.rooms-carousel__card.is-active) {
+    box-shadow: var(--shadow-card);
+    cursor: default;
+  }
+
+  .rooms :global(.rooms-carousel__card img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .rooms :global(.rooms-carousel__card figcaption) {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 80px 16px 16px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent);
+    color: var(--color-on-image);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .rooms :global(.rooms-carousel__card.is-active figcaption) {
+    opacity: 1;
+  }
+
+  .rooms :global(.rooms-carousel__arrows) {
+    display: flex;
+    gap: 8px;
+  }
+
+  .rooms :global(.rooms-carousel__arrows button) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    transition: transform 0.2s ease;
+  }
+
+  .rooms :global(.rooms-carousel__arrows button:active) {
+    transform: scale(0.92);
+  }
+
+  /* Tablet y mobile: una sola tarjeta a todo el ancho */
+  @media (max-width: 1199px) {
+    .rooms :global(.rooms-carousel__card) {
+      width: 100%;
+      transform: translateX(-50%) scale(0.95);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        opacity 0.45s ease,
+        box-shadow 0.45s ease;
+    }
+
+    .rooms :global(.rooms-carousel__card.is-active) {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .rooms :global(.rooms-carousel) {
+      padding: 0;
+    }
+
+    .rooms :global(.rooms-carousel__stage),
+    .rooms :global(.rooms-carousel__card) {
+      height: 268px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rooms :global(.rooms-carousel__card) {
+      transition: none;
+    }
+  }
+</style>

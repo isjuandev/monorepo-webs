@@ -1,0 +1,98 @@
+/* Tema de marca: colores, tipografías y medidas. Es el único archivo de estilos que se edita para cambiar la identidad visual. */
+
+/* Fuentes auto-alojadas, los mismos archivos que carga la fuente: Inter / Inter Display (OFL) y General Sans (Fontshare, ITF Free Font License). */
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter-900.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter Display";
+  src: url("/fonts/inter-display-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "General Sans";
+  src: url("/fonts/general-sans-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "General Sans";
+  src: url("/fonts/general-sans-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Colores */
+  --color-primary: #000000;
+  --color-on-primary: #ffffff;
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-text: #000000;
+  --color-muted: #545454;
+  --color-subtle: #a4a4a4;
+  --color-border: #dedede;
+  --color-on-image: #ffffff;
+  --color-on-image-hover: #dedede;
+  --color-star: #d9a43f;
+  --color-available: #3cff00;
+  --color-available-glow: rgba(119, 255, 0, 0.5);
+  --color-lightbox: #000000;
+  --color-placeholder: #f5f5f5;
+
+  /* Tipografía */
+  --font-sans: "Inter", "Inter Placeholder", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-button: "Inter Display", "Inter", system-ui, sans-serif;
+  --font-display: "General Sans", "Inter", system-ui, sans-serif;
+
+  /* Layout */
+  --max-width: 1440px;
+  --gutter: 24px;
+  --radius-md: 8px;
+  --radius-footer: 32px;
+  --shadow-card: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}

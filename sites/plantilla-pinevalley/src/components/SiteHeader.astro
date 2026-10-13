@@ -1,0 +1,267 @@
+---
+import Button from "@/components/Button.astro";
+import Icon from "@/components/Icon.astro";
+import { MENU_LINKS, siteConfig } from "@/config/site";
+import { BOOKING, UI_LABELS } from "@/data/content";
+
+export interface Props {
+  solid?: boolean;
+}
+
+const { solid = false } = Astro.props;
+const bookingHref = `/#${BOOKING.intro.id}`;
+---
+
+<header class="site-header" data-header data-variant={solid ? "dark" : "light"}>
+  <div class="site-header__bar">
+    <a class="site-header__logo" href="/">{siteConfig.logoText}</a>
+    <nav class="site-header__nav" aria-label={UI_LABELS.mainNav}>
+      <ul>
+        {
+          MENU_LINKS.map((link) => (
+            <li>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="site-header__cta">
+      <Button href={bookingHref} label={UI_LABELS.headerCta} variant="light" class="cta-light" />
+      <Button href={bookingHref} label={UI_LABELS.headerCta} variant="dark" class="cta-dark" />
+    </div>
+    <button
+      class="site-header__toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      aria-label={UI_LABELS.openMenu}
+      data-menu-open
+    >
+      <Icon name="menu" size={24} />
+    </button>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" data-menu hidden>
+    <div class="mobile-menu__top">
+      <a class="site-header__logo" href="/">{siteConfig.logoText}</a>
+      <button
+        class="mobile-menu__close"
+        type="button"
+        aria-label={UI_LABELS.closeMenu}
+        data-menu-close
+      >
+        <Icon name="close" size={24} />
+      </button>
+    </div>
+    <nav aria-label={UI_LABELS.mainNav}>
+      <ul class="mobile-menu__links">
+        {
+          MENU_LINKS.map((link) => (
+            <li>
+              <a href={link.href} data-menu-link>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <Button href={bookingHref} label={UI_LABELS.headerCta} variant="light" />
+  </div>
+</header>
+
+<script>
+  import { setScrollLocked } from "@/scripts/motion";
+
+  const menu = document.querySelector<HTMLElement>("[data-menu]");
+  const openBtn = document.querySelector<HTMLButtonElement>("[data-menu-open]");
+  const closeBtn = document.querySelector<HTMLButtonElement>("[data-menu-close]");
+
+  function setOpen(open: boolean): void {
+    if (!menu || !openBtn) return;
+    menu.hidden = !open;
+    openBtn.setAttribute("aria-expanded", String(open));
+    document.documentElement.classList.toggle("menu-open", open);
+    setScrollLocked(open);
+    if (open) closeBtn?.focus();
+    else openBtn.focus({ preventScroll: true });
+  }
+
+  openBtn?.addEventListener("click", () => setOpen(true));
+  closeBtn?.addEventListener("click", () => setOpen(false));
+  for (const link of menu?.querySelectorAll("[data-menu-link]") ?? []) {
+    link.addEventListener("click", () => setOpen(false));
+  }
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && menu && !menu.hidden) setOpen(false);
+  });
+  window.matchMedia("(min-width: 810px)").addEventListener("change", (event) => {
+    if (event.matches && menu && !menu.hidden) setOpen(false);
+  });
+</script>
+
+<style>
+  /* Cabecera fija: se oculta al bajar y reaparece al subir; clara sobre el hero, blanca después */
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    transition:
+      transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.3s ease;
+  }
+
+  .site-header.is-hidden {
+    transform: translateY(-150px);
+  }
+
+  .site-header[data-variant="dark"] {
+    background: var(--color-bg);
+  }
+
+  .site-header__bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: var(--max-width);
+    min-height: 65px;
+    margin: 0 auto;
+    padding: 16px var(--gutter);
+  }
+
+  .site-header__logo {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--color-on-image);
+    transition: color 0.3s ease;
+  }
+
+  [data-variant="dark"] .site-header__bar .site-header__logo {
+    color: var(--color-text);
+  }
+
+  .site-header__nav {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .site-header__nav ul {
+    display: flex;
+    gap: 32px;
+  }
+
+  .site-header__nav a {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--color-on-image);
+    transition: color 0.3s ease;
+  }
+
+  .site-header__nav a:hover {
+    color: var(--color-on-image-hover);
+  }
+
+  [data-variant="dark"] .site-header__nav a {
+    color: var(--color-text);
+  }
+
+  [data-variant="dark"] .site-header__nav a:hover {
+    color: var(--color-muted);
+  }
+
+  .site-header__cta {
+    display: flex;
+  }
+
+  [data-variant="light"] .site-header__cta :global(.cta-dark),
+  [data-variant="dark"] .site-header__cta :global(.cta-light) {
+    display: none;
+  }
+
+  .site-header__toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .mobile-menu {
+    position: absolute;
+    inset: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 16px var(--gutter) 40px;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .mobile-menu[hidden] {
+    display: none;
+  }
+
+  .mobile-menu__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 30px;
+  }
+
+  .mobile-menu .site-header__logo {
+    font-size: 16px;
+    color: var(--color-on-primary);
+  }
+
+  .mobile-menu__close {
+    display: flex;
+    color: var(--color-on-primary);
+  }
+
+  .mobile-menu__links {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .mobile-menu__links a {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 1199px) {
+    .site-header__nav ul {
+      gap: 24px;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .site-header__bar {
+      min-height: 62px;
+    }
+
+    .site-header__logo {
+      font-size: 16px;
+    }
+
+    .site-header__nav,
+    .site-header__cta {
+      display: none;
+    }
+
+    .site-header__toggle {
+      display: flex;
+    }
+  }
+</style>

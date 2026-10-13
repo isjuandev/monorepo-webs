@@ -1,0 +1,25 @@
+---
+export interface Props {
+  /** Texto con saltos de línea `\n` (los cortes de la fuente) */
+  text: string;
+  /** Mantener los saltos también en mobile (por defecto solo desde 810 px) */
+  keep?: boolean;
+}
+
+const { text, keep = false } = Astro.props;
+const lines = text.split("\n");
+---
+
+{
+  lines.map((line, i) => (
+    <>
+      {line}
+      {i < lines.length - 1 && (
+        <>
+          {" "}
+          <br class:list={["lb", { "lb--keep": keep }]} />
+        </>
+      )}
+    </>
+  ))
+}

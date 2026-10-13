@@ -1,0 +1,25 @@
+---
+import Lines from "@/components/Lines.astro";
+import type { SectionIntro as SectionIntroData } from "@/data/content";
+
+export interface Props {
+  intro: Omit<SectionIntroData, "id">;
+  light?: boolean;
+  /** Nivel del encabezado (h2 por defecto) */
+  as?: "h1" | "h2";
+}
+
+const { intro, light = false, as: Heading = "h2" } = Astro.props;
+---
+
+<div class:list={["intro", { "intro--light": light }]}>
+  <p class="intro__label">{intro.label}</p>
+  <Heading class="intro__title"><Lines text={intro.title} keep /></Heading>
+  {
+    intro.text && (
+      <p class="intro__text">
+        <Lines text={intro.text} />
+      </p>
+    )
+  }
+</div>

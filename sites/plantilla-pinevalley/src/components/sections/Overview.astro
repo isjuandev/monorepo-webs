@@ -1,0 +1,93 @@
+---
+import IconCard from "@/components/IconCard.astro";
+import { OVERVIEW } from "@/data/content";
+---
+
+<section class="section overview">
+  <div class="section__inner">
+    <div class="intro" data-reveal>
+      <p class="intro__label">{OVERVIEW.label}</p>
+      <p class="overview__statement" data-text-reveal>{OVERVIEW.statement}</p>
+    </div>
+    <div class="overview__body">
+      <div class="overview__media">
+        <img
+          src={OVERVIEW.image.src}
+          alt={OVERVIEW.image.alt}
+          width="1200"
+          height="896"
+          loading="lazy"
+          decoding="async"
+          data-parallax
+        />
+      </div>
+      <ul class="overview__grid">
+        {OVERVIEW.features.map((item) => <IconCard icon={item.icon} label={item.label} />)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .overview__statement {
+    max-width: 600px;
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .overview__body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .overview__media {
+    position: relative;
+    height: 600px;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background: var(--color-placeholder);
+  }
+
+  .overview__media img {
+    position: absolute;
+    inset: 0 0 auto;
+    width: 100%;
+    height: 150%;
+    object-fit: cover;
+  }
+
+  .overview__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  @media (max-width: 1199px) {
+    .overview__media {
+      height: 393px;
+    }
+
+    .overview__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 809px) {
+    .overview__statement {
+      font-size: 24px;
+    }
+
+    .overview__media {
+      height: 308px;
+    }
+
+    .overview__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

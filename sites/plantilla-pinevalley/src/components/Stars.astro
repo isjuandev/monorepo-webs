@@ -1,0 +1,23 @@
+---
+import Icon from "@/components/Icon.astro";
+import { UI_LABELS, fillLabel } from "@/data/content";
+
+export interface Props {
+  count: number;
+  size?: number;
+}
+
+const { count, size = 16 } = Astro.props;
+---
+
+<span class="stars" role="img" aria-label={fillLabel(UI_LABELS.rating, { n: count })}>
+  {Array.from({ length: count }, () => <Icon name="star" size={size} />)}
+</span>
+
+<style>
+  .stars {
+    display: inline-flex;
+    gap: 4px;
+    color: var(--color-star);
+  }
+</style>

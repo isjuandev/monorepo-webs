@@ -5,7 +5,7 @@ Lee y sigue todas las instrucciones definidas en [AGENTS.md](./AGENTS.md).
 ## Resumen rápido para Claude Code
 
 - Solo `pnpm` (nunca `npm`, `npx`, `yarn` ni `bun`); sin `react`/`react-dom`, solo Preact.
-- Sitios actuales en `sites/`: `_template`, `motel-boutique`, `plantilla-asterre` y `plantilla-hotellia`. Nunca importes código entre sitios.
+- Sitios actuales en `sites/`: `_template`, `motel-boutique`, `plantilla-asterre`, `plantilla-hotellia` y `plantilla-pinevalley`. Nunca importes código entre sitios.
 - Antes de entregar cambios ejecuta `pnpm verify` (aislamiento + lint + check + build); para QA visual: `SITE_FOLDER=<slug> pnpm test:visual`.
 - Skills en `.agents/skills/` y comandos slash en `.claude/commands/`: `/clone-website`, `/visual-qa`, `/review-monorepo`, `/seo-audit`, `/deploy-client`, `/codebase-context`.
 - **Al iniciar sesión y antes de explorar código, aplica la skill `codebase-context`**: consulta el grafo de codebase-memory (`index_status`, `get_architecture`, `search_graph`, `trace_path`, `get_code_snippet`) en vez de releer archivos; lee archivos completos solo si es imprescindible (los `.astro` y estilos se buscan con `search_code`/`grep`).
