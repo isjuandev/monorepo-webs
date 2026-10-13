@@ -34,23 +34,23 @@ const leadingText = words.join(" ");
 const hasBottom = Boolean(text || bottomLeft || bottomRight);
 ---
 
-<section class:list={["page-hero", tone === "brown" ? "bg-brown" : "tone-dark"]}>
+<section class:list={["page-hero", tone === "brown" ? "bg-brown" : "tone-dark"]} data-intro="fade">
   <div class="container page-hero__inner">
     <div class="page-hero__heading">
-      {label && <p class="t-label" data-reveal style="--reveal-delay: 0.4s">{label}</p>}
+      {label && <p class="t-label" data-reveal style="--reveal-delay: 0.9s">{label}</p>}
       <div class="page-hero__title-row">
         {sideLeft && <p class="t-label page-hero__side page-hero__side--left">{sideLeft}</p>}
         {
           inlineImage ? (
             <h1 class="t-display page-hero__title" aria-label={title}>
-              <SplitText text={leadingText} as="span" delay={0.1} />{" "}
-              <span class="page-hero__inline-image" data-reveal style="--reveal-delay: 0.5s">
+              <SplitText text={leadingText} as="span" delay={0.6} />{" "}
+              <span class="page-hero__inline-image" data-reveal style="--reveal-delay: 1s">
                 <img src={inlineImage} alt="" />
               </span>{" "}
-              <SplitText text={lastWord} as="span" delay={0.3} />
+              <SplitText text={lastWord} as="span" delay={0.8} />
             </h1>
           ) : (
-            <SplitText text={title} as="h1" class="t-display page-hero__title" delay={0.1} />
+            <SplitText text={title} as="h1" class="t-display page-hero__title" delay={0.6} />
           )
         }
         {sideRight && <p class="t-label page-hero__side page-hero__side--right">{sideRight}</p>}
@@ -58,7 +58,7 @@ const hasBottom = Boolean(text || bottomLeft || bottomRight);
     </div>
     {
       hasBottom && (
-        <div class="page-hero__bottom" data-reveal style="--reveal-delay: 0.6s">
+        <div class="page-hero__bottom" data-reveal style="--reveal-delay: 1.2s">
           <p class="t-body page-hero__bottom-left">{bottomLeft}</p>
           {text && <p class="t-lead page-hero__text">{text}</p>}
           <p class="t-body page-hero__bottom-right">{bottomRight}</p>
