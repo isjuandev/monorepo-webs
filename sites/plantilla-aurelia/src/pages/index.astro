@@ -1,0 +1,679 @@
+---
+import BookingForm from "@/components/BookingForm.astro";
+import CtaBanner from "@/components/CtaBanner.astro";
+import FaqSection from "@/components/FaqSection.astro";
+import ReviewCards from "@/components/ReviewCards.astro";
+import RoomCard from "@/components/RoomCard.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import { allRooms, homeServices } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const featuredRooms = allRooms.slice(0, 3);
+---
+
+<BaseLayout
+  title="Aurelia"
+  description="Hotel template for Framer. Experience Timeless Luxury at Aurelia Resort, Ibiza."
+>
+  <!-- =========================================================================
+       HERO SECTION CON HEADER EMBEBIDO
+       ========================================================================= -->
+  <section class="hero-section">
+    <div class="hero-bg-wrap">
+      <img
+        src="/images/X2OmMfETcWH9nQhEhQes4qxoshI.jpg"
+        alt="Aurelia Luxury Resort Mediterranean oceanfront"
+        class="hero-bg-img animate-ken-burns"
+        fetchpriority="high"
+        width="1920"
+        height="1080"
+      />
+      <div class="hero-overlay"></div>
+    </div>
+
+    <!-- Navegación Superior Transparente -->
+    <SiteHeader currentPath="/" theme="transparent" />
+
+    <div class="container hero-content-inner">
+      <div class="hero-text-block">
+        <span class="hero-badge animate-hero-badge">&#9734; WELCOME TO AURELIA &#9734;</span>
+        <h1 class="heading-display hero-title animate-hero-title">
+          Experience <br />
+          Timeless Luxury
+        </h1>
+        <p class="hero-subtitle animate-hero-subtitle">
+          Aurelia is where elegance meets comfort. Discover a sanctuary of luxury,
+          exceptional service and unforgettable moments.
+        </p>
+        <div class="hero-actions animate-hero-action">
+          <a href="/rooms" class="btn btn-outline-light">Discover Rooms</a>
+        </div>
+      </div>
+
+      <!-- Barra de Reserva Rápida Oscura (Framer Style) -->
+      <div class="hero-booking-wrap animate-hero-form">
+        <BookingForm layout="horizontal" />
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       ABOUT SECTION ("More than just a destination")
+       ========================================================================= -->
+  <section class="section-about">
+    <div class="container about-grid">
+      <div class="about-text reveal">
+        <span class="badge-overline">— AURELIA RESORT, IBIZA —</span>
+        <h2 class="heading-section about-title">
+          More than just <br />
+          a destination
+        </h2>
+        <div class="about-paragraphs">
+          <p>
+            Aurelia is where refined luxury meets the beauty of nature. Thoughtfully
+            designed spaces, exceptional service, and breathtaking surroundings create an
+            experience you'll remember long after your stay.
+          </p>
+        </div>
+
+        <!-- Firma de Julian Hayes -->
+        <div class="about-signature-wrap">
+          <img
+            src="/icons/Y0Cq6eEqVXtDNBt6PptXWCcup2E.svg"
+            alt="Julian Hayes"
+            class="signature-svg"
+            width="170"
+            height="60"
+          />
+          <p class="signature-role">Guest Experience Manager</p>
+        </div>
+
+        <div class="about-action">
+          <a href="/services" class="btn btn-dark">About Us</a>
+        </div>
+      </div>
+
+      <div class="about-media reveal reveal-delay-1">
+        <div class="about-arch-outer">
+          <div class="about-arch-frame">
+            <img
+              src="/images/CrnFdyBxxcFWLRnhkiuqRZGAbM.jpg"
+              alt="Relaxation overlooking the sea at Aurelia Resort"
+              class="about-arch-img"
+              width="340"
+              height="605"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       CTA BANNER
+       ========================================================================= -->
+  <CtaBanner />
+
+  <!-- =========================================================================
+       FEATURED ROOMS SECTION
+       ========================================================================= -->
+  <section class="section-rooms">
+    <div class="container">
+      <div class="section-header-row reveal">
+        <div>
+          <span class="badge-overline">— LUXURY SUITES & VILLAS —</span>
+          <h2 class="heading-section">Featured Rooms</h2>
+          <p class="section-desc-compact">
+            Discover a collection of beautifully designed suites and private villas, each
+            offering breathtaking views for an unforgettable stay.
+          </p>
+        </div>
+        <a href="/rooms" class="rooms-all-link">
+          <span>All Rooms</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
+
+      <div class="rooms-grid">
+        {
+          featuredRooms.map((room, idx) => (
+            <div class={`reveal reveal-delay-${idx + 1}`}>
+              <RoomCard room={room} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       BEYOND YOUR STAY (SERVICES) SECTION (Layout en 2 columnas de Framer)
+       ========================================================================= -->
+  <section class="section-services">
+    <div class="container services-two-col-layout">
+      <!-- Columna Izquierda: Título y Acción -->
+      <div class="services-left-col reveal">
+        <span class="badge-overline text-accent">— THE AURELIA EXPERIENCE —</span>
+        <h2 class="heading-section text-white services-main-title">Beyond Your Stay</h2>
+        <p class="services-intro-text">
+          From wellness retreats to unforgettable dining and exclusive island adventures,
+          every experience is crafted to make your stay exceptional.
+        </p>
+        <div class="services-action">
+          <a href="/services" class="btn btn-tan">More Services</a>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Tarjetas de Servicios Apiladas -->
+      <div class="services-right-col">
+        {
+          homeServices.map((svc, idx) => (
+            <div class={`service-card-stack reveal reveal-delay-${idx + 1}`}>
+              <div class="service-icon-circle">
+                <img src={svc.icon} alt="" class="service-svg-icon" width="24" height="24" />
+              </div>
+              <h4 class="service-stack-title">{svc.title}</h4>
+              <span class="service-stack-badge">THE AURELIA EXPERIENCE</span>
+              <p class="service-stack-desc">{svc.description}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       A GLIMPSE OF AURELIA (GALLERY HIGHLIGHTS)
+       ========================================================================= -->
+  <section class="section-home-gallery">
+    <div class="container home-gallery-inner">
+      <div class="home-gallery-center-text reveal">
+        <span class="badge-overline">— HIGHLIGHTS —</span>
+        <h2 class="heading-section gallery-center-title">A Glimpse of Aurelia</h2>
+        <p class="home-gallery-desc">
+          Mediterranean elegance, timeless architecture and unforgettable ocean views
+          come together to create an experience unlike any other.
+        </p>
+      </div>
+
+      <!-- Vignettes fotográficas flotantes en perspectiva -->
+      <div class="gallery-vignettes-wrap">
+        <div class="vignette vignette-1 reveal">
+          <img src="/images/pUgvkQQTW7mHNTOMkNZNkVsmg.jpg" alt="Coastal terrace" width="320" height="305" />
+        </div>
+        <div class="vignette vignette-2 reveal reveal-delay-1">
+          <img src="/images/FYt5VkZQcN1hOCo6dvR5QXBUZCs.jpg" alt="Sun loungers" width="155" height="148" />
+        </div>
+        <div class="vignette vignette-3 reveal reveal-delay-2">
+          <img src="/images/OxnRhyuk1fflUgDTkpIisbj3E6k.jpg" alt="Suite interior" width="216" height="212" />
+        </div>
+        <div class="vignette vignette-4 reveal reveal-delay-1">
+          <img src="/images/t7weLTGVyNL7xzOF9KriP8oMHjc.jpg" alt="Infinity pool" width="93" height="88" />
+        </div>
+        <div class="vignette vignette-5 reveal reveal-delay-3">
+          <img src="/images/rPGiZzoWjPb5uwEqVyk2DYpHU.jpg" alt="Twilight dining" width="124" height="118" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       REVIEWS & TESTIMONIAL HERO TWILIGHT
+       ========================================================================= -->
+  <ReviewCards />
+
+  <!-- =========================================================================
+       FAQ SECTION
+       ========================================================================= -->
+  <FaqSection />
+
+  <!-- =========================================================================
+       FOOTER
+       ========================================================================= -->
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  /* =========================================================================
+     Hero Styles
+     ========================================================================= */
+  .hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #ffffff;
+    padding-bottom: 3.5rem;
+  }
+
+  .hero-bg-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .hero-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(20, 28, 24, 0.35) 0%,
+      rgba(20, 28, 24, 0.2) 45%,
+      rgba(15, 22, 18, 0.75) 100%
+    );
+  }
+
+  .hero-content-inner {
+    position: relative;
+    z-index: 2;
+    margin-top: auto;
+    padding-top: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .hero-badge {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.9);
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+
+  .hero-title {
+    font-size: clamp(3rem, 7vw, 5.75rem);
+    line-height: 1.05;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1rem, 1.8vw, 1.1875rem);
+    line-height: 1.6;
+    max-width: 580px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-actions {
+    margin-bottom: 1rem;
+  }
+
+  .hero-booking-wrap {
+    width: 100%;
+  }
+
+  /* =========================================================================
+     About Section
+     ========================================================================= */
+  .section-about {
+    padding-top: clamp(5rem, 9vw, 8rem);
+    padding-bottom: clamp(5rem, 9vw, 8rem);
+    background-color: #ffffff;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 960px) {
+    .about-grid {
+      grid-template-columns: 1.15fr 1fr;
+      gap: 5rem;
+    }
+  }
+
+  .about-title {
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-primary);
+  }
+
+  .about-paragraphs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+    max-width: 560px;
+  }
+
+  .about-signature-wrap {
+    margin-bottom: 2.25rem;
+  }
+
+  .signature-svg {
+    width: 170px;
+    height: auto;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .signature-role {
+    font-family: var(--font-ui);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: none;
+    color: #6f7f73;
+  }
+
+  /* Arch Frame */
+  .about-arch-outer {
+    position: relative;
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 10px;
+    border: 1px solid rgba(191, 158, 101, 0.35);
+    border-radius: 999px;
+  }
+
+  .about-arch-frame {
+    border-radius: 999px;
+    overflow: hidden;
+    aspect-ratio: 0.72;
+    background-color: var(--color-sand);
+  }
+
+  .about-arch-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .about-arch-outer:hover .about-arch-img {
+    transform: scale(1.03);
+  }
+
+  /* =========================================================================
+     Rooms Section
+     ========================================================================= */
+  .section-rooms {
+    padding-top: clamp(5rem, 8vw, 7.5rem);
+    padding-bottom: clamp(5rem, 8vw, 7.5rem);
+    background-color: var(--color-cream);
+  }
+
+  .section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 3.5rem;
+    gap: 2rem;
+  }
+
+  .section-desc-compact {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    max-width: 520px;
+    margin-top: 0.5rem;
+  }
+
+  .rooms-all-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-accent);
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: gap 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  }
+
+  .rooms-all-link:hover {
+    gap: 0.75rem;
+    opacity: 0.85;
+  }
+
+  .rooms-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .rooms-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+  }
+
+  /* =========================================================================
+     Services Section (2-Column Framer Layout)
+     ========================================================================= */
+  .section-services {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    padding-top: clamp(5rem, 9vw, 8rem);
+    padding-bottom: clamp(5rem, 9vw, 8rem);
+  }
+
+  .services-two-col-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+  }
+
+  @media (min-width: 960px) {
+    .services-two-col-layout {
+      grid-template-columns: 1fr 1.3fr;
+      gap: 5rem;
+      align-items: start;
+    }
+  }
+
+  .text-white {
+    color: #ffffff;
+  }
+
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .services-main-title {
+    margin-top: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .services-intro-text {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2.25rem;
+    max-width: 460px;
+  }
+
+  .services-right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .service-card-stack {
+    border: 1px solid rgba(191, 158, 101, 0.25);
+    border-radius: 12px;
+    padding: 2.25rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.02);
+    transition: border-color var(--transition-fast), background-color var(--transition-fast),
+      transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .service-card-stack:hover {
+    border-color: rgba(191, 158, 101, 0.5);
+    background-color: rgba(255, 255, 255, 0.05);
+    transform: translateY(-4px);
+  }
+
+  .service-icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(191, 158, 101, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+  }
+
+  .service-card-stack:hover .service-icon-circle {
+    transform: scale(1.1);
+    border-color: var(--color-accent);
+  }
+
+  .service-svg-icon {
+    filter: invert(72%) sepia(25%) saturate(750%) hue-rotate(355deg) brightness(90%) contrast(90%);
+  }
+
+  .service-stack-title {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 0.4rem;
+  }
+
+  .service-stack-badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+  }
+
+  .service-stack-desc {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.75);
+    max-width: 480px;
+  }
+
+  /* =========================================================================
+     Home Gallery Highlights Section
+     ========================================================================= */
+  .section-home-gallery {
+    position: relative;
+    padding-top: clamp(5rem, 9vw, 8rem);
+    padding-bottom: clamp(5rem, 9vw, 8rem);
+    background-color: var(--color-cream);
+    overflow: hidden;
+  }
+
+  .home-gallery-inner {
+    position: relative;
+  }
+
+  .home-gallery-center-text {
+    text-align: center;
+    max-width: 620px;
+    margin: 0 auto 3.5rem auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .gallery-center-title {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+  }
+
+  .home-gallery-desc {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-text-muted);
+  }
+
+  .gallery-vignettes-wrap {
+    position: relative;
+    height: 480px;
+  }
+
+  /* Vignettes Fotográficas Flotantes */
+  .vignette {
+    position: absolute;
+    overflow: hidden;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+    will-change: transform;
+  }
+
+  .vignette img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .vignette:hover {
+    transform: scale(1.05) !important;
+    z-index: 5;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+  }
+
+  .vignette:hover img {
+    transform: scale(1.04);
+  }
+
+  .vignette-1 {
+    width: 260px;
+    height: 220px;
+    left: 2%;
+    top: 5%;
+    transform: rotate(-4deg);
+  }
+
+  .vignette-2 {
+    width: 170px;
+    height: 140px;
+    left: 38%;
+    top: 0;
+    transform: rotate(3deg);
+  }
+
+  .vignette-3 {
+    width: 240px;
+    height: 200px;
+    right: 2%;
+    top: 10%;
+    transform: rotate(-3deg);
+  }
+
+  .vignette-4 {
+    width: 160px;
+    height: 130px;
+    left: 22%;
+    bottom: 5%;
+    transform: rotate(5deg);
+  }
+
+  .vignette-5 {
+    width: 180px;
+    height: 150px;
+    right: 18%;
+    bottom: 2%;
+    transform: rotate(-2deg);
+  }
+</style>

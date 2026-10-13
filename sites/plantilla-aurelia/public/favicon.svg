@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="28" fill="#1e2a24"/>
+  <!-- Aurelia Stylized Luxury 'A' Crest Monogram in Gold -->
+  <g transform="translate(18, 18) scale(0.72)">
+    <path d="M64 12 L18 116 L38 116 L49 88 L79 88 L90 116 L110 116 Z M56 68 L64 42 L72 68 Z" fill="#bf9e65"/>
+    <circle cx="64" cy="22" r="4" fill="#bf9e65"/>
+  </g>
+</svg>

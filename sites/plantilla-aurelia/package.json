@@ -1,0 +1,26 @@
+{
+  "name": "@sites/plantilla-aurelia",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "clean": "rm -rf dist .astro .turbo"
+  },
+  "dependencies": {
+    "@astrojs/preact": "^4.0.0",
+    "@astrojs/sitemap": "^3.2.1",
+    "@repo/ui": "workspace:*",
+    "@repo/utils": "workspace:*",
+    "astro": "^5.1.0",
+    "preact": "^10.25.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@repo/tsconfig": "workspace:*",
+    "typescript": "^5.7.0"
+  }
+}

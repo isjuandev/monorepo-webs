@@ -1,0 +1,214 @@
+---
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+// 12 fotos exactas en el orden modular del diseño de Framer
+const modularGalleryPhotos = [
+  {
+    src: "/images/pUgvkQQTW7mHNTOMkNZNkVsmg.jpg",
+    alt: "Aurelia Resort coastal architecture and Mediterranean garden",
+    className: "item-wide-tall", // 2 col, 2 row
+  },
+  {
+    src: "/images/FYt5VkZQcN1hOCo6dvR5QXBUZCs.jpg",
+    alt: "Private villa sun loungers overlooking clear sea",
+    className: "item-unit", // 1 col, 1 row
+  },
+  {
+    src: "/images/OxnRhyuk1fflUgDTkpIisbj3E6k.jpg",
+    alt: "Warm wooden interior details and natural linen bedding",
+    className: "item-unit", // 1 col, 1 row
+  },
+  {
+    src: "/images/t7weLTGVyNL7xzOF9KriP8oMHjc.jpg",
+    alt: "Infinity pool edge mirroring the blue sky",
+    className: "item-unit", // 1 col, 1 row
+  },
+  {
+    src: "/images/rPGiZzoWjPb5uwEqVyk2DYpHU.jpg",
+    alt: "Al fresco dining terrace at twilight",
+    className: "item-unit", // 1 col, 1 row
+  },
+  {
+    src: "/images/ITGrhDCMBNgkkfR59OBZUAzg.png",
+    alt: "Luxury marble bathroom with freestanding soaking tub",
+    className: "item-unit", // 1 col, 1 row
+  },
+  {
+    src: "/images/NrD2iMNyjCmyHeaew67vObiGS38.jpg",
+    alt: "Spacious suite lounge area with panoramic ocean view",
+    className: "item-wide-tall", // 2 col, 2 row
+  },
+  {
+    src: "/images/PT8D8xYWi0mjOCBpM6oAxZCvLA.jpg",
+    alt: "Romantic sunset setup on private oceanfront terrace",
+    className: "item-tall", // 1 col, 2 row
+  },
+  {
+    src: "/images/aEzPtSmyulvvzrKdrPYZwF9X5R8.png",
+    alt: "Peaceful holistic spa and relaxation pavilion",
+    className: "item-unit", // 1 col, 1 row
+  },
+  {
+    src: "/images/V5hcRscOTU3X8Mu6UoqNYt1BPM.jpg",
+    alt: "Exclusive villa patio with private pool view",
+    className: "item-tall", // 1 col, 2 row
+  },
+  {
+    src: "/images/0rFLyij2JAVr2Po18j9ZvYXbPDU.png",
+    alt: "Artisan pottery and organic Mediterranean decor",
+    className: "item-tall", // 1 col, 2 row
+  },
+  {
+    src: "/images/jlZNqN6EF160KcLI76Ky1PVMyUw.jpg",
+    alt: "Sunlight casting geometric shadows across stone patio",
+    className: "item-wide-tall", // 2 col, 2 row
+  },
+];
+---
+
+<BaseLayout
+  title="Gallery"
+  description="Immerse yourself in the visual elegance of Aurelia Resort: panoramic Mediterranean suites, private infinity pools, dining terraces, and tranquil moments."
+>
+  <SiteHeader currentPath="/gallery" theme="solid" />
+
+  <main>
+    <!-- =========================================================================
+         Page Header
+         ========================================================================= -->
+    <section class="gallery-page-hero">
+      <div class="container text-center gallery-hero-content reveal">
+        <span class="badge-overline">— GALLERY —</span>
+        <h1 class="heading-display gallery-hero-title">A Glimpse of Aurelia</h1>
+        <p class="gallery-hero-subtitle">
+          Mediterranean elegance, timeless architecture and unforgettable ocean views
+          come together to create an experience unlike any other.
+        </p>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         Cuadrícula Modular 1:1 de 12 Fotografías
+         ========================================================================= -->
+    <section class="gallery-modular-section">
+      <div class="container">
+        <div class="modular-grid">
+          {
+            modularGalleryPhotos.map((photo, idx) => (
+              <div
+                class={`grid-cell ${photo.className} reveal reveal-delay-${(idx % 3) + 1}`}
+              >
+                <img
+                  src={photo.src}
+                  alt={photo.alt}
+                  class="modular-img"
+                  loading="lazy"
+                />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .gallery-page-hero {
+    background-color: var(--color-cream);
+    color: var(--color-primary);
+    padding-top: clamp(5rem, 9vw, 7.5rem);
+    padding-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .gallery-hero-title {
+    font-size: clamp(2.75rem, 5.5vw, 4.75rem);
+    margin-top: 0.5rem;
+    margin-bottom: 1.25rem;
+    color: var(--color-primary);
+  }
+
+  .gallery-hero-subtitle {
+    font-size: 1.125rem;
+    line-height: 1.65;
+    max-width: 660px;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--color-text-muted);
+  }
+
+  /* Modular Grid 3 Columnas */
+  .gallery-modular-section {
+    padding-top: clamp(3rem, 6vw, 4.5rem);
+    padding-bottom: clamp(5rem, 9vw, 8rem);
+    background-color: var(--color-cream);
+  }
+
+  .modular-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .modular-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 960px) {
+    .modular-grid {
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: 165px;
+      gap: 16px;
+    }
+
+    .item-unit {
+      grid-column: span 1;
+      grid-row: span 1;
+    }
+
+    .item-tall {
+      grid-column: span 1;
+      grid-row: span 2;
+    }
+
+    .item-wide-tall {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+  }
+
+  .grid-cell {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background-color: var(--color-sand);
+    aspect-ratio: 4 / 3;
+    box-shadow: 0 4px 16px rgba(30, 42, 36, 0.04);
+  }
+
+  @media (min-width: 960px) {
+    .grid-cell {
+      aspect-ratio: unset;
+    }
+  }
+
+  .modular-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .grid-cell:hover .modular-img {
+    transform: scale(1.04);
+  }
+</style>
