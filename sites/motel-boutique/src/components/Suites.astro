@@ -1,0 +1,57 @@
+---
+import { siteConfig } from "@/config/site";
+import { SUITES } from "@/data/content";
+import { buildWhatsAppUrl } from "@repo/utils";
+
+const whatsapp = siteConfig.contact.whatsapp;
+---
+
+<section id="suites" class="suites">
+  <div class="suites__inner">
+    <h2 class="section-title">Las suites</h2>
+    <div class="suites__grid">
+      {
+        SUITES.map((suite) => (
+          <article class="suite">
+            <h3>{suite.name}</h3>
+            <div class="suite__img" style={`background: ${suite.tone}`} role="img" aria-label={`Imagen de ${suite.name}`} />
+            <p class="suite__price">{suite.price}</p>
+            <p class="suite__extra">Hora adicional: {suite.extraHour}</p>
+            <p class="suite__extra">Persona adicional: {suite.extraPerson}</p>
+            {
+              whatsapp && (
+                <a class="ui-btn" href={buildWhatsAppUrl(whatsapp, `Hola, quiero información de ${suite.name}`)} target="_blank" rel="noopener noreferrer">
+                  Más información
+                </a>
+              )
+            }
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .suites { padding: 8rem 0 4rem; }
+  .suites__inner { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+  .suites__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+  .suite { display: flex; flex-direction: column; gap: 0.6rem; }
+  .suite h3 {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.6rem;
+  }
+  .suite__img { aspect-ratio: 3 / 4; width: 100%; }
+  .suite__price { font-weight: 700; font-size: 0.85rem; margin-top: 0.4rem; }
+  .suite__extra { color: var(--color-muted); font-size: 0.85rem; }
+  .suite .ui-btn { margin-top: 0.75rem; }
+  @media (max-width: 960px) { .suites__grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .suites__grid { grid-template-columns: 1fr; } }
+</style>
