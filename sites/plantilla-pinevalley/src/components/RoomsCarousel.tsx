@@ -1,6 +1,6 @@
+import { useState } from "preact/hooks";
 import { UiIcon } from "@/components/UiIcon";
 import type { ImageAsset } from "@/data/content";
-import { useState } from "preact/hooks";
 
 export interface RoomSlide {
   title: string;

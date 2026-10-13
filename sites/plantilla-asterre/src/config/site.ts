@@ -1,4 +1,4 @@
-import { type SiteMetadata, normalizeSiteUrl } from "@repo/utils";
+import { normalizeSiteUrl, type SiteMetadata } from "@repo/utils";
 
 export interface ClientSiteConfig extends SiteMetadata {
   /** Año de fundación mostrado junto al logotipo */

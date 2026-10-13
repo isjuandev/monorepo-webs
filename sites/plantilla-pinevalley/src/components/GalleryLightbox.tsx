@@ -1,6 +1,6 @@
+import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 import { UiIcon } from "@/components/UiIcon";
 import type { GalleryImage } from "@/data/content";
-import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 
 export interface GalleryLightboxLabels {
   cta: string;

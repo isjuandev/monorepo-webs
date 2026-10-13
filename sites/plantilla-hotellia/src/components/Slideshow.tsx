@@ -1,5 +1,5 @@
-import { type ImageAsset, UI_LABELS } from "@/data/content";
 import { useEffect, useRef, useState } from "preact/hooks";
+import { type ImageAsset, UI_LABELS } from "@/data/content";
 
 export interface SlideshowProps {
   slides: ImageAsset[];
@@ -48,7 +48,7 @@ export function Slideshow({ slides, prevIcon, nextIcon }: SlideshowProps) {
   const current = ((index % count) + count) % count;
 
   return (
-    <div class="slideshow" aria-roledescription="carousel" aria-label={UI_LABELS.slideshow}>
+    <section class="slideshow" aria-roledescription="carousel" aria-label={UI_LABELS.slideshow}>
       <ul
         ref={trackRef}
         class="slideshow__track"
@@ -87,6 +87,6 @@ export function Slideshow({ slides, prevIcon, nextIcon }: SlideshowProps) {
         </button>
       </div>
       <p class="visually-hidden" aria-live="polite">{`Slide ${current + 1} of ${count}`}</p>
-    </div>
+    </section>
   );
 }

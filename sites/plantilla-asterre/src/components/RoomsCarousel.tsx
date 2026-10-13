@@ -1,5 +1,5 @@
-import { UI_LABELS } from "@/data/content";
 import { useCallback, useEffect, useRef, useState } from "preact/hooks";
+import { UI_LABELS } from "@/data/content";
 
 export interface CarouselRoom {
   slug: string;
