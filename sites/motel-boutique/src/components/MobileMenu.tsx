@@ -39,6 +39,9 @@ export function MobileMenu({ items }: MobileMenuProps) {
         .mobile-menu__toggle span { display: block; height: 2px; background: #fff; }
         .mobile-menu__panel { position: absolute; left: 0; right: 0; top: var(--header-height); background: #000; border-top: 1px solid #262626; display: grid; padding: 1rem 1.5rem 1.5rem; }
         .mobile-menu__panel[hidden] { display: none; }
+        .mobile-menu__panel { animation: menu-fade 0.525s linear both; }
+        @keyframes menu-fade { from { opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { .mobile-menu__panel { animation: none; } }
         .mobile-menu__panel a { text-decoration: none; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.85rem; padding: 0.9rem 0; border-bottom: 1px solid #1a1a1a; }
         @media (max-width: 760px) { .mobile-menu { display: block; } }
       `}</style>

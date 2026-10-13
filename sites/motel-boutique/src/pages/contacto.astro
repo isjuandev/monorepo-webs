@@ -1,7 +1,9 @@
 ---
 import Contact from "@/components/Contact.astro";
+import { Gallery } from "@/components/Gallery";
 import PageHero from "@/components/PageHero.astro";
 import { siteConfig } from "@/config/site";
+import { GALLERY_ITEMS } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
@@ -11,4 +13,11 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 >
   <PageHero title="Contacto" subtitle="Escríbenos o llámanos para reservar." />
   <Contact />
+  <div class="gallery-wrap">
+    <Gallery client:visible items={GALLERY_ITEMS} />
+  </div>
 </BaseLayout>
+
+<style>
+  .gallery-wrap { padding-bottom: 5rem; }
+</style>

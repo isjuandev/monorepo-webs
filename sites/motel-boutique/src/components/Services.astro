@@ -8,8 +8,8 @@ import { SPECIAL_SERVICES } from "@/data/content";
     <p class="services__lead">Complementa tu visita con servicios pensados para cada ocasión.</p>
     <div class="services__grid">
       {
-        SPECIAL_SERVICES.map((service) => (
-          <article class="service">
+        SPECIAL_SERVICES.map((service, index) => (
+          <article class="service" data-reveal style={`--reveal-delay: ${index * 120}ms`}>
             <div class="service__img" style={`background: ${service.tone}`} role="img" aria-label={service.title} />
             <h3>{service.title}</h3>
             <p>{service.text}</p>

@@ -155,3 +155,14 @@ export const STAY_POLICY: string[] = [
   "Si no se especifica, se asumirá una estadía de 6 horas.",
   "Si el tiempo se excede, se generan cargos por horas adicionales que se pagan al salir.",
 ];
+
+export const GALLERY_ITEMS: Array<{ label: string; tone: string }> = [
+  { label: "Foto 1", tone: "linear-gradient(135deg, #3b1d4a, #c0457a)" },
+  { label: "Foto 2", tone: "linear-gradient(135deg, #3a2a1d, #c98a4b)" },
+  { label: "Foto 3", tone: "linear-gradient(135deg, #1d2f3a, #4b9cc9)" },
+  { label: "Foto 4", tone: "linear-gradient(135deg, #3a1d1d, #e8554e)" },
+  { label: "Foto 5", tone: "linear-gradient(135deg, #1d1d3a, #6b4bc9)" },
+  { label: "Foto 6", tone: "linear-gradient(135deg, #1d3a2f, #4bc98a)" },
+  { label: "Foto 7", tone: "linear-gradient(135deg, #5a1d2a, #e8554e)" },
+  { label: "Foto 8", tone: "linear-gradient(135deg, #2a2a2a, #8a8a8a)" },
+];

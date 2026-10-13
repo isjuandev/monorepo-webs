@@ -31,3 +31,21 @@ Fondo negro, texto blanco, acento rojo `#e8554e`, botones con borde blanco. Tít
 ## Diferencias conocidas
 - Sin fotos ni video de hero, sin mapa de Google ni galería (en `/contacto` solo van los datos de contacto).
 - Sin comparación píxel a píxel contra la fuente (no hay snapshots de referencia).
+
+## Animaciones (observadas en el original y su equivalente local)
+| Original | Disparador | Local |
+|---|---|---|
+| Fundido de cada sección al cargar, 0.48 s ease-out | carga | `main` con `page-fade` 0.48 s ease-out |
+| Entrada de imágenes y botones (`data-animation-role`) | scroll | `data-reveal` + `src/scripts/reveal.ts` (IntersectionObserver, fundido + 18 px, escalonado) |
+| Botones: color/fondo 0.1 s linear | hover | igual en `.ui-btn` |
+| Overlay del menú móvil: fundido 0.525 s linear | clic | `MobileMenu.tsx` |
+| Cabecera estática (no fija) | n/a | `position: relative` |
+| Hero con contenedor parallax | scroll | fondo `fixed` (parallax simple; sin imagen real aún) |
+| Marquesina movida por JS | tiempo | CSS `translateX` continuo (velocidad aproximada) |
+| Galería "View fullsize" | clic | `Gallery.tsx`: visor con Esc, flechas y foco devuelto |
+
+Todas respetan `prefers-reduced-motion`.
+
+### No verificado
+- Velocidad exacta de la marquesina y factor real del parallax (la medición en el panel no fue concluyente).
+- Fondo de video/imagen del hero y bloque de video/mapa: no incluidos.
