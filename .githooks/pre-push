@@ -1,0 +1,4 @@
+#!/bin/sh
+# Valida localmente lo mismo que CI antes de que un push dispare el despliegue en Coolify.
+set -e
+pnpm verify

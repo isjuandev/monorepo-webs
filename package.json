@@ -12,6 +12,7 @@
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "check": "turbo run check",
+    "verify": "pnpm verify:isolation && pnpm lint && pnpm check && pnpm build",
     "verify:isolation": "node scripts/verify-isolation.mjs",
     "new-client-site": "node scripts/new-client-site.mjs",
     "test:visual": "playwright test && node scripts/visual-qa-summary.mjs",
