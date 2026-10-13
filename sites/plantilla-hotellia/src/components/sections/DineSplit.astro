@@ -1,12 +1,12 @@
 ---
-import type { ImageAsset } from "@/data/content";
+import { type ImageAsset, UI_LABELS } from "@/data/content";
 
 export interface Props {
   title: string;
   text: string;
   href: string;
   image: ImageAsset;
-  /** "end": imagen a la derecha (Bar Ember); "start": imagen a la izquierda (restaurante). */
+  /** "end": imagen a la derecha (bar); "start": imagen a la izquierda (restaurante). */
   imageSide?: "start" | "end";
 }
 
@@ -18,7 +18,7 @@ const { title, text, href, image, imageSide = "end" } = Astro.props;
     <div class="dine-split__text">
       <h2 class="t-h2">{title}</h2>
       <p class="t-body">{text}</p>
-      <a class="pill pill--dark" href={href}>View Menu</a>
+      <a class="pill pill--dark" href={href}>{UI_LABELS.viewMenu}</a>
     </div>
     <div class="dine-split__media">
       <img src={image.src} alt={image.alt} width="1168" height="784" loading="lazy" />

@@ -1,11 +1,12 @@
 ---
-import { IMAGES, TICKER_OFFERS } from "@/data/content";
+import { siteConfig } from "@/config/site";
+import { IMAGES, TICKER_OFFERS, UI_LABELS } from "@/data/content";
 
 // Cuatro copias del grupo para cubrir pantallas anchas; la animación recorre una copia (-25 %).
 const COPIES = 4;
 ---
 
-<section class="ticker" aria-label="Offers">
+<section class="ticker" aria-label={UI_LABELS.offers}>
   <div class="ticker__viewport">
     <ul class="ticker__track">
       {
@@ -14,7 +15,7 @@ const COPIES = 4;
             <>
               <li class="ticker__item" aria-hidden={copy > 0 ? "true" : undefined}>
                 <a href="/" class="ticker__logo" tabindex={copy > 0 ? -1 : undefined}>
-                  <img src={IMAGES.logoBlack} alt="Hotellia" width="133" height="29" />
+                  <img src={IMAGES.logoBlack} alt={siteConfig.name} width="133" height="29" />
                 </a>
               </li>
               <li class="ticker__item" aria-hidden={copy > 0 ? "true" : undefined}>

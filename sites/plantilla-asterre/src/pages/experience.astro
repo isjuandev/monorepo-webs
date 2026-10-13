@@ -4,21 +4,23 @@ import LinkButton from "@/components/LinkButton.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 import PageHero from "@/components/sections/PageHero.astro";
 import { siteConfig } from "@/config/site";
-import { EXPERIENCES, IMAGES, PRIVATE_EXPERIENCES } from "@/data/content";
+import { EXPERIENCES, IMAGES, PAGES, PRIVATE_EXPERIENCES } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const page = PAGES.experience;
 ---
 
 <BaseLayout
-  title={`Experiencias | ${siteConfig.name}`}
-  description="Bienestar, gastronomía y planes para descubrir la región a tu ritmo."
+  title={`${page.meta.title} | ${siteConfig.name}`}
+  description={page.meta.description}
   headerTone="dark"
 >
   <PageHero
-    title="Días a tu ritmo"
+    title={page.hero.title}
     inlineImage={IMAGES.experienceHero}
-    sideLeft="Descansar"
-    sideRight="Explorar"
-    text="Nadar, comer bien, descansar o salir a explorar: tú decides cómo se llena cada día."
+    sideLeft={page.hero.sideLeft}
+    sideRight={page.hero.sideRight}
+    text={page.hero.text}
   />
 
   <section class="experiences">
@@ -51,7 +53,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
   <section class="section bg-brown private">
     <div class="container">
-      <SectionHeading label="Experiencias privadas" title="Hecho a tu medida" />
+      <SectionHeading label={page.private.label} title={page.private.title} />
       <ul class="private__grid">
         {
           PRIVATE_EXPERIENCES.map((item, i) => (

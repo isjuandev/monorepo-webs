@@ -2,7 +2,7 @@
 import LinkButton from "@/components/LinkButton.astro";
 import { RoomsCarousel } from "@/components/RoomsCarousel";
 import SectionHeading from "@/components/SectionHeading.astro";
-import type { Room } from "@/data/content";
+import { type Room, UI_LABELS } from "@/data/content";
 
 export interface Props {
   rooms: Room[];
@@ -28,7 +28,7 @@ const carouselRooms = rooms.map(({ slug, name, guests, size, view, price, image 
 <section class:list={["section rooms-slider", tone === "brown" && "bg-brown"]}>
   <div class="container">
     <SectionHeading title={title} text={text}>
-      <LinkButton href="/rooms">Ver todas las habitaciones</LinkButton>
+      <LinkButton href="/rooms">{UI_LABELS.viewAllRooms}</LinkButton>
     </SectionHeading>
   </div>
   <div class="rooms-slider__carousel" data-reveal>

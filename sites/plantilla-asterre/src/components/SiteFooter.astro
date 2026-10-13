@@ -1,6 +1,6 @@
 ---
 import { LEGAL_LINKS, NAV_LINKS, siteConfig } from "@/config/site";
-import { IMAGES } from "@/data/content";
+import { IMAGES, UI_LABELS } from "@/data/content";
 
 const { contact, socials } = siteConfig;
 const year = new Date().getFullYear();
@@ -25,12 +25,12 @@ const socialLinks = Object.entries(socials ?? {}).filter(
   <div class="site-footer__card" data-reveal>
     <div class="site-footer__row site-footer__brand">
       <a href="/" class="t-logo">{siteConfig.name}</a>
-      <span class="t-label">Est. {siteConfig.established}</span>
+      <span class="t-label">{UI_LABELS.established(siteConfig.established)}</span>
     </div>
 
     <div class="site-footer__row site-footer__contact">
       <div class="site-footer__group">
-        <p class="t-label t-muted">Contacto</p>
+        <p class="t-label t-muted">{UI_LABELS.contact}</p>
         {contact.email && <a href={`mailto:${contact.email}`} class="t-lead">{contact.email}</a>}
         {
           contact.phone && (
@@ -43,7 +43,7 @@ const socialLinks = Object.entries(socials ?? {}).filter(
       {
         contact.address && (
           <div class="site-footer__group">
-            <p class="t-label t-muted">Ubicación</p>
+            <p class="t-label t-muted">{UI_LABELS.location}</p>
             <a
               href={siteConfig.mapsUrl}
               class="t-lead site-footer__address"
@@ -57,7 +57,7 @@ const socialLinks = Object.entries(socials ?? {}).filter(
       }
     </div>
 
-    <nav class="site-footer__row" aria-label="Pie de página">
+    <nav class="site-footer__row" aria-label={UI_LABELS.footerNav}>
       <ul class="site-footer__nav">
         {
           NAV_LINKS.map((link) => (
@@ -98,7 +98,7 @@ const socialLinks = Object.entries(socials ?? {}).filter(
           ))
         }
       </ul>
-      <p class="t-label t-muted">© {year}, Todos los derechos reservados</p>
+      <p class="t-label t-muted">{UI_LABELS.allRightsReserved(year)}</p>
     </div>
   </div>
 </footer>

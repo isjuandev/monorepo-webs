@@ -2,11 +2,13 @@
 import SiteFooter from "@/components/SiteFooter.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
 import { pageTitle, siteConfig } from "@/config/site";
+import { UI_LABELS } from "@/data/content";
 import SEO from "@repo/ui/astro/SEO.astro";
+import "@/styles/theme.css";
 import "@/styles/global.css";
 
 export interface Props {
-  /** Nombre de la página; se compone como "Página - Hotellia - ..." igual que la fuente */
+  /** Nombre de la página; se compone como "Página - <título SEO del sitio>" */
   page?: string;
   description?: string;
   ogImage?: string;
@@ -34,7 +36,7 @@ const jsonLd = {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={siteConfig.locale?.split("_")[0] ?? "en"}>
   <head>
     <SEO
       title={title}
@@ -47,13 +49,16 @@ const jsonLd = {
     <link rel="icon" type="image/png" href="/favicon.png" media="(prefers-color-scheme: light)" />
     <link rel="icon" type="image/png" href="/favicon-dark.png" media="(prefers-color-scheme: dark)" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="preload" href="/fonts/libre-baskerville-400.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin />
-    <meta name="theme-color" content="#1c3d2d" />
+    {
+      siteConfig.preloadFonts.map((href) => (
+        <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />
+      ))
+    }
+    <meta name="theme-color" content={siteConfig.themeColor} />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
   <body>
-    <a href="#contenido" class="skip-link">Skip to content</a>
+    <a href="#contenido" class="skip-link">{UI_LABELS.skipToContent}</a>
     <SiteHeader />
     <main id="contenido" class="site-main">
       <slot />

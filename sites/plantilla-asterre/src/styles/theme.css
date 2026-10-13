@@ -1,0 +1,54 @@
+/* Tema de marca: colores, tipografías y medidas. Es el único archivo de estilos que se edita para cambiar la identidad visual. */
+
+@font-face {
+  font-family: "Forum";
+  src: url("/fonts/forum-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Almarai";
+  src: url("/fonts/almarai-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --color-primary: #734e34;
+  --color-accent: #e8e0d1;
+  --color-bg: #e8e0d1;
+  --color-surface: #734e34;
+  --color-text: #261a11;
+  --color-muted: rgba(38, 26, 17, 0.6);
+  --color-light: #e8e0d1;
+  --color-light-muted: rgba(232, 224, 209, 0.6);
+  --color-overlay: rgba(38, 26, 17, 0.5);
+  --color-line-dark: rgba(38, 26, 17, 0.2);
+  --color-line-light: rgba(232, 224, 209, 0.2);
+
+  --font-display: "Forum", "Times New Roman", serif;
+  --font-sans: "Almarai", system-ui, sans-serif;
+
+  --max-width: 1440px;
+  --gutter: 32px;
+  --section-space: 240px;
+  --radius-md: 0;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --header-height: 62px;
+}
+
+@media (max-width: 1199px) {
+  :root {
+    --section-space: 160px;
+  }
+}
+
+@media (max-width: 809px) {
+  :root {
+    --gutter: 24px;
+    --section-space: 120px;
+  }
+}

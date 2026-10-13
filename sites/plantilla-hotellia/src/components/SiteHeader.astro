@@ -1,18 +1,18 @@
 ---
 import Icon from "@/components/Icon.astro";
 import { MENU_LINKS, siteConfig } from "@/config/site";
-import { IMAGES } from "@/data/content";
+import { IMAGES, UI_LABELS } from "@/data/content";
 
 const splitWords = (label: string) => label.split(" ");
 ---
 
 <header class="site-header" data-header>
-  <nav class="site-header__bar" aria-label="Principal">
-    <a class="site-header__logo" href="/" aria-label={`${siteConfig.name} — inicio`}>
+  <nav class="site-header__bar" aria-label={UI_LABELS.mainNav}>
+    <a class="site-header__logo" href="/" aria-label={`${siteConfig.name} — ${UI_LABELS.home}`}>
       <img src={IMAGES.logoWhite} alt="" width="109" height="24" />
     </a>
     <div class="site-header__actions">
-      <a class="site-header__icon" href="/reserve" aria-label="Reserve">
+      <a class="site-header__icon" href="/reserve" aria-label={UI_LABELS.reserve}>
         <Icon name="bell" size={22} />
       </a>
       <button
@@ -22,7 +22,7 @@ const splitWords = (label: string) => label.split(" ");
         aria-controls="site-menu"
         data-menu-toggle
       >
-        <span data-menu-label>Menu</span>
+        <span data-menu-label>{UI_LABELS.menu}</span>
       </button>
     </div>
   </nav>

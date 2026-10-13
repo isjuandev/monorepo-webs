@@ -1,0 +1,83 @@
+/* Tema de marca: colores, tipografías y medidas. Es el único archivo de estilos que se edita para cambiar la identidad visual. */
+
+/* Fuentes auto-alojadas (OFL): Libre Baskerville, Inter y Manrope, los mismos archivos de la fuente. */
+
+@font-face {
+  font-family: "Libre Baskerville";
+  src: url("/fonts/libre-baskerville-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Libre Baskerville";
+  src: url("/fonts/libre-baskerville-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Libre Baskerville";
+  src: url("/fonts/libre-baskerville-400-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/manrope-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/manrope-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --color-primary: #1c3d2d;
+  --color-primary-overlay: rgba(28, 61, 45, 0.8);
+  --color-accent: #1c3d2d;
+  --color-bg: #f2f2f2;
+  --color-surface: #ffffff;
+  --color-text: #000000;
+  --color-heading: #2b2822;
+  --color-ink: #222222;
+  --color-muted: #b3b3b3;
+  --color-footer-text: #ebebeb;
+  --color-dot: #aaaaaa;
+  --font-display: "Libre Baskerville", "Times New Roman", serif;
+  --font-sans: "Inter", Arial, sans-serif;
+  --font-ui: "Manrope", Arial, sans-serif;
+  --max-width: 1150px;
+  --gutter: 20px;
+  --section-pad: 64px;
+  --radius-pill: 30px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-hero: cubic-bezier(0.6, -0.01, 0.3, 0.99);
+  --ease-layout: cubic-bezier(0.44, 0, 0.2, 1);
+}

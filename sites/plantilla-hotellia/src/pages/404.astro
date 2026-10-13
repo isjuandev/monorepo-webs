@@ -1,12 +1,13 @@
 ---
+import { NOT_FOUND } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
 <BaseLayout page="404" noindex>
   <section class="not-found">
-    <h1 class="t-h1">Oops!</h1>
-    <p class="t-body">Looks like this page doesn’t exist.</p>
-    <a class="pill pill--light" href="/">HOME</a>
+    <h1 class="t-h1">{NOT_FOUND.title}</h1>
+    <p class="t-body">{NOT_FOUND.text}</p>
+    <a class="pill pill--light" href="/">{NOT_FOUND.cta}</a>
   </section>
 </BaseLayout>
 

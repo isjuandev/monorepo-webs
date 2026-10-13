@@ -8,7 +8,7 @@ import InfoGrid from "@/components/sections/InfoGrid.astro";
 import PageHero from "@/components/sections/PageHero.astro";
 import RoomsSlider from "@/components/sections/RoomsSlider.astro";
 import { siteConfig } from "@/config/site";
-import { IMAGES, ROOMS, type Room, STAY_INFO } from "@/data/content";
+import { IMAGES, PAGES, ROOMS, type Room, STAY_INFO, UI_LABELS } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { GetStaticPaths } from "astro";
 
@@ -20,6 +20,8 @@ export interface Props {
 }
 
 const { room } = Astro.props;
+const page = PAGES.room;
+const infoCopy = PAGES.rooms.info;
 const [hero, galleryWide, galleryTall, detailMain, detailInset] = room.gallery;
 const otherRooms = ROOMS.filter((item) => item.slug !== room.slug);
 ---
@@ -27,13 +29,13 @@ const otherRooms = ROOMS.filter((item) => item.slug !== room.slug);
 <BaseLayout title={`${room.name} | ${siteConfig.name}`} description={room.tagline}>
   <PageHero
     tone="brown"
-    label={`Habitación Nº ${room.number}`}
+    label={UI_LABELS.roomNumber(room.number)}
     title={room.name}
     sideLeft={room.view}
     sideRight={room.bed}
     text={room.tagline}
-    bottomLeft={`${room.guests} huéspedes · ${room.size} m²`}
-    bottomRight={`Desde $${room.price}/noche`}
+    bottomLeft={`${UI_LABELS.guests(room.guests)} · ${UI_LABELS.squareMeters(room.size)}`}
+    bottomRight={UI_LABELS.fromPerNight(room.price)}
   />
 
   <ImageStatement image={hero} overlay={false} />
@@ -42,14 +44,14 @@ const otherRooms = ROOMS.filter((item) => item.slug !== room.slug);
     <div class="container overview__inner">
       <p class="t-big overview__text" data-reveal>{room.overview}</p>
       <div data-reveal>
-        <LinkButton href="booking">Ver disponibilidad</LinkButton>
+        <LinkButton href="booking">{UI_LABELS.checkAvailability}</LinkButton>
       </div>
     </div>
   </section>
 
   <FeatureGrid items={room.features} compact />
 
-  <section class="collage" aria-label="Galería">
+  <section class="collage" aria-label={UI_LABELS.gallery}>
     <div class="media collage__tall" data-speed="0.1">
       <img src={galleryTall} alt="" loading="lazy" />
     </div>
@@ -70,9 +72,9 @@ const otherRooms = ROOMS.filter((item) => item.slug !== room.slug);
     <div class="details__content">
       <SectionHeading
         align="left"
-        label="Los detalles"
-        title="Todo sobre la habitación"
-        text="Una mirada cercana a los espacios, materiales y comodidades preparados para tu llegada."
+        label={page.details.label}
+        title={page.details.title}
+        text={page.details.text}
       />
       <div class="details__groups">
         {
@@ -91,11 +93,11 @@ const otherRooms = ROOMS.filter((item) => item.slug !== room.slug);
     </div>
   </section>
 
-  <InfoGrid label="Antes de llegar" title="Información útil" items={STAY_INFO} />
+  <InfoGrid label={infoCopy.label} title={infoCopy.title} items={STAY_INFO} />
 
   <ImageStatement image={IMAGES.roomShared} overlay={false} />
 
-  <RoomsSlider rooms={otherRooms} title="Ver más" tone="brown" />
+  <RoomsSlider rooms={otherRooms} title={page.moreTitle} tone="brown" />
 
   <ClosingCta />
 </BaseLayout>

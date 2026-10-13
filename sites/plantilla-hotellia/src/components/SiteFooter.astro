@@ -2,14 +2,14 @@
 import FitTitle from "@/components/FitTitle.astro";
 import Icon from "@/components/Icon.astro";
 import { FOOTER_PRIMARY_LINKS, FOOTER_SECONDARY_LINKS, siteConfig } from "@/config/site";
-import { FOOTER_TAGLINE, HERO_TITLES } from "@/data/content";
+import { FOOTER_TAGLINE, HERO_TITLES, UI_LABELS } from "@/data/content";
 import type { IconName } from "@/data/icons";
 
 const contactLinks: { icon: IconName; label: string; href: string }[] = [
   { icon: "phone", label: siteConfig.contact.phone, href: siteConfig.contact.phoneHref },
   { icon: "at", label: siteConfig.contact.email, href: `mailto:${siteConfig.contact.email}` },
-  { icon: "facebook", label: "Follow us on Facebook", href: siteConfig.socials.facebook },
-  { icon: "instagram", label: "Our Instagram", href: siteConfig.socials.instagram },
+  { icon: "facebook", label: UI_LABELS.followFacebook, href: siteConfig.socials.facebook },
+  { icon: "instagram", label: UI_LABELS.followInstagram, href: siteConfig.socials.instagram },
 ];
 ---
 
@@ -17,7 +17,7 @@ const contactLinks: { icon: IconName; label: string; href: string }[] = [
   <div class="site-footer__content">
     <p class="site-footer__tagline t-h4">{FOOTER_TAGLINE}</p>
     <div class="site-footer__links">
-      <nav class="site-footer__nav" aria-label="Pie de página">
+      <nav class="site-footer__nav" aria-label={UI_LABELS.footerNav}>
         <ul>
           {
             FOOTER_PRIMARY_LINKS.map((link) => (

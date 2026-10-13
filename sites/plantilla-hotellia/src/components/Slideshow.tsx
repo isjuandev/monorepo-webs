@@ -1,4 +1,4 @@
-import type { ImageAsset } from "@/data/content";
+import { type ImageAsset, UI_LABELS } from "@/data/content";
 import { useEffect, useRef, useState } from "preact/hooks";
 
 export interface SlideshowProps {
@@ -48,7 +48,7 @@ export function Slideshow({ slides, prevIcon, nextIcon }: SlideshowProps) {
   const current = ((index % count) + count) % count;
 
   return (
-    <div class="slideshow" aria-roledescription="carousel" aria-label="Wine & Dine">
+    <div class="slideshow" aria-roledescription="carousel" aria-label={UI_LABELS.slideshow}>
       <ul
         ref={trackRef}
         class="slideshow__track"
@@ -72,7 +72,7 @@ export function Slideshow({ slides, prevIcon, nextIcon }: SlideshowProps) {
         <button
           type="button"
           class="slideshow__button"
-          aria-label="Previous slide"
+          aria-label={UI_LABELS.previousSlide}
           onClick={() => go(-1)}
         >
           <img src={prevIcon} alt="" width={40} height={40} />
@@ -80,7 +80,7 @@ export function Slideshow({ slides, prevIcon, nextIcon }: SlideshowProps) {
         <button
           type="button"
           class="slideshow__button"
-          aria-label="Next slide"
+          aria-label={UI_LABELS.nextSlide}
           onClick={() => go(1)}
         >
           <img src={nextIcon} alt="" width={40} height={40} />
