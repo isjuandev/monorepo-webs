@@ -1,14 +1,41 @@
 // Contenido de ejemplo de la plantilla. Reemplaza textos e imágenes por los del cliente.
-// Las imágenes viven en /public/images; los placeholders SVG se sustituyen por fotos reales.
+// Fotos de la plantilla Asterre (usadas con licencia); viven en /public/images.
+
+const img = (name: string) => `/images/${name}.webp`;
 
 export const IMAGES = {
-  landscape: "/images/placeholder-landscape.svg",
-  interior: "/images/placeholder-interior.svg",
-  garden: "/images/placeholder-garden.svg",
-  sea: "/images/placeholder-sea.svg",
-  detail: "/images/placeholder-detail.svg",
-  map: "/images/placeholder-map.svg",
+  homeHero: img("home-hero"),
+  homeIntro: img("home-intro"),
+  homeWellness: img("home-wellness"),
+  homeDining: [img("home-dining-1"), img("home-dining-2")] as [string, string],
+  homeExperiences: img("home-experiences"),
+  homeExperiencesHover: {
+    montana: img("home-experiences-mountains"),
+    mar: img("home-experiences-sea"),
+    "vida-local": img("home-experiences-local"),
+  } as Record<string, string>,
+  ticker: [img("ticker-1"), img("ticker-2")] as [string, string],
+  footer: img("footer"),
+  retreatHero: img("retreat-hero"),
+  retreatStory: [img("retreat-story-1"), img("retreat-story-2")] as [string, string],
+  retreatDesign: [img("retreat-design-1"), img("retreat-design-2"), img("retreat-design-3")],
+  retreatSustainability: img("retreat-sustainability"),
+  retreatSetting: img("retreat-setting"),
+  retreatMap: "/images/retreat-map.svg",
+  roomShared: img("room-shared"),
+  experienceHero: img("experience-hero"),
+  contactHero: img("contact-hero"),
+  contactDirections: img("contact-directions"),
 } as const;
+
+/** Galería de una habitación: principal, ancha, vertical, detalle grande e inserto. */
+const roomGallery = (key: string): RoomGallery => [
+  img(`room-${key}`),
+  img(`room-${key}-wide`),
+  img(`room-${key}-tall`),
+  img(`room-${key}-detail`),
+  img(`room-${key}-inset`),
+];
 
 export interface FeatureItem {
   title: string;
@@ -19,6 +46,8 @@ export interface DetailGroup {
   label: string;
   items: string[];
 }
+
+export type RoomGallery = [string, string, string, string, string];
 
 export interface Room {
   slug: string;
@@ -32,7 +61,7 @@ export interface Room {
   tagline: string;
   overview: string;
   image: string;
-  gallery: [string, string, string, string];
+  gallery: RoomGallery;
   features: FeatureItem[];
   details: DetailGroup[];
 }
@@ -72,8 +101,8 @@ export const ROOMS: Room[] = [
     price: 180,
     tagline: "Piedra cálida, lino suave y una terraza que abre al jardín.",
     overview: "Interiores luminosos que se abren a una terraza rodeada de árboles y hierbas.",
-    image: IMAGES.interior,
-    gallery: [IMAGES.interior, IMAGES.detail, IMAGES.garden, IMAGES.landscape],
+    image: img("room-garden"),
+    gallery: roomGallery("garden"),
     features: DEFAULT_FEATURES,
     details: DEFAULT_DETAILS,
   },
@@ -88,8 +117,8 @@ export const ROOMS: Room[] = [
     price: 240,
     tagline: "Ventanales amplios y el perfil de la montaña desde la cama.",
     overview: "Una suite elevada con sala propia y vistas abiertas al valle y las cumbres.",
-    image: IMAGES.landscape,
-    gallery: [IMAGES.landscape, IMAGES.interior, IMAGES.detail, IMAGES.garden],
+    image: img("room-mountain"),
+    gallery: roomGallery("mountain"),
     features: DEFAULT_FEATURES,
     details: DEFAULT_DETAILS,
   },
@@ -104,8 +133,8 @@ export const ROOMS: Room[] = [
     price: 320,
     tagline: "Un rincón íntimo con piscina propia y sombra de olivos.",
     overview: "Agua, piedra y madera en una suite pensada para no tener que salir.",
-    image: IMAGES.sea,
-    gallery: [IMAGES.sea, IMAGES.interior, IMAGES.garden, IMAGES.detail],
+    image: img("room-pool"),
+    gallery: roomGallery("pool"),
     features: DEFAULT_FEATURES,
     details: DEFAULT_DETAILS,
   },
@@ -120,8 +149,8 @@ export const ROOMS: Room[] = [
     price: 420,
     tagline: "Dos dormitorios, cocina abierta y un patio solo para ti.",
     overview: "La casa completa para familias o amigos que buscan espacio y privacidad.",
-    image: IMAGES.garden,
-    gallery: [IMAGES.garden, IMAGES.interior, IMAGES.sea, IMAGES.detail],
+    image: img("room-house"),
+    gallery: roomGallery("house"),
     features: DEFAULT_FEATURES,
     details: DEFAULT_DETAILS,
   },
@@ -136,8 +165,8 @@ export const ROOMS: Room[] = [
     price: 200,
     tagline: "Luz filtrada entre olivos y un rincón de lectura junto a la ventana.",
     overview: "Una habitación serena orientada al olivar, ideal para estancias largas.",
-    image: IMAGES.detail,
-    gallery: [IMAGES.detail, IMAGES.interior, IMAGES.garden, IMAGES.landscape],
+    image: img("room-olive"),
+    gallery: roomGallery("olive"),
     features: DEFAULT_FEATURES,
     details: DEFAULT_DETAILS,
   },
@@ -152,8 +181,8 @@ export const ROOMS: Room[] = [
     price: 280,
     tagline: "El mar a lo lejos y atardeceres desde una terraza alta.",
     overview: "Nuestra suite más alta, con terraza orientada al oeste y bañera exenta.",
-    image: IMAGES.landscape,
-    gallery: [IMAGES.landscape, IMAGES.sea, IMAGES.interior, IMAGES.detail],
+    image: img("room-horizon"),
+    gallery: roomGallery("horizon"),
     features: DEFAULT_FEATURES,
     details: DEFAULT_DETAILS,
   },
@@ -176,8 +205,8 @@ export const EXPERIENCES: Experience[] = [
     title: "Cuerpo y calma",
     text: "Yoga al amanecer, piscina templada y tratamientos privados adaptados a cada huésped.",
     cta: { label: "Reservar sesión", href: "booking" },
-    image: IMAGES.interior,
-    inset: IMAGES.garden,
+    image: img("exp-wellness"),
+    inset: img("exp-wellness-inset"),
   },
   {
     id: "gastronomia",
@@ -185,8 +214,8 @@ export const EXPERIENCES: Experience[] = [
     title: "Sabores de temporada",
     text: "Desayunos en el patio, almuerzos ligeros de la huerta y cenas largas bajo las estrellas.",
     cta: { label: "Ver la carta", href: "#" },
-    image: IMAGES.detail,
-    inset: IMAGES.interior,
+    image: img("exp-dining"),
+    inset: img("exp-dining-inset"),
   },
   {
     id: "montana",
@@ -194,8 +223,8 @@ export const EXPERIENCES: Experience[] = [
     title: "Senderos y miradores",
     text: "Senderos entre bancales y miradores tranquilos, con rutas para todos los niveles.",
     cta: { label: "Ver rutas", href: "maps" },
-    image: IMAGES.landscape,
-    inset: IMAGES.garden,
+    image: img("exp-mountains"),
+    inset: img("exp-mountains-inset"),
   },
   {
     id: "mar",
@@ -203,8 +232,8 @@ export const EXPERIENCES: Experience[] = [
     title: "Rumbo a la costa",
     text: "Salidas privadas en barco por la costa, con paradas en calas solo accesibles por mar.",
     cta: { label: "Reservar salida", href: "booking" },
-    image: IMAGES.sea,
-    inset: IMAGES.landscape,
+    image: img("exp-sea"),
+    inset: img("exp-sea-inset"),
   },
   {
     id: "vida-local",
@@ -212,8 +241,8 @@ export const EXPERIENCES: Experience[] = [
     title: "Oficios de la región",
     text: "Visitas a talleres, productores y mercados para conocer el oficio de la región.",
     cta: { label: "Consultar", href: "contact" },
-    image: IMAGES.garden,
-    inset: IMAGES.detail,
+    image: img("exp-local"),
+    inset: img("exp-local-inset"),
   },
 ];
 
@@ -221,25 +250,25 @@ export const PRIVATE_EXPERIENCES = [
   {
     title: "Desayuno al amanecer",
     text: "Una mesa preparada en un mirador mientras despierta el valle.",
-    image: IMAGES.landscape,
+    image: img("private-1"),
     ratio: "1 / 1",
   },
   {
     title: "Ruta por la costa",
     text: "Un día en coche por carreteras escénicas con paradas elegidas.",
-    image: IMAGES.sea,
+    image: img("private-2"),
     ratio: "332 / 590",
   },
   {
     title: "Cata de aceite",
     text: "Recorrido por una almazara familiar y degustación guiada.",
-    image: IMAGES.detail,
+    image: img("private-3"),
     ratio: "3 / 4",
   },
   {
     title: "Noche de estrellas",
     text: "Observación guiada con telescopio lejos de la ciudad.",
-    image: IMAGES.garden,
+    image: img("private-4"),
     ratio: "4 / 3",
   },
 ];
@@ -248,22 +277,22 @@ export const PLACES = [
   {
     name: "El pueblo",
     text: "Calles de piedra, mercado semanal y cafés en la plaza.",
-    image: IMAGES.garden,
+    image: img("place-1"),
   },
   {
     name: "La costa",
     text: "Calas tranquilas y restaurantes frente al mar a pocos minutos.",
-    image: IMAGES.sea,
+    image: img("place-2"),
   },
   {
     name: "El valle",
     text: "Bancales, huertas y miradores para caminar sin prisa.",
-    image: IMAGES.landscape,
+    image: img("place-3"),
   },
   {
     name: "La ciudad",
     text: "Casco histórico, tiendas y museos para una escapada de un día.",
-    image: IMAGES.detail,
+    image: img("place-4"),
   },
 ];
 
