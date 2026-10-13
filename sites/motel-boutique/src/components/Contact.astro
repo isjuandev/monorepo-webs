@@ -1,0 +1,33 @@
+---
+import { siteConfig } from "@/config/site";
+import { buildWhatsAppUrl } from "@repo/utils";
+
+const { phone, whatsapp, email, address } = siteConfig.contact;
+---
+
+<section id="contacto" class="contact">
+  <div class="contact__inner">
+    <h2 class="section-title">Contacto</h2>
+    <p>Para reservaciones o preguntas escríbenos o llámanos.</p>
+    <ul>
+      {address && <li>{address}</li>}
+      {phone && <li><a href={`tel:${phone.replace(/\s/g, "")}`}>{phone}</a></li>}
+      {email && <li><a href={`mailto:${email}`}>{email}</a></li>}
+    </ul>
+    {
+      whatsapp && (
+        <a class="ui-btn" href={buildWhatsAppUrl(whatsapp)} target="_blank" rel="noopener noreferrer">
+          WhatsApp
+        </a>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .contact { padding: 4rem 1.5rem 5rem; text-align: center; }
+  .contact__inner { max-width: 700px; margin: 0 auto; display: grid; gap: 1rem; justify-items: center; }
+  .contact .section-title { margin-bottom: 0.5rem; }
+  .contact ul { list-style: none; display: grid; gap: 0.4rem; margin: 0.5rem 0 1rem; }
+  .contact a:not(.ui-btn) { text-decoration: underline; text-underline-offset: 3px; }
+</style>

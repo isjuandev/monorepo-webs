@@ -1,0 +1,136 @@
+:root {
+  --color-primary: #000000;
+  --color-accent: #e8554e;
+  --color-bg: #000000;
+  --color-surface: #ffffff;
+  --color-text: #ffffff;
+  --color-muted: #a3a3a3;
+  --font-sans: "Proxima Nova", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Futura", "Century Gothic", "Trebuchet MS", sans-serif;
+  --max-width: 1100px;
+  --radius-md: 0;
+  --header-height: 76px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-height);
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+a {
+  color: inherit;
+}
+
+.ui-container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.ui-section {
+  padding: 4rem 0;
+}
+
+.ui-footer {
+  padding: 2rem 0;
+  border-top: 1px solid #262626;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid #fff;
+  background: transparent;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.ui-btn:hover,
+.ui-btn:focus-visible {
+  background: #fff;
+  color: #000;
+}
+
+.card-white {
+  background: var(--color-surface);
+  color: #111;
+  padding: 2rem;
+}
+
+.card-white h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.card-white p + p {
+  margin-top: 0.75rem;
+}
+
+.card-white .ui-btn {
+  border-color: #111;
+  color: #111;
+  margin-top: 1.25rem;
+}
+
+.card-white .ui-btn:hover {
+  background: #111;
+  color: #fff;
+}
+
+.section-title {
+  text-align: center;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  margin-bottom: 2.5rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
