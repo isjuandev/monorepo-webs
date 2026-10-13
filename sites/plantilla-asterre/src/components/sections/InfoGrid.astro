@@ -1,0 +1,50 @@
+---
+import SectionHeading from "@/components/SectionHeading.astro";
+
+export interface Props {
+  title: string;
+  label?: string;
+  items: { label: string; value: string }[];
+}
+
+const { title, label, items } = Astro.props;
+---
+
+<section class="section info-grid">
+  <div class="container">
+    <SectionHeading title={title} label={label} />
+    <dl class="info-grid__list" data-reveal>
+      {
+        items.map((item) => (
+          <div class="info-grid__item">
+            <dt class="t-label t-muted">{item.label}</dt>
+            <dd class="t-body">{item.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .info-grid__list {
+    display: grid;
+    grid-template-columns: repeat(3, 216px);
+    justify-content: center;
+    gap: 40px 16px;
+    margin-top: 80px;
+  }
+
+  .info-grid__item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  @media (max-width: 809px) {
+    .info-grid__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 56px;
+    }
+  }
+</style>

@@ -1,0 +1,53 @@
+---
+import LegalContent from "@/components/sections/LegalContent.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import { siteConfig } from "@/config/site";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+// Texto de ejemplo: debe revisarlo el asesor legal del cliente antes de publicar.
+const sections = [
+  {
+    title: "Uso del sitio",
+    paragraphs: [
+      "Este sitio ofrece información sobre el alojamiento, sus servicios y experiencias. Al usarlo aceptas hacerlo de forma lícita y respetuosa.",
+    ],
+  },
+  {
+    title: "Reservas",
+    paragraphs: [
+      "Las reservas se gestionan a través de nuestro motor de reservas o de forma directa. Las condiciones de pago y cancelación se indican en cada confirmación.",
+    ],
+  },
+  {
+    title: "Contenido",
+    paragraphs: [
+      "Textos, fotografías y diseño son propiedad del alojamiento o se usan con licencia. No está permitido reutilizarlos sin autorización.",
+    ],
+  },
+  {
+    title: "Enlaces externos",
+    paragraphs: [
+      "El sitio puede enlazar a servicios de terceros (mapas, reservas, redes sociales). No somos responsables de su contenido ni de sus políticas.",
+    ],
+  },
+  {
+    title: "Cambios",
+    paragraphs: [
+      "Podemos actualizar estos términos en cualquier momento. La versión vigente es siempre la publicada en esta página.",
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title={`Términos de uso | ${siteConfig.name}`}
+  description={`Condiciones de uso del sitio web de ${siteConfig.name}.`}
+  headerTone="dark"
+>
+  <PageHero label="Condiciones del sitio" title="Términos de uso" />
+  <LegalContent
+    updated="enero de 2026"
+    intro={`Estos términos regulan el uso del sitio web de ${siteConfig.name}. Te recomendamos leerlos antes de navegar o reservar.`}
+    sections={sections}
+  />
+</BaseLayout>

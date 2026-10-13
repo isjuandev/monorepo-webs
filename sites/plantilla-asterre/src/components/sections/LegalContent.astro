@@ -1,0 +1,80 @@
+---
+export interface LegalSection {
+  title: string;
+  paragraphs: string[];
+  list?: string[];
+}
+
+export interface Props {
+  updated: string;
+  intro: string;
+  sections: LegalSection[];
+}
+
+const { updated, intro, sections } = Astro.props;
+---
+
+<section class="legal">
+  <div class="container legal__inner">
+    <p class="t-lead legal__updated">Última actualización: {updated}</p>
+    <p class="t-lead">{intro}</p>
+    {
+      sections.map((section, i) => (
+        <div class="legal__section">
+          <h2 class="t-h3">
+            {i + 1}. {section.title}
+          </h2>
+          {section.paragraphs.map((paragraph) => (
+            <p class="t-lead">{paragraph}</p>
+          ))}
+          {section.list && (
+            <ul class="legal__list">
+              {section.list.map((item) => (
+                <li class="t-lead">{item}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .legal {
+    padding-bottom: 240px;
+  }
+
+  .legal__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: calc(680px + var(--gutter) * 2);
+  }
+
+  .legal__updated {
+    padding: 32px 0 40px;
+    border-top: 1px solid var(--color-line-dark);
+  }
+
+  .legal__section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  .legal__list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-left: 20px;
+    list-style: disc;
+  }
+
+  @media (max-width: 809px) {
+    .legal {
+      padding-bottom: 120px;
+    }
+  }
+</style>

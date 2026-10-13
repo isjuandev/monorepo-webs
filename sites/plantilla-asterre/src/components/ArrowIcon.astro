@@ -1,0 +1,23 @@
+---
+export interface Props {
+  direction?: "right" | "left" | "external";
+  class?: string;
+}
+
+const { direction = "right", class: className } = Astro.props;
+---
+
+<svg
+  class:list={["btn__icon", `btn__icon--${direction}`, className]}
+  viewBox="0 0 12 12"
+  fill="none"
+  aria-hidden="true"
+>
+  {
+    direction === "external" && (
+      <path d="M3 9 9 3M4 3h5v5" stroke="currentColor" stroke-width="1" />
+    )
+  }
+  {direction === "right" && <path d="M1 6h10M7 2l4 4-4 4" stroke="currentColor" stroke-width="1" />}
+  {direction === "left" && <path d="M11 6H1M5 2 1 6l4 4" stroke="currentColor" stroke-width="1" />}
+</svg>

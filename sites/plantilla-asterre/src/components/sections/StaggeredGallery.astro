@@ -1,0 +1,99 @@
+---
+import SectionHeading from "@/components/SectionHeading.astro";
+
+export interface Props {
+  label?: string;
+  title?: string;
+  text?: string;
+  images: [string, string];
+  alts?: [string, string];
+  /** Texto opcional bajo cada imagen (p. ej. historia del retreat) */
+  captions?: [string, string];
+  id?: string;
+}
+
+const { label, title, text, images, alts = ["", ""], captions, id } = Astro.props;
+---
+
+<section class="section staggered" id={id}>
+  <div class="container">
+    {title && <SectionHeading label={label} title={title} text={text} />}
+    <div class:list={["staggered__grid", title && "staggered__grid--spaced"]}>
+      {
+        images.map((src, i) => (
+          <figure class:list={["staggered__item", i === 1 && "staggered__item--offset"]}>
+            {captions && (
+              <figcaption class="t-lead staggered__caption" data-reveal>
+                {captions[i]}
+              </figcaption>
+            )}
+            <div class="media staggered__media" data-speed={i === 1 ? "0.12" : "0.04"}>
+              <img src={src} alt={alts[i]} loading="lazy" decoding="async" />
+            </div>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .staggered__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 448px);
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .staggered__grid--spaced {
+    margin-top: 80px;
+  }
+
+  .staggered__item {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .staggered__item--offset {
+    padding-top: 280px;
+  }
+
+  .staggered__caption {
+    max-width: 360px;
+  }
+
+  .staggered__media {
+    aspect-ratio: 448 / 757;
+    will-change: transform;
+  }
+
+  @media (max-width: 1199px) {
+    .staggered__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .staggered__item--offset {
+      padding-top: 160px;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .staggered__grid {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .staggered__grid--spaced {
+      margin-top: 56px;
+    }
+
+    .staggered__item--offset {
+      padding-top: 0;
+    }
+
+    .staggered__media {
+      aspect-ratio: 4 / 5;
+    }
+  }
+</style>

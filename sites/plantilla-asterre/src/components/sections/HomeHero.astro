@@ -1,0 +1,232 @@
+---
+import SplitText from "@/components/SplitText.astro";
+import Stars from "@/components/Stars.astro";
+import { siteConfig } from "@/config/site";
+
+export interface Props {
+  image: string;
+  title: string;
+  label: string;
+  sideLeft: string;
+  sideRight: string;
+  intro: string;
+}
+
+const { image, title, label, sideLeft, sideRight, intro } = Astro.props;
+const { rating } = siteConfig;
+---
+
+<section class="home-hero tone-light">
+  <div class="home-hero__media" aria-hidden="true">
+    <img src={image} alt="" fetchpriority="high" decoding="async" />
+    <div class="media-overlay"></div>
+    <div class="home-hero__top-fade"></div>
+  </div>
+
+  <div class="home-hero__content">
+    <div class="home-hero__heading">
+      <p class="t-label home-hero__label" data-reveal style="--reveal-delay: 0.6s">{label}</p>
+      <p class="t-label home-hero__side home-hero__side--left" data-reveal style="--reveal-delay: 0.8s">
+        {sideLeft}
+      </p>
+      <SplitText text={title} as="h1" class="t-display" delay={0.2} />
+      <p class="t-label home-hero__side home-hero__side--right" data-reveal style="--reveal-delay: 0.8s">
+        {sideRight}
+      </p>
+    </div>
+
+    <div class="home-hero__info">
+      <p class="t-lead home-hero__intro" data-reveal style="--reveal-delay: 1s">{intro}</p>
+      {
+        rating && (
+          <div class="home-hero__badge" data-reveal style="--reveal-delay: 1.1s">
+            <div class="home-hero__badge-head">
+              <Stars />
+              <span class="t-label">Reseñas</span>
+            </div>
+            <div class="home-hero__badge-body">
+              <p class="home-hero__score">
+                <span class="t-big">{rating.score}</span>
+                <span class="t-body">/5.0</span>
+              </p>
+              <p class="home-hero__score-text">
+                <span class="t-body">Excelente</span>
+                <span class="t-small">Basado en {rating.reviews} reseñas</span>
+              </p>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-hero {
+    position: relative;
+    height: 100vh;
+    min-height: 640px;
+    overflow: hidden;
+  }
+
+  .home-hero__media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .home-hero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .home-hero__top-fade {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 160px;
+    background: linear-gradient(to bottom, rgba(38, 26, 17, 0.4), rgba(38, 26, 17, 0));
+  }
+
+  .home-hero__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: var(--gutter);
+  }
+
+  .home-hero__heading {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .home-hero__heading :global(h1) {
+    max-width: 680px;
+  }
+
+  .home-hero__label {
+    margin-bottom: 16px;
+  }
+
+  .home-hero__side {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .home-hero__side.is-visible {
+    transform: translateY(-50%);
+  }
+
+  .home-hero__side--left {
+    right: calc(50% + 354px);
+  }
+
+  .home-hero__side--right {
+    left: calc(50% + 354px);
+  }
+
+  .home-hero__info {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .home-hero__intro {
+    max-width: 240px;
+  }
+
+  .home-hero__badge {
+    width: 296px;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  .home-hero__badge-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    border-bottom: 1px solid var(--color-line-dark);
+  }
+
+  .home-hero__badge-body {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 24px 12px 8px;
+  }
+
+  .home-hero__score {
+    display: flex;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .home-hero__score .t-body {
+    margin-top: 6px;
+  }
+
+  .home-hero__score-text {
+    display: flex;
+    flex-direction: column;
+    width: 146px;
+    margin-top: 6px;
+  }
+
+  @media (max-width: 1199px) {
+    .home-hero__side--left {
+      right: auto;
+      left: 0;
+    }
+
+    .home-hero__side--right {
+      left: auto;
+      right: 0;
+    }
+
+    .home-hero__side {
+      top: calc(50% + 140px);
+    }
+  }
+
+  @media (max-width: 809px) {
+    .home-hero__content {
+      padding: var(--gutter) var(--gutter) 24px;
+    }
+
+    .home-hero__heading :global(h1) {
+      max-width: 300px;
+    }
+
+    .home-hero__side--left {
+      position: static;
+      order: 3;
+      margin-top: 16px;
+      transform: none;
+    }
+
+    .home-hero__side.home-hero__side--left.is-visible {
+      transform: none;
+    }
+
+    .home-hero__side--right,
+    .home-hero__intro {
+      display: none;
+    }
+
+    .home-hero__badge {
+      width: 100%;
+    }
+
+    .home-hero__score-text {
+      width: 209px;
+    }
+  }
+</style>

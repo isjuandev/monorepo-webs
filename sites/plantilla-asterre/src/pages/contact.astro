@@ -1,0 +1,88 @@
+---
+import ClosingCta from "@/components/ClosingCta.astro";
+import ContactForm from "@/components/ContactForm.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import FeatureGrid from "@/components/sections/FeatureGrid.astro";
+import ImageStatement from "@/components/sections/ImageStatement.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import { siteConfig } from "@/config/site";
+import { IMAGES } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const { contact } = siteConfig;
+
+const reachItems = [
+  {
+    title: "Llámanos",
+    text: "Atendemos todos los días de 8:00 a 20:00.",
+    link: contact.phone
+      ? { label: "Llamar", href: `tel:${contact.phone.replace(/\s/g, "")}` }
+      : undefined,
+  },
+  {
+    title: "Escríbenos",
+    text: "Respondemos en menos de 24 horas.",
+    link: contact.email ? { label: "Enviar correo", href: `mailto:${contact.email}` } : undefined,
+  },
+  {
+    title: "Encuéntranos",
+    text: contact.address?.replace("\n", ", "),
+    link: { label: "Abrir en mapas", href: "maps" },
+  },
+];
+---
+
+<BaseLayout
+  title={`Contacto | ${siteConfig.name}`}
+  description="Escríbenos para reservas, experiencias o cualquier consulta sobre tu estancia."
+>
+  <PageHero
+    tone="brown"
+    label="Estamos para ayudarte"
+    title="Hablemos"
+    sideLeft="Consejo local"
+    sideRight="Planes a medida"
+  />
+
+  <ImageStatement image={IMAGES.interior} overlay={false} />
+
+  <section class="section">
+    <div class="container">
+      <SectionHeading
+        label="Envíanos una nota"
+        title="¿En qué podemos ayudarte?"
+        text="Desde experiencias en la zona hasta peticiones especiales, resolvemos tus dudas antes de llegar."
+      />
+      <ContactForm />
+    </div>
+  </section>
+
+  <FeatureGrid title="Contacto directo" items={reachItems} />
+
+  <section class="section bg-brown directions">
+    <div class="container">
+      <SectionHeading label="Cómo llegar" title="El camino hasta aquí">
+        <LinkButton href="maps">Ver ruta</LinkButton>
+      </SectionHeading>
+      <div class="media directions__img" data-reveal>
+        <img src={IMAGES.landscape} alt="" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <ClosingCta />
+</BaseLayout>
+
+<style>
+  .directions {
+    padding-bottom: 0;
+  }
+
+  .directions__img {
+    width: 680px;
+    max-width: 100%;
+    aspect-ratio: 680 / 462;
+    margin: 32px auto 0;
+  }
+</style>
