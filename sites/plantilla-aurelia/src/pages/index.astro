@@ -1,0 +1,624 @@
+---
+import BookingForm from "@/components/BookingForm.astro";
+import CtaBanner from "@/components/CtaBanner.astro";
+import FaqSection from "@/components/FaqSection.astro";
+import ReviewCards from "@/components/ReviewCards.astro";
+import RoomCard from "@/components/RoomCard.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import { allRooms, allServices } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const featuredRooms = allRooms.slice(0, 3);
+---
+
+<BaseLayout
+  title="Aurelia — Luxury Resort & Villas"
+  description="Experience Timeless Luxury at Aurelia Resort, Ibiza. Discover exclusive suites, private villas, sunset dining, and world-class hospitality."
+>
+  <!-- =========================================================================
+       HERO SECTION CON HEADER EMBEBIDO
+       ========================================================================= -->
+  <section class="hero-section">
+    <div class="hero-bg-wrap">
+      <img
+        src="/images/X2OmMfETcWH9nQhEhQes4qxoshI.jpg"
+        alt="Aurelia Luxury Resort Mediterranean oceanfront"
+        class="hero-bg-img"
+        fetchpriority="high"
+        width="1920"
+        height="1080"
+      />
+      <div class="hero-overlay"></div>
+    </div>
+
+    <!-- Navegación Superior Transparente -->
+    <SiteHeader currentPath="/" theme="transparent" />
+
+    <div class="container hero-content-inner">
+      <div class="hero-text-block reveal">
+        <span class="hero-badge">WELCOME TO AURELIA</span>
+        <h1 class="heading-display hero-title">
+          Experience <br />
+          Timeless Luxury
+        </h1>
+        <p class="hero-subtitle">
+          Aurelia is where elegance meets comfort. Discover a peaceful sanctuary
+          surrounded by Mediterranean beauty.
+        </p>
+      </div>
+
+      <!-- Barra de Reserva Rápida -->
+      <div class="hero-booking-wrap reveal reveal-delay-2">
+        <BookingForm layout="horizontal" />
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       ABOUT SECTION ("More than just a destination")
+       ========================================================================= -->
+  <section class="section-about">
+    <div class="container about-grid">
+      <div class="about-text reveal">
+        <span class="badge-overline">AURELIA RESORT, IBIZA</span>
+        <h2 class="heading-section about-title">More than just a destination</h2>
+        <div class="about-paragraphs">
+          <p>
+            Aurelia is where refined luxury meets the beauty of Ibiza. Set in a secluded
+            coastal haven, our resort offers a serene retreat with thoughtfully designed
+            suites, private villas, exceptional dining and panoramic Mediterranean views.
+          </p>
+          <p>
+            Whether relaxing by the infinity pool, savoring seasonal gastronomy, or exploring
+            hidden coves, every moment at Aurelia is crafted for unforgettable tranquility.
+          </p>
+        </div>
+        <div class="about-crest">
+          <img
+            src="/icons/crest.svg"
+            alt="Aurelia Emblem Signature"
+            width="280"
+            height="98"
+            loading="lazy"
+          />
+        </div>
+      </div>
+
+      <div class="about-media reveal reveal-delay-1">
+        <div class="about-img-frame">
+          <img
+            src="/images/B9TgZKFojhZcITmuAoyhovIoabg.jpg"
+            alt="Sunset dining and Mediterranean architecture at Aurelia"
+            class="about-img"
+            loading="lazy"
+            width="600"
+            height="450"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       CTA BANNER
+       ========================================================================= -->
+  <CtaBanner />
+
+  <!-- =========================================================================
+       FEATURED ROOMS SECTION
+       ========================================================================= -->
+  <section class="section-rooms">
+    <div class="container">
+      <div class="section-header-row reveal">
+        <div>
+          <span class="badge-overline">LUXURY SUITES & VILLAS</span>
+          <h2 class="heading-section">Featured Rooms</h2>
+        </div>
+        <div class="header-action-side">
+          <p class="section-desc-compact">
+            Discover a collection of beautifully designed suites and private villas, each
+            offering breathtaking views for an unforgettable stay.
+          </p>
+          <a href="/rooms" class="btn btn-outline-dark">All Rooms</a>
+        </div>
+      </div>
+
+      <div class="rooms-grid">
+        {
+          featuredRooms.map((room, idx) => (
+            <div class={`reveal reveal-delay-${idx + 1}`}>
+              <RoomCard room={room} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       BEYOND YOUR STAY (SERVICES) SECTION
+       ========================================================================= -->
+  <section class="section-services">
+    <div class="container">
+      <div class="services-header reveal">
+        <span class="badge-overline">THE AURELIA EXPERIENCE</span>
+        <h2 class="heading-section text-white">Beyond Your Stay</h2>
+        <p class="services-intro-text">
+          From wellness retreats to unforgettable dining and exclusive island adventures,
+          discover unique experiences tailored to elevate your stay.
+        </p>
+      </div>
+
+      <div class="services-grid">
+        {
+          allServices.map((svc, idx) => (
+            <div class={`service-card reveal reveal-delay-${idx + 1}`}>
+              <div class="service-icon-box">
+                <img src={svc.icon} alt="" class="service-svg-icon" width="28" height="28" />
+              </div>
+              <span class="service-badge">{svc.badge}</span>
+              <h3 class="heading-card service-title">{svc.title}</h3>
+              <p class="service-desc">{svc.description}</p>
+              <div class="service-hours">
+                {svc.hours.split("\n").map((line) => (
+                  <p>{line}</p>
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       A GLIMPSE OF AURELIA (GALLERY PREVIEW)
+       ========================================================================= -->
+  <section class="section-gallery-preview">
+    <div class="container">
+      <div class="gallery-header-row reveal">
+        <div>
+          <span class="badge-overline">HIGHLIGHTS</span>
+          <h2 class="heading-section">A Glimpse of Aurelia</h2>
+        </div>
+        <div class="header-action-side">
+          <p class="section-desc-compact">
+            Mediterranean elegance, timeless architecture and unforgettable ocean views
+            come together to create an experience unlike any other.
+          </p>
+          <a href="/gallery" class="btn btn-outline-dark">View Gallery</a>
+        </div>
+      </div>
+
+      <div class="gallery-preview-grid">
+        <div class="gal-col gal-col-large reveal">
+          <img
+            src="/images/pUgvkQQTW7mHNTOMkNZNkVsmg.jpg"
+            alt="Aurelia Resort oceanfront architecture"
+            loading="lazy"
+            class="gal-img"
+          />
+        </div>
+        <div class="gal-col reveal reveal-delay-1">
+          <img
+            src="/images/FYt5VkZQcN1hOCo6dvR5QXBUZCs.jpg"
+            alt="Private sun loungers by the water"
+            loading="lazy"
+            class="gal-img"
+          />
+        </div>
+        <div class="gal-col reveal reveal-delay-2">
+          <img
+            src="/images/t7weLTGVyNL7xzOF9KriP8oMHjc.jpg"
+            alt="Infinity pool overlooking the Mediterranean"
+            loading="lazy"
+            class="gal-img"
+          />
+        </div>
+        <div class="gal-col reveal reveal-delay-1">
+          <img
+            src="/images/OxnRhyuk1fflUgDTkpIisbj3E6k.jpg"
+            alt="Natural textures and peaceful interior suites"
+            loading="lazy"
+            class="gal-img"
+          />
+        </div>
+        <div class="gal-col reveal reveal-delay-2">
+          <img
+            src="/images/rPGiZzoWjPb5uwEqVyk2DYpHU.jpg"
+            alt="Twilight dining on the terrace"
+            loading="lazy"
+            class="gal-img"
+          />
+        </div>
+        <div class="gal-col reveal reveal-delay-3">
+          <img
+            src="/images/7ikECULfZ6uUUDMoyN3zDxkK3I.jpg"
+            alt="Coastal sunrise at Aurelia"
+            loading="lazy"
+            class="gal-img"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       REVIEWS & TESTIMONIALS
+       ========================================================================= -->
+  <ReviewCards />
+
+  <!-- =========================================================================
+       FAQ SECTION
+       ========================================================================= -->
+  <FaqSection />
+
+  <!-- =========================================================================
+       FOOTER
+       ========================================================================= -->
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  /* =========================================================================
+     Hero Styles
+     ========================================================================= */
+  .hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #ffffff;
+    padding-bottom: 3.5rem;
+  }
+
+  .hero-bg-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .hero-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(30, 42, 36, 0.45) 0%,
+      rgba(30, 42, 36, 0.25) 50%,
+      rgba(21, 30, 26, 0.8) 100%
+    );
+  }
+
+  .hero-content-inner {
+    position: relative;
+    z-index: 2;
+    margin-top: auto;
+    padding-top: 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .hero-badge {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2.75rem, 6.5vw, 5.5rem);
+    line-height: 1.05;
+    margin-bottom: 1.25rem;
+    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1.0625rem, 1.8vw, 1.25rem);
+    line-height: 1.6;
+    max-width: 580px;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-booking-wrap {
+    width: 100%;
+  }
+
+  /* =========================================================================
+     About Section
+     ========================================================================= */
+  .section-about {
+    padding-top: clamp(5rem, 9vw, 8rem);
+    padding-bottom: clamp(5rem, 9vw, 8rem);
+    background-color: #ffffff;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 960px) {
+    .about-grid {
+      grid-template-columns: 1.1fr 1fr;
+      gap: 5rem;
+    }
+  }
+
+  .about-title {
+    margin-bottom: 1.5rem;
+    color: var(--color-primary);
+  }
+
+  .about-paragraphs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .about-crest img {
+    height: auto;
+    max-width: 260px;
+  }
+
+  .about-img-frame {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 20px 48px rgba(30, 42, 36, 0.12);
+  }
+
+  .about-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* =========================================================================
+     Rooms Section
+     ========================================================================= */
+  .section-rooms {
+    padding-top: clamp(5rem, 8vw, 7.5rem);
+    padding-bottom: clamp(5rem, 8vw, 7.5rem);
+    background-color: var(--color-cream);
+  }
+
+  .section-header-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 3.5rem;
+  }
+
+  @media (min-width: 800px) {
+    .section-header-row {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+  }
+
+  .header-action-side {
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  @media (min-width: 800px) {
+    .header-action-side {
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
+
+  .section-desc-compact {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+  }
+
+  .rooms-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .rooms-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1080px) {
+    .rooms-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.25rem;
+    }
+  }
+
+  /* =========================================================================
+     Services Section
+     ========================================================================= */
+  .section-services {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    padding-top: clamp(5rem, 9vw, 8rem);
+    padding-bottom: clamp(5rem, 9vw, 8rem);
+  }
+
+  .text-white {
+    color: #ffffff;
+  }
+
+  .services-header {
+    text-align: center;
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 4rem;
+  }
+
+  .services-intro-text {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 1rem;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 860px) {
+    .services-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+    }
+  }
+
+  .service-card {
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), background-color var(--transition-fast);
+  }
+
+  .service-card:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    transform: translateY(-4px);
+  }
+
+  .service-icon-box {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: rgba(191, 158, 101, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .service-svg-icon {
+    filter: invert(72%) sepia(25%) saturate(750%) hue-rotate(355deg) brightness(90%) contrast(90%);
+  }
+
+  .service-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 0.625rem;
+  }
+
+  .service-title {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: #ffffff;
+  }
+
+  .service-desc {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 2rem;
+    flex: 1;
+  }
+
+  .service-hours {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-accent);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1.25rem;
+    line-height: 1.6;
+  }
+
+  /* =========================================================================
+     Gallery Preview Section
+     ========================================================================= */
+  .section-gallery-preview {
+    padding-top: clamp(5rem, 8vw, 7.5rem);
+    padding-bottom: clamp(5rem, 8vw, 7.5rem);
+    background-color: var(--color-cream);
+  }
+
+  .gallery-header-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 3.5rem;
+  }
+
+  @media (min-width: 800px) {
+    .gallery-header-row {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+  }
+
+  .gallery-preview-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .gallery-preview-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .gallery-preview-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .gal-col {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background-color: var(--color-sand);
+  }
+
+  .gal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .gal-col:hover .gal-img {
+    transform: scale(1.05);
+  }
+</style>

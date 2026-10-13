@@ -1,0 +1,306 @@
+---
+import FaqSection from "@/components/FaqSection.astro";
+import ReviewCards from "@/components/ReviewCards.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import { allServices } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Our Services — Aurelia Resort"
+  description="Discover curated Mediterranean culinary journeys, private yacht experiences, and holistic wellness rituals at Aurelia Resort, Ibiza."
+>
+  <SiteHeader currentPath="/services" theme="solid" />
+
+  <main>
+    <!-- =========================================================================
+         Page Hero
+         ========================================================================= -->
+    <section class="services-page-hero">
+      <div class="container text-center reveal">
+        <span class="badge-overline">WELCOME TO AURELIA</span>
+        <h1 class="heading-display services-hero-title">
+          Where Luxury <br />
+          Feels Natural
+        </h1>
+        <p class="services-hero-subtitle">
+          Nestled along the breathtaking coastline of Ibiza, Aurelia Resort offers a
+          refined escape where contemporary elegance, exceptional hospitality and the
+          beauty of nature come together to create unforgettable moments.
+        </p>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         Intro Section ("Where Moments Become Memories")
+         ========================================================================= -->
+    <section class="services-intro-section">
+      <div class="container text-center reveal">
+        <span class="badge-overline">INSPIRED BY THE ISLAND</span>
+        <h2 class="heading-section intro-heading">Where Moments Become Memories</h2>
+        <p class="intro-body">
+          At Aurelia Resort, luxury is defined by simplicity, authenticity and genuine
+          hospitality. Every detail has been thoughtfully designed to create a peaceful
+          sanctuary where guests can reconnect with nature while enjoying world-class
+          comfort.
+        </p>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         3 Extended Service Showcases
+         ========================================================================= -->
+    <section class="services-showcase-section">
+      <div class="container services-showcase-list">
+        {
+          allServices.map((svc, idx) => {
+            const isReversed = idx % 2 === 1;
+            return (
+              <article
+                class={`service-detail-row ${isReversed ? "row-reverse" : ""} reveal`}
+              >
+                <!-- Columna de Imágenes -->
+                <div class="service-media-duo">
+                  <div class="media-box-main">
+                    <img
+                      src={svc.imageMain.src}
+                      alt={svc.imageMain.alt}
+                      class="service-img"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div class="media-box-sec">
+                    <img
+                      src={svc.imageSecondary.src}
+                      alt={svc.imageSecondary.alt}
+                      class="service-img"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+
+                <!-- Columna de Texto -->
+                <div class="service-info-col">
+                  <div class="service-icon-wrap">
+                    <img
+                      src={svc.icon}
+                      alt=""
+                      class="service-svg"
+                      width="32"
+                      height="32"
+                    />
+                  </div>
+                  <span class="badge-overline">{svc.badge}</span>
+                  <h3 class="heading-section service-row-title">{svc.title}</h3>
+                  <p class="service-row-desc">{svc.description}</p>
+
+                  <div class="service-row-hours">
+                    <span class="hours-label">Hours / Availability</span>
+                    {svc.hours.split("\n").map((line) => (
+                      <p class="hours-line">{line}</p>
+                    ))}
+                  </div>
+
+                  <div class="service-cta">
+                    <a href="/contact" class="btn btn-dark">
+                      Inquire or Reserve
+                    </a>
+                  </div>
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
+    </section>
+
+    <!-- Testimonios -->
+    <ReviewCards />
+
+    <!-- FAQ -->
+    <FaqSection />
+  </main>
+
+  <SiteFooter />
+</BaseLayout>
+
+<style>
+  .services-page-hero {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    padding-top: clamp(4.5rem, 8vw, 6.5rem);
+    padding-bottom: clamp(4rem, 7vw, 5.5rem);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .services-hero-title {
+    font-size: clamp(2.75rem, 5.5vw, 4.75rem);
+    margin-bottom: 1.25rem;
+  }
+
+  .services-hero-subtitle {
+    font-size: 1.125rem;
+    line-height: 1.65;
+    max-width: 660px;
+    margin-left: auto;
+    margin-right: auto;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  /* Intro Section */
+  .services-intro-section {
+    padding-top: clamp(4.5rem, 8vw, 6.5rem);
+    padding-bottom: clamp(3.5rem, 6vw, 5rem);
+    background-color: #ffffff;
+  }
+
+  .intro-heading {
+    margin-bottom: 1.25rem;
+    color: var(--color-primary);
+  }
+
+  .intro-body {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--color-text-muted);
+  }
+
+  /* Services Showcase */
+  .services-showcase-section {
+    padding-top: 2rem;
+    padding-bottom: clamp(5rem, 9vw, 8rem);
+    background-color: #ffffff;
+  }
+
+  .services-showcase-list {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(5rem, 9vw, 8rem);
+  }
+
+  .service-detail-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 960px) {
+    .service-detail-row {
+      grid-template-columns: 1.2fr 1fr;
+      gap: 5rem;
+    }
+
+    .service-detail-row.row-reverse {
+      grid-template-columns: 1fr 1.2fr;
+    }
+
+    .service-detail-row.row-reverse .service-media-duo {
+      order: 2;
+    }
+
+    .service-detail-row.row-reverse .service-info-col {
+      order: 1;
+    }
+  }
+
+  /* Duo de Imágenes */
+  .service-media-duo {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .media-box-main {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background-color: var(--color-sand);
+  }
+
+  .media-box-sec {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background-color: var(--color-sand);
+  }
+
+  .service-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+
+  .service-img:hover {
+    transform: scale(1.04);
+  }
+
+  /* Info Column */
+  .service-info-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .service-icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: rgba(191, 158, 101, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .service-svg {
+    filter: invert(72%) sepia(25%) saturate(750%) hue-rotate(355deg) brightness(90%) contrast(90%);
+  }
+
+  .service-row-title {
+    margin-bottom: 1.25rem;
+    color: var(--color-primary);
+  }
+
+  .service-row-desc {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .service-row-hours {
+    background-color: var(--color-cream);
+    border-left: 3px solid var(--color-accent);
+    padding: 1rem 1.25rem;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin-bottom: 2rem;
+    width: 100%;
+  }
+
+  .hours-label {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 0.35rem;
+  }
+
+  .hours-line {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1.5;
+  }
+</style>

@@ -1,0 +1,97 @@
+---
+import { reviews } from "@/data/content";
+---
+
+<section class="section-reviews">
+  <div class="container">
+    <div class="reviews-grid">
+      {
+        reviews.map((rev, idx) => (
+          <div class={`review-card reveal reveal-delay-${idx + 1}`}>
+            <div class="quote-mark" aria-hidden="true">
+              “
+            </div>
+            <p class="review-text">{rev.quote}</p>
+            <div class="review-meta">
+              <span class="review-author">{rev.author}</span>
+              <span class="review-separator">–</span>
+              <span class="review-source">{rev.source}</span>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .section-reviews {
+    background-color: var(--color-cream);
+    padding-top: clamp(4rem, 7vw, 6rem);
+    padding-bottom: clamp(4rem, 7vw, 6rem);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 840px) {
+    .reviews-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+    }
+  }
+
+  .review-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 2.25rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(30, 42, 36, 0.03);
+    position: relative;
+  }
+
+  .quote-mark {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    line-height: 1;
+    color: var(--color-accent);
+    margin-bottom: -1rem;
+    opacity: 0.8;
+  }
+
+  .review-text {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-text);
+    margin-bottom: 1.75rem;
+    font-style: italic;
+  }
+
+  .review-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    border-top: 1px solid var(--color-border);
+    padding-top: 1rem;
+  }
+
+  .review-author {
+    color: var(--color-primary);
+  }
+
+  .review-source {
+    color: var(--color-accent);
+    text-transform: uppercase;
+  }
+</style>

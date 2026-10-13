@@ -1,0 +1,62 @@
+---
+export interface Props {
+  text?: string;
+  btnText?: string;
+  btnHref?: string;
+}
+
+const {
+  text = "Luxury stays, unforgettable moments, and the true spirit of Ibiza.",
+  btnText = "Book Now",
+  btnHref = "/contact",
+} = Astro.props;
+---
+
+<section class="cta-banner">
+  <div class="container cta-banner-inner">
+    <p class="cta-text">{text}</p>
+    <a href={btnHref} class="btn btn-primary cta-btn">{btnText}</a>
+  </div>
+</section>
+
+<style>
+  .cta-banner {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .cta-banner-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .cta-banner-inner {
+      flex-direction: row;
+      text-align: left;
+    }
+  }
+
+  .cta-text {
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.5vw, 2.125rem);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    max-width: 680px;
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  .cta-btn {
+    flex-shrink: 0;
+    padding: 0.9375rem 2.25rem;
+  }
+</style>

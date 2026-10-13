@@ -1,0 +1,162 @@
+---
+import { FaqAccordion } from "@/components/FaqAccordion";
+import { faqList } from "@/data/content";
+
+export interface Props {
+  title?: string;
+  badge?: string;
+}
+
+const { title = "Before Your Stay", badge = "FAQ" } = Astro.props;
+---
+
+<section class="section-faq" id="faq">
+  <div class="container">
+    <div class="faq-layout">
+      <!-- Columna izquierda: Información y CTA -->
+      <div class="faq-info reveal">
+        <span class="badge-overline">{badge}</span>
+        <h2 class="heading-section faq-title">{title}</h2>
+        <p class="faq-intro">
+          Find answers to the most common questions about your stay, check-in, amenities
+          and resort services before you arrive.
+        </p>
+        <div class="faq-cta-btn">
+          <a href="/contact" class="btn btn-dark">Get in Touch</a>
+        </div>
+      </div>
+
+      <!-- Columna derecha: Acordeón interactivo -->
+      <div class="faq-accordion-col reveal reveal-delay-1">
+        <FaqAccordion client:visible items={faqList} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section-faq {
+    background-color: var(--color-sand);
+    padding-top: clamp(4.5rem, 8vw, 7.5rem);
+    padding-bottom: clamp(4.5rem, 8vw, 7.5rem);
+    color: var(--color-primary);
+  }
+
+  .faq-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  @media (min-width: 960px) {
+    .faq-layout {
+      grid-template-columns: 1fr 1.4fr;
+      gap: 4.5rem;
+      align-items: start;
+    }
+  }
+
+  .faq-title {
+    margin-bottom: 1.25rem;
+    color: var(--color-primary);
+  }
+
+  .faq-intro {
+    font-size: 1.0625rem;
+    color: var(--color-text-muted);
+    line-height: 1.65;
+    margin-bottom: 2rem;
+    max-width: 440px;
+  }
+
+  .faq-cta-btn {
+    margin-top: 1rem;
+  }
+
+  /* Estilos del Acordeón embebidos */
+  :global(.faq-accordion-wrap) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  :global(.faq-item) {
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(30, 42, 36, 0.08);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  :global(.faq-item:hover) {
+    background-color: #ffffff;
+    border-color: rgba(30, 42, 36, 0.16);
+  }
+
+  :global(.faq-item.is-expanded) {
+    background-color: #ffffff;
+    border-color: var(--color-accent);
+  }
+
+  :global(.faq-trigger) {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    background: none;
+    border: none;
+    text-align: left;
+    gap: 1rem;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    color: var(--color-primary);
+  }
+
+  :global(.faq-question-text) {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  :global(.faq-icon-indicator) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: rgba(30, 42, 36, 0.05);
+    color: var(--color-primary);
+  }
+
+  :global(.plus-svg) {
+    width: 16px;
+    height: 16px;
+    transition: transform var(--transition-normal);
+  }
+
+  :global(.plus-svg.is-rotated) {
+    transform: rotate(45deg);
+  }
+
+  :global(.faq-content) {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    opacity: 0;
+  }
+
+  :global(.faq-content.content-open) {
+    max-height: 500px;
+    opacity: 1;
+  }
+
+  :global(.faq-answer-inner) {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--color-text-muted);
+  }
+</style>
