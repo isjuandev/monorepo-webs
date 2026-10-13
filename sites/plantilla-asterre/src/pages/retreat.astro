@@ -5,9 +5,10 @@ import LinkButton from "@/components/LinkButton.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 import FeatureGrid from "@/components/sections/FeatureGrid.astro";
 import HomeHero from "@/components/sections/HomeHero.astro";
+import InfoGrid from "@/components/sections/InfoGrid.astro";
 import StaggeredGallery from "@/components/sections/StaggeredGallery.astro";
 import { siteConfig } from "@/config/site";
-import { IMAGES, PLACES } from "@/data/content";
+import { DISTANCES, IMAGES, PLACES } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const designPoints = ["Materiales locales", "Espacios abiertos", "Detalles originales"];
@@ -47,7 +48,7 @@ const sustainability = [
   description="La historia, el diseño y la forma de recibir de nuestra casa."
 >
   <HomeHero
-    image={IMAGES.garden}
+    image={IMAGES.retreatHero}
     label="Vida en el campo"
     title="Nuestra casa"
     sideLeft="Cerca de la montaña"
@@ -65,7 +66,7 @@ const sustainability = [
   </section>
 
   <StaggeredGallery
-    images={[IMAGES.interior, IMAGES.detail]}
+    images={IMAGES.retreatStory}
     captions={[
       "La casa original lleva generaciones en estas colinas, rodeada de bancales, árboles frutales y caminos de piedra.",
       "Hoy es un refugio tranquilo que conserva sus muros, sus materiales y su relación directa con el entorno.",
@@ -84,13 +85,13 @@ const sustainability = [
       </ul>
       <div class="design__images">
         <div class="media design__img design__img--a" data-reveal>
-          <img src={IMAGES.landscape} alt="" loading="lazy" />
+          <img src={IMAGES.retreatDesign[0]} alt="" loading="lazy" />
         </div>
         <div class="media design__img design__img--b" data-reveal style="--reveal-delay: 0.1s">
-          <img src={IMAGES.interior} alt="" loading="lazy" />
+          <img src={IMAGES.retreatDesign[1]} alt="" loading="lazy" />
         </div>
         <div class="media design__img design__img--c" data-reveal style="--reveal-delay: 0.2s">
-          <img src={IMAGES.detail} alt="" loading="lazy" />
+          <img src={IMAGES.retreatDesign[2]} alt="" loading="lazy" />
         </div>
       </div>
     </div>
@@ -121,12 +122,12 @@ const sustainability = [
         </ul>
       </div>
       <div class="media setting__img setting__img--left">
-        <img src={IMAGES.garden} alt="" loading="lazy" />
+        <img src={IMAGES.retreatSustainability} alt="" loading="lazy" />
       </div>
     </div>
     <div class="setting__block setting__block--right">
       <div class="media setting__img setting__img--right">
-        <img src={IMAGES.landscape} alt="" loading="lazy" />
+        <img src={IMAGES.retreatSetting} alt="" loading="lazy" />
       </div>
       <div class="setting__text setting__text--right">
         <SectionHeading
@@ -135,7 +136,7 @@ const sustainability = [
           title="Cerca del pueblo"
           text="La casa está rodeada de naturaleza, con el pueblo, los senderos y la costa a pocos minutos."
         />
-        <img src={IMAGES.map} alt="Mapa de ubicación" class="setting__map" loading="lazy" />
+        <img src={IMAGES.retreatMap} alt="Mapa de ubicación" class="setting__map" loading="lazy" />
       </div>
     </div>
   </section>
@@ -167,6 +168,16 @@ const sustainability = [
       </div>
     </div>
   </section>
+
+  <InfoGrid
+    tone="brown"
+    label="Cómo llegar"
+    title="El camino hasta casa"
+    items={DISTANCES}
+    image={IMAGES.retreatRoad}
+    imageSize="medium"
+    large
+  />
 
   <ClosingCta />
 </BaseLayout>

@@ -5,28 +5,69 @@ export interface Props {
   title: string;
   label?: string;
   items: { label: string; value: string }[];
+  tone?: "cream" | "brown";
+  /** Imagen opcional: "wide" va entre el título y la lista; "medium" va debajo de la lista */
+  image?: string;
+  imageSize?: "wide" | "medium";
+  /** Valores grandes (p. ej. tiempos de trayecto) */
+  large?: boolean;
+  id?: string;
 }
 
-const { title, label, items } = Astro.props;
+const {
+  title,
+  label,
+  items,
+  tone = "cream",
+  image,
+  imageSize = "wide",
+  large = false,
+  id,
+} = Astro.props;
 ---
 
-<section class="section info-grid">
+<section
+  class:list={[
+    "section info-grid",
+    tone === "brown" && "bg-brown",
+    image && imageSize === "medium" && "info-grid--flush",
+  ]}
+  id={id}
+>
   <div class="container">
     <SectionHeading title={title} label={label} />
-    <dl class="info-grid__list" data-reveal>
+    {
+      image && imageSize === "wide" && (
+        <div class="media info-grid__image info-grid__image--wide" data-reveal>
+          <img src={image} alt="" loading="lazy" />
+        </div>
+      )
+    }
+    <dl class:list={["info-grid__list", large && "info-grid__list--large"]} data-reveal>
       {
         items.map((item) => (
           <div class="info-grid__item">
             <dt class="t-label t-muted">{item.label}</dt>
-            <dd class="t-body">{item.value}</dd>
+            <dd class={large ? "t-h3" : "t-body"}>{item.value}</dd>
           </div>
         ))
       }
     </dl>
+    {
+      image && imageSize === "medium" && (
+        <div class="media info-grid__image info-grid__image--medium" data-reveal>
+          <img src={image} alt="" loading="lazy" />
+        </div>
+      )
+    }
   </div>
 </section>
 
 <style>
+  .info-grid--flush {
+    padding-bottom: 0;
+  }
+
   .info-grid__list {
     display: grid;
     grid-template-columns: repeat(3, 216px);
@@ -41,9 +82,49 @@ const { title, label, items } = Astro.props;
     gap: 4px;
   }
 
+  .info-grid__list--large {
+    gap: 16px;
+    margin-top: 96px;
+  }
+
+  .info-grid__list--large .info-grid__item {
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0 16px;
+    border-top: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+    border-color: var(--color-line-light);
+    text-align: center;
+  }
+
+  .info-grid__image--wide {
+    aspect-ratio: 1376 / 384;
+    margin-top: 80px;
+  }
+
+  .info-grid__image--wide + .info-grid__list {
+    margin-top: 96px;
+  }
+
+  .info-grid__image--medium {
+    width: 680px;
+    max-width: 100%;
+    aspect-ratio: 680 / 462;
+    margin: 24px auto 0;
+  }
+
   @media (max-width: 809px) {
     .info-grid__list {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 56px;
+    }
+
+    .info-grid__list--large {
+      grid-template-columns: 1fr;
+    }
+
+    .info-grid__image--wide {
+      aspect-ratio: 4 / 3;
       margin-top: 56px;
     }
   }

@@ -22,7 +22,7 @@ const showcase = EXPERIENCES.filter((exp) => ["montana", "mar", "vida-local"].in
 
 <BaseLayout>
   <HomeHero
-    image={IMAGES.landscape}
+    image={IMAGES.homeHero}
     label="Un retiro privado"
     title="Lejos de todo"
     sideLeft="Entre montañas"
@@ -30,7 +30,7 @@ const showcase = EXPERIENCES.filter((exp) => ["montana", "mar", "vida-local"].in
     intro="Una casa de campo restaurada entre colinas y mar, pensada para bajar el ritmo."
   />
 
-  <ImageStatement image={IMAGES.landscape} align="spread">
+  <ImageStatement image={IMAGES.homeIntro} align="spread">
     <BrandMark />
     <div class="highlights" data-reveal>
       {
@@ -54,7 +54,7 @@ const showcase = EXPERIENCES.filter((exp) => ["montana", "mar", "vida-local"].in
     </SectionHeading>
   </ImageStatement>
 
-  <ImageStatement image={IMAGES.interior}>
+  <ImageStatement image={IMAGES.homeWellness}>
     <SectionHeading title="Pausa necesaria" sideLeft="Spa al aire libre" sideRight="Rituales diarios">
       <LinkButton href="/experience#bienestar" variant="primary" blockMobile>Ver bienestar</LinkButton>
     </SectionHeading>
@@ -70,20 +70,21 @@ const showcase = EXPERIENCES.filter((exp) => ["montana", "mar", "vida-local"].in
     label="Cocina de temporada"
     title="Mesa compartida"
     text="Producto local, pescado del día y vinos de la zona en platos sencillos, pensados para compartir sin prisa."
-    images={[IMAGES.garden, IMAGES.detail]}
+    images={IMAGES.homeDining}
   />
 
   <ExperienceShowcase
     label="Experiencias"
     title="Salir a descubrir"
-    image={IMAGES.garden}
+    image={IMAGES.homeExperiences}
+    hoverImages={IMAGES.homeExperiencesHover}
     experiences={showcase}
   />
 
   <Ticker
     rows={[
-      { text: "Montaña y mar", image: IMAGES.sea },
-      { text: "Ciudad, País", image: IMAGES.landscape },
+      { text: "Montaña y mar", image: IMAGES.ticker[0] },
+      { text: "Ciudad, País", image: IMAGES.ticker[1] },
     ]}
   />
 

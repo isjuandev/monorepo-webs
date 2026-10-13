@@ -2,7 +2,9 @@
 
 Fuente: `https://asterre.framer.website/` (plantilla Framer de terceros, sitio de un retiro boutique).
 Alcance acordado: **todas las rutas**, reproduciendo layout, tipografía, paleta e interacciones,
-con **copy propio en español e imágenes placeholder** (no se redistribuyen textos ni fotos del autor).
+con **copy propio en español**. Las **fotos son las de la plantilla Asterre**, usadas bajo la licencia
+que confirmó el equipo; antes de entregar a un cliente, verificar que la licencia cubre su uso o
+reemplazarlas por fotos del cliente.
 
 ## Mapa de rutas (fuente → local)
 
@@ -59,8 +61,16 @@ No se detectó Lenis (`window.lenis` ausente), por lo que no se añadió smooth-
 ## Activos
 
 - Fuentes auto-alojadas: `public/fonts/forum-400.woff2`, `public/fonts/almarai-400.woff2`.
-- Imágenes: placeholders SVG propios en `public/images/placeholder-*.svg`, referenciados desde
-  `IMAGES` en `src/data/content.ts`. Sustituir por fotos reales del cliente.
+- Fotos: 72 imágenes descargadas de `framerusercontent.com/images/<id>` con `scale-down-to`
+  2048 (fondos a pantalla completa), 1024 (medianas) o 512 (miniaturas). El CDN las sirve como
+  **WebP** aunque la URL termine en `.jpg`, así que se guardaron como `.webp`.
+  Mapa SVG del retiro: `retreat-map.svg` (vector original).
+- Nombres en `public/images/`: `home-*`, `retreat-*`, `room-<clave>[-wide|-tall|-detail|-inset]`,
+  `room-shared`, `exp-<id>[-inset]`, `private-1..4`, `place-1..4`, `ticker-1..2`, `contact-*`,
+  `footer`. Todas se referencian desde `IMAGES` / `ROOMS` / `EXPERIENCES` en `src/data/content.ts`.
+- Correspondencia de habitaciones (local ← fuente): garden-room ← garden-room,
+  mountain-suite ← tramuntana-suite, pool-suite ← pool-suite, casa-principal ← asterre-house,
+  olive-room ← olive-room, horizon-suite ← horizon-suite.
 - Iconos (estrellas, redes, flechas) dibujados como SVG inline propios.
 
 ## Diferencias deliberadas frente a la fuente

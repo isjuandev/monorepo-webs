@@ -35,6 +35,7 @@ export const siteConfig: ClientSiteConfig = {
   description:
     "Plantilla de sitio para retiros privados, hoteles boutique y casas de huéspedes rodeadas de naturaleza.",
   locale: "es_CO",
+  ogImage: "/images/home-hero.webp",
   established: "2026",
   bookingUrl: "https://example.com/reservas",
   mapsUrl: "https://maps.google.com",

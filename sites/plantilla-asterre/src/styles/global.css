@@ -23,7 +23,7 @@
   --color-muted: rgba(38, 26, 17, 0.6);
   --color-light: #e8e0d1;
   --color-light-muted: rgba(232, 224, 209, 0.6);
-  --color-overlay: rgba(38, 26, 17, 0.4);
+  --color-overlay: rgba(38, 26, 17, 0.5);
   --color-line-dark: rgba(38, 26, 17, 0.2);
   --color-line-light: rgba(232, 224, 209, 0.2);
 
@@ -409,6 +409,28 @@ ul {
   white-space: nowrap;
 }
 
+/* ---------- Animación inicial de la página ---------- */
+
+@keyframes intro-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes intro-zoom {
+  from {
+    transform: scale(1.1);
+  }
+}
+
+.js [data-intro="fade"] {
+  animation: intro-fade 0.9s var(--ease-out) var(--intro-delay, 0.15s) both;
+}
+
+.js [data-intro="zoom"] {
+  animation: intro-zoom 1.6s var(--ease-out) var(--intro-delay, 0.15s) both;
+}
+
 html:not(.js) [data-reveal],
 html:not(.js) [data-split] .split-char {
   opacity: 1;
@@ -427,5 +449,9 @@ html:not(.js) [data-split] .split-char {
 
   .parallax {
     transform: none !important;
+  }
+
+  .js [data-intro] {
+    animation: none;
   }
 }

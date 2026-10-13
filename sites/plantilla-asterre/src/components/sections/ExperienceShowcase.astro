@@ -6,10 +6,12 @@ export interface Props {
   label: string;
   title: string;
   image: string;
+  /** Fondo por experiencia al pasar el ratón; por defecto usa la imagen de la experiencia */
+  hoverImages?: Record<string, string>;
   experiences: Experience[];
 }
 
-const { label, title, image, experiences } = Astro.props;
+const { label, title, image, hoverImages = {}, experiences } = Astro.props;
 ---
 
 <section class="showcase tone-light" data-hover-group>
@@ -17,7 +19,7 @@ const { label, title, image, experiences } = Astro.props;
     <img src={image} alt="" class="is-active" data-hover-image="default" loading="lazy" />
     {
       experiences.map((exp) => (
-        <img src={exp.image} alt="" data-hover-image={exp.id} loading="lazy" />
+        <img src={hoverImages[exp.id] ?? exp.image} alt="" data-hover-image={exp.id} loading="lazy" />
       ))
     }
     <div class="media-overlay"></div>
