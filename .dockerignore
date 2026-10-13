@@ -1,0 +1,12 @@
+node_modules
+**/node_modules
+dist
+**/dist
+.astro
+**/.astro
+.turbo
+**/.turbo
+.git
+.gitignore
+.DS_Store
+.env*

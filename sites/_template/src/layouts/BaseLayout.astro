@@ -1,0 +1,42 @@
+---
+import SEO from "@repo/ui/astro/SEO.astro";
+import Footer from "@repo/ui/astro/Footer.astro";
+import { siteConfig } from "@/config/site";
+import "@/styles/global.css";
+
+export interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = siteConfig.title,
+  description = siteConfig.description,
+  ogImage = siteConfig.ogImage,
+  noindex = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <SEO
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      locale={siteConfig.locale}
+      siteName={siteConfig.name}
+      noindex={noindex}
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </head>
+  <body>
+    <main>
+      <slot />
+    </main>
+    <Footer brandName={siteConfig.name} />
+  </body>
+</html>

@@ -1,0 +1,15 @@
+---
+export interface Props {
+  brandName: string;
+  year?: number;
+}
+
+const { brandName, year = new Date().getFullYear() } = Astro.props;
+---
+
+<footer class="ui-footer">
+  <div class="ui-container">
+    <p>&copy; {year} {brandName}. Todos los derechos reservados.</p>
+    <slot />
+  </div>
+</footer>

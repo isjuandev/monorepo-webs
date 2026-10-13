@@ -1,0 +1,4 @@
+{
+  "extends": "@repo/tsconfig/preact.json",
+  "include": ["src"]
+}

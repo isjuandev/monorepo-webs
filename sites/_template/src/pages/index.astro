@@ -1,0 +1,18 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Section from "@repo/ui/astro/Section.astro";
+import { Button } from "@repo/ui";
+import { siteConfig } from "@/config/site";
+---
+
+<BaseLayout>
+  <Section>
+    <h1>{siteConfig.name}</h1>
+    <p>{siteConfig.description}</p>
+    <div style="margin-top: 1.5rem;">
+      <Button client:load variant="primary">
+        Contáctanos
+      </Button>
+    </div>
+  </Section>
+</BaseLayout>
