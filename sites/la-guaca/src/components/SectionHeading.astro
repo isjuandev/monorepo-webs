@@ -23,9 +23,13 @@ const {
   as = "h2",
   size = "h2",
 } = Astro.props;
+
+// Los titulares largos (frases completas) usan una columna más ancha y una escala menor.
+const LONG_TITLE_CHARS = 28;
+const isLong = size === "h2" && title.length > LONG_TITLE_CHARS;
 ---
 
-<div class:list={["heading", `heading--${align}`, `heading--${size}`]}>
+<div class:list={["heading", `heading--${align}`, `heading--${size}`, isLong && "heading--long"]}>
   {label && <p class="t-label heading__label" data-reveal>{label}</p>}
   <div class="heading__title-wrap">
     {sideLeft && <p class="t-label heading__side heading__side--left">{sideLeft}</p>}
@@ -67,6 +71,18 @@ const {
     max-width: 760px;
   }
 
+  .heading--long .heading__title-wrap {
+    max-width: 820px;
+  }
+
+  .heading--long :global(.t-h2) {
+    font-size: 56px;
+  }
+
+  .heading--long .heading__text {
+    max-width: 640px;
+  }
+
   .heading__text {
     max-width: 480px;
   }
@@ -104,11 +120,23 @@ const {
     .heading__side {
       display: none;
     }
+
+    .heading--long :global(.t-h2) {
+      font-size: 48px;
+    }
   }
 
   @media (max-width: 809px) {
     .heading__title-wrap {
       max-width: 300px;
+    }
+
+    .heading--long .heading__title-wrap {
+      max-width: 100%;
+    }
+
+    .heading--long :global(.t-h2) {
+      font-size: 34px;
     }
 
     .heading__text {

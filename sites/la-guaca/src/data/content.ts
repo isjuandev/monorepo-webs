@@ -1,5 +1,5 @@
-// Contenido de La Guaca Motel. Fuente: recursos/la-guaca/brief.md.
-// Tono K1 (el jacuzzi como protagonista) + K2 (suite-experiencia), persona "tú".
+// Contenido de La Guaca Motel. Fuente: recursos/la-guaca/brief.md y la auditoría de copy y
+// conversión (CRO) aprobada por el cliente: tono sensual, elegante y discreto, persona "tú".
 // Guía de voz: docs/research/la-guaca/guia-de-voz.md
 
 import { buildWhatsAppUrl } from "@repo/utils";
@@ -14,13 +14,25 @@ export interface Photo {
 
 const photo = (name: string, alt: string): Photo => ({ src: img(name), alt });
 
+const formatPrice = (value: number) => `$${value.toLocaleString("es-CO")}`;
+
 /* ---------- WhatsApp ---------- */
 
 export const WHATSAPP_MESSAGES = {
-  general: "Hola, quiero reservar una habitación con jacuzzi en La Guaca. ¿Qué tienen disponible?",
-  room: (name: string) => `Hola, me interesa la habitación ${name}. ¿Está disponible?`,
+  general: "Hola La Guaca, ¿tienen habitaciones disponibles en este momento?",
+  header: "Hola La Guaca, quiero consultar qué habitaciones tienen disponibles en este momento.",
+  menuLive: "Hola, ¿me confirman disponibilidad y precios de habitaciones para ir hoy?",
+  menuReserve: "Hola, quiero apartar una habitación en Motel La Guaca.",
+  hero: "Hola La Guaca, quiero saber qué suites con jacuzzi están disponibles ahora mismo.",
+  closing: "Hola La Guaca, voy en camino / quiero confirmar disponibilidad de habitación.",
+  room: (name: string, price: number) =>
+    `Hola, me interesa la habitación ${name} de ${formatPrice(price)}. ¿Está disponible?`,
   rates: "Hola, ¿me comparten las tarifas de las habitaciones?",
-  occasion: "Hola, quiero celebrar una ocasión especial. ¿Qué opciones de decoración tienen?",
+  versions: "Hola, quiero consultar qué versiones de habitaciones tienen disponibles hoy.",
+  dawnOrDecoration:
+    "Hola, vi las tarifas de 5 horas en la web y quiero consultar por amanecida / decoración.",
+  dawn: "Hola La Guaca, ¿me comparten los horarios y tarifas de amanecida?",
+  occasion: "Hola, quiero cotizar una habitación decorada para una ocasión especial.",
   menu: "Hola, ¿me comparten la carta del restaurante?",
   room46: "Hola, quiero reservar la Presidencial 46, la del domo y la fuente. ¿Está disponible?",
 };
@@ -42,7 +54,8 @@ export const IMAGES = {
   ),
   homeHeroMobile: img("hero-1-mobile"),
   homeIntro: img("hero-2"),
-  homeJacuzzi: img("super"),
+  homeFacade: img("fachada"),
+  homeFacadeMobile: img("fachada-mobile"),
   homeOccasions: [
     photo("decoracion", "Habitación decorada con globos rojos y pétalos de rosa sobre la cama"),
     photo("especial", "Habitación Especial con cama doble, columnas azules y jacuzzi"),
@@ -63,6 +76,19 @@ export interface FeatureItem {
   text: string;
 }
 
+export interface FeatureItemWithLink extends FeatureItem {
+  link?: { label: string; href: string };
+}
+
+/** Bloque de la vitrina de experiencias del inicio (enlaza a /experiencias#id) */
+export interface ShowcaseItem {
+  id: string;
+  label: string;
+  title: string;
+  text: string;
+  image: string;
+}
+
 export interface DetailGroup {
   label: string;
   items: string[];
@@ -78,10 +104,22 @@ export interface Room {
   hours: number;
   extraPerson: number;
   extraHour: number;
-  /** Rasgo diferencial corto para tarjetas y carrusel */
+  /** Rasgo diferencial corto (cabecera de la página de la habitación) */
   highlight: string;
+  /** Equipamiento acumulado que muestran las tarjetas y el carrusel */
+  cardFeatures: string[];
+  /** Frase de venta de la tarjeta en /habitaciones */
+  cardPitch: string;
   tagline: string;
-  overview: string;
+  /** Etiqueta superior de la cabecera; por defecto "Categoría NN" */
+  badge?: string;
+  /** Titular corto de la página: vende la sensación */
+  headline: string;
+  /** Párrafo introductorio con la tarifa */
+  intro: string;
+  /** Botón de reserva propio de la categoría y su mensaje de WhatsApp */
+  reserveCta: string;
+  reserveMessage: string;
   image: Photo;
   /** Fotos adicionales (la principal es `image`) */
   gallery: Photo[];
@@ -95,17 +133,20 @@ export interface Room {
 /** Lo que se repite en todas las habitaciones (brief: características comunes a las cinco) */
 export const COMMON_AMENITIES = [
   "Silla del amor",
-  "Equipo de sonido",
+  "Sonido envolvente",
   "Televisor LED con cable y canales para adultos",
   "Aire acondicionado",
   "Nevera y minibar",
-  "Garaje privado",
-  "Servicio a la habitación",
-  "Restaurante 24 horas",
+  "Parqueadero privado con cortina",
+  "Room service discreto 24/7",
+  "Cocina y bar 24 horas",
 ];
 
 export const ROOM_VERSIONS_NOTE =
-  "Hay diferentes versiones de cada habitación: el color y la distribución de sus elementos pueden variar.";
+  "Diseños únicos en cada suite: Contamos con diferentes ambientes e iluminación por categoría. ¿Tienes una favorita? Pídela por WhatsApp.";
+
+export const DAWN_NOTE =
+  "¿Buscas amanecida o estadía nocturna completa?: Consulta por WhatsApp nuestras condiciones y horarios de amanecida de domingo a jueves y fines de semana, o combina tu fracción de 5 horas con horas adicionales a tarifa preferencial.";
 
 export const ROOMS: Room[] = [
   {
@@ -117,9 +158,15 @@ export const ROOMS: Room[] = [
     extraPerson: 57500,
     extraHour: 23000,
     highlight: "Jacuzzi y silla del amor",
+    cardFeatures: ["Jacuzzi caliente", "Silla del amor"],
+    cardPitch: "El refugio ideal para desconectarse en pareja.",
     tagline: "Jacuzzi con agua caliente, silla del amor y equipo de sonido por 5 horas.",
-    overview:
-      "La Suite tiene lo esencial de La Guaca: jacuzzi con agua caliente, silla del amor, equipo de sonido y televisor LED con canales para adultos. Llegas por tu garaje privado y tienes 5 horas incluidas.",
+    headline: "Suite Clásica: tu refugio íntimo con jacuzzi caliente y 5 horas sin afanes",
+    intro:
+      "Todo lo necesario para desconectarse en pareja con total discreción. Ingresa directo por tu garaje privado, sumérgete en el jacuzzi de agua caliente y disfruta 5 horas completas a tu propio ritmo por $115.000.",
+    reserveCta: "Apartar Suite ($115.000) por WhatsApp",
+    reserveMessage:
+      "Hola La Guaca, ¿tienen disponible una habitación categoría SUITE ($115.000 por 5h)?",
     image: photo(
       "suite-01",
       "Suite con cama doble, jacuzzi y silla del amor junto a una pared verde"
@@ -136,9 +183,18 @@ export const ROOMS: Room[] = [
       photo("suite-10", "Jacuzzi y ducha de vidrio en una suite de piso ajedrezado"),
     ],
     features: [
-      { title: "Jacuzzi con agua caliente", text: "Listo para dos, dentro de la habitación." },
-      { title: "Silla del amor", text: "Diseñada para la pareja, a pocos pasos de la cama." },
-      { title: "Música y TV", text: "Equipo de sonido y televisor LED con cable." },
+      {
+        title: "Jacuzzi climatizado",
+        text: "Agua caliente garantizada e hidromasaje listo para dos dentro de la habitación.",
+      },
+      {
+        title: "Silla del amor",
+        text: "Ubicada a pocos pasos de la cama para salir de la rutina y probar nuevas sensaciones.",
+      },
+      {
+        title: "Ambiente a tu medida",
+        text: "Aire acondicionado, minibar, sonido para tu música y TV LED con canales para adultos.",
+      },
     ],
     amenities: ["Jacuzzi con agua caliente"],
   },
@@ -150,16 +206,31 @@ export const ROOMS: Room[] = [
     hours: 5,
     extraPerson: 66500,
     extraHour: 26600,
-    highlight: "Jacuzzi y turco",
+    highlight: "Jacuzzi y baño turco privado",
+    cardFeatures: ["Jacuzzi caliente", "Baño turco privado"],
+    cardPitch: "Suma el calor del vapor para relajar todos los sentidos.",
     tagline: "Jacuzzi con agua caliente y turco en la misma habitación, por 5 horas.",
-    overview:
-      "La Especial suma turco a todo lo de la Suite. Primero el vapor, luego el jacuzzi con agua caliente, con silla del amor, equipo de sonido y televisor LED con canales para adultos. Son 5 horas con garaje privado.",
+    headline: "Suite Especial: el contraste perfecto entre baño turco y jacuzzi caliente",
+    intro:
+      "Eleva la temperatura de tu encuentro. Empieza relajando los sentidos en tu baño turco privado, continúa en el jacuzzi con agua caliente y disfruta 5 horas de complicidad absoluta por $133.000.",
+    reserveCta: "Apartar Especial con Turco ($133.000)",
+    reserveMessage:
+      "Hola La Guaca, ¿tienen disponible una habitación ESPECIAL con turco ($133.000 por 5h)?",
     image: photo("especial", "Habitación Especial con cama doble, columnas azules y jacuzzi"),
     gallery: [],
     features: [
-      { title: "Turco", text: "Vapor caliente sin salir de la habitación." },
-      { title: "Jacuzzi con agua caliente", text: "Para después del turco, a tu ritmo." },
-      { title: "Silla del amor", text: "En la habitación, junto al resto del equipamiento." },
+      {
+        title: "Baño turco privado",
+        text: "Cabina de vapor caliente dentro de tu suite para desconectar el cuerpo antes de pasar al agua.",
+      },
+      {
+        title: "Jacuzzi con agua caliente",
+        text: "El complemento ideal después del vapor para compartir una copa en pareja.",
+      },
+      {
+        title: "Silla del amor y confort",
+        text: "Cama amplia, silla del amor, sonido envolvente y minibar sin salir de tu habitación.",
+      },
     ],
     amenities: ["Jacuzzi con agua caliente", "Turco"],
   },
@@ -171,21 +242,36 @@ export const ROOMS: Room[] = [
     hours: 5,
     extraPerson: 75000,
     extraHour: 30000,
-    highlight: "Pista de baile y luces",
+    highlight: "Pista de baile y luces rítmicas",
+    cardFeatures: ["Jacuzzi XL", "Turco", "Pista de baile y luces"],
+    cardPitch: "Diseñada para encender la noche a tu propio ritmo.",
     tagline: "Jacuzzi de lujo grande, turco y pista de baile con luces profesionales por 5 horas.",
-    overview:
-      "En la Super el jacuzzi crece: es de lujo, grande y con agua caliente. Además tiene turco, una amplia pista de baile y juego de luces profesionales para ponerle ritmo con el equipo de sonido. Buena opción si vienes con amigos.",
+    headline: "Suite Super: jacuzzi XL de lujo, turco y tu propia pista de baile",
+    intro:
+      "Más amplitud, más agua y tu propia fiesta privada. Cuenta con jacuzzi de gran formato, baño turco y pista de baile con luces rítmicas profesionales. Ideal para parejas que quieren más espacio o para celebrar con amigos ($150.000 por 5 horas).",
+    reserveCta: "Apartar Super con Pista ($150.000)",
+    reserveMessage:
+      "Hola La Guaca, ¿tienen disponible una habitación SUPER con jacuzzi grande y pista ($150.000)?",
     image: photo("super", "Habitación Super con jacuzzi tras un vidrio, cama doble y pared verde"),
     gallery: [],
     features: [
-      { title: "Jacuzzi de lujo grande", text: "Más espacio en el agua, siempre caliente." },
-      { title: "Pista de baile", text: "Amplia, dentro de la habitación." },
-      { title: "Luces profesionales", text: "Un juego de luces para armar el ambiente." },
+      {
+        title: "Jacuzzi de lujo gran formato",
+        text: "Mayor capacidad e hidromasaje profundo con agua siempre caliente.",
+      },
+      {
+        title: "Pista de baile privada",
+        text: "Espacio amplio integrado en la suite para bailar y disfrutar sin testigos.",
+      },
+      {
+        title: "Iluminación escénica y sonido",
+        text: "Juego de luces profesionales y sonido potente para transformar la atmósfera con un botón.",
+      },
     ],
     amenities: [
       "Jacuzzi de lujo grande con agua caliente",
       "Turco",
-      "Amplia pista de baile",
+      "Pista de baile privada con sonido envolvente",
       "Juego de luces profesionales",
     ],
   },
@@ -197,25 +283,41 @@ export const ROOMS: Room[] = [
     hours: 5,
     extraPerson: 110000,
     extraHour: 44000,
-    highlight: "Barra de striptease",
-    tagline: "Barra de striptease, jacuzzi de lujo grande, turco y pista con luces por 5 horas.",
-    overview:
-      "La Super Especial tiene todo lo de la Super: jacuzzi de lujo grande, turco, pista de baile y luces profesionales. Y agrega barra de striptease. El show lo pones tú; el escenario ya está listo.",
+    highlight: "Barra de pole dance",
+    badge: "Super Especial · 5 horas · Pole dance y jacuzzi XL",
+    cardFeatures: ["Jacuzzi XL", "Turco", "Pista", "Barra de Pole Dance"],
+    cardPitch: "El escenario perfecto para un show privado inolvidable.",
+    tagline: "Barra de pole dance, jacuzzi de lujo grande, turco y pista con luces por 5 horas.",
+    headline: "El show lo pones tú; el escenario privado ya está listo",
+    intro:
+      "Diseñada para cumplir fantasías sin reservas. La Suite Super Especial reúne nuestro jacuzzi grande de lujo, baño turco, pista de baile con iluminación profesional y una barra de Pole Dance protagonista en el centro del espacio ($220.000 por 5 horas).",
+    reserveCta: "Apartar Super Especial ($220.000)",
+    reserveMessage:
+      "Hola La Guaca, ¿tienen disponible la habitación SUPER ESPECIAL con barra de show ($220.000)?",
     image: photo(
       "super-especial",
       "Habitación Super Especial con barra, cama con luz inferior y mesa de centro"
     ),
     gallery: [],
     features: [
-      { title: "Barra de striptease", text: "En el centro de la pista, para tu propio show." },
-      { title: "Pista y luces", text: "Amplia pista de baile con luces profesionales." },
-      { title: "Jacuzzi de lujo grande", text: "Agua caliente y turco en la misma habitación." },
+      {
+        title: "Barra de show (Pole Dance)",
+        text: "Ubicada en el corazón de la pista bajo luces escénicas para un espectáculo íntimo inolvidable.",
+      },
+      {
+        title: "Jacuzzi XL y baño turco",
+        text: "Relájate antes o después del show entre vapor caliente e hidromasaje de lujo.",
+      },
+      {
+        title: "Sonido y luces de club privado",
+        text: "Potencia musical y efectos de luz para que la noche tenga el ritmo que ustedes elijan.",
+      },
     ],
     amenities: [
-      "Barra de striptease",
+      "Barra de Pole Dance en el centro de la pista con luces escénicas",
       "Jacuzzi de lujo grande con agua caliente",
       "Turco",
-      "Amplia pista de baile",
+      "Pista de baile privada con sonido envolvente",
       "Juego de luces profesionales",
     ],
   },
@@ -227,33 +329,50 @@ export const ROOMS: Room[] = [
     hours: 5,
     extraPerson: 127500,
     extraHour: 51000,
-    highlight: "Columpio y muro de las caricias",
+    highlight: "Columpio erótico y muro de las caricias",
+    cardFeatures: ["Jacuzzi XL", "Turco", "Barra", "Columpio y Muro de las Caricias"],
+    cardPitch: "Nuestra suite insignia. Máxima amplitud para parejas o grupos.",
     tagline:
-      "La categoría más completa: columpio, muro de las caricias, barra, turco y jacuzzi grande.",
-    overview:
-      "La Presidencial reúne todo: jacuzzi grande de lujo con agua caliente, turco, barra de striptease, pista de baile con luces profesionales, columpio y muro de las caricias. La habitación 46 suma domo y fuente de agua; si la quieres a ella, pídela por WhatsApp.",
+      "Nuestra suite insignia: columpio erótico, muro de las caricias, barra, turco y jacuzzi grande.",
+    headline: "Suite Presidencial: nuestra experiencia cumbre de fantasía, lujo y amplitud",
+    intro:
+      "Sin límites y con todo incluido en un mismo escenario. Disfruta de jacuzzi grande de lujo, baño turco, pista con luces, barra de show y dos elementos exclusivos para despertar los sentidos: Columpio del Amor y Muro de las Caricias ($255.000 por 5 horas).",
+    reserveCta: "Apartar Presidencial / Suite 46 ($255.000)",
+    reserveMessage:
+      "Hola La Guaca, quiero consultar disponibilidad de la habitación PRESIDENCIAL (o la Habitación 46 con domo).",
     image: photo(
       "presidencial",
       "Habitación Presidencial con barra, silla del amor y piso de vidrio iluminado"
     ),
     gallery: [],
     features: [
-      { title: "Columpio", text: "Instalado en la habitación, junto a la pista." },
-      { title: "Muro de las caricias", text: "Uno de los elementos propios de esta categoría." },
-      { title: "Domo y fuente de agua", text: "Solo en la habitación 46: pídela al reservar." },
+      {
+        title: "Columpio y Muro de las Caricias",
+        text: "Exclusivos de la categoría Presidencial para experimentar juegos de complicidad, entrega y nuevas sensaciones.",
+      },
+      {
+        title: "Edición especial — Habitación 46",
+        text: "Nuestra joya arquitectónica con domo y fuente de agua. Si quieres reservar específicamente la Suite 46, pídela por WhatsApp.",
+      },
+      {
+        title: "Todo el lujo en un solo espacio",
+        text: "Máxima capacidad para parejas o grupos con jacuzzi XL, turco, pista de baile, barra y garaje privado.",
+      },
     ],
     amenities: [
       "Domo (solo habitación 46)",
       "Fuente de agua (solo habitación 46)",
-      "Barra de striptease",
+      "Barra de Pole Dance en el centro de la pista con luces escénicas",
       "Jacuzzi grande de lujo con agua caliente",
-      "Columpio",
+      "Columpio del amor",
       "Turco",
-      "Amplia pista de baile",
+      "Pista de baile privada con sonido envolvente",
       "Juego de luces profesionales",
-      "Muro de las caricias",
+      "Muro de las Caricias",
     ],
-    notes: ["Domo y fuente de agua: solo en la habitación 46."],
+    notes: [
+      "Edición Exclusiva — Suite 46: Equipada con domo corredizo al cielo y fuente de agua. Solicítala por WhatsApp.",
+    ],
   },
 ];
 
@@ -301,7 +420,7 @@ export const EXPERIENCES: Experience[] = [
     id: "show",
     label: "Ambiente de show",
     title: "Barra para tu show",
-    text: "Super Especial y Presidencial suman barra de striptease junto a la pista. Las luces ya están; el show lo pones tú.",
+    text: "Super Especial y Presidencial suman barra de pole dance e iluminación escénica junto a la pista. Las luces ya están; el show privado lo pones tú.",
     cta: { label: "Ver la Super Especial", href: "/habitaciones/super-especial" },
     image: img("super-especial"),
     inset: img("hero-1"),
@@ -310,7 +429,7 @@ export const EXPERIENCES: Experience[] = [
     id: "presidencial",
     label: "Presidencial",
     title: "Columpio, domo y fuente",
-    text: "La Presidencial agrega columpio y muro de las caricias. Domo y fuente de agua: solo en la habitación 46.",
+    text: "La Presidencial agrega columpio erótico y Muro de las Caricias para llevar la fantasía a otro nivel. Domo y fuente de agua: solo en la habitación 46.",
     cta: { label: "Pedir la 46", href: whatsappUrl(WHATSAPP_MESSAGES.room46) },
     image: img("presidencial"),
     inset: img("hero-2"),
@@ -358,25 +477,74 @@ export const PRIVATE_EXPERIENCES = [
 export const INCLUDED: FeatureItem[] = [
   {
     title: "Jacuzzi con agua caliente",
-    text: "En las cinco categorías; desde la Super, de lujo y grande.",
+    text: "Hidromasaje climatizado en las 5 categorías (y formato XL de lujo desde la Super).",
   },
-  { title: "Garaje privado", text: "Llegas y estacionas en el garaje de tu habitación." },
-  { title: "Silla del amor", text: "En todas las habitaciones, de la Suite a la Presidencial." },
-  { title: "Equipo de sonido", text: "Tu música, a tu volumen, en cada habitación." },
-  { title: "Televisor LED", text: "Con televisión por cable y canales para adultos." },
-  { title: "Aire acondicionado", text: "La temperatura a tu gusto durante la estadía." },
-  { title: "Nevera y minibar", text: "Dentro de la habitación, sin salir a buscar nada." },
-  { title: "Servicio a la habitación", text: "Pide lo que necesites sin dejar la habitación." },
-  { title: "Restaurante 24 horas", text: "Platos desde $16.500 hasta $51.700, a cualquier hora." },
+  {
+    title: "Parqueadero privado",
+    text: "Acceso directo en carro o moto a tu habitación con cierre independiente y total reserva.",
+  },
+  {
+    title: "Silla del amor",
+    text: "Presente en todas las suites para explorar nuevas posturas con total comodidad.",
+  },
+  {
+    title: "Sonido envolvente",
+    text: "Conecta tu propia música y controla el volumen para crear tu ambiente ideal.",
+  },
+  {
+    title: "Televisor LED",
+    text: "Pantalla plana con programación por cable y canales exclusivos para adultos.",
+  },
+  {
+    title: "Climatización total",
+    text: "Aire acondicionado regulable para equilibrar el calor del jacuzzi y el vapor.",
+  },
+  {
+    title: "Minibar en la suite",
+    text: "Bebidas frías, licores y snacks listos al alcance de la mano apenas entras.",
+  },
+  {
+    title: "Room Service discreto",
+    text: "Pide licores, platos o kits íntimos con entrega privada sin contacto visual.",
+  },
+  {
+    title: "Cocina y Bar 24 horas",
+    text: "Carta de platos recién preparados desde $16.500 hasta $51.700 a cualquier hora del día o la madrugada.",
+  },
 ];
+
+export const PAYMENT_METHODS =
+  "Efectivo, transferencia (Nequi / Daviplata) y tarjetas débito y crédito con datáfono inalámbrico";
 
 export const STAY_INFO = [
   { label: "Horario", value: "Abierto 24/7" },
   { label: "Tarifa base", value: "Incluye 5 horas" },
   { label: "Edad", value: "Solo mayores de 18 años" },
-  { label: "Pagos", value: "Efectivo, datáfono y transferencia" },
+  { label: "Pagos", value: PAYMENT_METHODS },
   { label: "Reservas", value: "Por WhatsApp o llamada" },
   { label: "Restaurante", value: "24 horas, con servicio a la habitación" },
+];
+
+/** "Lo que debes saber" de /habitaciones y de cada habitación: protocolo de privacidad y pagos */
+export const ROOMS_INFO = [
+  { label: "Horario", value: "Abierto 24/7" },
+  { label: "Tarifa base", value: "Incluye 5 horas" },
+  { label: "Edad", value: "Solo mayores de 18 años" },
+  {
+    label: "Privacidad en recepción y pedidos",
+    value:
+      "Entrega de cuenta, datáfono y pedidos de restaurante a través de torno/ventanilla privada sin contacto visual.",
+  },
+  {
+    label: "Ingreso en carro, moto o taxi",
+    value:
+      "Parqueadero individual privado con cortina en cada habitación; si llegas en taxi o plataforma, puedes ingresar con total discreción hasta el acceso interno.",
+  },
+  {
+    label: "Medios de pago discretos",
+    value:
+      "Recibimos efectivo, transferencias inmediatas (Nequi, Daviplata, Bancolombia) y tarjetas débito/crédito directamente en tu habitación.",
+  },
 ];
 
 export interface FaqItem {
@@ -394,14 +562,15 @@ export const UI_LABELS = {
   mainNav: "Principal",
   footerNav: "Pie de página",
   menu: "Menú",
-  checkAvailability: "Reservar por WhatsApp",
-  headerCta: "Reservar",
+  checkAvailability: "Ver disponibilidad por WhatsApp",
+  headerCta: "Disponibilidad hoy",
   hours: "Horarios",
   contact: "Contacto",
   location: "Ubicación",
   whatsapp: "WhatsApp",
-  whatsappFloat: "WhatsApp",
-  whatsappFloatAria: "Reservar por WhatsApp (se abre en una pestaña nueva)",
+  whatsappFloat: "¿Hay suite disponible? Escríbenos",
+  whatsappFloatAria:
+    "¿Hay suite disponible? Escríbenos por WhatsApp (se abre en una pestaña nueva)",
   openAllHours: "Abierto 24/7",
   adultsOnly: "Solo mayores de 18 años",
   logoAlt: (name: string) => `${name} Motel`,
@@ -413,25 +582,34 @@ export const UI_LABELS = {
   basedOnReviews: (count: number) => `Basado en ${count} reseñas`,
   allRightsReserved: (year: number) => `© ${year}, todos los derechos reservados`,
   menuCtaTitle: "¿Reservamos?",
-  menuCtaText: "Escríbenos por WhatsApp y pregunta qué habitación está disponible.",
-  menuCta: "Escribir por WhatsApp",
-  viewRooms: "Ver habitaciones",
-  viewAllRooms: "Ver todas las habitaciones",
+  menuCtaText:
+    "Consulta disponibilidad en tiempo real por WhatsApp o reserva tu suite antes de salir.",
+  menuCta: "Consultar disponibilidad en vivo",
+  menuCtaSecondary: "Apartar una suite",
+  viewRooms: "Explorar las 5 suites y precios",
+  viewAllRooms: "Ver detalles y precios de las 5 suites",
+  roomCardCta: "Quiero esta suite por WhatsApp",
+  roomCardCtaAria: (name: string) =>
+    `Quiero la habitación ${name} por WhatsApp (se abre en una pestaña nueva)`,
   roomsCarousel: "Habitaciones",
   carouselRole: "carrusel",
   previousRoom: "Habitación anterior",
   nextRoom: "Habitación siguiente",
   roomsCount: (count: number) => `${count} categorías`,
-  price: (value: number) => `$${value.toLocaleString("es-CO")}`,
-  priceFor: (value: number, hours: number) =>
-    `$${value.toLocaleString("es-CO")} por ${hours} horas`,
+  price: formatPrice,
+  priceFor: (value: number, hours: number) => `${formatPrice(value)} por ${hours} horas`,
+  priceShort: (value: number, hours: number) => `${formatPrice(value)} / ${hours} horas`,
   hoursIncluded: (hours: number) => `${hours} horas`,
-  extraPerson: (value: number) => `Persona adicional: $${value.toLocaleString("es-CO")}`,
-  extraHour: (value: number) => `Hora adicional: $${value.toLocaleString("es-CO")}`,
+  roomFeatures: (features: string[]) => features.join(" + "),
+  extraPerson: (value: number) => `Persona adicional: ${formatPrice(value)}`,
+  extraHour: (value: number) => `Hora adicional: ${formatPrice(value)}`,
   roomNumber: (number: string) => `Categoría ${number}`,
-  reserveRoom: "Reservar esta habitación",
   openInMaps: "Abrir en mapas",
-  directions: "Cómo llegar",
+  directions: "Iniciar ruta en Waze / Maps",
+  openInWaze: "Abrir ruta directa en Waze",
+  openInGoogleMaps: "Abrir ubicación en Google Maps",
+  wazeShort: "Abrir en Waze",
+  googleMapsShort: "Abrir en Google Maps",
   lastUpdated: "Última actualización:",
   gallery: "Galería",
   form: {
@@ -459,8 +637,9 @@ export const UI_LABELS = {
         .join("\n"),
   },
   closingCta: {
-    title: "Reserva tu jacuzzi",
-    text: "Escríbenos por WhatsApp o pasa a conocernos en el km 2 vía Montenegro.",
+    title: "¿Listos para escapar hoy? Tu suite te espera 24/7",
+    text: "Confirma disponibilidad en segundos por WhatsApp o llega directo sin reserva previa al Km 2 vía Montenegro (a 5 minutos de Armenia). Ingreso 100% discreto.",
+    cta: "Confirmar habitación por WhatsApp",
     sideLeft: "Abierto 24/7",
     sideRight: "Armenia",
   },
@@ -479,40 +658,162 @@ export interface LegalSectionCopy {
 export const PAGES = {
   home: {
     hero: {
-      label: "Motel en Armenia",
-      title: "Jacuzzi caliente en cada habitación",
+      label: "Armenia · Km 2 vía Montenegro",
+      title: "Cinco horas de intimidad total con jacuzzi caliente en cada suite",
       sideLeft: "Abierto 24/7",
-      sideRight: "Km 2 vía Montenegro",
+      sideRight: "Parqueadero privado",
       intro:
-        "Cinco categorías con jacuzzi de agua caliente y garaje privado. Desde $115.000 por 5 horas.",
+        "Escapa de la rutina a solo 5 minutos de Armenia. Cinco categorías de habitaciones con garaje privado independiente, agua caliente garantizada y total discreción. Rato de 5 horas desde $115.000.",
     },
-    highlights: (roomCount: number) => [
-      { label: "En todas", items: ["Jacuzzi con agua caliente", "Garaje privado"] },
-      { label: "La Guaca", items: [UI_LABELS.roomsCount(roomCount), UI_LABELS.openAllHours] },
+    highlights: [
+      {
+        label: "En todas las suites",
+        items: ["Jacuzzi de agua caliente", "Parqueadero privado con cortina", "Silla del amor"],
+      },
+      {
+        label: "Experiencia La Guaca",
+        items: ["Fracción amplia de 5 horas", "Room Service discreto 24/7", "Parejas o grupos"],
+      },
     ],
     intro: {
-      title: "Cinco horas a tu manera",
-      text: "La Guaca es un motel en el km 2 de la vía a Montenegro, en Armenia. Abre 24/7 y cada habitación tiene garaje privado, jacuzzi con agua caliente, silla del amor y servicio a la habitación. Ven en pareja o con amigos: la tarifa base incluye 5 horas.",
+      title: "Sin afanes ni interrupciones: 5 horas para desconectarse del mundo",
+      text: "Mientras otros lugares limitan tu encuentro a 3 o 4 horas, en La Guaca cada tarifa base te da 5 horas completas para disfrutar a tu ritmo. Entra directo a tu garaje privado sin cruzar miradas, pide licores o snacks a la habitación con entrega reservada y vive una experiencia diseñada para parejas o encuentros entre amigos.",
+      cta: "Comparar suites desde $115.000",
     },
     jacuzzi: {
-      title: "El agua, siempre caliente",
-      sideLeft: "Jacuzzi en las cinco",
-      sideRight: "De lujo desde la Super",
-      cta: "Ver experiencias",
+      title: "El placer del agua caliente, listo apenas cierras la puerta",
+      text: "Olvídate de esperar o de jacuzzis fríos. Todas nuestras habitaciones cuentan con hidromasaje de agua caliente constante, y desde la categoría Super disfrutas de jacuzzis de gran formato con iluminación envolvente.",
+      sideLeft: "Hidromasaje en las 5 categorías",
+      sideRight: "Climatización inmediata",
+      cta: "Descubrir jacuzzi, turco y show",
     },
     rooms: {
-      title: "Sube de categoría",
-      text: "De la Suite a la Presidencial, cada una suma algo: turco, pista con luces, barra o columpio. Desde $115.000 por 5 horas.",
+      title: "Elige el nivel de tu fantasía",
+      text: "Todas nuestras habitaciones incluyen 5 horas, garaje privado y jacuzzi con agua caliente. Sube de categoría para sumar baño turco privado, pista de baile con luces, barra de show o columpio erótico. Tarifas desde $115.000.",
+    },
+    rates: {
+      label: "Tarifas transparentes",
+      title: "Todo claro antes de entrar: fracción, amanecida y adicionales",
+      text: "Disfruta con total tranquilidad. Todas nuestras tarifas estándar incluyen 5 horas completas de estadía.",
+      items: [
+        {
+          title: "Fracción / Rato (5 horas)",
+          text: "Disponible las 24 horas en nuestras 5 categorías (desde $115.000 hasta $255.000).",
+        },
+        {
+          title: "Planes de amanecida",
+          text: "Consulta por WhatsApp nuestros horarios y tarifas especiales de amanecida (domingo a jueves y fines de semana/festivos).",
+          link: { label: "Consultar amanecida", href: whatsappUrl(WHATSAPP_MESSAGES.dawn) },
+        },
+        {
+          title: "Hora adicional",
+          text: "¿Quieren quedarse un rato más? Extiende tu estadía por fracción de hora adicional directamente desde la habitación.",
+        },
+        {
+          title: "Parejas o amigos (persona adicional)",
+          text: "Las tarifas base aplican para 2 personas. En nuestras suites amplias puedes ingresar con acompañantes adicionales pagando el suplemento por persona.",
+        },
+      ] satisfies FeatureItemWithLink[],
     },
     occasions: {
-      label: "Ocasiones especiales",
-      title: "Celebra en la habitación",
-      text: "¿Aniversario, cumpleaños o una sorpresa? Pregunta por WhatsApp por la decoración de la habitación y sus condiciones.",
-      cta: "Preguntar por la decoración",
+      label: "Noches especiales y aniversarios",
+      title: "Sorprende con una suite decorada a tu medida",
+      text: "¿Aniversario, cumpleaños o reconciliación? Preparamos tu habitación antes de que llegues con pétalos de rosa, velas aromáticas, globos y botella para brindar. Escríbenos por WhatsApp para elegir tu paquete y reservarla con anticipación.",
+      cta: "Cotizar decoración romántica",
+      items: [
+        {
+          title: "Toque romántico clásico",
+          text: "Camino de pétalos naturales, velas tipo LED/aromáticas, bombas metalizadas o en helio y letrero temático (Feliz Aniversario, Feliz Cumpleaños o Te Amo).",
+        },
+        {
+          title: "Brindis en el jacuzzi",
+          text: "Opción de incluir botella de vino, champaña o licor de tu elección con dos copas listas junto al jacuzzi.",
+        },
+        {
+          title: "¿Cómo funciona?",
+          text: "Escríbenos con al menos 24 horas de anticipación, elige la categoría de tu suite y abona tu reserva por transferencia para tener todo listo a la hora exacta de tu llegada.",
+        },
+      ] satisfies FeatureItem[],
     },
-    experiences: { label: "Experiencias", title: "Agua, vapor y luces" },
-    showcase: ["turco", "pista", "show"],
-    ticker: ["Jacuzzi · Turco · Pista", "Armenia · Abierto 24/7"] as [string, string],
+    experiences: {
+      id: "experiencias",
+      label: "Experiencias sensoriales",
+      title: "Vapor, música y fantasía a puerta cerrada",
+    },
+    showcase: [
+      {
+        id: "turco",
+        label: "Baño turco privado",
+        title: "Vapor envolvente desde la suite Especial",
+        text: "Cierra la puerta, activa el vapor y deja que el calor desconecte el estrés antes de pasar al jacuzzi.",
+        image: img("especial"),
+      },
+      {
+        id: "pista",
+        label: "Sonido y luces",
+        title: "Tu propia pista de baile privada",
+        text: "Iluminación ambiental y sonido envolvente desde la categoría Super para que la fiesta sea solo de ustedes.",
+        image: img("super"),
+      },
+      {
+        id: "show",
+        label: "Fantasía y juego",
+        title: "Barra de show, columpio y Muro de las Caricias",
+        text: "Espacios diseñados para romper la timidez y explorar nuevas sensaciones en las suites Super Especial y Presidencial.",
+        image: img("super-especial"),
+      },
+    ] satisfies ShowcaseItem[],
+    privacy: {
+      label: "Discreción garantizada",
+      title: "Privacidad absoluta desde que entras hasta que sales",
+      text: "Diseñamos cada detalle operativo para que nadie interrumpa tu momento ni tengas contacto visual innecesario.",
+      items: [
+        {
+          title: "Garaje privado individual",
+          text: "Ingresa con tu vehículo o moto directamente al parqueadero privado de tu suite y cierra la puerta antes de bajar.",
+        },
+        {
+          title: "Llegada discreta en taxi o plataforma",
+          text: "Si vienes en taxi, Uber o InDrive, el vehículo puede dejarte directamente en el acceso interno de tu habitación con total reserva.",
+        },
+        {
+          title: "Atención sin contacto visual",
+          text: "Recepción y entrega de pedidos a la habitación a través de ventanilla/torno privado.",
+        },
+        {
+          title: "Múltiples medios de pago",
+          text: `Paga cómodamente desde tu suite en efectivo, transferencia (Nequi / Daviplata) o tarjetas débito y crédito con datáfono inalámbrico.`,
+        },
+      ] satisfies FeatureItem[],
+    },
+    roomService: {
+      label: "Room service 24 horas",
+      title: "Licores, snacks y juguetería sin salir de la cama",
+      text: "Pide desde el teléfono de tu habitación o por WhatsApp interno y recibe tu pedido en minutos por el torno privado.",
+      items: [
+        {
+          title: "Licores y bebidas frías",
+          text: "Cervezas nacionales e importadas, vinos, whisky, tequila, aguardiente, ron, hidratantes y energizantes.",
+        },
+        {
+          title: "Snacks y comida 24/7",
+          text: "Opciones rápidas y calientes para recargar energía a cualquier hora del día o la madrugada.",
+        },
+        {
+          title: "Boutique íntima y bienestar",
+          text: "Preservativos, lubricantes, aceites de masaje y kits de aseo personal adicionales siempre disponibles.",
+        },
+      ] satisfies FeatureItem[],
+    },
+    location: {
+      label: "Ubicación estratégica en Armenia",
+      title: "A solo 5 minutos de Armenia por la vía a Montenegro",
+      text: "Encuéntranos en el Km 2 vía Montenegro (Armenia, Quindío), con entrada amplia, iluminada y de fácil acceso en ambos sentidos.",
+    },
+    ticker: [
+      "5 horas incluidas · Jacuzzi de agua caliente · Turco privado",
+      "Parqueadero discreto · Km 2 vía Montenegro · Abierto 24/7",
+    ] as [string, string],
   },
   experience: {
     meta: {
@@ -558,8 +859,7 @@ export const PAGES = {
     directions: {
       label: "Cómo llegar",
       title: "Km 2 vía Montenegro",
-      text: "Pasa a conocernos y elige la habitación con calma: estamos en el km 2 de la vía a Montenegro, en Armenia.",
-      cta: "Ver ruta en el mapa",
+      text: "Llega directo y sin esperas: abre tu ruta en Waze o asegura tu suite por WhatsApp.",
     },
   },
   faq: [
@@ -576,7 +876,7 @@ export const PAGES = {
     },
     {
       question: "¿Qué formas de pago aceptan?",
-      answer: "Efectivo, datáfono y transferencia.",
+      answer: `${PAYMENT_METHODS}. Pagas cómodamente desde tu suite.`,
     },
     {
       question: "¿Hay edad mínima?",
@@ -610,29 +910,55 @@ export const PAGES = {
         "Suite, Especial, Super, Super Especial y Presidencial: todas con jacuzzi de agua caliente y garaje privado. Desde $115.000 por 5 horas en Armenia.",
     },
     hero: {
-      label: "Habitaciones",
-      title: "Elige tu categoría",
+      label: "Elige el escenario de tu próxima escapada",
+      title: "Nuestras 5 suites: compara y elige tu experiencia",
+      text: "Todas las tarifas incluyen fracción de 5 horas, parqueadero privado independiente y jacuzzi con agua caliente garantizada.",
       sideRight: "5 horas incluidas",
     },
     overview: {
-      label: "Antes de elegir",
-      title: "Cada categoría tiene versiones",
-      text: `${ROOM_VERSIONS_NOTE} Si quieres una en particular, pregúntanos por WhatsApp.`,
-      cta: "Consultar disponibilidad",
+      label: "Ambientes exclusivos",
+      title: "Cada visita es distinta: diferentes diseños en cada categoría",
+      text: "Dentro de cada categoría contamos con habitaciones de diferente ambientación cromática y distribución para que nunca repitas la misma experiencia. ¿Tienes un número de habitación favorito? Solicítalo por WhatsApp antes de llegar.",
+      cta: "Elegir versión de habitación por WhatsApp",
     },
     included: { label: "En todas las habitaciones", title: "Siempre incluido" },
     rates: {
       label: "Tarifas",
       title: "Precios claros, 5 horas incluidas",
-      cta: "Pedir tarifas por WhatsApp",
+      dawn: { label: "Amanecida", value: DAWN_NOTE },
+      cta: "Consultar amanecida o decoración",
     },
-    info: { label: "Antes de llegar", title: "Información útil" },
+    dining: {
+      label: "Gastronomía, bar y boutique 24/7",
+      title: "Carta 24 horas, licores y kits íntimos directo a tu suite",
+      text: "Platos recién preparados desde $16.500 hasta $51.700, licores nacionales e importados y productos de bienestar íntimo entregados sin contacto visual.",
+      items: [
+        {
+          title: "Cocina abierta 24/7",
+          text: "Picadas, platos fuertes, comidas rápidas y opciones para compartir a cualquier hora.",
+        },
+        {
+          title: "Bar y minibar",
+          text: "Cervezas, vinos, champaña, whisky, ron, tequila, aguardiente y bebidas energizantes.",
+        },
+        {
+          title: "Kits íntimos y bienestar",
+          text: "Preservativos, lubricantes, aceites cálidos y kits de aseo personal siempre disponibles.",
+        },
+      ] satisfies FeatureItem[],
+      cta: "Pedir la carta de restaurante y licores",
+    },
+    info: { label: "Antes de llegar", title: "Lo que debes saber" },
+    location: {
+      label: "Cómo llegar",
+      title: "Llega en 5 minutos desde Armenia (Km 2 vía Montenegro)",
+    },
   },
   room: {
     details: {
       label: "Los detalles",
       title: "Qué incluye",
-      text: "Lo propio de esta categoría, lo que trae toda habitación y lo que cuesta.",
+      text: "Revisa el equipamiento completo de esta suite y sus tarifas transparentes por 5 horas.",
     },
     groups: {
       own: "En esta habitación",

@@ -14,13 +14,13 @@ export interface Props {
 
 const { rooms, title, text, tone = "cream", startIndex = 0 } = Astro.props;
 
-const carouselRooms = rooms.map(({ slug, name, hours, highlight, price, image }) => ({
+const carouselRooms = rooms.map(({ slug, name, hours, cardFeatures, price, image }) => ({
   slug,
   name,
   image: image.src,
   imageAlt: image.alt,
-  meta: [UI_LABELS.hoursIncluded(hours), highlight],
-  priceLabel: UI_LABELS.price(price),
+  meta: [UI_LABELS.hoursIncluded(hours), UI_LABELS.roomFeatures(cardFeatures)],
+  priceLabel: UI_LABELS.priceShort(price, hours),
 }));
 ---
 

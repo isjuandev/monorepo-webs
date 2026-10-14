@@ -1,6 +1,8 @@
 ---
 export interface Props {
   image: string;
+  /** Versión vertical para pantallas de hasta 809px */
+  imageMobile?: string;
   /** Altura de la sección; "screen" ocupa el viewport completo */
   height?: "screen" | "auto";
   overlay?: boolean;
@@ -8,7 +10,7 @@ export interface Props {
   id?: string;
 }
 
-const { image, height = "screen", overlay = true, align = "center", id } = Astro.props;
+const { image, imageMobile, height = "screen", overlay = true, align = "center", id } = Astro.props;
 ---
 
 <section
@@ -16,7 +18,16 @@ const { image, height = "screen", overlay = true, align = "center", id } = Astro
   id={id}
 >
   <div class="parallax" data-parallax aria-hidden="true">
-    <img src={image} alt="" loading="lazy" decoding="async" />
+    {
+      imageMobile ? (
+        <picture>
+          <source media="(max-width: 809px)" srcset={imageMobile} />
+          <img src={image} alt="" loading="lazy" decoding="async" />
+        </picture>
+      ) : (
+        <img src={image} alt="" loading="lazy" decoding="async" />
+      )
+    }
   </div>
   {overlay && <div class="media-overlay"></div>}
   {
@@ -32,6 +43,10 @@ const { image, height = "screen", overlay = true, align = "center", id } = Astro
   .image-statement {
     position: relative;
     overflow: hidden;
+  }
+
+  .parallax picture {
+    display: contents;
   }
 
   .image-statement--screen {

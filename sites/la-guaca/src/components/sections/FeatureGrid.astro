@@ -17,16 +17,33 @@ export interface Props {
   compact?: boolean;
   /** Muestra un índice "01", "02"… sobre cada título */
   numbered?: boolean;
+  /** Columnas en escritorio: 2 para listas de 4 ítems (cuadrícula 2x2) */
+  columns?: 2 | 3;
   id?: string;
 }
 
-const { items, title, label, text, compact = false, numbered = false, id } = Astro.props;
+const {
+  items,
+  title,
+  label,
+  text,
+  compact = false,
+  numbered = false,
+  columns = 3,
+  id,
+} = Astro.props;
 ---
 
 <section class:list={["section features", compact && "features--compact"]} id={id}>
   <div class="container">
     {title && <SectionHeading title={title} label={label} text={text} />}
-    <ul class:list={["features__grid", title && "features__grid--spaced"]}>
+    <ul
+      class:list={[
+        "features__grid",
+        title && "features__grid--spaced",
+        columns === 2 && "features__grid--two",
+      ]}
+    >
       {
         items.map((item, i) => (
           <li class="features__item" data-reveal style={`--reveal-delay: ${(i % 3) * 0.1}s`}>
@@ -72,6 +89,23 @@ const { items, title, label, text, compact = false, numbered = false, id } = Ast
     border-left: 1px solid var(--color-line-dark);
   }
 
+  .features__grid--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .features__grid--two .features__item:not(:nth-child(3n + 1)) {
+    border-left: 0;
+  }
+
+  .features__grid--two .features__item:nth-child(2n) {
+    border-left: 1px solid var(--color-line-dark);
+  }
+
+  .features__grid--two .features__title,
+  .features__grid--two .features__text {
+    max-width: 400px;
+  }
+
   .features__index {
     margin-bottom: 12px;
   }
@@ -85,11 +119,13 @@ const { items, title, label, text, compact = false, numbered = false, id } = Ast
   }
 
   @media (max-width: 809px) {
-    .features__grid {
+    .features__grid,
+    .features__grid--two {
       grid-template-columns: 1fr;
     }
 
-    .features__item:not(:nth-child(3n + 1)) {
+    .features__item:not(:nth-child(3n + 1)),
+    .features__grid--two .features__item:nth-child(2n) {
       border-left: 0;
     }
 

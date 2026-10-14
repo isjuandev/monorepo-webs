@@ -1,10 +1,12 @@
 ---
+import ArrowIcon from "@/components/ArrowIcon.astro";
 import ClosingCta from "@/components/ClosingCta.astro";
 import LinkButton from "@/components/LinkButton.astro";
 import RoomMeta from "@/components/RoomMeta.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 import FeatureGrid from "@/components/sections/FeatureGrid.astro";
 import InfoGrid from "@/components/sections/InfoGrid.astro";
+import LocationCta from "@/components/sections/LocationCta.astro";
 import PageHero from "@/components/sections/PageHero.astro";
 import { siteConfig } from "@/config/site";
 import {
@@ -12,7 +14,7 @@ import {
   INCLUDED,
   PAGES,
   ROOMS,
-  STAY_INFO,
+  ROOMS_INFO,
   UI_LABELS,
   WHATSAPP_MESSAGES,
   whatsappUrl,
@@ -39,6 +41,7 @@ const rates = ROOMS.map((room) => ({
   <PageHero
     label={page.hero.label}
     title={page.hero.title}
+    text={page.hero.text}
     sideLeft={UI_LABELS.roomsCount(ROOMS.length)}
     sideRight={page.hero.sideRight}
   />
@@ -48,17 +51,28 @@ const rates = ROOMS.map((room) => ({
       <ul class="rooms-grid__list">
         {
           ROOMS.map((room, i) => (
-            <li data-reveal style={`--reveal-delay: ${(i % 2) * 0.1}s`}>
-              <a href={`/habitaciones/${room.slug}`} class="room-card">
+            <li data-reveal style={`--reveal-delay: ${(i % 2) * 0.1}s`} class="room-card">
+              <a href={`/habitaciones/${room.slug}`} class="room-card__link">
                 <div class="media room-card__media">
                   <img src={room.image.src} alt={room.image.alt} loading={i < 2 ? "eager" : "lazy"} />
                 </div>
-                <div class="room-card__body">
-                  <h2 class="t-h3">{room.name}</h2>
-                  <RoomMeta room={room} />
-                  <p class="t-lead room-card__price">{UI_LABELS.priceFor(room.price, room.hours)}</p>
-                </div>
+                <h2 class="t-h3">{room.name}</h2>
               </a>
+              <div class="room-card__body">
+                <p class="t-lead">{UI_LABELS.priceShort(room.price, room.hours)}</p>
+                <RoomMeta room={room} />
+                <p class="t-body room-card__pitch">{room.cardPitch}</p>
+                <a
+                  href={whatsappUrl(WHATSAPP_MESSAGES.room(room.name, room.price))}
+                  class="btn btn--secondary room-card__cta"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={UI_LABELS.roomCardCtaAria(room.name)}
+                >
+                  {UI_LABELS.roomCardCta}
+                  <ArrowIcon direction="external" />
+                </a>
+              </div>
             </li>
           ))
         }
@@ -76,7 +90,7 @@ const rates = ROOMS.map((room) => ({
         {page.overview.text}
       </p>
       <div data-reveal>
-        <LinkButton href="booking">{page.overview.cta}</LinkButton>
+        <LinkButton href={whatsappUrl(WHATSAPP_MESSAGES.versions)}>{page.overview.cta}</LinkButton>
       </div>
     </div>
   </section>
@@ -88,16 +102,34 @@ const rates = ROOMS.map((room) => ({
     numbered
   />
 
-  <InfoGrid label={page.rates.label} title={page.rates.title} items={rates}>
-    <LinkButton href={whatsappUrl(WHATSAPP_MESSAGES.rates)}>{page.rates.cta}</LinkButton>
+  <InfoGrid label={page.rates.label} title={page.rates.title} items={[...rates, page.rates.dawn]}>
+    <LinkButton href={whatsappUrl(WHATSAPP_MESSAGES.dawnOrDecoration)}>{page.rates.cta}</LinkButton>
   </InfoGrid>
+
+  <FeatureGrid
+    label={page.dining.label}
+    title={page.dining.title}
+    text={page.dining.text}
+    items={page.dining.items}
+  />
+
+  <div class="dining-cta" data-reveal>
+    <LinkButton href={whatsappUrl(WHATSAPP_MESSAGES.menu)}>{page.dining.cta}</LinkButton>
+  </div>
 
   <InfoGrid
     tone="brown"
     label={page.info.label}
     title={page.info.title}
-    items={STAY_INFO}
+    items={ROOMS_INFO}
     image={IMAGES.roomsInfo}
+  />
+
+  <LocationCta
+    title={page.location.title}
+    label={page.location.label}
+    wazeLabel={UI_LABELS.wazeShort}
+    mapsLabel={UI_LABELS.googleMapsShort}
   />
 
   <ClosingCta />
@@ -110,6 +142,12 @@ const rates = ROOMS.map((room) => ({
 
   .rooms-overview {
     padding-bottom: 0;
+  }
+
+  .dining-cta {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 120px;
   }
 
   .rooms-overview__inner {
@@ -142,6 +180,12 @@ const rates = ROOMS.map((room) => ({
   .room-card {
     display: flex;
     flex-direction: column;
+    gap: 20px;
+  }
+
+  .room-card__link {
+    display: flex;
+    flex-direction: column;
     gap: 32px;
   }
 
@@ -153,7 +197,7 @@ const rates = ROOMS.map((room) => ({
     transition: transform 1.2s var(--ease-out);
   }
 
-  .room-card:hover .room-card__media img {
+  .room-card__link:hover .room-card__media img {
     transform: scale(1.04);
   }
 
@@ -164,8 +208,12 @@ const rates = ROOMS.map((room) => ({
     gap: 12px;
   }
 
-  .room-card__price {
-    margin-top: 12px;
+  .room-card__pitch {
+    max-width: 480px;
+  }
+
+  .room-card__cta {
+    margin-top: 8px;
   }
 
   @media (max-width: 809px) {
@@ -183,7 +231,7 @@ const rates = ROOMS.map((room) => ({
       gap: 48px;
     }
 
-    .room-card {
+    .room-card__link {
       gap: 24px;
     }
   }

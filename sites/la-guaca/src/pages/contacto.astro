@@ -7,7 +7,7 @@ import FeatureGrid from "@/components/sections/FeatureGrid.astro";
 import ImageStatement from "@/components/sections/ImageStatement.astro";
 import PageHero from "@/components/sections/PageHero.astro";
 import { siteConfig } from "@/config/site";
-import { IMAGES, PAGES, whatsappUrl } from "@/data/content";
+import { IMAGES, PAGES, UI_LABELS, whatsappUrl } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const { contact } = siteConfig;
@@ -73,7 +73,8 @@ const reachItems = [
         title={page.directions.title}
         text={page.directions.text}
       >
-        <LinkButton href="maps" variant="primary" blockMobile>{page.directions.cta}</LinkButton>
+        <LinkButton href="waze" variant="primary" blockMobile>{UI_LABELS.openInWaze}</LinkButton>
+        <LinkButton href="maps">{UI_LABELS.openInGoogleMaps}</LinkButton>
       </SectionHeading>
     </div>
   </section>
@@ -85,9 +86,20 @@ const reachItems = [
     padding-bottom: 200px;
   }
 
+  .directions :global(.heading__actions) {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 32px;
+  }
+
   @media (max-width: 809px) {
     .directions {
       padding-bottom: 120px;
+    }
+
+    .directions :global(.heading__actions) {
+      width: 100%;
+      flex-direction: column;
     }
   }
 </style>

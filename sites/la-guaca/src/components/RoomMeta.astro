@@ -2,22 +2,23 @@
 import { type Room, UI_LABELS } from "@/data/content";
 
 export interface Props {
-  room: Pick<Room, "hours" | "highlight">;
-  showHighlight?: boolean;
+  room: Pick<Room, "hours" | "cardFeatures">;
+  showHours?: boolean;
 }
 
-const { room, showHighlight = true } = Astro.props;
+const { room, showHours = true } = Astro.props;
+const features = UI_LABELS.roomFeatures(room.cardFeatures);
+const items = showHours ? [UI_LABELS.hoursIncluded(room.hours), features] : [features];
 ---
 
 <span class="room-meta t-body">
-  <span>{UI_LABELS.hoursIncluded(room.hours)}</span>
   {
-    showHighlight && (
+    items.map((item, i) => (
       <>
-        <i aria-hidden="true" />
-        <span>{room.highlight}</span>
+        {i > 0 && <i aria-hidden="true" />}
+        <span>{item}</span>
       </>
-    )
+    ))
   }
 </span>
 

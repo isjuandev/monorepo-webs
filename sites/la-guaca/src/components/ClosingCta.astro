@@ -1,7 +1,7 @@
 ---
 import LinkButton from "@/components/LinkButton.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
-import { UI_LABELS } from "@/data/content";
+import { UI_LABELS, WHATSAPP_MESSAGES, whatsappUrl } from "@/data/content";
 
 export interface Props {
   title?: string;
@@ -21,7 +21,9 @@ const {
 <section class="section bg-brown closing-cta">
   <div class="container">
     <SectionHeading title={title} text={text} sideLeft={sideLeft} sideRight={sideRight}>
-      <LinkButton href="booking" variant="primary" blockMobile>{UI_LABELS.checkAvailability}</LinkButton>
+      <LinkButton href={whatsappUrl(WHATSAPP_MESSAGES.closing)} variant="primary" blockMobile>
+        {UI_LABELS.closingCta.cta}
+      </LinkButton>
       <LinkButton href="maps">{UI_LABELS.directions}</LinkButton>
     </SectionHeading>
   </div>

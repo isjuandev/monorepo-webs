@@ -1,6 +1,6 @@
 ---
 import SectionHeading from "@/components/SectionHeading.astro";
-import type { Experience } from "@/data/content";
+import type { ShowcaseItem } from "@/data/content";
 
 export interface Props {
   label: string;
@@ -8,13 +8,16 @@ export interface Props {
   image: string;
   /** Fondo por experiencia al pasar el ratón; por defecto usa la imagen de la experiencia */
   hoverImages?: Record<string, string>;
-  experiences: Experience[];
+  experiences: ShowcaseItem[];
+  /** Muestra el texto de apoyo bajo cada titular */
+  showText?: boolean;
+  id?: string;
 }
 
-const { label, title, image, hoverImages = {}, experiences } = Astro.props;
+const { label, title, image, hoverImages = {}, experiences, showText = false, id } = Astro.props;
 ---
 
-<section class="showcase tone-light" data-hover-group>
+<section class="showcase tone-light" data-hover-group id={id}>
   <div class="showcase__media" aria-hidden="true">
     <img src={image} alt="" class="is-active" data-hover-image="default" loading="lazy" />
     {
@@ -34,6 +37,7 @@ const { label, title, image, hoverImages = {}, experiences } = Astro.props;
             <a href={`/experiencias#${exp.id}`} class="showcase__link" data-hover-trigger={exp.id}>
               <span class="t-label">{exp.label}</span>
               <span class="t-h3">{exp.title}</span>
+              {showText && <span class="t-body showcase__text">{exp.text}</span>}
             </a>
           </li>
         ))
@@ -100,6 +104,10 @@ const { label, title, image, hoverImages = {}, experiences } = Astro.props;
     padding: 16px 52px;
     text-align: center;
     transition: opacity 0.3s ease;
+  }
+
+  .showcase__text {
+    opacity: 0.85;
   }
 
   .showcase__links:hover .showcase__link:not(:hover) {

@@ -23,10 +23,11 @@ const {
   class: className,
 } = Astro.props;
 
-// Atajos de contenido: "booking" (WhatsApp con mensaje general), "maps" y "contact".
+// Atajos de contenido: "booking" (WhatsApp con mensaje general), "maps", "waze" y "contact".
 const SHORTCUTS: Record<string, string> = {
   booking: whatsappUrl(),
   maps: siteConfig.mapsUrl,
+  waze: siteConfig.wazeUrl,
   contact: "/contacto",
 };
 

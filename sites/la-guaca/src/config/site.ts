@@ -5,6 +5,8 @@ export interface ClientSiteConfig extends SiteMetadata {
   bookingUrl: string;
   /** Enlace a la ubicación en mapas */
   mapsUrl: string;
+  /** Ruta directa en Waze (coordenadas del lugar en Google Maps) */
+  wazeUrl: string;
   contact: {
     phone?: string;
     /** Número internacional, solo dígitos (código de país + número) */
@@ -41,6 +43,7 @@ export const siteConfig: ClientSiteConfig = {
   ogImage: "/images/og-image.jpg",
   bookingUrl: buildWhatsAppUrl(WHATSAPP_NUMBER),
   mapsUrl: "https://maps.app.goo.gl/pC9Ps9RnKSGE9G8f6",
+  wazeUrl: "https://waze.com/ul?ll=4.5276421,-75.7167478&navigate=yes",
   contact: {
     phone: "+57 320 727 4329",
     whatsapp: WHATSAPP_NUMBER,

@@ -2,7 +2,7 @@
 import ArrowIcon from "@/components/ArrowIcon.astro";
 import Stars from "@/components/Stars.astro";
 import { NAV_LINKS, siteConfig } from "@/config/site";
-import { IMAGES, STAY_INFO, UI_LABELS, whatsappUrl } from "@/data/content";
+import { IMAGES, STAY_INFO, UI_LABELS, WHATSAPP_MESSAGES, whatsappUrl } from "@/data/content";
 
 export interface Props {
   /** Color del texto sobre el hero de la página antes de hacer scroll */
@@ -12,7 +12,11 @@ export interface Props {
 const { tone = "light" } = Astro.props;
 const { contact, rating } = siteConfig;
 const year = new Date().getFullYear();
-const bookingHref = whatsappUrl();
+const bookingHref = whatsappUrl(WHATSAPP_MESSAGES.header);
+const menuActions = [
+  { label: UI_LABELS.menuCta, href: whatsappUrl(WHATSAPP_MESSAGES.menuLive) },
+  { label: UI_LABELS.menuCtaSecondary, href: whatsappUrl(WHATSAPP_MESSAGES.menuReserve) },
+];
 ---
 
 <header class="site-header" data-header data-tone={tone}>
@@ -124,15 +128,21 @@ const bookingHref = whatsappUrl();
     <div class="site-menu__panel site-menu__panel--cta">
       <p class="t-h3">{UI_LABELS.menuCtaTitle}</p>
       <p class="t-lead">{UI_LABELS.menuCtaText}</p>
-      <a
-        href={bookingHref}
-        class="btn btn--secondary"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {UI_LABELS.menuCta}
-        <ArrowIcon direction="external" />
-      </a>
+      <div class="site-menu__actions">
+        {
+          menuActions.map((action) => (
+            <a
+              href={action.href}
+              class="btn btn--secondary"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {action.label}
+              <ArrowIcon direction="external" />
+            </a>
+          ))
+        }
+      </div>
     </div>
   </div>
 </header>
@@ -375,7 +385,11 @@ const bookingHref = whatsappUrl();
     text-align: center;
   }
 
-  .site-menu__panel--cta .btn {
+  .site-menu__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
     margin-top: 16px;
   }
 

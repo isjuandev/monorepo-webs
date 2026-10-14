@@ -6,18 +6,19 @@ import SectionHeading from "@/components/SectionHeading.astro";
 import FeatureGrid from "@/components/sections/FeatureGrid.astro";
 import ImageStatement from "@/components/sections/ImageStatement.astro";
 import InfoGrid from "@/components/sections/InfoGrid.astro";
+import LocationCta from "@/components/sections/LocationCta.astro";
 import PageHero from "@/components/sections/PageHero.astro";
 import RoomsSlider from "@/components/sections/RoomsSlider.astro";
 import { siteConfig } from "@/config/site";
 import {
   COMMON_AMENITIES,
+  DAWN_NOTE,
   PAGES,
   ROOM_VERSIONS_NOTE,
   ROOMS,
+  ROOMS_INFO,
   type Room,
-  STAY_INFO,
   UI_LABELS,
-  WHATSAPP_MESSAGES,
   whatsappUrl,
 } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
@@ -32,10 +33,11 @@ export interface Props {
 const { room } = Astro.props;
 const page = PAGES.room;
 const infoCopy = PAGES.rooms.info;
+const locationCopy = PAGES.rooms.location;
 const [galleryTall, galleryWide, detailMain, detailInset] = room.gallery;
 const detailPhoto = detailMain ?? room.image;
 const otherRooms = ROOMS.filter((item) => item.slug !== room.slug);
-const reserveHref = whatsappUrl(WHATSAPP_MESSAGES.room(room.name));
+const reserveHref = whatsappUrl(room.reserveMessage);
 
 const detailGroups = [
   { label: page.groups.own, items: room.amenities },
@@ -48,7 +50,7 @@ const detailGroups = [
       UI_LABELS.extraHour(room.extraHour),
     ],
   },
-  { label: page.groups.notes, items: [...(room.notes ?? []), ROOM_VERSIONS_NOTE] },
+  { label: page.groups.notes, items: [...(room.notes ?? []), ROOM_VERSIONS_NOTE, DAWN_NOTE] },
 ];
 ---
 
@@ -59,11 +61,10 @@ const detailGroups = [
 >
   <PageHero
     tone="brown"
-    label={UI_LABELS.roomNumber(room.number)}
+    label={room.badge ?? UI_LABELS.roomNumber(room.number)}
     title={room.name}
     sideLeft={UI_LABELS.hoursIncluded(room.hours)}
     sideRight={room.highlight}
-    text={room.tagline}
     bottomLeft={UI_LABELS.extraPerson(room.extraPerson)}
     bottomRight={UI_LABELS.priceFor(room.price, room.hours)}
   />
@@ -72,9 +73,10 @@ const detailGroups = [
 
   <section class="section overview">
     <div class="container overview__inner">
-      <p class="t-big overview__text" data-reveal>{room.overview}</p>
+      <p class="t-big overview__text" data-reveal>{room.headline}</p>
+      <p class="t-lead overview__intro" data-reveal>{room.intro}</p>
       <div data-reveal>
-        <LinkButton href={reserveHref} variant="primary">{UI_LABELS.reserveRoom}</LinkButton>
+        <LinkButton href={reserveHref} variant="primary">{room.reserveCta}</LinkButton>
       </div>
     </div>
   </section>
@@ -131,7 +133,14 @@ const detailGroups = [
     </div>
   </section>
 
-  <InfoGrid label={infoCopy.label} title={infoCopy.title} items={STAY_INFO} />
+  <InfoGrid label={infoCopy.label} title={infoCopy.title} items={ROOMS_INFO} />
+
+  <LocationCta
+    title={locationCopy.title}
+    label={locationCopy.label}
+    wazeLabel={UI_LABELS.wazeShort}
+    mapsLabel={UI_LABELS.googleMapsShort}
+  />
 
   <RoomsSlider rooms={otherRooms} title={page.moreTitle} tone="brown" />
 
@@ -153,6 +162,10 @@ const detailGroups = [
 
   .overview__text {
     max-width: 880px;
+  }
+
+  .overview__intro {
+    max-width: 640px;
   }
 
   .collage {
