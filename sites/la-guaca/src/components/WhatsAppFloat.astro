@@ -1,0 +1,69 @@
+---
+import { UI_LABELS, whatsappUrl } from "@/data/content";
+---
+
+<a
+  href={whatsappUrl()}
+  class="wa-float"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={UI_LABELS.whatsappFloatAria}
+  data-intro="fade"
+  style="--intro-delay: 1.4s"
+>
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      fill="currentColor"
+      d="M12.04 2a9.9 9.9 0 0 0-8.5 14.98L2 22l5.17-1.5A9.92 9.92 0 1 0 12.04 2Zm0 18.1a8.2 8.2 0 0 1-4.2-1.15l-.3-.18-3.07.9.9-3-.2-.31a8.2 8.2 0 1 1 6.87 3.74Zm4.5-6.14c-.25-.12-1.46-.72-1.69-.8-.23-.08-.39-.12-.55.12-.17.25-.64.8-.78.97-.14.16-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22a7.4 7.4 0 0 1-1.37-1.7c-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.12-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.55-1.33-.76-1.82-.2-.48-.4-.41-.55-.42h-.47a.9.9 0 0 0-.66.31 2.76 2.76 0 0 0-.86 2.05 4.8 4.8 0 0 0 1 2.55 11 11 0 0 0 4.2 3.72c.59.25 1.05.4 1.4.52.6.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z"
+    ></path>
+  </svg>
+  <span class="wa-float__label">{UI_LABELS.whatsappFloat}</span>
+</a>
+
+<style>
+  .wa-float {
+    position: fixed;
+    right: var(--gutter);
+    bottom: 24px;
+    z-index: 40;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px 12px 14px;
+    border-radius: 999px;
+    background-color: var(--color-whatsapp);
+    color: var(--color-on-whatsapp);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1;
+    box-shadow: 0 8px 24px var(--color-shade);
+    transition: transform 0.3s var(--ease-out);
+  }
+
+  .wa-float:hover {
+    transform: translateY(-2px);
+  }
+
+  .wa-float svg {
+    width: 24px;
+    height: 24px;
+    flex: none;
+  }
+
+  @media (max-width: 809px) {
+    .wa-float {
+      right: 16px;
+      bottom: 16px;
+      padding: 14px;
+    }
+
+    .wa-float__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+</style>

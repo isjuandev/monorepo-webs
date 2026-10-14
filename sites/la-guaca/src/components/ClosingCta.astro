@@ -5,12 +5,14 @@ import { UI_LABELS } from "@/data/content";
 
 export interface Props {
   title?: string;
+  text?: string;
   sideLeft?: string;
   sideRight?: string;
 }
 
 const {
   title = UI_LABELS.closingCta.title,
+  text = UI_LABELS.closingCta.text,
   sideLeft = UI_LABELS.closingCta.sideLeft,
   sideRight = UI_LABELS.closingCta.sideRight,
 } = Astro.props;
@@ -18,15 +20,24 @@ const {
 
 <section class="section bg-brown closing-cta">
   <div class="container">
-    <SectionHeading title={title} sideLeft={sideLeft} sideRight={sideRight}>
+    <SectionHeading title={title} text={text} sideLeft={sideLeft} sideRight={sideRight}>
       <LinkButton href="booking" variant="primary" blockMobile>{UI_LABELS.checkAvailability}</LinkButton>
+      <LinkButton href="maps">{UI_LABELS.directions}</LinkButton>
     </SectionHeading>
   </div>
 </section>
 
 <style>
   .closing-cta {
-    padding-bottom: 240px;
+    padding-bottom: 200px;
+  }
+
+  .closing-cta :global(.heading__actions) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px 32px;
   }
 
   @media (max-width: 809px) {
@@ -36,6 +47,7 @@ const {
 
     .closing-cta :global(.heading__actions) {
       width: 100%;
+      flex-direction: column;
     }
   }
 </style>

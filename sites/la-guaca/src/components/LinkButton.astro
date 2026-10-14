@@ -2,6 +2,7 @@
 import { cn } from "@repo/utils";
 import ArrowIcon from "@/components/ArrowIcon.astro";
 import { siteConfig } from "@/config/site";
+import { whatsappUrl } from "@/data/content";
 
 export interface Props {
   href: string;
@@ -22,11 +23,11 @@ const {
   class: className,
 } = Astro.props;
 
-// Atajos de contenido: "booking", "maps" y "contact" apuntan a la configuración del sitio.
+// Atajos de contenido: "booking" (WhatsApp con mensaje general), "maps" y "contact".
 const SHORTCUTS: Record<string, string> = {
-  booking: siteConfig.bookingUrl,
+  booking: whatsappUrl(),
   maps: siteConfig.mapsUrl,
-  contact: "/contact",
+  contact: "/contacto",
 };
 
 const resolvedHref = SHORTCUTS[href] ?? href;

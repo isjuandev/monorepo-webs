@@ -4,11 +4,11 @@ import { UI_LABELS } from "@/data/content";
 export interface CarouselRoom {
   slug: string;
   name: string;
-  guests: number;
-  size: number;
-  view: string;
-  price: number;
   image: string;
+  imageAlt: string;
+  /** Línea de datos bajo el nombre (p. ej. duración y rasgo diferencial) */
+  meta: string[];
+  priceLabel: string;
 }
 
 export interface RoomsCarouselProps {
@@ -46,7 +46,11 @@ function Arrow({ direction }: { direction: "left" | "right" }) {
   );
 }
 
-export function RoomsCarousel({ rooms, basePath = "/rooms", startIndex = 0 }: RoomsCarouselProps) {
+export function RoomsCarousel({
+  rooms,
+  basePath = "/habitaciones",
+  startIndex = 0,
+}: RoomsCarouselProps) {
   const count = rooms.length;
   // Se triplica la lista para simular un bucle infinito sin saltos visibles.
   const loop = [...rooms, ...rooms, ...rooms];
@@ -159,17 +163,20 @@ export function RoomsCarousel({ rooms, basePath = "/rooms", startIndex = 0 }: Ro
                   }
                 }}
               >
-                <img src={room.image} alt={room.name} loading="lazy" draggable={false} />
+                <img src={room.image} alt={room.imageAlt} loading="lazy" draggable={false} />
                 <span class="rc__overlay" />
                 <span class="rc__info">
                   <span class="rc__name-group">
                     <span class="t-h3 rc__name">{room.name}</span>
                     <span class="t-body rc__meta">
-                      {UI_LABELS.guests(room.guests)} <i /> {UI_LABELS.squareMeters(room.size)}{" "}
-                      <i /> {room.view}
+                      {room.meta.map((item, metaIndex) => (
+                        <>
+                          {metaIndex > 0 && <i />} {item}{" "}
+                        </>
+                      ))}
                     </span>
                   </span>
-                  <span class="t-lead rc__price">{UI_LABELS.fromPerNight(room.price)}</span>
+                  <span class="t-lead rc__price">{room.priceLabel}</span>
                 </span>
               </a>
             </div>

@@ -1,25 +1,49 @@
 ---
+import LinkButton from "@/components/LinkButton.astro";
 import SplitText from "@/components/SplitText.astro";
 import Stars from "@/components/Stars.astro";
 import { siteConfig } from "@/config/site";
 import { UI_LABELS } from "@/data/content";
 
+export interface HeroAction {
+  label: string;
+  href: string;
+}
+
 export interface Props {
   image: string;
+  /** Versión vertical para pantallas de hasta 809px */
+  imageMobile?: string;
   title: string;
   label: string;
   sideLeft: string;
   sideRight: string;
   intro: string;
+  /** CTA principal (p. ej. WhatsApp) y secundario; se muestran si no hay valoraciones */
+  primaryAction?: HeroAction;
+  secondaryAction?: HeroAction;
 }
 
-const { image, title, label, sideLeft, sideRight, intro } = Astro.props;
+const {
+  image,
+  imageMobile,
+  title,
+  label,
+  sideLeft,
+  sideRight,
+  intro,
+  primaryAction,
+  secondaryAction,
+} = Astro.props;
 const { rating } = siteConfig;
 ---
 
 <section class="home-hero tone-light" data-intro="fade">
   <div class="home-hero__media" aria-hidden="true" data-intro="zoom">
-    <img src={image} alt="" fetchpriority="high" decoding="async" />
+    <picture>
+      {imageMobile && <source media="(max-width: 809px)" srcset={imageMobile} />}
+      <img src={image} alt="" fetchpriority="high" decoding="async" />
+    </picture>
     <div class="media-overlay"></div>
     <div class="home-hero__top-fade"></div>
   </div>
@@ -58,6 +82,20 @@ const { rating } = siteConfig;
           </div>
         )
       }
+      {
+        !rating && (primaryAction || secondaryAction) && (
+          <div class="home-hero__actions" data-reveal style="--reveal-delay: 1.3s">
+            {primaryAction && (
+              <LinkButton href={primaryAction.href} variant="primary" blockMobile>
+                {primaryAction.label}
+              </LinkButton>
+            )}
+            {secondaryAction && (
+              <LinkButton href={secondaryAction.href}>{secondaryAction.label}</LinkButton>
+            )}
+          </div>
+        )
+      }
     </div>
   </div>
 </section>
@@ -75,6 +113,10 @@ const { rating } = siteConfig;
     inset: 0;
   }
 
+  .home-hero__media picture {
+    display: contents;
+  }
+
   .home-hero__media img {
     width: 100%;
     height: 100%;
@@ -85,7 +127,7 @@ const { rating } = siteConfig;
     position: absolute;
     inset: 0 0 auto;
     height: 160px;
-    background: linear-gradient(to bottom, rgba(38, 26, 17, 0.4), rgba(38, 26, 17, 0));
+    background: linear-gradient(to bottom, var(--color-shade), var(--color-shade-clear));
   }
 
   .home-hero__content {
@@ -141,6 +183,12 @@ const { rating } = siteConfig;
 
   .home-hero__intro {
     max-width: 240px;
+  }
+
+  .home-hero__actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
   }
 
   .home-hero__badge {
@@ -224,6 +272,16 @@ const { rating } = siteConfig;
 
     .home-hero__badge {
       width: 100%;
+    }
+
+    .home-hero__info {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .home-hero__actions {
+      flex-direction: column;
+      gap: 12px;
     }
 
     .home-hero__score-text {

@@ -54,6 +54,13 @@ const {
       }
     </dl>
     {
+      Astro.slots.has("default") && (
+        <div class="info-grid__actions" data-reveal>
+          <slot />
+        </div>
+      )
+    }
+    {
       image && imageSize === "medium" && (
         <div class="media info-grid__image info-grid__image--medium" data-reveal>
           <img src={image} alt="" loading="lazy" />
@@ -64,6 +71,12 @@ const {
 </section>
 
 <style>
+  .info-grid__actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 56px;
+  }
+
   .info-grid--flush {
     padding-bottom: 0;
   }

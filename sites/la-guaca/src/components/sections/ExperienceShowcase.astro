@@ -31,7 +31,7 @@ const { label, title, image, hoverImages = {}, experiences } = Astro.props;
       {
         experiences.map((exp) => (
           <li>
-            <a href={`/experience#${exp.id}`} class="showcase__link" data-hover-trigger={exp.id}>
+            <a href={`/experiencias#${exp.id}`} class="showcase__link" data-hover-trigger={exp.id}>
               <span class="t-label">{exp.label}</span>
               <span class="t-h3">{exp.title}</span>
             </a>

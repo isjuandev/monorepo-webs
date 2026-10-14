@@ -17,7 +17,16 @@ const { label, title, text, images, alts = ["", ""], captions, id } = Astro.prop
 
 <section class="section staggered" id={id}>
   <div class="container">
-    {title && <SectionHeading label={label} title={title} text={text} />}
+    {
+      title &&
+        (Astro.slots.has("default") ? (
+          <SectionHeading label={label} title={title} text={text}>
+            <slot />
+          </SectionHeading>
+        ) : (
+          <SectionHeading label={label} title={title} text={text} />
+        ))
+    }
     <div class:list={["staggered__grid", title && "staggered__grid--spaced"]}>
       {
         images.map((src, i) => (

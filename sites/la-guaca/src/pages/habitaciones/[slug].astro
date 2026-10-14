@@ -9,7 +9,17 @@ import InfoGrid from "@/components/sections/InfoGrid.astro";
 import PageHero from "@/components/sections/PageHero.astro";
 import RoomsSlider from "@/components/sections/RoomsSlider.astro";
 import { siteConfig } from "@/config/site";
-import { IMAGES, PAGES, ROOMS, type Room, STAY_INFO, UI_LABELS } from "@/data/content";
+import {
+  COMMON_AMENITIES,
+  PAGES,
+  ROOM_VERSIONS_NOTE,
+  ROOMS,
+  type Room,
+  STAY_INFO,
+  UI_LABELS,
+  WHATSAPP_MESSAGES,
+  whatsappUrl,
+} from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 export const getStaticPaths = (() =>
@@ -22,52 +32,80 @@ export interface Props {
 const { room } = Astro.props;
 const page = PAGES.room;
 const infoCopy = PAGES.rooms.info;
-const [hero, galleryWide, galleryTall, detailMain, detailInset] = room.gallery;
+const [galleryTall, galleryWide, detailMain, detailInset] = room.gallery;
+const detailPhoto = detailMain ?? room.image;
 const otherRooms = ROOMS.filter((item) => item.slug !== room.slug);
+const reserveHref = whatsappUrl(WHATSAPP_MESSAGES.room(room.name));
+
+const detailGroups = [
+  { label: page.groups.own, items: room.amenities },
+  { label: page.groups.common, items: COMMON_AMENITIES },
+  {
+    label: page.groups.rates,
+    items: [
+      UI_LABELS.priceFor(room.price, room.hours),
+      UI_LABELS.extraPerson(room.extraPerson),
+      UI_LABELS.extraHour(room.extraHour),
+    ],
+  },
+  { label: page.groups.notes, items: [...(room.notes ?? []), ROOM_VERSIONS_NOTE] },
+];
 ---
 
-<BaseLayout title={`${room.name} | ${siteConfig.name}`} description={room.tagline}>
+<BaseLayout
+  title={`${room.name} | ${siteConfig.name}`}
+  description={room.tagline}
+  ogImage={room.image.src}
+>
   <PageHero
     tone="brown"
     label={UI_LABELS.roomNumber(room.number)}
     title={room.name}
-    sideLeft={room.view}
-    sideRight={room.bed}
+    sideLeft={UI_LABELS.hoursIncluded(room.hours)}
+    sideRight={room.highlight}
     text={room.tagline}
-    bottomLeft={`${UI_LABELS.guests(room.guests)} · ${UI_LABELS.squareMeters(room.size)}`}
-    bottomRight={UI_LABELS.fromPerNight(room.price)}
+    bottomLeft={UI_LABELS.extraPerson(room.extraPerson)}
+    bottomRight={UI_LABELS.priceFor(room.price, room.hours)}
   />
 
-  <ImageStatement image={hero} overlay={false} />
+  <ImageStatement image={room.image.src} overlay={false} />
 
   <section class="section overview">
     <div class="container overview__inner">
       <p class="t-big overview__text" data-reveal>{room.overview}</p>
       <div data-reveal>
-        <LinkButton href="booking">{UI_LABELS.checkAvailability}</LinkButton>
+        <LinkButton href={reserveHref} variant="primary">{UI_LABELS.reserveRoom}</LinkButton>
       </div>
     </div>
   </section>
 
   <FeatureGrid items={room.features} compact />
 
-  <section class="collage" aria-label={UI_LABELS.gallery}>
-    <div class="media collage__tall" data-speed="0.1">
-      <img src={galleryTall} alt="" loading="lazy" />
-    </div>
-    <div class="media collage__wide" data-reveal>
-      <img src={galleryWide} alt="" loading="lazy" />
-    </div>
-  </section>
+  {
+    galleryTall && galleryWide && (
+      <section class="collage" aria-label={UI_LABELS.gallery}>
+        <div class="media collage__tall" data-speed="0.1">
+          <img src={galleryTall.src} alt={galleryTall.alt} loading="lazy" />
+        </div>
+        <div class="media collage__wide" data-reveal>
+          <img src={galleryWide.src} alt={galleryWide.alt} loading="lazy" />
+        </div>
+      </section>
+    )
+  }
 
   <section class="details">
     <div class="details__media">
       <div class="media details__main">
-        <img src={detailMain} alt="" loading="lazy" />
+        <img src={detailPhoto.src} alt={detailPhoto.alt} loading="lazy" />
       </div>
-      <div class="media details__inset" data-speed="0.08">
-        <img src={detailInset} alt="" loading="lazy" />
-      </div>
+      {
+        detailInset && (
+          <div class="media details__inset" data-speed="0.08">
+            <img src={detailInset.src} alt={detailInset.alt} loading="lazy" />
+          </div>
+        )
+      }
     </div>
     <div class="details__content">
       <SectionHeading
@@ -78,7 +116,7 @@ const otherRooms = ROOMS.filter((item) => item.slug !== room.slug);
       />
       <div class="details__groups">
         {
-          room.details.map((group) => (
+          detailGroups.map((group) => (
             <div class="details__group" data-reveal>
               <p class="t-label t-muted">{group.label}</p>
               <ul>
@@ -94,8 +132,6 @@ const otherRooms = ROOMS.filter((item) => item.slug !== room.slug);
   </section>
 
   <InfoGrid label={infoCopy.label} title={infoCopy.title} items={STAY_INFO} />
-
-  <ImageStatement image={IMAGES.roomShared} overlay={false} />
 
   <RoomsSlider rooms={otherRooms} title={page.moreTitle} tone="brown" />
 

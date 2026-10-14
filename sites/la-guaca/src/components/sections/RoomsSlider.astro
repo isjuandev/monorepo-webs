@@ -14,21 +14,20 @@ export interface Props {
 
 const { rooms, title, text, tone = "cream", startIndex = 0 } = Astro.props;
 
-const carouselRooms = rooms.map(({ slug, name, guests, size, view, price, image }) => ({
+const carouselRooms = rooms.map(({ slug, name, hours, highlight, price, image }) => ({
   slug,
   name,
-  guests,
-  size,
-  view,
-  price,
-  image,
+  image: image.src,
+  imageAlt: image.alt,
+  meta: [UI_LABELS.hoursIncluded(hours), highlight],
+  priceLabel: UI_LABELS.price(price),
 }));
 ---
 
 <section class:list={["section rooms-slider", tone === "brown" && "bg-brown"]}>
   <div class="container">
     <SectionHeading title={title} text={text}>
-      <LinkButton href="/rooms">{UI_LABELS.viewAllRooms}</LinkButton>
+      <LinkButton href="/habitaciones">{UI_LABELS.viewAllRooms}</LinkButton>
     </SectionHeading>
   </div>
   <div class="rooms-slider__carousel" data-reveal>
@@ -100,7 +99,7 @@ const carouselRooms = rooms.map(({ slug, name, guests, size, view, price, image 
     right: 0;
     bottom: 0;
     height: 33%;
-    background: linear-gradient(to bottom, rgba(38, 26, 17, 0), rgba(38, 26, 17, 0.6));
+    background: linear-gradient(to bottom, var(--color-shade-clear), var(--color-shade));
   }
 
   .rooms-slider :global(.rc__info) {
@@ -147,7 +146,7 @@ const carouselRooms = rooms.map(({ slug, name, guests, size, view, price, image 
     width: 36px;
     height: 36px;
     border: 0;
-    background: rgba(38, 26, 17, 0.08);
+    background: var(--color-media);
     color: var(--color-text);
     cursor: pointer;
     transform: translateY(-50%);
@@ -155,12 +154,12 @@ const carouselRooms = rooms.map(({ slug, name, guests, size, view, price, image 
   }
 
   .rooms-slider.bg-brown :global(.rc__arrow) {
-    background: rgba(232, 224, 209, 0.12);
+    background: var(--color-line-dark);
     color: var(--color-light);
   }
 
   .rooms-slider :global(.rc__arrow:hover) {
-    background: rgba(38, 26, 17, 0.16);
+    background: var(--color-accent);
   }
 
   .rooms-slider :global(.rc__arrow--prev) {

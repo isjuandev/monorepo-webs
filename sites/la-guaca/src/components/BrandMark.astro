@@ -1,5 +1,6 @@
 ---
 import { siteConfig } from "@/config/site";
+import { IMAGES, UI_LABELS } from "@/data/content";
 
 export interface Props {
   class?: string;
@@ -9,22 +10,16 @@ const { class: className } = Astro.props;
 ---
 
 <div class:list={["brand-mark", className]}>
-  <svg class="brand-mark__icon" viewBox="0 0 40 40" aria-hidden="true">
-    {
-      Array.from({ length: 8 }, (_, i) => (
-        <ellipse
-          cx="20"
-          cy="10"
-          rx="3.2"
-          ry="9"
-          fill="currentColor"
-          transform={`rotate(${i * 45} 20 20)`}
-        />
-      ))
-    }
-  </svg>
-  <p class="t-logo">{siteConfig.name}</p>
-  <p class="t-label">Est. {siteConfig.established}</p>
+  <img
+    src={IMAGES.logo}
+    alt={UI_LABELS.logoAlt(siteConfig.name)}
+    class="brand-mark__logo"
+    width="640"
+    height="779"
+    loading="lazy"
+    decoding="async"
+  />
+  <p class="t-label">{UI_LABELS.openAllHours}</p>
 </div>
 
 <style>
@@ -32,13 +27,18 @@ const { class: className } = Astro.props;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 16px;
     text-align: center;
   }
 
-  .brand-mark__icon {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 24px;
+  .brand-mark__logo {
+    width: 180px;
+    height: auto;
+  }
+
+  @media (max-width: 809px) {
+    .brand-mark__logo {
+      width: 140px;
+    }
   }
 </style>

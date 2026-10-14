@@ -9,23 +9,36 @@ import ImageStatement from "@/components/sections/ImageStatement.astro";
 import RoomsSlider from "@/components/sections/RoomsSlider.astro";
 import StaggeredGallery from "@/components/sections/StaggeredGallery.astro";
 import Ticker from "@/components/sections/Ticker.astro";
-import { EXPERIENCES, IMAGES, PAGES, ROOMS } from "@/data/content";
+import {
+  EXPERIENCES,
+  IMAGES,
+  PAGES,
+  ROOMS,
+  UI_LABELS,
+  WHATSAPP_MESSAGES,
+  whatsappUrl,
+} from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const page = PAGES.home;
 const highlights = page.highlights(ROOMS.length);
 
-const showcase = EXPERIENCES.filter((exp) => ["montana", "mar", "vida-local"].includes(exp.id));
+const showcase = EXPERIENCES.filter((exp) => page.showcase.includes(exp.id));
+const showcaseHover = Object.fromEntries(showcase.map((exp) => [exp.id, exp.image]));
+const [occasionMain, occasionSecond] = IMAGES.homeOccasions;
 ---
 
 <BaseLayout>
   <HomeHero
-    image={IMAGES.homeHero}
+    image={IMAGES.homeHero.src}
+    imageMobile={IMAGES.homeHeroMobile}
     label={page.hero.label}
     title={page.hero.title}
     sideLeft={page.hero.sideLeft}
     sideRight={page.hero.sideRight}
     intro={page.hero.intro}
+    primaryAction={{ label: UI_LABELS.checkAvailability, href: "booking" }}
+    secondaryAction={{ label: UI_LABELS.viewRooms, href: "/habitaciones" }}
   />
 
   <ImageStatement image={IMAGES.homeIntro} align="spread">
@@ -44,41 +57,40 @@ const showcase = EXPERIENCES.filter((exp) => ["montana", "mar", "vida-local"].in
         ))
       }
     </div>
-    <SectionHeading title={page.slowDown.title} text={page.slowDown.text}>
-      <LinkButton href="/retreat" variant="primary" blockMobile>{page.slowDown.cta}</LinkButton>
+    <SectionHeading title={page.intro.title} text={page.intro.text}>
+      <LinkButton href="/habitaciones" variant="primary" blockMobile>{UI_LABELS.viewRooms}</LinkButton>
     </SectionHeading>
   </ImageStatement>
 
-  <ImageStatement image={IMAGES.homeWellness}>
+  <ImageStatement image={IMAGES.homeJacuzzi}>
     <SectionHeading
-      title={page.wellness.title}
-      sideLeft={page.wellness.sideLeft}
-      sideRight={page.wellness.sideRight}
+      title={page.jacuzzi.title}
+      sideLeft={page.jacuzzi.sideLeft}
+      sideRight={page.jacuzzi.sideRight}
     >
-      <LinkButton href="/experience#bienestar" variant="primary" blockMobile>
-        {page.wellness.cta}
+      <LinkButton href="/experiencias#jacuzzi" variant="primary" blockMobile>
+        {page.jacuzzi.cta}
       </LinkButton>
     </SectionHeading>
   </ImageStatement>
 
-  <RoomsSlider
-    rooms={ROOMS}
-    title={page.rooms.title}
-    text={page.rooms.text}
-  />
+  <RoomsSlider rooms={ROOMS} title={page.rooms.title} text={page.rooms.text} />
 
   <StaggeredGallery
-    label={page.dining.label}
-    title={page.dining.title}
-    text={page.dining.text}
-    images={IMAGES.homeDining}
-  />
+    label={page.occasions.label}
+    title={page.occasions.title}
+    text={page.occasions.text}
+    images={[occasionMain.src, occasionSecond.src]}
+    alts={[occasionMain.alt, occasionSecond.alt]}
+  >
+    <LinkButton href={whatsappUrl(WHATSAPP_MESSAGES.occasion)}>{page.occasions.cta}</LinkButton>
+  </StaggeredGallery>
 
   <ExperienceShowcase
     label={page.experiences.label}
     title={page.experiences.title}
     image={IMAGES.homeExperiences}
-    hoverImages={IMAGES.homeExperiencesHover}
+    hoverImages={showcaseHover}
     experiences={showcase}
   />
 

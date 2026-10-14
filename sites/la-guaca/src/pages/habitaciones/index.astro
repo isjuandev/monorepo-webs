@@ -7,10 +7,28 @@ import FeatureGrid from "@/components/sections/FeatureGrid.astro";
 import InfoGrid from "@/components/sections/InfoGrid.astro";
 import PageHero from "@/components/sections/PageHero.astro";
 import { siteConfig } from "@/config/site";
-import { IMAGES, INCLUDED, PAGES, ROOMS, STAY_INFO, UI_LABELS } from "@/data/content";
+import {
+  IMAGES,
+  INCLUDED,
+  PAGES,
+  ROOMS,
+  STAY_INFO,
+  UI_LABELS,
+  WHATSAPP_MESSAGES,
+  whatsappUrl,
+} from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 
 const page = PAGES.rooms;
+
+const rates = ROOMS.map((room) => ({
+  label: room.name,
+  value: [
+    UI_LABELS.priceFor(room.price, room.hours),
+    UI_LABELS.extraPerson(room.extraPerson),
+    UI_LABELS.extraHour(room.extraHour),
+  ].join(" · "),
+}));
 ---
 
 <BaseLayout
@@ -22,7 +40,7 @@ const page = PAGES.rooms;
     label={page.hero.label}
     title={page.hero.title}
     sideLeft={UI_LABELS.roomsCount(ROOMS.length)}
-    sideRight={UI_LABELS.openAllYear}
+    sideRight={page.hero.sideRight}
   />
 
   <section class="rooms-grid">
@@ -31,14 +49,14 @@ const page = PAGES.rooms;
         {
           ROOMS.map((room, i) => (
             <li data-reveal style={`--reveal-delay: ${(i % 2) * 0.1}s`}>
-              <a href={`/rooms/${room.slug}`} class="room-card">
+              <a href={`/habitaciones/${room.slug}`} class="room-card">
                 <div class="media room-card__media">
-                  <img src={room.image} alt={room.name} loading={i < 2 ? "eager" : "lazy"} />
+                  <img src={room.image.src} alt={room.image.alt} loading={i < 2 ? "eager" : "lazy"} />
                 </div>
                 <div class="room-card__body">
                   <h2 class="t-h3">{room.name}</h2>
                   <RoomMeta room={room} />
-                  <p class="t-lead room-card__price">{UI_LABELS.fromPerNight(room.price)}</p>
+                  <p class="t-lead room-card__price">{UI_LABELS.priceFor(room.price, room.hours)}</p>
                 </div>
               </a>
             </li>
@@ -50,7 +68,7 @@ const page = PAGES.rooms;
 
   <section class="section rooms-overview">
     <div class="container rooms-overview__inner">
-      <SectionHeading label={page.yourStay(siteConfig.name)} title={page.overview.title} />
+      <SectionHeading label={page.overview.label} title={page.overview.title} />
       <div class="media rooms-overview__image" data-reveal>
         <img src={IMAGES.roomsOverview} alt="" loading="lazy" />
       </div>
@@ -58,12 +76,21 @@ const page = PAGES.rooms;
         {page.overview.text}
       </p>
       <div data-reveal>
-        <LinkButton href="booking">{UI_LABELS.checkAvailability}</LinkButton>
+        <LinkButton href="booking">{page.overview.cta}</LinkButton>
       </div>
     </div>
   </section>
 
-  <FeatureGrid title={page.included.title} items={INCLUDED} numbered />
+  <FeatureGrid
+    label={page.included.label}
+    title={page.included.title}
+    items={INCLUDED}
+    numbered
+  />
+
+  <InfoGrid label={page.rates.label} title={page.rates.title} items={rates}>
+    <LinkButton href={whatsappUrl(WHATSAPP_MESSAGES.rates)}>{page.rates.cta}</LinkButton>
+  </InfoGrid>
 
   <InfoGrid
     tone="brown"

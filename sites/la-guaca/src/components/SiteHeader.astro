@@ -2,7 +2,7 @@
 import ArrowIcon from "@/components/ArrowIcon.astro";
 import Stars from "@/components/Stars.astro";
 import { NAV_LINKS, siteConfig } from "@/config/site";
-import { STAY_INFO, UI_LABELS } from "@/data/content";
+import { IMAGES, STAY_INFO, UI_LABELS, whatsappUrl } from "@/data/content";
 
 export interface Props {
   /** Color del texto sobre el hero de la página antes de hacer scroll */
@@ -12,6 +12,7 @@ export interface Props {
 const { tone = "light" } = Astro.props;
 const { contact, rating } = siteConfig;
 const year = new Date().getFullYear();
+const bookingHref = whatsappUrl();
 ---
 
 <header class="site-header" data-header data-tone={tone}>
@@ -29,14 +30,17 @@ const year = new Date().getFullYear();
       </span>
       <span class="menu-toggle__label" data-menu-label>{UI_LABELS.menu}</span>
     </button>
-    <a href="/" class="t-logo site-header__logo">{siteConfig.name}</a>
+    <a href="/" class="t-logo site-header__logo" aria-label={UI_LABELS.homeLink(siteConfig.name)}>
+      <img src={IMAGES.logoMark} alt="" width="70" height="160" />
+      <span>{siteConfig.name}</span>
+    </a>
     <a
-      href={siteConfig.bookingUrl}
+      href={bookingHref}
       class="btn btn--secondary site-header__cta"
       target="_blank"
       rel="noopener noreferrer"
     >
-      {UI_LABELS.checkAvailability}
+      {UI_LABELS.headerCta}
       <ArrowIcon direction="external" />
     </a>
   </div>
@@ -87,6 +91,9 @@ const year = new Date().getFullYear();
       <div class="site-menu__block">
         <div class="site-menu__group">
           <p class="t-label t-muted">{UI_LABELS.contact}</p>
+          <a href={bookingHref} class="t-lead" target="_blank" rel="noopener noreferrer">
+            {UI_LABELS.whatsapp}
+          </a>
           {contact.email && <a href={`mailto:${contact.email}`} class="t-lead">{contact.email}</a>}
           {
             contact.phone && (
@@ -118,7 +125,7 @@ const year = new Date().getFullYear();
       <p class="t-h3">{UI_LABELS.menuCtaTitle}</p>
       <p class="t-lead">{UI_LABELS.menuCtaText}</p>
       <a
-        href={siteConfig.bookingUrl}
+        href={bookingHref}
         class="btn btn--secondary"
         target="_blank"
         rel="noopener noreferrer"
@@ -220,6 +227,14 @@ const year = new Date().getFullYear();
 
   .site-header__logo {
     justify-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .site-header__logo img {
+    width: auto;
+    height: 34px;
   }
 
   .site-header__cta {

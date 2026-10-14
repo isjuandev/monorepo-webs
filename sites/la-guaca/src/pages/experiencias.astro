@@ -59,7 +59,7 @@ const page = PAGES.experience;
           PRIVATE_EXPERIENCES.map((item, i) => (
             <li class="private__item" data-reveal style={`--reveal-delay: ${i * 0.1}s`}>
               <div class="media private__img" style={`aspect-ratio: ${item.ratio}`}>
-                <img src={item.image} alt="" loading="lazy" />
+                <img src={item.image.src} alt={item.image.alt} loading="lazy" />
               </div>
               <h3 class="t-h3">{item.title}</h3>
               <p class="t-body">{item.text}</p>

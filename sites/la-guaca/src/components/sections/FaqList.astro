@@ -1,0 +1,95 @@
+---
+import LinkButton from "@/components/LinkButton.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import type { FaqItem } from "@/data/content";
+
+export interface Props {
+  title: string;
+  label?: string;
+  items: FaqItem[];
+  id?: string;
+}
+
+const { title, label, items, id } = Astro.props;
+---
+
+<section class="section faq" id={id}>
+  <div class="container">
+    <SectionHeading title={title} label={label} />
+    <div class="faq__list" data-reveal>
+      {
+        items.map((item) => (
+          <details class="faq__item">
+            <summary class="t-h3 faq__question">
+              <span>{item.question}</span>
+              <svg viewBox="0 0 12 12" aria-hidden="true">
+                <path d="M6 1v10M1 6h10" fill="none" stroke="currentColor" />
+              </svg>
+            </summary>
+            <div class="faq__answer">
+              <p class="t-lead">{item.answer}</p>
+              {item.link && <LinkButton href={item.link.href}>{item.link.label}</LinkButton>}
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq__list {
+    max-width: 880px;
+    margin: 80px auto 0;
+    border-top: 1px solid var(--color-line-dark);
+  }
+
+  .faq__item {
+    border-bottom: 1px solid var(--color-line-dark);
+  }
+
+  .faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 24px 0;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__question svg {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    color: var(--color-gold);
+    transition: transform 0.4s var(--ease-out);
+  }
+
+  .faq__item[open] .faq__question svg {
+    transform: rotate(45deg);
+  }
+
+  .faq__answer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    max-width: 680px;
+    padding-bottom: 28px;
+  }
+
+  @media (max-width: 809px) {
+    .faq__list {
+      margin-top: 48px;
+    }
+
+    .faq__question {
+      padding: 20px 0;
+    }
+  }
+</style>
