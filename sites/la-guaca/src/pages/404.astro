@@ -1,0 +1,32 @@
+---
+import LinkButton from "@/components/LinkButton.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import { PAGES } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const page = PAGES.notFound;
+---
+
+<BaseLayout title={page.title} noindex headerTone="dark">
+  <PageHero label={page.label} title={page.heading} />
+  <section class="not-found">
+    <div class="container not-found__inner">
+      <p class="t-lead">{page.text}</p>
+      <LinkButton href="/" variant="primary" tone="dark">{page.cta}</LinkButton>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    padding-bottom: 240px;
+  }
+
+  .not-found__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    text-align: center;
+  }
+</style>

@@ -1,0 +1,118 @@
+---
+import SplitText from "@/components/SplitText.astro";
+
+export interface Props {
+  title: string;
+  label?: string;
+  text?: string;
+  /** Etiquetas laterales junto al título (solo escritorio) */
+  sideLeft?: string;
+  sideRight?: string;
+  align?: "center" | "left";
+  as?: "h1" | "h2";
+  size?: "h2" | "display";
+}
+
+const {
+  title,
+  label,
+  text,
+  sideLeft,
+  sideRight,
+  align = "center",
+  as = "h2",
+  size = "h2",
+} = Astro.props;
+---
+
+<div class:list={["heading", `heading--${align}`, `heading--${size}`]}>
+  {label && <p class="t-label heading__label" data-reveal>{label}</p>}
+  <div class="heading__title-wrap">
+    {sideLeft && <p class="t-label heading__side heading__side--left">{sideLeft}</p>}
+    <SplitText text={title} as={as} class={size === "display" ? "t-display" : "t-h2"} />
+    {sideRight && <p class="t-label heading__side heading__side--right">{sideRight}</p>}
+  </div>
+  {text && <p class="t-lead heading__text" data-reveal>{text}</p>}
+  {
+    Astro.slots.has("default") && (
+      <div class="heading__actions" data-reveal>
+        <slot />
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .heading {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .heading--center {
+    align-items: center;
+    text-align: center;
+  }
+
+  .heading__label {
+    margin-bottom: 0;
+  }
+
+  .heading__title-wrap {
+    position: relative;
+    max-width: 400px;
+  }
+
+  .heading--display .heading__title-wrap {
+    max-width: 760px;
+  }
+
+  .heading__text {
+    max-width: 480px;
+  }
+
+  .heading--left .heading__text {
+    max-width: 400px;
+  }
+
+  .heading__actions {
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .heading--left .heading__actions {
+    justify-content: flex-start;
+  }
+
+  .heading__side {
+    position: absolute;
+    top: 50%;
+    white-space: nowrap;
+    transform: translateY(-50%);
+  }
+
+  .heading__side--left {
+    right: calc(100% + 72px);
+  }
+
+  .heading__side--right {
+    left: calc(100% + 72px);
+  }
+
+  @media (max-width: 1199px) {
+    .heading__side {
+      display: none;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .heading__title-wrap {
+      max-width: 300px;
+    }
+
+    .heading__text {
+      max-width: 100%;
+    }
+  }
+</style>

@@ -1,0 +1,41 @@
+---
+import LinkButton from "@/components/LinkButton.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import { UI_LABELS } from "@/data/content";
+
+export interface Props {
+  title?: string;
+  sideLeft?: string;
+  sideRight?: string;
+}
+
+const {
+  title = UI_LABELS.closingCta.title,
+  sideLeft = UI_LABELS.closingCta.sideLeft,
+  sideRight = UI_LABELS.closingCta.sideRight,
+} = Astro.props;
+---
+
+<section class="section bg-brown closing-cta">
+  <div class="container">
+    <SectionHeading title={title} sideLeft={sideLeft} sideRight={sideRight}>
+      <LinkButton href="booking" variant="primary" blockMobile>{UI_LABELS.checkAvailability}</LinkButton>
+    </SectionHeading>
+  </div>
+</section>
+
+<style>
+  .closing-cta {
+    padding-bottom: 240px;
+  }
+
+  @media (max-width: 809px) {
+    .closing-cta {
+      padding-bottom: 120px;
+    }
+
+    .closing-cta :global(.heading__actions) {
+      width: 100%;
+    }
+  }
+</style>

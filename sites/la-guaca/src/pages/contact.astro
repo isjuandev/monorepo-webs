@@ -1,0 +1,92 @@
+---
+import ClosingCta from "@/components/ClosingCta.astro";
+import ContactForm from "@/components/ContactForm.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import FeatureGrid from "@/components/sections/FeatureGrid.astro";
+import ImageStatement from "@/components/sections/ImageStatement.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import { siteConfig } from "@/config/site";
+import { IMAGES, PAGES } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const { contact } = siteConfig;
+
+const page = PAGES.contact;
+
+const reachItems = [
+  {
+    title: page.reach.call.title,
+    text: page.reach.call.text,
+    link: contact.phone
+      ? { label: page.reach.call.cta, href: `tel:${contact.phone.replace(/\s/g, "")}` }
+      : undefined,
+  },
+  {
+    title: page.reach.write.title,
+    text: page.reach.write.text,
+    link: contact.email
+      ? { label: page.reach.write.cta, href: `mailto:${contact.email}` }
+      : undefined,
+  },
+  {
+    title: page.reach.visit.title,
+    text: contact.address?.replace("\n", ", "),
+    link: { label: page.reach.visit.cta, href: "maps" },
+  },
+];
+---
+
+<BaseLayout
+  title={`${page.meta.title} | ${siteConfig.name}`}
+  description={page.meta.description}
+>
+  <PageHero
+    tone="brown"
+    label={page.hero.label}
+    title={page.hero.title}
+    sideLeft={page.hero.sideLeft}
+    sideRight={page.hero.sideRight}
+  />
+
+  <ImageStatement image={IMAGES.contactHero} overlay={false} />
+
+  <section class="section">
+    <div class="container">
+      <SectionHeading
+        label={page.form.label}
+        title={page.form.title}
+        text={page.form.text}
+      />
+      <ContactForm />
+    </div>
+  </section>
+
+  <FeatureGrid title={page.reach.title} items={reachItems} />
+
+  <section class="section bg-brown directions">
+    <div class="container">
+      <SectionHeading label={page.directions.label} title={page.directions.title}>
+        <LinkButton href="maps">{page.directions.cta}</LinkButton>
+      </SectionHeading>
+      <div class="media directions__img" data-reveal>
+        <img src={IMAGES.contactDirections} alt="" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <ClosingCta />
+</BaseLayout>
+
+<style>
+  .directions {
+    padding-bottom: 0;
+  }
+
+  .directions__img {
+    width: 680px;
+    max-width: 100%;
+    aspect-ratio: 680 / 462;
+    margin: 32px auto 0;
+  }
+</style>
