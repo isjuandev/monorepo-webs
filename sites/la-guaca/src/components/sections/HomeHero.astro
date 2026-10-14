@@ -84,7 +84,7 @@ const { rating } = siteConfig;
       }
       {
         !rating && (primaryAction || secondaryAction) && (
-          <div class="home-hero__actions" data-reveal style="--reveal-delay: 1.3s">
+          <div class="home-hero__actions">
             {primaryAction && (
               <LinkButton href={primaryAction.href} variant="primary" blockMobile>
                 {primaryAction.label}

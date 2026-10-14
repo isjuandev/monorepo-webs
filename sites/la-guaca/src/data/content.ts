@@ -414,6 +414,7 @@ export const UI_LABELS = {
   allRightsReserved: (year: number) => `© ${year}, todos los derechos reservados`,
   menuCtaTitle: "¿Reservamos?",
   menuCtaText: "Escríbenos por WhatsApp y pregunta qué habitación está disponible.",
+  menuCta: "Escribir por WhatsApp",
   viewRooms: "Ver habitaciones",
   viewAllRooms: "Ver todas las habitaciones",
   roomsCarousel: "Habitaciones",
@@ -552,7 +553,6 @@ export const PAGES = {
       },
       call: { title: "Llámanos", cta: "Llamar" },
       write: { title: "Correo", text: "Para temas que no sean reservas.", cta: "Enviar correo" },
-      visit: { title: "Visítanos", cta: "Abrir en mapas" },
     },
     faq: { label: "Preguntas frecuentes", title: "Antes de venir" },
     directions: {
@@ -710,7 +710,7 @@ export const PAGES = {
       {
         title: "Solo para adultos",
         paragraphs: [
-          "El sitio y el servicio están dirigidos exclusivamente a mayores de 18 años. Al usarlos confirmas que cumples esta condición.",
+          "El sitio y el servicio están dirigidos solo a mayores de 18 años. Al usarlos confirmas que cumples esta condición.",
         ],
       },
       {
