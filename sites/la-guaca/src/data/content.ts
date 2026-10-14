@@ -1,44 +1,62 @@
-// Contenido de ejemplo de la plantilla. Reemplaza textos e imágenes por los del cliente.
-// Fotos de la plantilla de origen (usadas con licencia); viven en /public/images.
+// Contenido de La Guaca Motel. Fuente: recursos/la-guaca/brief.md.
+// Tono K1 (el jacuzzi como protagonista) + K2 (suite-experiencia), persona "tú".
+// Guía de voz: docs/research/la-guaca/guia-de-voz.md
+
+import { buildWhatsAppUrl } from "@repo/utils";
+import { siteConfig } from "@/config/site";
 
 const img = (name: string) => `/images/${name}.webp`;
 
+export interface Photo {
+  src: string;
+  alt: string;
+}
+
+const photo = (name: string, alt: string): Photo => ({ src: img(name), alt });
+
+/* ---------- WhatsApp ---------- */
+
+export const WHATSAPP_MESSAGES = {
+  general: "Hola, quiero reservar una habitación con jacuzzi en La Guaca. ¿Qué tienen disponible?",
+  room: (name: string) => `Hola, me interesa la habitación ${name}. ¿Está disponible?`,
+  rates: "Hola, ¿me comparten las tarifas de las habitaciones?",
+  occasion: "Hola, quiero celebrar una ocasión especial. ¿Qué opciones de decoración tienen?",
+  menu: "Hola, ¿me comparten la carta del restaurante?",
+  room46: "Hola, quiero reservar la Presidencial 46, la del domo y la fuente. ¿Está disponible?",
+};
+
+/** Enlace wa.me con mensaje inicial; sin número configurado vuelve al enlace general */
+export const whatsappUrl = (message: string = WHATSAPP_MESSAGES.general) =>
+  siteConfig.contact.whatsapp
+    ? buildWhatsAppUrl(siteConfig.contact.whatsapp, message)
+    : siteConfig.bookingUrl;
+
+/* ---------- Imágenes ---------- */
+
 export const IMAGES = {
-  homeHero: img("home-hero"),
-  homeIntro: img("home-intro"),
-  homeWellness: img("home-wellness"),
-  homeDining: [img("home-dining-1"), img("home-dining-2")] as [string, string],
-  homeExperiences: img("home-experiences"),
-  homeExperiencesHover: {
-    montana: img("home-experiences-mountains"),
-    mar: img("home-experiences-sea"),
-    "vida-local": img("home-experiences-local"),
-  } as Record<string, string>,
-  ticker: [img("ticker-1"), img("ticker-2")] as [string, string],
-  footer: img("footer"),
-  retreatHero: img("retreat-hero"),
-  retreatStory: [img("retreat-story-1"), img("retreat-story-2")] as [string, string],
-  retreatDesign: [img("retreat-design-1"), img("retreat-design-2"), img("retreat-design-3")],
-  retreatSustainability: img("retreat-sustainability"),
-  retreatSetting: img("retreat-setting"),
-  retreatMap: "/images/retreat-map.svg",
-  retreatRoad: img("retreat-road"),
-  roomsOverview: img("rooms-overview"),
-  roomsInfo: img("rooms-info"),
-  roomShared: img("room-shared"),
-  experienceHero: img("experience-hero"),
-  contactHero: img("contact-hero"),
-  contactDirections: img("contact-directions"),
+  logo: img("logo"),
+  logoMark: img("logo-mark"),
+  homeHero: photo(
+    "hero-1",
+    "Habitación con cama redonda, cojines rojos y techo iluminado en azul y amarillo"
+  ),
+  homeHeroMobile: img("hero-1-mobile"),
+  homeIntro: img("hero-2"),
+  homeJacuzzi: img("super"),
+  homeOccasions: [
+    photo("decoracion", "Habitación decorada con globos rojos y pétalos de rosa sobre la cama"),
+    photo("especial", "Habitación Especial con cama doble, columnas azules y jacuzzi"),
+  ] as [Photo, Photo],
+  homeExperiences: img("hero-3"),
+  ticker: [img("suite-04"), img("presidencial")] as [string, string],
+  footer: img("hero-3"),
+  roomsOverview: img("suite-07"),
+  roomsInfo: img("super-especial"),
+  experienceHero: img("presidencial"),
+  contactHero: img("hero-2"),
 } as const;
 
-/** Galería de una habitación: principal, ancha, vertical, detalle grande e inserto. */
-const roomGallery = (key: string): RoomGallery => [
-  img(`room-${key}`),
-  img(`room-${key}-wide`),
-  img(`room-${key}-tall`),
-  img(`room-${key}-detail`),
-  img(`room-${key}-inset`),
-];
+/* ---------- Habitaciones ---------- */
 
 export interface FeatureItem {
   title: string;
@@ -50,146 +68,196 @@ export interface DetailGroup {
   items: string[];
 }
 
-export type RoomGallery = [string, string, string, string, string];
-
 export interface Room {
   slug: string;
   number: string;
   name: string;
-  guests: number;
-  size: number;
-  view: string;
-  bed: string;
+  /** Tarifa base en pesos colombianos */
   price: number;
+  /** Horas incluidas en la tarifa base */
+  hours: number;
+  extraPerson: number;
+  extraHour: number;
+  /** Rasgo diferencial corto para tarjetas y carrusel */
+  highlight: string;
   tagline: string;
   overview: string;
-  image: string;
-  gallery: RoomGallery;
+  image: Photo;
+  /** Fotos adicionales (la principal es `image`) */
+  gallery: Photo[];
   features: FeatureItem[];
-  details: DetailGroup[];
+  /** Características propias de la categoría (lo que no está en todas) */
+  amenities: string[];
+  /** Restricciones o excepciones de la categoría */
+  notes?: string[];
 }
 
-const DEFAULT_DETAILS: DetailGroup[] = [
-  { label: "Lo esencial", items: ["2 huéspedes", "Cama king", "Vista al jardín", "Planta baja"] },
-  {
-    label: "En la habitación",
-    items: ["Terraza privada", "Zona de estar", "Climatización", "Caja fuerte"],
-  },
-  { label: "Baño", items: ["Ducha a ras de suelo", "Amenities naturales", "Batas y pantuflas"] },
-  { label: "Comodidades", items: ["Cortinas blackout", "Servicio de cortesía", "Wi-Fi"] },
-  {
-    label: "Incluido",
-    items: ["Desayuno diario", "Acceso al spa", "Limpieza diaria", "Guarda equipaje"],
-  },
+/** Lo que se repite en todas las habitaciones (brief: características comunes a las cinco) */
+export const COMMON_AMENITIES = [
+  "Silla del amor",
+  "Equipo de sonido",
+  "Televisor LED con cable y canales para adultos",
+  "Aire acondicionado",
+  "Nevera y minibar",
+  "Garaje privado",
+  "Servicio a la habitación",
+  "Restaurante 24 horas",
 ];
 
-const DEFAULT_FEATURES: FeatureItem[] = [
-  { title: "Terraza privada", text: "Un espacio exterior propio para el café de la mañana." },
-  {
-    title: "Descanso amplio",
-    text: "Cama generosa vestida con lino natural y almohadas a elegir.",
-  },
-  { title: "Baño de piedra", text: "Ducha amplia revestida en piedra local y luz natural." },
-];
+export const ROOM_VERSIONS_NOTE =
+  "Hay diferentes versiones de cada habitación: el color y la distribución de sus elementos pueden variar.";
 
 export const ROOMS: Room[] = [
   {
-    slug: "garden-room",
+    slug: "suite",
     number: "01",
-    name: "Habitación Jardín",
-    guests: 2,
-    size: 38,
-    view: "Vista al jardín",
-    bed: "Cama king",
-    price: 180,
-    tagline: "Piedra cálida, lino suave y una terraza que abre al jardín.",
-    overview: "Interiores luminosos que se abren a una terraza rodeada de árboles y hierbas.",
-    image: img("room-garden"),
-    gallery: roomGallery("garden"),
-    features: DEFAULT_FEATURES,
-    details: DEFAULT_DETAILS,
+    name: "Suite",
+    price: 115000,
+    hours: 5,
+    extraPerson: 57500,
+    extraHour: 23000,
+    highlight: "Jacuzzi y silla del amor",
+    tagline: "Jacuzzi con agua caliente, silla del amor y equipo de sonido por 5 horas.",
+    overview:
+      "La Suite tiene lo esencial de La Guaca: jacuzzi con agua caliente, silla del amor, equipo de sonido y televisor LED con canales para adultos. Llegas por tu garaje privado y tienes 5 horas incluidas.",
+    image: photo(
+      "suite-01",
+      "Suite con cama doble, jacuzzi y silla del amor junto a una pared verde"
+    ),
+    gallery: [
+      photo("suite-04", "Jacuzzi blanco, silla del amor y sofá en la Suite"),
+      photo("suite-02", "Suite con silla del amor y cama con luz cálida en la base"),
+      photo("suite-08", "Suite con piso ajedrezado, jacuzzi y mesa de vidrio"),
+      photo("suite-03", "Jacuzzi de la Suite junto a columnas verdes y espejo redondo"),
+      photo("suite-05", "Cama amplia de la Suite con columnas verdes al fondo"),
+      photo("suite-06", "Suite con cama, televisor y sala junto a columnas verdes"),
+      photo("suite-07", "Suite con cama doble, espejo y silla del amor"),
+      photo("suite-09", "Suite con piso ajedrezado, columna y silla del amor"),
+      photo("suite-10", "Jacuzzi y ducha de vidrio en una suite de piso ajedrezado"),
+    ],
+    features: [
+      { title: "Jacuzzi con agua caliente", text: "Listo para dos, dentro de la habitación." },
+      { title: "Silla del amor", text: "Diseñada para la pareja, a pocos pasos de la cama." },
+      { title: "Música y TV", text: "Equipo de sonido y televisor LED con cable." },
+    ],
+    amenities: ["Jacuzzi con agua caliente"],
   },
   {
-    slug: "mountain-suite",
+    slug: "especial",
     number: "02",
-    name: "Suite Montaña",
-    guests: 2,
-    size: 54,
-    view: "Vista a la montaña",
-    bed: "Cama king",
-    price: 240,
-    tagline: "Ventanales amplios y el perfil de la montaña desde la cama.",
-    overview: "Una suite elevada con sala propia y vistas abiertas al valle y las cumbres.",
-    image: img("room-mountain"),
-    gallery: roomGallery("mountain"),
-    features: DEFAULT_FEATURES,
-    details: DEFAULT_DETAILS,
+    name: "Especial",
+    price: 133000,
+    hours: 5,
+    extraPerson: 66500,
+    extraHour: 26600,
+    highlight: "Jacuzzi y turco",
+    tagline: "Jacuzzi con agua caliente y turco en la misma habitación, por 5 horas.",
+    overview:
+      "La Especial suma turco a todo lo de la Suite. Primero el vapor, luego el jacuzzi con agua caliente, con silla del amor, equipo de sonido y televisor LED con canales para adultos. Son 5 horas con garaje privado.",
+    image: photo("especial", "Habitación Especial con cama doble, columnas azules y jacuzzi"),
+    gallery: [],
+    features: [
+      { title: "Turco", text: "Vapor caliente sin salir de la habitación." },
+      { title: "Jacuzzi con agua caliente", text: "Para después del turco, a tu ritmo." },
+      { title: "Silla del amor", text: "En la habitación, junto al resto del equipamiento." },
+    ],
+    amenities: ["Jacuzzi con agua caliente", "Turco"],
   },
   {
-    slug: "pool-suite",
+    slug: "super",
     number: "03",
-    name: "Suite Piscina",
-    guests: 2,
-    size: 62,
-    view: "Piscina privada",
-    bed: "Cama king",
-    price: 320,
-    tagline: "Un rincón íntimo con piscina propia y sombra de olivos.",
-    overview: "Agua, piedra y madera en una suite pensada para no tener que salir.",
-    image: img("room-pool"),
-    gallery: roomGallery("pool"),
-    features: DEFAULT_FEATURES,
-    details: DEFAULT_DETAILS,
+    name: "Super",
+    price: 150000,
+    hours: 5,
+    extraPerson: 75000,
+    extraHour: 30000,
+    highlight: "Pista de baile y luces",
+    tagline: "Jacuzzi de lujo grande, turco y pista de baile con luces profesionales por 5 horas.",
+    overview:
+      "En la Super el jacuzzi crece: es de lujo, grande y con agua caliente. Además tiene turco, una amplia pista de baile y juego de luces profesionales para ponerle ritmo con el equipo de sonido. Buena opción si vienes con amigos.",
+    image: photo("super", "Habitación Super con jacuzzi tras un vidrio, cama doble y pared verde"),
+    gallery: [],
+    features: [
+      { title: "Jacuzzi de lujo grande", text: "Más espacio en el agua, siempre caliente." },
+      { title: "Pista de baile", text: "Amplia, dentro de la habitación." },
+      { title: "Luces profesionales", text: "Un juego de luces para armar el ambiente." },
+    ],
+    amenities: [
+      "Jacuzzi de lujo grande con agua caliente",
+      "Turco",
+      "Amplia pista de baile",
+      "Juego de luces profesionales",
+    ],
   },
   {
-    slug: "casa-principal",
+    slug: "super-especial",
     number: "04",
-    name: "Casa Principal",
-    guests: 4,
-    size: 96,
-    view: "Piscina privada",
-    bed: "2 camas king",
-    price: 420,
-    tagline: "Dos dormitorios, cocina abierta y un patio solo para ti.",
-    overview: "La casa completa para familias o amigos que buscan espacio y privacidad.",
-    image: img("room-house"),
-    gallery: roomGallery("house"),
-    features: DEFAULT_FEATURES,
-    details: DEFAULT_DETAILS,
+    name: "Super Especial",
+    price: 220000,
+    hours: 5,
+    extraPerson: 110000,
+    extraHour: 44000,
+    highlight: "Barra de striptease",
+    tagline: "Barra de striptease, jacuzzi de lujo grande, turco y pista con luces por 5 horas.",
+    overview:
+      "La Super Especial tiene todo lo de la Super: jacuzzi de lujo grande, turco, pista de baile y luces profesionales. Y agrega barra de striptease. El show lo pones tú; el escenario ya está listo.",
+    image: photo(
+      "super-especial",
+      "Habitación Super Especial con barra, cama con luz inferior y mesa de centro"
+    ),
+    gallery: [],
+    features: [
+      { title: "Barra de striptease", text: "En el centro de la pista, para tu propio show." },
+      { title: "Pista y luces", text: "Amplia pista de baile con luces profesionales." },
+      { title: "Jacuzzi de lujo grande", text: "Agua caliente y turco en la misma habitación." },
+    ],
+    amenities: [
+      "Barra de striptease",
+      "Jacuzzi de lujo grande con agua caliente",
+      "Turco",
+      "Amplia pista de baile",
+      "Juego de luces profesionales",
+    ],
   },
   {
-    slug: "olive-room",
+    slug: "presidencial",
     number: "05",
-    name: "Habitación Olivo",
-    guests: 2,
-    size: 42,
-    view: "Vista al olivar",
-    bed: "Cama queen",
-    price: 200,
-    tagline: "Luz filtrada entre olivos y un rincón de lectura junto a la ventana.",
-    overview: "Una habitación serena orientada al olivar, ideal para estancias largas.",
-    image: img("room-olive"),
-    gallery: roomGallery("olive"),
-    features: DEFAULT_FEATURES,
-    details: DEFAULT_DETAILS,
-  },
-  {
-    slug: "horizon-suite",
-    number: "06",
-    name: "Suite Horizonte",
-    guests: 3,
-    size: 58,
-    view: "Vista al mar",
-    bed: "Cama king + sofá cama",
-    price: 280,
-    tagline: "El mar a lo lejos y atardeceres desde una terraza alta.",
-    overview: "Nuestra suite más alta, con terraza orientada al oeste y bañera exenta.",
-    image: img("room-horizon"),
-    gallery: roomGallery("horizon"),
-    features: DEFAULT_FEATURES,
-    details: DEFAULT_DETAILS,
+    name: "Presidencial",
+    price: 255000,
+    hours: 5,
+    extraPerson: 127500,
+    extraHour: 51000,
+    highlight: "Columpio y muro de las caricias",
+    tagline:
+      "La categoría más completa: columpio, muro de las caricias, barra, turco y jacuzzi grande.",
+    overview:
+      "La Presidencial reúne todo: jacuzzi grande de lujo con agua caliente, turco, barra de striptease, pista de baile con luces profesionales, columpio y muro de las caricias. La habitación 46 suma domo y fuente de agua; si la quieres a ella, pídela por WhatsApp.",
+    image: photo(
+      "presidencial",
+      "Habitación Presidencial con barra, silla del amor y piso de vidrio iluminado"
+    ),
+    gallery: [],
+    features: [
+      { title: "Columpio", text: "Instalado en la habitación, junto a la pista." },
+      { title: "Muro de las caricias", text: "Uno de los elementos propios de esta categoría." },
+      { title: "Domo y fuente de agua", text: "Solo en la habitación 46: pídela al reservar." },
+    ],
+    amenities: [
+      "Domo (solo habitación 46)",
+      "Fuente de agua (solo habitación 46)",
+      "Barra de striptease",
+      "Jacuzzi grande de lujo con agua caliente",
+      "Columpio",
+      "Turco",
+      "Amplia pista de baile",
+      "Juego de luces profesionales",
+      "Muro de las caricias",
+    ],
+    notes: ["Domo y fuente de agua: solo en la habitación 46."],
   },
 ];
+
+/* ---------- Experiencias ---------- */
 
 export interface Experience {
   id: string;
@@ -203,131 +271,119 @@ export interface Experience {
 
 export const EXPERIENCES: Experience[] = [
   {
-    id: "bienestar",
-    label: "Bienestar",
-    title: "Cuerpo y calma",
-    text: "Yoga al amanecer, piscina templada y tratamientos privados adaptados a cada huésped.",
-    cta: { label: "Reservar sesión", href: "booking" },
-    image: img("exp-wellness"),
-    inset: img("exp-wellness-inset"),
+    id: "jacuzzi",
+    label: "Jacuzzi",
+    title: "Agua caliente en todas",
+    text: "Las cinco categorías tienen jacuzzi con agua caliente. Desde la Super es un jacuzzi de lujo grande, con más espacio para dos.",
+    cta: { label: "Ver habitaciones", href: "/habitaciones" },
+    image: img("suite-04"),
+    inset: img("suite-03"),
   },
   {
-    id: "gastronomia",
-    label: "Gastronomía",
-    title: "Sabores de temporada",
-    text: "Desayunos en el patio, almuerzos ligeros de la huerta y cenas largas bajo las estrellas.",
-    cta: { label: "Ver la carta", href: "#" },
-    image: img("exp-dining"),
-    inset: img("exp-dining-inset"),
+    id: "turco",
+    label: "Turco",
+    title: "Vapor desde la Especial",
+    text: "Especial, Super, Super Especial y Presidencial incluyen turco. Combínalo con el jacuzzi durante tus 5 horas.",
+    cta: { label: "Ver la Especial", href: "/habitaciones/especial" },
+    image: img("especial"),
+    inset: img("suite-10"),
   },
   {
-    id: "montana",
-    label: "La montaña",
-    title: "Senderos y miradores",
-    text: "Senderos entre bancales y miradores tranquilos, con rutas para todos los niveles.",
-    cta: { label: "Ver rutas", href: "maps" },
-    image: img("exp-mountains"),
-    inset: img("exp-mountains-inset"),
+    id: "pista",
+    label: "Pista y luces",
+    title: "Tu propia pista de baile",
+    text: "Super, Super Especial y Presidencial tienen amplia pista de baile, juego de luces profesionales y equipo de sonido.",
+    cta: { label: "Ver la Super", href: "/habitaciones/super" },
+    image: img("super"),
+    inset: img("hero-3"),
   },
   {
-    id: "mar",
-    label: "El mar",
-    title: "Rumbo a la costa",
-    text: "Salidas privadas en barco por la costa, con paradas en calas solo accesibles por mar.",
-    cta: { label: "Reservar salida", href: "booking" },
-    image: img("exp-sea"),
-    inset: img("exp-sea-inset"),
+    id: "show",
+    label: "Ambiente de show",
+    title: "Barra para tu show",
+    text: "Super Especial y Presidencial suman barra de striptease junto a la pista. Las luces ya están; el show lo pones tú.",
+    cta: { label: "Ver la Super Especial", href: "/habitaciones/super-especial" },
+    image: img("super-especial"),
+    inset: img("hero-1"),
   },
   {
-    id: "vida-local",
-    label: "Vida local",
-    title: "Oficios de la región",
-    text: "Visitas a talleres, productores y mercados para conocer el oficio de la región.",
-    cta: { label: "Consultar", href: "contact" },
-    image: img("exp-local"),
-    inset: img("exp-local-inset"),
+    id: "presidencial",
+    label: "Presidencial",
+    title: "Columpio, domo y fuente",
+    text: "La Presidencial agrega columpio y muro de las caricias. Domo y fuente de agua: solo en la habitación 46.",
+    cta: { label: "Pedir la 46", href: whatsappUrl(WHATSAPP_MESSAGES.room46) },
+    image: img("presidencial"),
+    inset: img("hero-2"),
+  },
+  {
+    id: "restaurante",
+    label: "Restaurante 24 horas",
+    title: "Pide sin salir",
+    text: "Servicio a la habitación y restaurante abierto las 24 horas, con platos desde $16.500 hasta $51.700.",
+    cta: { label: "Pedir la carta", href: whatsappUrl(WHATSAPP_MESSAGES.menu) },
+    image: img("suite-09"),
+    inset: img("suite-06"),
   },
 ];
 
 export const PRIVATE_EXPERIENCES = [
   {
-    title: "Desayuno al amanecer",
-    text: "Una mesa preparada en un mirador mientras despierta el valle.",
-    image: img("private-1"),
+    title: "Silla del amor",
+    text: "En las cinco categorías, de la Suite a la Presidencial.",
+    image: photo("suite-02", "Silla del amor frente a la cama de la Suite"),
     ratio: "1 / 1",
   },
   {
-    title: "Ruta por la costa",
-    text: "Un día en coche por carreteras escénicas con paradas elegidas.",
-    image: img("private-2"),
+    title: "Música y TV",
+    text: "Equipo de sonido y televisor LED con cable y canales para adultos.",
+    image: photo("suite-06", "Televisor sobre la cama en una suite con columnas verdes"),
     ratio: "332 / 590",
   },
   {
-    title: "Cata de aceite",
-    text: "Recorrido por una almazara familiar y degustación guiada.",
-    image: img("private-3"),
+    title: "Aire acondicionado",
+    text: "La temperatura a tu gusto, con nevera y minibar en la habitación.",
+    image: photo("suite-01", "Suite con aire acondicionado sobre la cama y jacuzzi al lado"),
     ratio: "3 / 4",
   },
   {
-    title: "Noche de estrellas",
-    text: "Observación guiada con telescopio lejos de la ciudad.",
-    image: img("private-4"),
+    title: "Servicio a la habitación",
+    text: "Pide del restaurante 24 horas sin salir.",
+    image: photo("suite-09", "Sala con mesa de vidrio en una suite de piso ajedrezado"),
     ratio: "4 / 3",
   },
 ];
 
-export const PLACES = [
+/* ---------- Servicios, tarifas e información ---------- */
+
+export const INCLUDED: FeatureItem[] = [
   {
-    name: "El pueblo",
-    text: "Calles de piedra, mercado semanal y cafés en la plaza.",
-    image: img("place-1"),
+    title: "Jacuzzi con agua caliente",
+    text: "En las cinco categorías; desde la Super, de lujo y grande.",
   },
-  {
-    name: "La costa",
-    text: "Calas tranquilas y restaurantes frente al mar a pocos minutos.",
-    image: img("place-2"),
-  },
-  {
-    name: "El valle",
-    text: "Bancales, huertas y miradores para caminar sin prisa.",
-    image: img("place-3"),
-  },
-  {
-    name: "La ciudad",
-    text: "Casco histórico, tiendas y museos para una escapada de un día.",
-    image: img("place-4"),
-  },
+  { title: "Garaje privado", text: "Llegas y estacionas en el garaje de tu habitación." },
+  { title: "Silla del amor", text: "En todas las habitaciones, de la Suite a la Presidencial." },
+  { title: "Equipo de sonido", text: "Tu música, a tu volumen, en cada habitación." },
+  { title: "Televisor LED", text: "Con televisión por cable y canales para adultos." },
+  { title: "Aire acondicionado", text: "La temperatura a tu gusto durante la estadía." },
+  { title: "Nevera y minibar", text: "Dentro de la habitación, sin salir a buscar nada." },
+  { title: "Servicio a la habitación", text: "Pide lo que necesites sin dejar la habitación." },
+  { title: "Restaurante 24 horas", text: "Platos desde $16.500 hasta $51.700, a cualquier hora." },
 ];
 
 export const STAY_INFO = [
-  { label: "Check-in", value: "Desde las 15:00" },
-  { label: "Check-out", value: "Hasta las 11:00" },
-  { label: "Desayuno", value: "7:30 – 11:00" },
-  { label: "Traslados", value: "Bajo solicitud" },
-  { label: "Niños", value: "Habitaciones familiares" },
-  { label: "Mascotas", value: "Consultar" },
+  { label: "Horario", value: "Abierto 24/7" },
+  { label: "Tarifa base", value: "Incluye 5 horas" },
+  { label: "Edad", value: "Solo mayores de 18 años" },
+  { label: "Pagos", value: "Efectivo, datáfono y transferencia" },
+  { label: "Reservas", value: "Por WhatsApp o llamada" },
+  { label: "Restaurante", value: "24 horas, con servicio a la habitación" },
 ];
 
-export const INCLUDED: FeatureItem[] = [
-  { title: "Desayuno", text: "Pan del día, fruta de temporada y café recién hecho cada mañana." },
-  { title: "Bienestar", text: "Piscina exterior, sauna y espacios para estirar sin horario." },
-  {
-    title: "Limpieza diaria",
-    text: "Habitaciones ordenadas y ropa de cama fresca durante tu estancia.",
-  },
-  { title: "Despensa", text: "Agua, café y pequeños productos locales siempre a mano." },
-  {
-    title: "Conserjería",
-    text: "Ayuda con planes, reservas en restaurantes, traslados y excursiones.",
-  },
-  { title: "Wi-Fi", text: "Conexión estable de alta velocidad en toda la propiedad." },
-];
-
-export const DISTANCES = [
-  { label: "Aeropuerto", value: "45 min" },
-  { label: "Centro del pueblo", value: "15 min" },
-  { label: "Playa más cercana", value: "20 min" },
-];
+export interface FaqItem {
+  question: string;
+  answer: string;
+  link?: { label: string; href: string };
+}
 
 /**
  * Etiquetas de interfaz (navegación, accesibilidad, formularios y botones).
@@ -338,58 +394,74 @@ export const UI_LABELS = {
   mainNav: "Principal",
   footerNav: "Pie de página",
   menu: "Menú",
-  checkAvailability: "Ver disponibilidad",
+  checkAvailability: "Reservar por WhatsApp",
+  headerCta: "Reservar",
   hours: "Horarios",
   contact: "Contacto",
   location: "Ubicación",
-  established: (year: string) => `Est. ${year}`,
-  reviewsCount: (count: number) => `(${count} reseñas)`,
-  allRightsReserved: (year: number) => `© ${year}, Todos los derechos reservados`,
-  menuCtaTitle: "¿Lista tu escapada?",
-  menuCtaText: "Consulta fechas y tarifas en nuestro motor de reservas.",
+  whatsapp: "WhatsApp",
+  whatsappFloat: "WhatsApp",
+  whatsappFloatAria: "Reservar por WhatsApp (se abre en una pestaña nueva)",
+  openAllHours: "Abierto 24/7",
+  adultsOnly: "Solo mayores de 18 años",
+  logoAlt: (name: string) => `${name} Motel`,
+  homeLink: (name: string) => `${name}, inicio`,
+  socialNames: { facebook: "Facebook", instagram: "Instagram", x: "X" } as Record<string, string>,
   reviews: "Reseñas",
   excellent: "Excelente",
+  reviewsCount: (count: number) => `(${count} reseñas)`,
   basedOnReviews: (count: number) => `Basado en ${count} reseñas`,
+  allRightsReserved: (year: number) => `© ${year}, todos los derechos reservados`,
+  menuCtaTitle: "¿Reservamos?",
+  menuCtaText: "Escríbenos por WhatsApp y pregunta qué habitación está disponible.",
+  viewRooms: "Ver habitaciones",
   viewAllRooms: "Ver todas las habitaciones",
   roomsCarousel: "Habitaciones",
   carouselRole: "carrusel",
   previousRoom: "Habitación anterior",
   nextRoom: "Habitación siguiente",
-  roomsCount: (count: number) => `${count} habitaciones`,
-  openAllYear: "Abierto todo el año",
-  guests: (count: number) => `${count} huéspedes`,
-  squareMeters: (size: number) => `${size} m²`,
-  fromPerNight: (price: number) => `Desde $${price}/noche`,
-  roomNumber: (number: string) => `Habitación Nº ${number}`,
+  roomsCount: (count: number) => `${count} categorías`,
+  price: (value: number) => `$${value.toLocaleString("es-CO")}`,
+  priceFor: (value: number, hours: number) =>
+    `$${value.toLocaleString("es-CO")} por ${hours} horas`,
+  hoursIncluded: (hours: number) => `${hours} horas`,
+  extraPerson: (value: number) => `Persona adicional: $${value.toLocaleString("es-CO")}`,
+  extraHour: (value: number) => `Hora adicional: $${value.toLocaleString("es-CO")}`,
+  roomNumber: (number: string) => `Categoría ${number}`,
+  reserveRoom: "Reservar esta habitación",
   openInMaps: "Abrir en mapas",
+  directions: "Cómo llegar",
   lastUpdated: "Última actualización:",
   gallery: "Galería",
-  mapAlt: "Mapa de ubicación",
   form: {
     name: "Nombre",
-    namePlaceholder: "Tu nombre completo",
-    email: "Correo",
-    emailPlaceholder: "Tu correo",
-    phone: "Teléfono",
-    phonePlaceholder: "Tu teléfono",
+    namePlaceholder: "¿Cómo te llamamos?",
     enquiryType: "Tipo de consulta",
     selectOption: "Selecciona una opción",
-    enquiryTypes: ["Reserva", "Experiencias", "Eventos privados", "Prensa", "Otro"],
+    enquiryTypes: [
+      "Reservar una habitación",
+      "Tarifas",
+      "Decoración para una ocasión",
+      "Restaurante",
+      "Otra consulta",
+    ],
+    when: "Fecha y hora (opcional)",
+    whenPlaceholder: "Ej.: sábado a las 9 p. m.",
     message: "Mensaje",
-    messagePlaceholder: "Cuéntanos cómo podemos ayudarte",
-    consent: "Acepto ser contactado sobre mi consulta.",
-    submit: "Enviar mensaje",
-    missingEmail: "Configura un correo de contacto en src/config/site.ts.",
-    opening: "Abriendo tu aplicación de correo…",
-    mailSubject: (type: string, name: string) => `Consulta: ${type} — ${name}`,
-    mailName: "Nombre",
-    mailEmail: "Correo",
-    mailPhone: "Teléfono",
+    messagePlaceholder: "Cuéntanos qué habitación te interesa o qué necesitas",
+    submit: "Abrir WhatsApp",
+    missingWhatsapp: "Configura el número de WhatsApp en src/config/site.ts.",
+    opening: "Abriendo WhatsApp con tu mensaje…",
+    whatsappMessage: (type: string, name: string, when: string, message: string) =>
+      [`Hola, soy ${name}. Consulta: ${type}.`, when ? `Para: ${when}.` : "", message]
+        .filter(Boolean)
+        .join("\n"),
   },
   closingCta: {
-    title: "Tu próxima escapada",
-    sideLeft: "Un retiro privado",
-    sideRight: "Reserva directa",
+    title: "Reserva tu jacuzzi",
+    text: "Escríbenos por WhatsApp o pasa a conocernos en el km 2 vía Montenegro.",
+    sideLeft: "Abierto 24/7",
+    sideRight: "Armenia",
   },
 } as const;
 
@@ -401,191 +473,180 @@ export interface LegalSectionCopy {
 
 /**
  * Textos de cada página. Las páginas solo componen estos bloques con imágenes y componentes.
- * Los textos legales son de ejemplo: deben revisarlos los asesores legales del cliente.
+ * Los textos legales son una base genérica: deben revisarlos los asesores legales del cliente.
  */
 export const PAGES = {
   home: {
     hero: {
-      label: "Un retiro privado",
-      title: "Lejos de todo",
-      sideLeft: "Entre montañas",
-      sideRight: "Ciudad, País",
-      intro: "Una casa de campo restaurada entre colinas y mar, pensada para bajar el ritmo.",
+      label: "Motel en Armenia",
+      title: "Jacuzzi caliente en cada habitación",
+      sideLeft: "Abierto 24/7",
+      sideRight: "Km 2 vía Montenegro",
+      intro:
+        "Cinco categorías con jacuzzi de agua caliente y garaje privado. Desde $115.000 por 5 horas.",
     },
     highlights: (roomCount: number) => [
-      { label: "Bienestar", items: ["Piscina exterior", "Spa y masajes"] },
-      {
-        label: "La estancia",
-        items: [UI_LABELS.roomsCount(roomCount), UI_LABELS.openAllYear],
-      },
+      { label: "En todas", items: ["Jacuzzi con agua caliente", "Garaje privado"] },
+      { label: "La Guaca", items: [UI_LABELS.roomsCount(roomCount), UI_LABELS.openAllHours] },
     ],
-    slowDown: {
-      title: "Bajar el ritmo",
-      text: "Mañanas lentas, comidas sin reloj y tardes a la sombra: aquí el tiempo se mide de otra manera.",
-      cta: "Conocer el retiro",
+    intro: {
+      title: "Cinco horas a tu manera",
+      text: "La Guaca es un motel en el km 2 de la vía a Montenegro, en Armenia. Abre 24/7 y cada habitación tiene garaje privado, jacuzzi con agua caliente, silla del amor y servicio a la habitación. Ven en pareja o con amigos: la tarifa base incluye 5 horas.",
     },
-    wellness: {
-      title: "Pausa necesaria",
-      sideLeft: "Spa al aire libre",
-      sideRight: "Rituales diarios",
-      cta: "Ver bienestar",
+    jacuzzi: {
+      title: "El agua, siempre caliente",
+      sideLeft: "Jacuzzi en las cinco",
+      sideRight: "De lujo desde la Super",
+      cta: "Ver experiencias",
     },
     rooms: {
-      title: "Dormir bien",
-      text: "Habitaciones y suites con materiales nobles, luz natural y vistas que invitan a quedarse.",
+      title: "Sube de categoría",
+      text: "De la Suite a la Presidencial, cada una suma algo: turco, pista con luces, barra o columpio. Desde $115.000 por 5 horas.",
     },
-    dining: {
-      label: "Cocina de temporada",
-      title: "Mesa compartida",
-      text: "Producto local, pescado del día y vinos de la zona en platos sencillos, pensados para compartir sin prisa.",
+    occasions: {
+      label: "Ocasiones especiales",
+      title: "Celebra en la habitación",
+      text: "¿Aniversario, cumpleaños o una sorpresa? Pregunta por WhatsApp por la decoración de la habitación y sus condiciones.",
+      cta: "Preguntar por la decoración",
     },
-    experiences: { label: "Experiencias", title: "Salir a descubrir" },
-    ticker: ["Montaña y mar", "Ciudad, País"],
-  },
-  retreat: {
-    meta: {
-      title: "El retiro",
-      description: "La historia, el diseño y la forma de recibir de nuestra casa.",
-    },
-    hero: {
-      label: "Vida en el campo",
-      title: "Nuestra casa",
-      sideLeft: "Cerca de la montaña",
-      sideRight: "Cerca del mar",
-      intro: "Una casa antigua recuperada con respeto por su historia y su paisaje.",
-    },
-    storyTitle: "La historia",
-    storyCaptions: [
-      "La casa original lleva generaciones en estas colinas, rodeada de bancales, árboles frutales y caminos de piedra.",
-      "Hoy es un refugio tranquilo que conserva sus muros, sus materiales y su relación directa con el entorno.",
-    ] as [string, string],
-    design: {
-      label: "Diseño y arquitectura",
-      title: "Hecha para el lugar",
-      text: "La reforma mantiene el carácter de la casa y suma espacios luminosos, materiales honestos y una conexión constante con el exterior.",
-      points: ["Materiales locales", "Espacios abiertos", "Detalles originales"],
-    },
-    ourWay: {
-      title: "Nuestra forma",
-      items: [
-        {
-          title: "Bienvenida personal",
-          text: "Te recibimos sin formularios eternos ni esperas en recepción.",
-        },
-        { title: "Sin horarios", text: "Cada día se organiza a tu medida, sin agendas fijas." },
-        {
-          title: "Consejo local",
-          text: "Recomendaciones de rutas, mesas y rincones que no salen en guías.",
-        },
-        {
-          title: "Atención discreta",
-          text: "Estamos cerca cuando nos necesitas y lejos cuando no.",
-        },
-        {
-          title: "Pequeños gestos",
-          text: "Detalles pensados en cada habitación para que todo sea fácil.",
-        },
-        {
-          title: "Siempre disponibles",
-          text: "Un equipo atento para reservas, planes o peticiones especiales.",
-        },
-      ],
-    },
-    sustainability: {
-      label: "Sostenibilidad",
-      title: "Cuidar la tierra",
-      text: "Tomamos decisiones responsables en todo el retiro, entre ellas:",
-      items: [
-        "Trabajamos con artesanos y proveedores locales",
-        "Cocinamos con producto de temporada",
-        "Ahorramos agua y energía",
-        "Reducimos los plásticos de un solo uso",
-        "Plantamos especies nativas",
-      ],
-    },
-    setting: {
-      label: "El entorno",
-      title: "Cerca del pueblo",
-      text: "La casa está rodeada de naturaleza, con el pueblo, los senderos y la costa a pocos minutos.",
-    },
-    places: {
-      label: "Alrededores",
-      title: "Explorar desde aquí",
-      footer:
-        "Pueblos de montaña, mercados, calas y rincones con historia a un corto trayecto de la casa.",
-      cta: "Explorar la zona",
-    },
-    directions: { label: "Cómo llegar", title: "El camino hasta casa" },
+    experiences: { label: "Experiencias", title: "Agua, vapor y luces" },
+    showcase: ["turco", "pista", "show"],
+    ticker: ["Jacuzzi · Turco · Pista", "Armenia · Abierto 24/7"] as [string, string],
   },
   experience: {
     meta: {
       title: "Experiencias",
-      description: "Bienestar, gastronomía y planes para descubrir la región a tu ritmo.",
+      description:
+        "Jacuzzi con agua caliente, turco, pista de baile con luces, barra de striptease y restaurante 24 horas en La Guaca, Armenia.",
     },
     hero: {
-      title: "Días a tu ritmo",
-      sideLeft: "Descansar",
-      sideRight: "Explorar",
-      text: "Nadar, comer bien, descansar o salir a explorar: tú decides cómo se llena cada día.",
+      title: "Agua, vapor y luces",
+      sideLeft: "Jacuzzi y turco",
+      sideRight: "Pista y luces",
+      text: "Todas las categorías tienen jacuzzi con agua caliente; las más altas suman turco, pista de baile, barra, columpio y domo.",
     },
-    private: { label: "Experiencias privadas", title: "Hecho a tu medida" },
+    private: { label: "En todas las habitaciones", title: "Lo que nunca falta" },
   },
   contact: {
     meta: {
-      title: "Contacto",
-      description: "Escríbenos para reservas, experiencias o cualquier consulta sobre tu estancia.",
+      title: "Contacto y ubicación",
+      description: `Reserva por WhatsApp al ${siteConfig.contact.phone ?? ""} o visítanos en el km 2 vía Montenegro, Armenia. Abierto 24/7.`,
     },
     hero: {
-      label: "Estamos para ayudarte",
+      label: "Reservas y visitas",
       title: "Hablemos",
-      sideLeft: "Consejo local",
-      sideRight: "Planes a medida",
+      sideLeft: "Abierto 24/7",
+      sideRight: "Armenia",
     },
     form: {
-      label: "Envíanos una nota",
-      title: "¿En qué podemos ayudarte?",
-      text: "Desde experiencias en la zona hasta peticiones especiales, resolvemos tus dudas antes de llegar.",
+      label: "Escríbenos por WhatsApp",
+      title: "Arma tu mensaje",
+      text: "Completa los datos y abrimos WhatsApp con el mensaje listo para enviar.",
     },
     reach: {
       title: "Contacto directo",
-      call: { title: "Llámanos", text: "Atendemos todos los días de 8:00 a 20:00.", cta: "Llamar" },
-      write: {
-        title: "Escríbenos",
-        text: "Respondemos en menos de 24 horas.",
-        cta: "Enviar correo",
+      whatsapp: {
+        title: "WhatsApp",
+        text: "Reservas y consultas sobre habitaciones, tarifas y decoración.",
+        cta: "Abrir WhatsApp",
       },
-      visit: { title: "Encuéntranos", cta: "Abrir en mapas" },
+      call: { title: "Llámanos", cta: "Llamar" },
+      write: { title: "Correo", text: "Para temas que no sean reservas.", cta: "Enviar correo" },
+      visit: { title: "Visítanos", cta: "Abrir en mapas" },
     },
-    directions: { label: "Cómo llegar", title: "El camino hasta aquí", cta: "Ver ruta" },
+    faq: { label: "Preguntas frecuentes", title: "Antes de venir" },
+    directions: {
+      label: "Cómo llegar",
+      title: "Km 2 vía Montenegro",
+      text: "Pasa a conocernos y elige la habitación con calma: estamos en el km 2 de la vía a Montenegro, en Armenia.",
+      cta: "Ver ruta en el mapa",
+    },
   },
+  faq: [
+    {
+      question: "¿Cuánto tiempo incluye la tarifa?",
+      answer:
+        "La tarifa base incluye 5 horas en todas las categorías. Cada hora adicional se cobra según la habitación, desde $23.000 en la Suite.",
+    },
+    {
+      question: "¿Puedo ir con más personas?",
+      answer:
+        "Sí. Cada persona adicional tiene un valor según la habitación, desde $57.500 en la Suite. Pregunta por WhatsApp cuántas personas admite la que te interesa.",
+      link: { label: "Preguntar por WhatsApp", href: whatsappUrl(WHATSAPP_MESSAGES.rates) },
+    },
+    {
+      question: "¿Qué formas de pago aceptan?",
+      answer: "Efectivo, datáfono y transferencia.",
+    },
+    {
+      question: "¿Hay edad mínima?",
+      answer: "Sí. La Guaca es solo para mayores de 18 años.",
+    },
+    {
+      question: "¿Abren todos los días?",
+      answer: "Sí, estamos abiertos 24 horas, los 7 días de la semana.",
+    },
+    {
+      question: "¿Puedo pedir comida?",
+      answer:
+        "Sí. Hay restaurante 24 horas con servicio a la habitación y platos desde $16.500 hasta $51.700.",
+      link: { label: "Pedir la carta", href: whatsappUrl(WHATSAPP_MESSAGES.menu) },
+    },
+    {
+      question: "¿Todas las habitaciones de una categoría son iguales?",
+      answer: `${ROOM_VERSIONS_NOTE} Domo y fuente de agua solo están en la Presidencial 46.`,
+    },
+    {
+      question: "¿Cómo reservo?",
+      answer:
+        "Escríbenos por WhatsApp con la categoría y la hora que quieres, y te contamos qué hay disponible. También puedes llamar.",
+      link: { label: "Escribir por WhatsApp", href: whatsappUrl() },
+    },
+  ] satisfies FaqItem[],
   rooms: {
     meta: {
-      title: "Habitaciones y suites",
+      title: "Habitaciones y tarifas",
       description:
-        "Habitaciones y suites con materiales naturales, luz abundante y vistas abiertas.",
+        "Suite, Especial, Super, Super Especial y Presidencial: todas con jacuzzi de agua caliente y garaje privado. Desde $115.000 por 5 horas en Armenia.",
     },
-    hero: { label: "Habitaciones y suites", title: "Elige tu rincón" },
+    hero: {
+      label: "Habitaciones",
+      title: "Elige tu categoría",
+      sideRight: "5 horas incluidas",
+    },
     overview: {
-      title: "Pensado para el lugar",
-      text: "Interiores cálidos, rincones exteriores propios y vistas que acompañan cada momento del día.",
+      label: "Antes de elegir",
+      title: "Cada categoría tiene versiones",
+      text: `${ROOM_VERSIONS_NOTE} Si quieres una en particular, pregúntanos por WhatsApp.`,
+      cta: "Consultar disponibilidad",
     },
-    included: { title: "Todo incluido" },
+    included: { label: "En todas las habitaciones", title: "Siempre incluido" },
+    rates: {
+      label: "Tarifas",
+      title: "Precios claros, 5 horas incluidas",
+      cta: "Pedir tarifas por WhatsApp",
+    },
     info: { label: "Antes de llegar", title: "Información útil" },
-    yourStay: (name: string) => `Tu estancia en ${name}`,
   },
   room: {
     details: {
       label: "Los detalles",
-      title: "Todo sobre la habitación",
-      text: "Una mirada cercana a los espacios, materiales y comodidades preparados para tu llegada.",
+      title: "Qué incluye",
+      text: "Lo propio de esta categoría, lo que trae toda habitación y lo que cuesta.",
     },
-    moreTitle: "Ver más",
+    groups: {
+      own: "En esta habitación",
+      common: "En todas",
+      rates: "Tarifas",
+      notes: "Ten en cuenta",
+    },
+    moreTitle: "Otras categorías",
   },
   notFound: {
     title: "Página no encontrada",
     label: "Error 404",
-    heading: "Camino perdido",
-    text: "La página que buscas no existe o fue movida.",
+    heading: "Esta puerta no abre",
+    text: "La página que buscas no existe o cambió de lugar. Las habitaciones siguen donde siempre.",
     cta: "Volver al inicio",
   },
   privacy: {
@@ -594,44 +655,44 @@ export const PAGES = {
       description: `Cómo ${name} recopila, usa y protege tus datos personales.`,
     }),
     hero: { label: "Cómo usamos tus datos", title: "Privacidad" },
-    updated: "enero de 2026",
+    updated: "octubre de 2026",
     intro: (name: string) =>
-      `${name} respeta tu privacidad. Esta política explica qué información recopilamos, cómo la usamos y qué opciones tienes al visitar el sitio, enviar una consulta o reservar.`,
+      `${name} respeta tu privacidad. Esta política explica qué información tratamos cuando visitas el sitio o nos escribes por WhatsApp, teléfono o correo para reservar.`,
     sections: (email?: string): LegalSectionCopy[] => [
       {
-        title: "Datos que recopilamos",
+        title: "Datos que tratamos",
         paragraphs: [
           "Podemos tratar los datos que nos facilitas al contactarnos o reservar, como:",
         ],
         list: [
-          "Nombre, correo electrónico y teléfono",
-          "Fechas de estancia y preferencias",
-          "Mensajes enviados a través del formulario",
-          "Datos técnicos básicos de navegación",
+          "Nombre y número de teléfono o WhatsApp",
+          "Correo electrónico, si nos escribes por ese medio",
+          "Fecha, hora y habitación de tu reserva",
+          "Datos técnicos básicos de navegación del sitio",
         ],
       },
       {
         title: "Para qué los usamos",
         paragraphs: [
-          "Usamos tus datos para responder consultas, gestionar reservas, mejorar el sitio web y, si lo autorizas, enviarte información relevante sobre tu estancia.",
+          "Usamos tus datos solo para responder tus consultas, gestionar tu reserva y mejorar el sitio web.",
         ],
       },
       {
         title: "Con quién los compartimos",
         paragraphs: [
-          "Solo compartimos datos con proveedores necesarios para prestar el servicio (por ejemplo, motor de reservas o alojamiento web) y cuando la ley lo exige.",
+          "No vendemos tus datos. Solo los compartimos con proveedores necesarios para prestar el servicio (por ejemplo, WhatsApp o el alojamiento web) y cuando la ley lo exige.",
         ],
       },
       {
         title: "Conservación",
         paragraphs: [
-          "Conservamos los datos durante el tiempo necesario para la finalidad indicada y los plazos legales aplicables.",
+          "Conservamos los datos durante el tiempo necesario para la finalidad indicada y los plazos legales aplicables en Colombia.",
         ],
       },
       {
         title: "Tus derechos",
         paragraphs: [
-          `Puedes solicitar acceso, rectificación o eliminación de tus datos escribiendo a ${email ?? "nuestro correo de contacto"}.`,
+          `Puedes conocer, actualizar, rectificar o pedir la eliminación de tus datos escribiendo a ${email ?? "nuestro correo de contacto"}.`,
         ],
       },
     ],
@@ -642,32 +703,38 @@ export const PAGES = {
       description: `Condiciones de uso del sitio web de ${name}.`,
     }),
     hero: { label: "Condiciones del sitio", title: "Términos de uso" },
-    updated: "enero de 2026",
+    updated: "octubre de 2026",
     intro: (name: string) =>
       `Estos términos regulan el uso del sitio web de ${name}. Te recomendamos leerlos antes de navegar o reservar.`,
     sections: [
       {
-        title: "Uso del sitio",
+        title: "Solo para adultos",
         paragraphs: [
-          "Este sitio ofrece información sobre el alojamiento, sus servicios y experiencias. Al usarlo aceptas hacerlo de forma lícita y respetuosa.",
+          "El sitio y el servicio están dirigidos exclusivamente a mayores de 18 años. Al usarlos confirmas que cumples esta condición.",
         ],
       },
       {
-        title: "Reservas",
+        title: "Uso del sitio",
         paragraphs: [
-          "Las reservas se gestionan a través de nuestro motor de reservas o de forma directa. Las condiciones de pago y cancelación se indican en cada confirmación.",
+          "Este sitio ofrece información sobre las habitaciones, servicios y tarifas del motel. Al usarlo aceptas hacerlo de forma lícita y respetuosa.",
+        ],
+      },
+      {
+        title: "Reservas y tarifas",
+        paragraphs: [
+          "Las reservas se gestionan por WhatsApp o por teléfono y están sujetas a disponibilidad. Las tarifas publicadas pueden cambiar; la vigente es la que te confirmamos al reservar.",
         ],
       },
       {
         title: "Contenido",
         paragraphs: [
-          "Textos, fotografías y diseño son propiedad del alojamiento o se usan con licencia. No está permitido reutilizarlos sin autorización.",
+          "Textos, fotografías y diseño son propiedad del motel o se usan con autorización. Las habitaciones tienen varias versiones, por lo que el color y la distribución pueden variar respecto a las fotos.",
         ],
       },
       {
         title: "Enlaces externos",
         paragraphs: [
-          "El sitio puede enlazar a servicios de terceros (mapas, reservas, redes sociales). No somos responsables de su contenido ni de sus políticas.",
+          "El sitio enlaza a servicios de terceros (WhatsApp, mapas y redes sociales). No somos responsables de su contenido ni de sus políticas.",
         ],
       },
       {
