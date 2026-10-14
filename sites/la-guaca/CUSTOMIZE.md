@@ -1,41 +1,29 @@
-# Personalizar este sitio (plantilla-asterre)
+# Personalizar este sitio (la-guaca)
 
-Todo lo específico de un cliente vive en **4 puntos**. Los componentes y páginas solo componen datos: no hace falta editarlos para entregar un sitio.
+Sitio de La Guaca Motel, generado desde `plantilla-asterre` y adaptado a motel (tono `motel-copywriting` K1 + K2). Fuente de datos: `recursos/la-guaca/brief.md`. Guía de voz: `docs/research/la-guaca/guia-de-voz.md`.
 
 | # | Qué cambia | Archivo | Qué contiene |
 | :-- | :-- | :-- | :-- |
-| 1 | Identidad y contacto | `src/config/site.ts` | dominio (`CLIENT_DOMAIN`), nombre, SEO, `locale`, año de fundación, enlaces de reservas y mapas, teléfono, correo, dirección, redes, valoración, `themeColor`, fuentes precargadas, menú (`NAV_LINKS`) y enlaces legales |
-| 2 | Marca visual | `src/styles/theme.css` | colores, tipografías (`@font-face`), anchos y espaciados |
-| 3 | Textos y datos | `src/data/content.ts` | `PAGES` (copys de cada página), `UI_LABELS` (botones, menús, formularios, accesibilidad), `ROOMS`, `EXPERIENCES`, `PRIVATE_EXPERIENCES`, `PLACES`, `STAY_INFO`, `INCLUDED`, `DISTANCES` y mapa de imágenes `IMAGES` |
-| 4 | Activos | `public/` | fotos `.webp`, `favicon.svg`, mapa `retreat-map.svg` y fuentes `.woff2` |
+| 1 | Identidad y contacto | `src/config/site.ts` | dominio (`CLIENT_DOMAIN`), número de WhatsApp (`WHATSAPP_NUMBER`), nombre, SEO, `locale`, mapa, teléfono, correo, dirección, redes, `themeColor`, fuentes precargadas, menú (`NAV_LINKS`) y enlaces legales |
+| 2 | Marca visual | `src/styles/theme.css` | negro, rojo y dorado del logo (`--color-*`), tipografías (`@font-face`) y medidas |
+| 3 | Textos y datos | `src/data/content.ts` | `ROOMS` (tarifa, horas, persona/hora adicional, características propias, fotos), `COMMON_AMENITIES`, `INCLUDED`, `EXPERIENCES`, `STAY_INFO`, `PAGES` (incluida la FAQ), `UI_LABELS` y `WHATSAPP_MESSAGES` |
+| 4 | Activos | `public/` | fotos `.webp` en `public/images`, `logo.webp`, `logo-mark.webp`, `og-image.jpg`, `favicon.png`, `apple-touch-icon.png` y fuentes `.woff2` |
 
-## Flujo recomendado
+## Rutas
 
-1. `pnpm new-client-site <slug> --from plantilla-asterre --name "..." --domain "..."`
-2. Edita los 4 puntos en este orden: `site.ts` → `theme.css` → `content.ts` → `public/`.
-3. `pnpm customize:check <slug>` y corrige todo lo que reporte.
-4. `pnpm verify` y `SITE_FOLDER=<slug> pnpm test:visual`.
+`/`, `/habitaciones`, `/habitaciones/<slug>` (una por entrada de `ROOMS`), `/experiencias`, `/contacto`, `/politica-de-privacidad`, `/terminos-de-uso` y la 404.
 
-## Detalles por punto
+## Notas
 
-### 1. `src/config/site.ts`
-- `bookingUrl` y `mapsUrl` alimentan todos los botones "Ver disponibilidad" y "Abrir en mapas".
-- Si el cliente no tiene valoraciones, elimina `rating`: se ocultan las insignias.
-- `CLIENT_DOMAIN` debe coincidir con `SITE_URL` en Coolify.
-
-### 2. `src/styles/theme.css`
-- Cambia primero `--color-*` y `--font-*`. Si cambias fuentes, añade los `.woff2` a `public/fonts/`, actualiza `@font-face` y `preloadFonts`.
-
-### 3. `src/data/content.ts`
-- `ROOMS` genera `/rooms/<slug>` automáticamente: una entrada por habitación, con su galería de 5 fotos (`room-<clave>`, `-wide`, `-tall`, `-detail`, `-inset`).
-- Al cambiar de idioma, traduce `UI_LABELS`, `PAGES`, `NAV_LINKS`/`LEGAL_LINKS` y ajusta `locale` en `site.ts` (el atributo `lang` se deriva de él).
-- Los textos legales (`PAGES.privacy`, `PAGES.terms`) son de ejemplo: deben revisarlos los asesores legales del cliente.
-
-### 4. `public/`
-Reemplaza cada imagen conservando nombre y proporción. Los nombres y usos están en `IMAGES` (`src/data/content.ts`); formato `.webp`, lado largo ≥ 1600 px (hero ≥ 2400 px). La imagen para compartir se define en `ogImage` de `site.ts`.
+- **WhatsApp:** todos los CTA usan `whatsappUrl(mensaje)` de `content.ts`, que arma un enlace `wa.me` con `buildWhatsAppUrl`. Los mensajes viven en `WHATSAPP_MESSAGES`. El formulario de contacto abre WhatsApp con el mensaje ya redactado.
+- **Fotos de habitación:** `image` es la foto principal y `gallery` las adicionales. Con 2 o más fotos aparece el collage; la tercera y la cuarta llenan la sección de detalles. Las fotos de la Suite son de 768 px: conviene reemplazarlas por originales de al menos 1600 px.
+- **Regenerar activos:** se optimizan desde `recursos/la-guaca/` a WebP (lado largo ≤ 2400 px en hero y 1440 px en habitaciones).
+- **Textos legales:** son una base genérica y debe revisarlos el asesor legal del cliente.
 
 ## Checklist de entrega
-- [ ] `pnpm customize:check <slug> --strict` sin hallazgos
-- [ ] Sin fotos, textos ni contactos de la plantilla en el sitio publicado
+
+- [ ] `pnpm customize:check la-guaca --strict` sin hallazgos (requiere el dominio definitivo; ver abajo)
 - [ ] Textos legales revisados por el cliente
 - [ ] `pnpm verify` y Visual QA en verde
+
+> `CLIENT_DOMAIN` es hoy `la-guaca.nexobite.com`, como pide el brief. `customize:check` trata `nexobite.com` como dominio de ejemplo, así que la verificación estricta falla hasta tener el dominio propio del cliente.
