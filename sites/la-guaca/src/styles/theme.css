@@ -17,24 +17,32 @@
 }
 
 :root {
-  --color-primary: #734e34;
-  --color-accent: #e8e0d1;
-  --color-bg: #e8e0d1;
-  --color-surface: #734e34;
-  --color-text: #261a11;
-  --color-muted: rgba(38, 26, 17, 0.6);
-  --color-light: #e8e0d1;
-  --color-light-muted: rgba(232, 224, 209, 0.6);
-  --color-overlay: rgba(38, 26, 17, 0.5);
-  --color-line-dark: rgba(38, 26, 17, 0.2);
-  --color-line-light: rgba(232, 224, 209, 0.2);
+  /* La Guaca: negro y rojo (brief) con el dorado del logo como acento fino */
+  --color-primary: #e0303f;
+  --color-accent: #b5121b;
+  --color-on-accent: #ffffff;
+  --color-gold: #d19a5b;
+  --color-bg: #0b0909;
+  --color-surface: #3a0a0e;
+  --color-text: #f4ece4;
+  --color-muted: rgba(244, 236, 228, 0.66);
+  --color-light: #f4ece4;
+  --color-light-muted: rgba(244, 236, 228, 0.66);
+  --color-overlay: rgba(11, 9, 9, 0.55);
+  --color-shade: rgba(11, 9, 9, 0.6);
+  --color-shade-clear: rgba(11, 9, 9, 0);
+  --color-media: rgba(244, 236, 228, 0.06);
+  --color-line-dark: rgba(244, 236, 228, 0.18);
+  --color-line-light: rgba(244, 236, 228, 0.2);
+  --color-whatsapp: #25d366;
+  --color-on-whatsapp: #0b0909;
 
   --font-display: "Forum", "Times New Roman", serif;
   --font-sans: "Almarai", system-ui, sans-serif;
 
   --max-width: 1440px;
   --gutter: 32px;
-  --section-space: 240px;
+  --section-space: 200px;
   --radius-md: 0;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --header-height: 62px;
@@ -42,13 +50,13 @@
 
 @media (max-width: 1199px) {
   :root {
-    --section-space: 160px;
+    --section-space: 140px;
   }
 }
 
 @media (max-width: 809px) {
   :root {
     --gutter: 24px;
-    --section-space: 120px;
+    --section-space: 96px;
   }
 }
