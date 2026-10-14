@@ -41,13 +41,47 @@
 - Tipografías:
 - Archivos: ver `marca/`
 
-## Habitaciones / servicios
+## Servicios incluidos en todas las habitaciones
 
-<!-- Una entrada por habitación o servicio: nombre, tarifa, duración, capacidad, equipamiento, carpeta de fotos -->
+<!-- Lo que se repite en cada habitación (garaje, aire, TV, nevera, servicio a la habitación...). Escríbelo aquí una sola vez y no lo repitas en cada habitación. -->
 
-| Nombre | Tarifa | Duración | Capacidad | Equipamiento | Fotos |
-| :-- | :-- | :-- | :-- | :-- | :-- |
-|  |  |  |  |  |  |
+-
+
+## Restaurante / otros servicios
+
+<!-- Horario, rango de precios y notas. Ejemplo: "24 horas · platos desde $16.500 hasta $51.700" -->
+
+-
+
+## Nota general de habitaciones
+
+<!-- Texto que aplica a todas. Ejemplo: "Hay diferentes versiones de cada habitación; el color y la distribución pueden variar." -->
+
+-
+
+## Habitaciones
+
+<!-- Copia el bloque de abajo una vez por habitación, en orden de menor a mayor categoría.
+     Solo se registra lo que es EXCLUSIVO de esa habitación o la diferencia de las demás.
+     Datos que no tengas: déjalos vacíos (serán pendientes). -->
+
+### <NOMBRE DE LA HABITACIÓN>
+
+- Tarifa base: $ <valor>
+- Duración incluida: <ej. 5 horas>
+- Persona adicional: $ <valor>
+- Hora adicional: $ <valor>
+- Capacidad: <ej. 2 personas>
+- Características propias:
+  - <ej. Jacuzzi con agua caliente>
+  - <ej. Silla del amor>
+  - <ej. Turco>
+- Restricciones o excepciones: <ej. "Domo y fuente de agua: solo en la habitación 46">
+- Fotos: `fotos/habitaciones/<nombre-habitacion>/`
+- Notas: <opcional>
+
+<!-- Ejemplo de uso (no copiar): "### SUITE · $ 115.000 por 5 horas · Persona adicional $ 57.500 · Hora adicional $ 23.000 · Características propias: Jacuzzi con agua caliente, Silla del amor" -->
+
 
 ## Páginas
 

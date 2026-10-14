@@ -23,7 +23,8 @@ Dentro de este monorepo la skill **no depende de datos pegados en el prompt**: l
 | :-- | :-- |
 | Estilo (1-10), tono principal, tono secundario, persona gramatical, público objetivo | Sección "Tono" de `brief.md` |
 | Nombre, contacto, WhatsApp, dirección, horarios, pagos, políticas | `brief.md` (secciones Contacto y Horarios) |
-| Habitaciones, tarifas, duración, capacidad, equipamiento | Tabla "Habitaciones / servicios" de `brief.md` |
+| Habitaciones, tarifas, duración, persona/hora adicional, características propias y excepciones | Bloques `### <HABITACIÓN>` de la sección "Habitaciones" de `brief.md` |
+| Servicios comunes (garaje, aire, TV…), restaurante y nota general | Secciones "Servicios incluidos en todas las habitaciones", "Restaurante / otros servicios" y "Nota general de habitaciones" de `brief.md` (no los repitas por habitación) |
 | FAQ, promociones, notas | `brief.md` y archivos de `textos/` |
 | Textos previos del cliente | `textos/` (úsalos como base, respeta los datos reales) |
 | Identidad visual y fotos (para `alt` y coherencia) | `marca/` y `fotos/` |
