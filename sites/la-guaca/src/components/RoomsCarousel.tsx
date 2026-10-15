@@ -24,13 +24,14 @@ interface Metrics {
   step: number;
 }
 
-const DESKTOP: Metrics = { slide: 800, step: 852 };
-const MOBILE: Metrics = { slide: 342, step: 320 };
+// Diapositivas verticales (3:4): las fotos de las habitaciones son retrato.
+const DESKTOP: Metrics = { slide: 480, step: 512 };
+const MOBILE: Metrics = { slide: 300, step: 316 };
 
 function getMetrics(): Metrics {
   if (typeof window === "undefined") return DESKTOP;
   if (window.innerWidth < 810) return MOBILE;
-  if (window.innerWidth < 1200) return { slide: 600, step: 640 };
+  if (window.innerWidth < 1200) return { slide: 420, step: 452 };
   return DESKTOP;
 }
 

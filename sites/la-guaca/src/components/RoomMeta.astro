@@ -8,7 +8,8 @@ export interface Props {
 
 const { room, showHours = true } = Astro.props;
 const features = UI_LABELS.roomFeatures(room.cardFeatures);
-const items = showHours ? [UI_LABELS.hoursIncluded(room.hours), features] : [features];
+const items =
+  showHours && room.hours ? [UI_LABELS.hoursIncluded(room.hours), features] : [features];
 ---
 
 <span class="room-meta t-body">

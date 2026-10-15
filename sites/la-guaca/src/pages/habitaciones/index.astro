@@ -15,6 +15,7 @@ import {
   PAGES,
   ROOMS,
   ROOMS_INFO,
+  roomExtras,
   UI_LABELS,
   WHATSAPP_MESSAGES,
   whatsappUrl,
@@ -25,11 +26,7 @@ const page = PAGES.rooms;
 
 const rates = ROOMS.map((room) => ({
   label: room.name,
-  value: [
-    UI_LABELS.priceFor(room.price, room.hours),
-    UI_LABELS.extraPerson(room.extraPerson),
-    UI_LABELS.extraHour(room.extraHour),
-  ].join(" · "),
+  value: [UI_LABELS.priceFor(room.price, room.hours), ...roomExtras(room)].join(" · "),
 }));
 ---
 
@@ -60,7 +57,7 @@ const rates = ROOMS.map((room) => ({
               </a>
               <div class="room-card__body">
                 <p class="t-lead">{UI_LABELS.priceShort(room.price, room.hours)}</p>
-                <RoomMeta room={room} />
+                <RoomMeta room={room} showHours={false} />
                 <p class="t-body room-card__pitch">{room.cardPitch}</p>
                 <a
                   href={whatsappUrl(WHATSAPP_MESSAGES.room(room.name, room.price))}
@@ -171,9 +168,10 @@ const rates = ROOMS.map((room) => ({
     margin: 64px 0 24px;
   }
 
+  /* Fotos en retrato: tres columnas en escritorio, dos en tableta y una en móvil */
   .rooms-grid__list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 64px 16px;
   }
 
@@ -190,7 +188,7 @@ const rates = ROOMS.map((room) => ({
   }
 
   .room-card__media {
-    aspect-ratio: 680 / 510;
+    aspect-ratio: 4 / 5;
   }
 
   .room-card__media img {
@@ -214,6 +212,12 @@ const rates = ROOMS.map((room) => ({
 
   .room-card__cta {
     margin-top: 8px;
+  }
+
+  @media (max-width: 1199px) {
+    .rooms-grid__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   @media (max-width: 809px) {

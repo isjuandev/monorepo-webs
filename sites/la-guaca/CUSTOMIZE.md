@@ -16,7 +16,7 @@ Sitio de La Guaca Motel, generado desde `plantilla-asterre` y adaptado a motel (
 ## Notas
 
 - **WhatsApp:** todos los CTA usan `whatsappUrl(mensaje)` de `content.ts`, que arma un enlace `wa.me` con `buildWhatsAppUrl`. Los mensajes viven en `WHATSAPP_MESSAGES`. El formulario de contacto abre WhatsApp con el mensaje ya redactado.
-- **Fotos de habitación:** `image` es la foto principal y `gallery` las adicionales. Con 2 o más fotos aparece el collage; la tercera y la cuarta llenan la sección de detalles. Las fotos de la Suite son de 768 px: conviene reemplazarlas por originales de al menos 1600 px.
+- **Fotos de habitación:** `image` es la portada (tarjetas, carrusel y primera foto de la galería) y `gallery` las demás, en orden. Están pensadas en retrato (3:4 o 9:16): en móvil la galería se desliza y en escritorio es un mosaico con la portada en 2x2. La segunda y la tercera foto se repiten en la sección de detalles. Nombres: `public/images/<slug>-NN.webp`.
 - **Regenerar activos:** se optimizan desde `recursos/la-guaca/` a WebP (lado largo ≤ 2400 px en hero y 1440 px en habitaciones).
 - **Textos legales:** son una base genérica y debe revisarlos el asesor legal del cliente.
 

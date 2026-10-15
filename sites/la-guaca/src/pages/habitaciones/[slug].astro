@@ -4,10 +4,10 @@ import ClosingCta from "@/components/ClosingCta.astro";
 import LinkButton from "@/components/LinkButton.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 import FeatureGrid from "@/components/sections/FeatureGrid.astro";
-import ImageStatement from "@/components/sections/ImageStatement.astro";
 import InfoGrid from "@/components/sections/InfoGrid.astro";
 import LocationCta from "@/components/sections/LocationCta.astro";
 import PageHero from "@/components/sections/PageHero.astro";
+import RoomGallery from "@/components/sections/RoomGallery.astro";
 import RoomsSlider from "@/components/sections/RoomsSlider.astro";
 import { siteConfig } from "@/config/site";
 import {
@@ -18,6 +18,7 @@ import {
   ROOMS,
   ROOMS_INFO,
   type Room,
+  roomExtras,
   UI_LABELS,
   whatsappUrl,
 } from "@/data/content";
@@ -34,8 +35,9 @@ const { room } = Astro.props;
 const page = PAGES.room;
 const infoCopy = PAGES.rooms.info;
 const locationCopy = PAGES.rooms.location;
-const [galleryTall, galleryWide, detailMain, detailInset] = room.gallery;
-const detailPhoto = detailMain ?? room.image;
+const photos = [room.image, ...room.gallery];
+// La sección de detalles repite dos fotos de la galería (la segunda y la tercera)
+const [detailPhoto = room.image, detailInset] = room.gallery;
 const otherRooms = ROOMS.filter((item) => item.slug !== room.slug);
 const reserveHref = whatsappUrl(room.reserveMessage);
 
@@ -44,11 +46,7 @@ const detailGroups = [
   { label: page.groups.common, items: COMMON_AMENITIES },
   {
     label: page.groups.rates,
-    items: [
-      UI_LABELS.priceFor(room.price, room.hours),
-      UI_LABELS.extraPerson(room.extraPerson),
-      UI_LABELS.extraHour(room.extraHour),
-    ],
+    items: [UI_LABELS.priceFor(room.price, room.hours), ...roomExtras(room)],
   },
   { label: page.groups.notes, items: [...(room.notes ?? []), ROOM_VERSIONS_NOTE, DAWN_NOTE] },
 ];
@@ -65,11 +63,16 @@ const detailGroups = [
     title={room.name}
     sideLeft={UI_LABELS.hoursIncluded(room.hours)}
     sideRight={room.highlight}
-    bottomLeft={UI_LABELS.extraPerson(room.extraPerson)}
+    bottomLeft={roomExtras(room)[0]}
     bottomRight={UI_LABELS.priceFor(room.price, room.hours)}
   />
 
-  <ImageStatement image={room.image.src} overlay={false} />
+  <RoomGallery
+    photos={photos}
+    label={UI_LABELS.gallery}
+    hint={UI_LABELS.swipeHint}
+    cta={{ title: UI_LABELS.galleryCtaTitle, label: room.reserveCta, href: reserveHref }}
+  />
 
   <section class="section overview">
     <div class="container overview__inner">
@@ -82,19 +85,6 @@ const detailGroups = [
   </section>
 
   <FeatureGrid items={room.features} compact />
-
-  {
-    galleryTall && galleryWide && (
-      <section class="collage" aria-label={UI_LABELS.gallery}>
-        <div class="media collage__tall" data-speed="0.1">
-          <img src={galleryTall.src} alt={galleryTall.alt} loading="lazy" />
-        </div>
-        <div class="media collage__wide" data-reveal>
-          <img src={galleryWide.src} alt={galleryWide.alt} loading="lazy" />
-        </div>
-      </section>
-    )
-  }
 
   <section class="details">
     <div class="details__media">
@@ -168,29 +158,6 @@ const detailGroups = [
     max-width: 640px;
   }
 
-  .collage {
-    position: relative;
-    height: 1320px;
-    padding: 160px 0;
-  }
-
-  .collage__wide {
-    position: absolute;
-    right: 0;
-    top: 360px;
-    width: 66.67%;
-    aspect-ratio: 4 / 3;
-  }
-
-  .collage__tall {
-    position: absolute;
-    left: 10.3%;
-    top: 160px;
-    z-index: 1;
-    width: 448px;
-    aspect-ratio: 3 / 4;
-  }
-
   .details {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -208,10 +175,10 @@ const detailGroups = [
 
   .details__inset {
     position: absolute;
-    right: -224px;
-    top: 600px;
-    width: 448px;
-    aspect-ratio: 4 / 3;
+    right: -168px;
+    top: 560px;
+    width: 336px;
+    aspect-ratio: 3 / 4;
   }
 
   .details__content {
@@ -235,28 +202,6 @@ const detailGroups = [
   }
 
   @media (max-width: 1199px) {
-    .collage {
-      height: auto;
-      display: grid;
-      grid-template-columns: 1fr 1.6fr;
-      gap: 16px;
-      padding: 120px var(--gutter);
-    }
-
-    .collage__wide,
-    .collage__tall {
-      position: static;
-      width: auto;
-    }
-
-    .collage__tall {
-      margin-bottom: 160px;
-    }
-
-    .collage__wide {
-      align-self: end;
-    }
-
     .details__inset {
       display: none;
     }
@@ -271,16 +216,6 @@ const detailGroups = [
   }
 
   @media (max-width: 809px) {
-    .collage {
-      grid-template-columns: 1fr;
-      padding: 80px var(--gutter);
-    }
-
-    .collage__tall {
-      margin-bottom: 0;
-      width: 70%;
-    }
-
     .details {
       grid-template-columns: 1fr;
       min-height: 0;

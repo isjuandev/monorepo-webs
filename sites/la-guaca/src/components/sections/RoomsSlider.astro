@@ -19,7 +19,7 @@ const carouselRooms = rooms.map(({ slug, name, hours, cardFeatures, price, image
   name,
   image: image.src,
   imageAlt: image.alt,
-  meta: [UI_LABELS.hoursIncluded(hours), UI_LABELS.roomFeatures(cardFeatures)],
+  meta: [...(hours ? [UI_LABELS.hoursIncluded(hours)] : []), UI_LABELS.roomFeatures(cardFeatures)],
   priceLabel: UI_LABELS.priceShort(price, hours),
 }));
 ---
@@ -73,7 +73,7 @@ const carouselRooms = rooms.map(({ slug, name, hours, cardFeatures, price, image
   .rooms-slider :global(.rc__slide) {
     position: relative;
     display: block;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 3 / 4;
     overflow: hidden;
     color: var(--color-light);
     transform: scale(0.8);
@@ -98,7 +98,7 @@ const carouselRooms = rooms.map(({ slug, name, hours, cardFeatures, price, image
     left: 0;
     right: 0;
     bottom: 0;
-    height: 33%;
+    height: 55%;
     background: linear-gradient(to bottom, var(--color-shade-clear), var(--color-shade));
   }
 
@@ -108,9 +108,9 @@ const carouselRooms = rooms.map(({ slug, name, hours, cardFeatures, price, image
     right: 32px;
     bottom: 32px;
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .rooms-slider :global(.rc__name-group) {
@@ -163,11 +163,11 @@ const carouselRooms = rooms.map(({ slug, name, hours, cardFeatures, price, image
   }
 
   .rooms-slider :global(.rc__arrow--prev) {
-    left: calc(50% - 484px);
+    left: calc(50% - 300px);
   }
 
   .rooms-slider :global(.rc__arrow--next) {
-    right: calc(50% - 484px);
+    right: calc(50% - 300px);
   }
 
   .rooms-slider :global(.rc__status) {
@@ -180,19 +180,15 @@ const carouselRooms = rooms.map(({ slug, name, hours, cardFeatures, price, image
 
   @media (max-width: 1199px) {
     .rooms-slider :global(.rc__arrow--prev) {
-      left: calc(50% - 356px);
+      left: calc(50% - 270px);
     }
 
     .rooms-slider :global(.rc__arrow--next) {
-      right: calc(50% - 356px);
+      right: calc(50% - 270px);
     }
   }
 
   @media (max-width: 809px) {
-    .rooms-slider :global(.rc__slide) {
-      aspect-ratio: 1 / 1;
-    }
-
     .rooms-slider :global(.rc__info) {
       left: 24px;
       right: 24px;

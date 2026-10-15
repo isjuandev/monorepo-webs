@@ -38,7 +38,7 @@ export const siteConfig: ClientSiteConfig = {
   url: normalizeSiteUrl(CLIENT_DOMAIN),
   title: "La Guaca Motel | Habitaciones con jacuzzi en Armenia",
   description:
-    "Motel en el km 2 vía Montenegro, Armenia. Abierto 24/7: cinco categorías con jacuzzi de agua caliente y garaje privado desde $115.000 por 5 horas.",
+    "Motel en el km 2 vía Montenegro, Armenia. Abierto 24/7: nueve habitaciones con jacuzzi y parqueadero privado, desde $75.000 por 5 horas.",
   locale: "es_CO",
   ogImage: "/images/og-image.jpg",
   bookingUrl: buildWhatsAppUrl(WHATSAPP_NUMBER),
