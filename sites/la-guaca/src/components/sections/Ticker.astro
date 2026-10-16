@@ -1,0 +1,78 @@
+---
+export interface TickerRow {
+  text: string;
+  image: string;
+}
+
+export interface Props {
+  rows: [TickerRow, TickerRow];
+}
+
+const { rows } = Astro.props;
+const REPEAT = 3;
+---
+
+<section class="ticker bg-brown" aria-label={rows.map((row) => row.text).join(" · ")}>
+  {
+    rows.map((row, rowIndex) => (
+      <div class="ticker__viewport" aria-hidden="true">
+        <div class="ticker__row" data-ticker-row={rowIndex === 0 ? "left" : "right"}>
+          {Array.from({ length: REPEAT }, () => (
+            <>
+              <span class="t-display ticker__text">{row.text}</span>
+              <img src={row.image} alt="" class="ticker__image" loading="lazy" />
+            </>
+          ))}
+        </div>
+      </div>
+    ))
+  }
+</section>
+
+<style>
+  .ticker {
+    padding: 240px 0 0;
+    overflow: hidden;
+  }
+
+  .ticker__viewport {
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid var(--color-line-light);
+  }
+
+  .ticker__row {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    flex-shrink: 0;
+    padding: 0 20px;
+    will-change: transform;
+  }
+
+  .ticker__text {
+    white-space: nowrap;
+  }
+
+  .ticker__image {
+    width: 296px;
+    height: 167px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 809px) {
+    .ticker {
+      padding-top: 120px;
+    }
+
+    .ticker__row {
+      gap: 20px;
+    }
+
+    .ticker__image {
+      width: 120px;
+      height: 68px;
+    }
+  }
+</style>

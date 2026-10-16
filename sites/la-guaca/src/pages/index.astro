@@ -1,0 +1,174 @@
+---
+import BrandMark from "@/components/BrandMark.astro";
+import ClosingCta from "@/components/ClosingCta.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import ExperienceShowcase from "@/components/sections/ExperienceShowcase.astro";
+import FeatureGrid from "@/components/sections/FeatureGrid.astro";
+import HomeHero from "@/components/sections/HomeHero.astro";
+import ImageStatement from "@/components/sections/ImageStatement.astro";
+import LocationCta from "@/components/sections/LocationCta.astro";
+import RoomsSlider from "@/components/sections/RoomsSlider.astro";
+import StaggeredGallery from "@/components/sections/StaggeredGallery.astro";
+import Ticker from "@/components/sections/Ticker.astro";
+import { IMAGES, PAGES, ROOMS, UI_LABELS, WHATSAPP_MESSAGES, whatsappUrl } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const page = PAGES.home;
+
+const showcaseHover = Object.fromEntries(page.showcase.map((exp) => [exp.id, exp.image]));
+const [occasionMain, occasionSecond] = IMAGES.homeOccasions;
+---
+
+<BaseLayout>
+  <HomeHero
+    image={IMAGES.homeHero.src}
+    imageMobile={IMAGES.homeHeroMobile}
+    label={page.hero.label}
+    title={page.hero.title}
+    sideLeft={page.hero.sideLeft}
+    sideRight={page.hero.sideRight}
+    intro={page.hero.intro}
+    primaryAction={{
+      label: UI_LABELS.checkAvailability,
+      href: whatsappUrl(WHATSAPP_MESSAGES.hero),
+    }}
+    secondaryAction={{ label: UI_LABELS.viewRooms, href: "/habitaciones" }}
+  />
+
+  <ImageStatement image={IMAGES.homeIntro} align="spread">
+    <BrandMark />
+    <div class="highlights" data-reveal>
+      {
+        page.highlights.map((block) => (
+          <div class="highlights__block">
+            <p class="t-label">{block.label}</p>
+            <ul>
+              {block.items.map((item) => (
+                <li class="t-body">{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+    <SectionHeading title={page.intro.title} text={page.intro.text}>
+      <LinkButton href="/habitaciones" variant="primary" blockMobile>{page.intro.cta}</LinkButton>
+    </SectionHeading>
+  </ImageStatement>
+
+  <ImageStatement image={IMAGES.homeFacade} imageMobile={IMAGES.homeFacadeMobile}>
+    <SectionHeading
+      title={page.jacuzzi.title}
+      text={page.jacuzzi.text}
+      sideLeft={page.jacuzzi.sideLeft}
+      sideRight={page.jacuzzi.sideRight}
+    >
+      <LinkButton href={`#${page.experiences.id}`} variant="primary" blockMobile>
+        {page.jacuzzi.cta}
+      </LinkButton>
+    </SectionHeading>
+  </ImageStatement>
+
+  <RoomsSlider rooms={ROOMS} title={page.rooms.title} text={page.rooms.text} />
+
+  <FeatureGrid
+    label={page.rates.label}
+    title={page.rates.title}
+    text={page.rates.text}
+    items={page.rates.items}
+    columns={2}
+    numbered
+  />
+
+  <StaggeredGallery
+    label={page.occasions.label}
+    title={page.occasions.title}
+    text={page.occasions.text}
+    images={[occasionMain.src, occasionSecond.src]}
+    alts={[occasionMain.alt, occasionSecond.alt]}
+  >
+    <LinkButton href={whatsappUrl(WHATSAPP_MESSAGES.occasion)}>{page.occasions.cta}</LinkButton>
+  </StaggeredGallery>
+
+  <FeatureGrid items={page.occasions.items} compact />
+
+  <ExperienceShowcase
+    id={page.experiences.id}
+    label={page.experiences.label}
+    title={page.experiences.title}
+    image={IMAGES.homeExperiences}
+    hoverImages={showcaseHover}
+    experiences={page.showcase}
+    showText
+  />
+
+  <FeatureGrid
+    label={page.privacy.label}
+    title={page.privacy.title}
+    text={page.privacy.text}
+    items={page.privacy.items}
+    columns={2}
+  />
+
+  <FeatureGrid
+    label={page.roomService.label}
+    title={page.roomService.title}
+    text={page.roomService.text}
+    items={page.roomService.items}
+    compact
+  />
+
+  <LocationCta
+    label={page.location.label}
+    title={page.location.title}
+    text={page.location.text}
+    wazeLabel={UI_LABELS.openInWaze}
+    mapsLabel={UI_LABELS.openInGoogleMaps}
+  />
+
+  <Ticker
+    rows={[
+      { text: page.ticker[0], image: IMAGES.ticker[0] },
+      { text: page.ticker[1], image: IMAGES.ticker[1] },
+    ]}
+  />
+
+  <ClosingCta />
+</BaseLayout>
+
+<style>
+  .highlights {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 32px;
+    width: 100%;
+  }
+
+  .highlights::before {
+    content: "";
+    grid-column: 2;
+    grid-row: 1;
+    background: currentColor;
+  }
+
+  .highlights__block {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 12px 0;
+    text-align: left;
+  }
+
+  .highlights__block:first-child {
+    grid-column: 1;
+    grid-row: 1;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .highlights__block:last-child {
+    grid-column: 3;
+    grid-row: 1;
+  }
+</style>

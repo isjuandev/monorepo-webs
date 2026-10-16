@@ -1,0 +1,41 @@
+---
+import { type Room, UI_LABELS } from "@/data/content";
+
+export interface Props {
+  room: Pick<Room, "hours" | "cardFeatures">;
+  showHours?: boolean;
+}
+
+const { room, showHours = true } = Astro.props;
+const features = UI_LABELS.roomFeatures(room.cardFeatures);
+const items =
+  showHours && room.hours ? [UI_LABELS.hoursIncluded(room.hours), features] : [features];
+---
+
+<span class="room-meta t-body">
+  {
+    items.map((item, i) => (
+      <>
+        {i > 0 && <i aria-hidden="true" />}
+        <span>{item}</span>
+      </>
+    ))
+  }
+</span>
+
+<style>
+  .room-meta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .room-meta i {
+    display: inline-block;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+</style>

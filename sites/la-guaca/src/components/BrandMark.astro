@@ -1,0 +1,44 @@
+---
+import { siteConfig } from "@/config/site";
+import { IMAGES, UI_LABELS } from "@/data/content";
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={["brand-mark", className]}>
+  <img
+    src={IMAGES.logo}
+    alt={UI_LABELS.logoAlt(siteConfig.name)}
+    class="brand-mark__logo"
+    width="640"
+    height="779"
+    loading="lazy"
+    decoding="async"
+  />
+  <p class="t-label">{UI_LABELS.openAllHours}</p>
+</div>
+
+<style>
+  .brand-mark {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .brand-mark__logo {
+    width: 180px;
+    height: auto;
+  }
+
+  @media (max-width: 809px) {
+    .brand-mark__logo {
+      width: 140px;
+    }
+  }
+</style>

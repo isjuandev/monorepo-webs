@@ -1,0 +1,38 @@
+---
+export interface Props {
+  text: string;
+  as?: "h1" | "h2" | "p" | "div" | "span";
+  class?: string;
+  /** Retraso inicial de la animación en segundos */
+  delay?: number;
+}
+
+const { text, as: Tag = "h2", class: className, delay = 0 } = Astro.props;
+
+// Divide el texto en palabras y letras para la entrada escalonada (desenfoque + opacidad).
+let index = 0;
+const words = text.split(" ").map((word) =>
+  [...word].map((char) => {
+    index += 1;
+    return { char, i: index };
+  })
+);
+---
+
+<Tag
+  class={className}
+  aria-label={text}
+  data-split
+  style={delay ? `--split-delay: ${delay}s` : undefined}
+>
+  {
+    words.map((chars, wordIndex) => (
+      <>
+        <span class="split-word" aria-hidden="true">
+          {chars.map(({ char, i }) => <span class="split-char" style={`--i: ${i}`}>{char}</span>)}
+        </span>
+        {wordIndex < words.length - 1 && " "}
+      </>
+    ))
+  }
+</Tag>

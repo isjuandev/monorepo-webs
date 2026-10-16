@@ -1,0 +1,32 @@
+---
+export interface Props {
+  count?: number;
+}
+
+const { count = 5 } = Astro.props;
+---
+
+<span class="stars" role="img" aria-label={`${count} de 5 estrellas`}>
+  {
+    Array.from({ length: count }, () => (
+      <svg viewBox="0 0 14 14" aria-hidden="true">
+        <path
+          d="m7 .8 1.8 4.1 4.4.4-3.3 2.9 1 4.3L7 10.3l-3.9 2.2 1-4.3L.8 5.3l4.4-.4Z"
+          fill="currentColor"
+        />
+      </svg>
+    ))
+  }
+</span>
+
+<style>
+  .stars {
+    display: inline-flex;
+    gap: 2px;
+  }
+
+  .stars svg {
+    width: 14px;
+    height: 14px;
+  }
+</style>

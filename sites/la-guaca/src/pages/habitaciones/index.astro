@@ -1,0 +1,247 @@
+---
+import ArrowIcon from "@/components/ArrowIcon.astro";
+import ClosingCta from "@/components/ClosingCta.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import RoomMeta from "@/components/RoomMeta.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import FeatureGrid from "@/components/sections/FeatureGrid.astro";
+import InfoGrid from "@/components/sections/InfoGrid.astro";
+import LocationCta from "@/components/sections/LocationCta.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import { siteConfig } from "@/config/site";
+import {
+  IMAGES,
+  INCLUDED,
+  PAGES,
+  ROOMS,
+  ROOMS_INFO,
+  UI_LABELS,
+  WHATSAPP_MESSAGES,
+  whatsappUrl,
+} from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const page = PAGES.rooms;
+
+const rates = ROOMS.map((room) => ({
+  label: room.name,
+  // Horas y adicionales comunes van en una sola nota bajo la tabla
+  value: UI_LABELS.priceShort(room.price, room.hours),
+}));
+---
+
+<BaseLayout
+  title={`${page.meta.title} | ${siteConfig.name}`}
+  description={page.meta.description}
+  headerTone="dark"
+>
+  <PageHero
+    label={page.hero.label}
+    title={page.hero.title}
+    text={page.hero.text}
+    sideLeft={UI_LABELS.roomsCount(ROOMS.length)}
+    sideRight={page.hero.sideRight}
+  />
+
+  <section class="rooms-grid">
+    <div class="container">
+      <ul class="rooms-grid__list">
+        {
+          ROOMS.map((room, i) => (
+            <li data-reveal style={`--reveal-delay: ${(i % 2) * 0.1}s`} class="room-card">
+              <a href={`/habitaciones/${room.slug}`} class="room-card__link">
+                <div class="media room-card__media">
+                  <img src={room.image.src} alt={room.image.alt} loading={i < 2 ? "eager" : "lazy"} />
+                </div>
+                <h2 class="t-h3">{room.name}</h2>
+              </a>
+              <div class="room-card__body">
+                <p class="t-lead">{UI_LABELS.priceShort(room.price, room.hours)}</p>
+                <RoomMeta room={room} showHours={false} />
+                <p class="t-body room-card__pitch">{room.cardPitch}</p>
+                <a
+                  href={whatsappUrl(WHATSAPP_MESSAGES.room(room.name, room.price))}
+                  class="btn btn--secondary room-card__cta"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={UI_LABELS.roomCardCtaAria(room.name)}
+                >
+                  {UI_LABELS.roomCardCta}
+                  <ArrowIcon direction="external" />
+                </a>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section rooms-overview">
+    <div class="container rooms-overview__inner">
+      <SectionHeading label={page.overview.label} title={page.overview.title} />
+      <div class="media rooms-overview__image" data-reveal>
+        <img src={IMAGES.roomsOverview} alt="" loading="lazy" />
+      </div>
+      <p class="t-lead rooms-overview__text" data-reveal>
+        {page.overview.text}
+      </p>
+      <div data-reveal>
+        <LinkButton href={whatsappUrl(WHATSAPP_MESSAGES.versions)}>{page.overview.cta}</LinkButton>
+      </div>
+    </div>
+  </section>
+
+  <FeatureGrid
+    label={page.included.label}
+    title={page.included.title}
+    items={INCLUDED}
+    numbered
+  />
+
+  <InfoGrid
+    label={page.rates.label}
+    title={page.rates.title}
+    items={[...rates, page.rates.dawn]}
+    note={page.rates.note}
+  >
+    <LinkButton href={whatsappUrl(WHATSAPP_MESSAGES.dawnOrDecoration)}>{page.rates.cta}</LinkButton>
+  </InfoGrid>
+
+  <FeatureGrid
+    label={page.dining.label}
+    title={page.dining.title}
+    text={page.dining.text}
+    items={page.dining.items}
+  />
+
+  <div class="dining-cta" data-reveal>
+    <LinkButton href={whatsappUrl(WHATSAPP_MESSAGES.menu)}>{page.dining.cta}</LinkButton>
+  </div>
+
+  <InfoGrid
+    tone="brown"
+    label={page.info.label}
+    title={page.info.title}
+    items={ROOMS_INFO}
+    image={IMAGES.roomsInfo}
+  />
+
+  <LocationCta
+    title={page.location.title}
+    label={page.location.label}
+    wazeLabel={UI_LABELS.wazeShort}
+    mapsLabel={UI_LABELS.googleMapsShort}
+  />
+
+  <ClosingCta />
+</BaseLayout>
+
+<style>
+  .rooms-grid {
+    padding-bottom: 0;
+  }
+
+  .rooms-overview {
+    padding-bottom: 0;
+  }
+
+  .dining-cta {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 120px;
+  }
+
+  .rooms-overview__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .rooms-overview__image {
+    position: relative;
+    z-index: -1;
+    width: 640px;
+    max-width: 100%;
+    aspect-ratio: 640 / 440;
+    margin-top: -16px;
+  }
+
+  .rooms-overview__text {
+    max-width: 480px;
+    margin: 64px 0 24px;
+  }
+
+  /* Fotos en retrato: tres columnas en escritorio, dos en tableta y una en móvil */
+  .rooms-grid__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 64px 16px;
+  }
+
+  .room-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .room-card__link {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .room-card__media {
+    aspect-ratio: 4 / 5;
+  }
+
+  .room-card__media img {
+    transition: transform 1.2s var(--ease-out);
+  }
+
+  .room-card__link:hover .room-card__media img {
+    transform: scale(1.04);
+  }
+
+  .room-card__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .room-card__pitch {
+    max-width: 480px;
+  }
+
+  .room-card__cta {
+    margin-top: 8px;
+  }
+
+  @media (max-width: 1199px) {
+    .rooms-grid__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 809px) {
+    .rooms-overview__image {
+      margin-top: 32px;
+      z-index: auto;
+    }
+
+    .rooms-overview__text {
+      margin-top: 40px;
+    }
+
+    .rooms-grid__list {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .room-card__link {
+      gap: 24px;
+    }
+  }
+</style>

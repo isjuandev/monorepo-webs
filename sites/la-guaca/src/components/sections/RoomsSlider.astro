@@ -1,0 +1,219 @@
+---
+import LinkButton from "@/components/LinkButton.astro";
+import { RoomsCarousel } from "@/components/RoomsCarousel";
+import SectionHeading from "@/components/SectionHeading.astro";
+import { type Room, UI_LABELS } from "@/data/content";
+
+export interface Props {
+  rooms: Room[];
+  title: string;
+  text?: string;
+  tone?: "cream" | "brown";
+  startIndex?: number;
+}
+
+const { rooms, title, text, tone = "cream", startIndex = 0 } = Astro.props;
+
+const carouselRooms = rooms.map(({ slug, name, hours, cardFeatures, price, image }) => ({
+  slug,
+  name,
+  image: image.src,
+  imageAlt: image.alt,
+  meta: [...(hours ? [UI_LABELS.hoursIncluded(hours)] : []), UI_LABELS.roomFeatures(cardFeatures)],
+  priceLabel: UI_LABELS.priceShort(price, hours),
+}));
+---
+
+<section class:list={["section rooms-slider", tone === "brown" && "bg-brown"]}>
+  <div class="container">
+    <SectionHeading title={title} text={text}>
+      <LinkButton href="/habitaciones">{UI_LABELS.viewAllRooms}</LinkButton>
+    </SectionHeading>
+  </div>
+  <div class="rooms-slider__carousel" data-reveal>
+    <RoomsCarousel client:visible rooms={carouselRooms} startIndex={startIndex} />
+  </div>
+</section>
+
+<style>
+  .rooms-slider {
+    padding-bottom: 0;
+  }
+
+  .rooms-slider__carousel {
+    margin-top: 80px;
+  }
+
+  @media (max-width: 809px) {
+    .rooms-slider__carousel {
+      margin-top: 64px;
+    }
+  }
+
+  .rooms-slider :global(.rc) {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 0;
+  }
+
+  .rooms-slider :global(.rc__track) {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    touch-action: pan-y;
+    user-select: none;
+  }
+
+  .rooms-slider :global(.rc__slot) {
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .rooms-slider :global(.rc__slide) {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    color: var(--color-light);
+    transform: scale(0.8);
+    transition: transform 0.8s var(--ease-out);
+  }
+
+  .rooms-slider :global(.rc__slot.is-active .rc__slide) {
+    transform: none;
+  }
+
+  .rooms-slider :global(.rc__slide img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  .rooms-slider :global(.rc__overlay) {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 55%;
+    background: linear-gradient(to bottom, var(--color-shade-clear), var(--color-shade));
+  }
+
+  .rooms-slider :global(.rc__info) {
+    position: absolute;
+    left: 32px;
+    right: 32px;
+    bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .rooms-slider :global(.rc__name-group) {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .rooms-slider :global(.rc__meta) {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .rooms-slider :global(.rc__meta i) {
+    display: inline-block;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .rooms-slider :global(.rc__price) {
+    white-space: nowrap;
+  }
+
+  .rooms-slider :global(.rc__arrow) {
+    position: absolute;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    background: var(--color-media);
+    color: var(--color-text);
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition: background-color 0.3s ease;
+  }
+
+  .rooms-slider.bg-brown :global(.rc__arrow) {
+    background: var(--color-line-dark);
+    color: var(--color-light);
+  }
+
+  .rooms-slider :global(.rc__arrow:hover) {
+    background: var(--color-accent);
+  }
+
+  .rooms-slider :global(.rc__arrow--prev) {
+    left: calc(50% - 300px);
+  }
+
+  .rooms-slider :global(.rc__arrow--next) {
+    right: calc(50% - 300px);
+  }
+
+  .rooms-slider :global(.rc__status) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  @media (max-width: 1199px) {
+    .rooms-slider :global(.rc__arrow--prev) {
+      left: calc(50% - 270px);
+    }
+
+    .rooms-slider :global(.rc__arrow--next) {
+      right: calc(50% - 270px);
+    }
+  }
+
+  @media (max-width: 809px) {
+    .rooms-slider :global(.rc__info) {
+      left: 24px;
+      right: 24px;
+      bottom: 24px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .rooms-slider :global(.rc__arrow) {
+      top: auto;
+      bottom: -60px;
+      transform: none;
+    }
+
+    .rooms-slider :global(.rc) {
+      padding-bottom: 60px;
+    }
+
+    .rooms-slider :global(.rc__arrow--prev) {
+      left: calc(50% - 44px);
+    }
+
+    .rooms-slider :global(.rc__arrow--next) {
+      right: calc(50% - 44px);
+    }
+  }
+</style>
