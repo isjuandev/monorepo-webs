@@ -57,11 +57,11 @@ export const IMAGES = {
   homeOccasions: [
     photo(
       "vip-love-decorada-01",
-      "VIP Love Decorada: cama con dosel rojo y mensaje Te amo bajo bombas de corazón"
+      "VIP Love Decorada: cama con dosel rojo y mensaje Te amo bajo globos de corazón"
     ),
     photo(
       "vip-fetiche-decorada-02",
-      "VIP Fetiche Decorada: cama con el mensaje Feliz aniversario mi amor bajo bombas rojas"
+      "VIP Fetiche Decorada: cama con el mensaje Feliz aniversario mi amor bajo globos rojos"
     ),
   ] as [Photo, Photo],
   homeExperiences: img("hero-3"),
@@ -142,7 +142,7 @@ export const COMMON_AMENITIES = [
   "Aire acondicionado y ventilador",
   "Televisor y equipo de sonido",
   "Nevera",
-  "Parqueadero privado con cortina",
+  "Parqueadero privado ",
   "Room service discreto 24/7",
   "Cocina y bar 24 horas",
 ];
@@ -151,7 +151,7 @@ export const ROOM_VERSIONS_NOTE =
   "Cada habitación tiene su propio ambiente. ¿Tienes una favorita? Pídela por WhatsApp antes de llegar.";
 
 export const DAWN_NOTE =
-  "¿Buscas amanecida o estadía nocturna completa?: Consulta por WhatsApp nuestras condiciones y horarios de amanecida de domingo a jueves y fines de semana, o combina tu reserva con horas adicionales a tarifa preferencial.";
+  "¿Prefieres quedarte toda la noche? Pregunta por WhatsApp por nuestras tarifas de amanecida o suma horas adicionales a precio especial.";
 
 export const ROOMS: Room[] = [
   {
@@ -162,13 +162,13 @@ export const ROOMS: Room[] = [
     hours: 5,
     highlight: "Jacuzzi, silla del amor y mini sala",
     cardFeatures: ["Jacuzzi", "Silla del amor", "Mini sala"],
-    cardPitch: "Todo lo esencial para dos, listo apenas cierras la puerta.",
+    cardPitch: "Íntima, acogedora y con todo lo esencial para escaparse en pareja.",
     tagline:
       "Habitación Junior en La Guaca, Armenia: jacuzzi, silla del amor, mini sala, wifi y parqueadero privado por $75.000 las 5 horas.",
-    headline: "Junior: lo esencial para dos, con jacuzzi y 5 horas sin afanes",
+    headline: "Lo esencial para dos, con jacuzzi y sin afanes",
     intro:
-      "Cómoda, completa y lista apenas cierras la puerta. Entras por tu parqueadero privado, el jacuzzi te espera junto a la mini sala y tienes 5 horas para disfrutar a tu ritmo por $75.000.",
-    reserveCta: "Apartar Junior ($75.000) por WhatsApp",
+      "Privacidad, calor y confort para desconectarse de la rutina. Disfruta 5 horas con jacuzzi caliente, silla del amor y garaje privado por $75.000.",
+    reserveCta: "Apartar Junior ($75.000)",
     reserveMessage: "Hola La Guaca, ¿tienen disponible una habitación JUNIOR ($75.000 por 5h)?",
     image: photo(
       "junior-01",
@@ -185,15 +185,15 @@ export const ROOMS: Room[] = [
     features: [
       {
         title: "Jacuzzi privado",
-        text: "Listo para dos dentro de la habitación, para empezar o cerrar la noche.",
+        text: "Agua caliente lista para dos en el corazón de la habitación.",
       },
       {
         title: "Silla del amor",
-        text: "Para salir de la rutina y probar nuevas posiciones con total comodidad.",
+        text: "Diseñada para explorar nuevas posturas con total comodidad.",
       },
       {
-        title: "Mini sala y wifi",
-        text: "Un rincón para conversar y brindar, con televisor, equipo de sonido y conexión.",
+        title: "Mini sala y sonido",
+        text: "Rincón íntimo con música a tu gusto, Wi-Fi, TV y minibar.",
       },
     ],
     amenities: ["Jacuzzi", "Silla del amor", "Mini sala", "Wifi", "Baño con ducha"],
@@ -206,12 +206,12 @@ export const ROOMS: Room[] = [
     hours: 5,
     highlight: "Columpio del amor y comedor de lujo",
     cardFeatures: ["Jacuzzi", "Columpio del amor", "Comedor de lujo"],
-    cardPitch: "Pensada para el romance: cena para dos, juego de luces y columpio.",
+    cardPitch: "Romance y complicidad entre luces suaves, cena íntima y columpio.",
     tagline:
       "VIP Love en La Guaca, Armenia: columpio del amor, comedor de lujo, jacuzzi, silla del amor y juego de luces por $90.000 las 5 horas.",
-    headline: "VIP Love: romance a puerta cerrada, con columpio del amor y jacuzzi",
+    headline: "Romance y complicidad entre luces, columpio y jacuzzi",
     intro:
-      "Una habitación hecha para enamorar. Brinden en el comedor de lujo, enciendan el juego de luces y dejen que el columpio del amor y el jacuzzi hagan el resto: 5 horas por $90.000.",
+      "Creada para seducir sin prisa. Brinden en su comedor privado, jueguen en el columpio del amor y cierren la noche en el jacuzzi ($90.000 / 5 horas).",
     reserveCta: "Apartar VIP Love ($90.000)",
     reserveMessage: "Hola La Guaca, ¿tienen disponible la habitación VIP LOVE ($90.000 por 5h)?",
     image: photo(
@@ -235,15 +235,15 @@ export const ROOMS: Room[] = [
     features: [
       {
         title: "Columpio del amor",
-        text: "Suspendido junto a la cama para mecerse, jugar y descubrirse sin prisa.",
+        text: "Suspendido junto a la cama para mecerse y probar nuevas sensaciones.",
       },
       {
-        title: "Comedor de lujo",
-        text: "Una mesa para dos para brindar o cenar antes de pasar al jacuzzi.",
+        title: "Comedor para dos",
+        text: "Mesa privada ideal para compartir una copa o pedir de nuestra cocina 24/7.",
       },
       {
-        title: "Luces y jacuzzi",
-        text: "Juego de luces, silla del amor y jacuzzi para crear la atmósfera que quieran.",
+        title: "Atmósfera envolvente",
+        text: "Juego de luces cálidas, silla del amor e hidromasaje caliente.",
       },
     ],
     amenities: [
@@ -263,12 +263,12 @@ export const ROOMS: Room[] = [
     hours: 5,
     highlight: "Guillotina y columpio del amor",
     cardFeatures: ["Jacuzzi", "Guillotina", "Columpio del amor"],
-    cardPitch: "Estilo, lujo e imaginación para que tú tengas el control.",
+    cardPitch: "Atmósfera en negro y rojo diseñada para el juego de roles y la fantasía.",
     tagline:
       "VIP Fetiche en La Guaca, Armenia: guillotina, columpio del amor y jacuzzi en un ambiente negro y rojo por $90.000 las 5 horas.",
-    headline: "VIP Fetiche: estilo, lujo e imaginación para que tú tengas el control",
+    headline: "Negro, rojo y fantasía para que tú pongas las reglas",
     intro:
-      "Una habitación para dejar volar la imaginación. Guillotina, columpio del amor y jacuzzi en un ambiente negro y rojo, con todo listo para que tú pongas las reglas: 5 horas por $90.000.",
+      "Un escenario provocador donde la timidez queda afuera. Equipada con guillotina erótica, columpio con cadenas e hidromasaje bajo luz roja ($90.000 / 5 horas).",
     reserveCta: "Apartar VIP Fetiche ($90.000)",
     reserveMessage: "Hola La Guaca, ¿tienen disponible la habitación VIP FETICHE ($90.000 por 5h)?",
     image: photo(
@@ -289,16 +289,16 @@ export const ROOMS: Room[] = [
     ],
     features: [
       {
-        title: "Guillotina",
-        text: "La pieza protagonista para los juegos de rol, al pie de la cama.",
+        title: "Guillotina erótica",
+        text: "Al pie de la cama, protagonista para juegos de rol y entrega.",
       },
       {
-        title: "Columpio del amor",
-        text: "Suspendido con cadenas para explorar nuevas sensaciones.",
+        title: "Columpio en cadenas",
+        text: "Diseñado para llevar la complicidad y el deseo a otro nivel.",
       },
       {
         title: "Jacuzzi en clave roja",
-        text: "Hidromasaje bajo un mural de labios rojos para cambiar de ritmo.",
+        text: "Agua caliente e iluminación intensa para cambiar de ritmo cuando quieran.",
       },
     ],
     amenities: ["Guillotina", "Columpio del amor", "Jacuzzi"],
@@ -312,12 +312,12 @@ export const ROOMS: Room[] = [
     hours: 5,
     highlight: "Guillotina, jacuzzi grande y tubo de pole dance",
     cardFeatures: ["Jacuzzi grande", "Guillotina", "Tubo de pole dance"],
-    cardPitch: "Sensual de principio a fin: guillotina, cama con esposas y tubo para tu show.",
+    cardPitch: "Cama con esposas, barra de show e hidromasaje amplio bajo luz cenital.",
     tagline:
       "VIP Guillotina en La Guaca, Armenia: guillotina, cama con esposas, jacuzzi grande, silla del amor y tubo de pole dance por $90.000 las 5 horas.",
-    headline: "VIP Guillotina: una pieza protagonista para despertar todos tus deseos",
+    headline: "Juego de roles, pole dance y jacuzzi de gran formato",
     intro:
-      "Sensual desde que entras. La guillotina preside la cama con esposas, el tubo de pole dance espera junto al jacuzzi grande y la silla del amor completa el juego: 5 horas por $90.000.",
+      "Sensualidad pura desde que cruzas la puerta: cama con esposas, guillotina, barra de pole dance y un jacuzzi más amplio para los dos ($90.000 / 5 horas).",
     reserveCta: "Apartar VIP Guillotina ($90.000)",
     reserveMessage:
       "Hola La Guaca, ¿tienen disponible la habitación VIP GUILLOTINA ($90.000 por 5h)?",
@@ -338,16 +338,16 @@ export const ROOMS: Room[] = [
     ],
     features: [
       {
-        title: "Guillotina y cama con esposas",
-        text: "Dos elementos pensados para el juego de roles y la entrega, a puerta cerrada.",
+        title: "Guillotina y esposas",
+        text: "El dúo perfecto junto a la cama para dominar o dejarse llevar.",
       },
       {
-        title: "Jacuzzi grande",
-        text: "Hidromasaje amplio bajo una claraboya iluminada, para relajarse después del juego.",
+        title: "Jacuzzi de gran formato",
+        text: "Mayor amplitud de agua caliente bajo una claraboya iluminada.",
       },
       {
-        title: "Tubo de pole dance",
-        text: "Junto al jacuzzi, listo para un show privado con tu música.",
+        title: "Barra de pole dance",
+        text: "Frente al jacuzzi, lista para un show privado con tu propia música.",
       },
     ],
     amenities: [
@@ -365,52 +365,50 @@ export const ROOMS: Room[] = [
     name: "VIP Fetiche Decorada",
     price: 180000,
     hours: 6,
-    highlight: "Bombas, pétalos, champaña y picada para dos",
-    cardFeatures: ["Decoración", "Champaña", "Picada para dos"],
-    cardPitch: "La VIP Fetiche lista para celebrar: luces, pétalos y un brindis esperándote.",
+    highlight: "Pétalos, globos, champaña y picada para dos",
+    cardFeatures: ["Suite Fetiche", "Pétalos", "Champaña", "Picada para 2"],
+    cardPitch: "Tu fantasía lista al llegar con decoración en clave roja, brindis y cena.",
     tagline:
-      "VIP Fetiche Decorada en La Guaca, Armenia: bombas, pétalos, botella de champaña, picada de carne para dos y luces por $180.000 las 6 horas.",
-    headline: "VIP Fetiche Decorada: la fantasía, lista para celebrar apenas llegas",
+      "VIP Fetiche Decorada en La Guaca, Armenia: globos, pétalos, botella de champaña, picada caliente para dos y luces por $180.000 las 6 horas.",
+    headline: "Seducción y celebración con todo listo antes de llegar",
     intro:
-      "La VIP Fetiche con todo preparado para una noche especial. Bombas, pétalos y luces rojas, una botella de champaña y una picada de carne para dos te esperan: 6 horas por $180.000.",
+      "Toda la intensidad de la suite Fetiche (guillotina, columpio y jacuzzi) vestida de gala con pétalos, globos, champaña fría y picada caliente para dos ($180.000 / 6 horas).",
     reserveCta: "Apartar Fetiche Decorada ($180.000)",
     reserveMessage: "Hola La Guaca, ¿tienen disponible la VIP FETICHE DECORADA ($180.000 por 6h)?",
     image: photo(
       "vip-fetiche-decorada-01",
-      "Cama roja de la VIP Fetiche con bombas rojas en el techo y mesa con velas"
+      "Cama roja de la VIP Fetiche con globos rojos en el techo y mesa con velas"
     ),
     gallery: [
       photo(
         "vip-fetiche-decorada-02",
-        "Cama con el mensaje Feliz aniversario mi amor bajo bombas rojas"
+        "Cama con el mensaje Feliz aniversario mi amor bajo globos rojos"
       ),
-      photo("vip-fetiche-decorada-03", "Vista general con bombas de corazón y pétalos en el piso"),
+      photo("vip-fetiche-decorada-03", "Vista general con globos de corazón y pétalos en el piso"),
       photo("vip-fetiche-decorada-04", "Mesa con mantel rojo y velas junto a la cama decorada"),
-      photo("vip-fetiche-decorada-05", "Sofá rojo, mesa con champaña y bombas Te amo"),
+      photo("vip-fetiche-decorada-05", "Sofá rojo, mesa con champaña y globos Te amo"),
     ],
     features: [
       {
-        title: "Decoración lista",
-        text: "Bombas, pétalos y luces rojas preparados antes de que llegues.",
+        title: "Ambientación en rojo",
+        text: "Pétalos, globos y luces seductoras listas antes de tu ingreso.",
       },
       {
-        title: "Champaña para brindar",
-        text: "Una botella esperándote en la mesa para abrir la noche.",
+        title: "Brindis y cena para dos",
+        text: "Botella de champaña y picada recién preparada esperándolos en la mesa.",
       },
       {
-        title: "Picada para dos",
-        text: "Picada de carne para compartir sin salir de la habitación.",
+        title: "6 horas de fantasía",
+        text: "Una hora extra incluida para disfrutar el jacuzzi, el columpio y la guillotina sin prisa.",
       },
     ],
     amenities: [
-      "Decoración con bombas y pétalos",
+      "Decoración con pétalos y globos",
       "Botella de champaña",
-      "Picada de carne para dos personas",
-      "Juego de luces",
-    ],
-    notes: [
-      "Es la VIP Fetiche, con su guillotina, columpio del amor y jacuzzi.",
-      "Y más detalles sorpresa: pregunta por ellos al reservar.",
+      "Picada caliente para 2 personas",
+      "Guillotina erótica",
+      "Columpio del amor",
+      "Jacuzzi y luces rojas",
     ],
   },
   {
@@ -419,49 +417,50 @@ export const ROOMS: Room[] = [
     name: "VIP Love Decorada",
     price: 180000,
     hours: 6,
-    highlight: "Champaña, picada para dos y jacuzzi",
-    cardFeatures: ["Decoración", "Champaña", "Picada para dos", "Jacuzzi"],
-    cardPitch: "La VIP Love decorada para sorprender: pétalos, bombas y un brindis para dos.",
+    highlight: "Pétalos, globos, champaña y jacuzzi",
+    cardFeatures: ["Suite Love", "Pétalos", "Champaña", "Picada para 2"],
+    cardPitch: "La sorpresa romántica perfecta con todo preparado antes de abrir la puerta.",
     tagline:
-      "VIP Love Decorada en La Guaca, Armenia: champaña, picada de carne para dos, pétalos, bombas y jacuzzi por $180.000 las 6 horas.",
-    headline: "VIP Love Decorada: la sorpresa perfecta, lista antes de que llegues",
+      "VIP Love Decorada en La Guaca, Armenia: champaña, picada caliente para dos, pétalos, globos y jacuzzi por $180.000 las 6 horas.",
+    headline: "La sorpresa romántica perfecta, lista al abrir la puerta",
     intro:
-      "Para aniversarios, cumpleaños o simplemente porque sí. La VIP Love te recibe con pétalos, bombas de corazón, una botella de champaña y una picada de carne para dos, con el jacuzzi listo: 6 horas por $180.000.",
+      "Celebra tu aniversario o cumpleaños sin preocuparte por nada. La VIP Love los recibe con camino de pétalos, globos, champaña, picada para dos y jacuzzi caliente ($180.000 / 6 horas).",
     reserveCta: "Apartar Love Decorada ($180.000)",
     reserveMessage: "Hola La Guaca, ¿tienen disponible la VIP LOVE DECORADA ($180.000 por 6h)?",
     image: photo(
       "vip-love-decorada-01",
-      "Cama con dosel rojo, cisnes de toalla y mensaje Te amo bajo bombas de corazón"
+      "Cama con dosel rojo, cisnes de toalla y mensaje Te amo bajo globos de corazón"
     ),
     gallery: [
-      photo("vip-love-decorada-02", "Cama decorada con pétalos y bombas rojas bajo luz azul"),
-      photo("vip-love-decorada-03", "Cama con dosel y bombas de corazón flotando en el techo"),
-      photo("vip-love-decorada-04", "Jacuzzi con letras LOVE y bombas Te amo en el piso"),
-      photo("vip-love-decorada-05", "Comedor y columpio del amor con pétalos y bombas en el piso"),
-      photo("vip-love-decorada-06", "Comedor para dos con bombas de corazón bajo luz morada"),
-      photo("vip-love-decorada-07", "Comedor de vidrio y columpio con bombas rojas"),
+      photo("vip-love-decorada-02", "Cama decorada con pétalos y globos rojos bajo luz azul"),
+      photo("vip-love-decorada-03", "Cama con dosel y globos de corazón flotando en el techo"),
+      photo("vip-love-decorada-04", "Jacuzzi con letras LOVE y globos Te amo en el piso"),
+      photo("vip-love-decorada-05", "Comedor y columpio del amor con pétalos y globos en el piso"),
+      photo("vip-love-decorada-06", "Comedor para dos con globos de corazón bajo luz morada"),
+      photo("vip-love-decorada-07", "Comedor de vidrio y columpio con globos rojos"),
     ],
     features: [
       {
-        title: "Pétalos y bombas",
-        text: "Corazones en el techo y pétalos en la cama y el piso desde que abres la puerta.",
+        title: "Decoración romántica",
+        text: "Pétalos sobre la cama y el jacuzzi con globos de corazón en toda la suite.",
       },
       {
-        title: "Champaña y picada",
-        text: "Una botella para brindar y una picada de carne para dos personas.",
+        title: "Champaña y picada caliente",
+        text: "Cena para dos servida en el comedor de lujo para brindar en privado.",
       },
       {
-        title: "Jacuzzi para dos",
-        text: "Rodeado de pétalos, para cerrar la sorpresa a tu ritmo.",
+        title: "6 horas de romance",
+        text: "Más tiempo incluido para disfrutar el jacuzzi, el columpio del amor y la sorpresa.",
       },
     ],
     amenities: [
-      "Decoración con pétalos y bombas",
+      "Decoración con pétalos y corazones",
       "Botella de champaña",
-      "Picada de carne para dos personas",
-      "Jacuzzi",
+      "Picada caliente para 2 personas",
+      "Columpio del amor",
+      "Comedor de lujo",
+      "Silla del amor y jacuzzi",
     ],
-    notes: ["Es la VIP Love, con su columpio del amor y su comedor de lujo."],
   },
   {
     slug: "presidencial-plata",
@@ -470,13 +469,13 @@ export const ROOMS: Room[] = [
     price: 200000,
     hours: 6,
     highlight: "Jacuzzi para 10 personas y techo corredizo",
-    cardFeatures: ["Jacuzzi para 10", "Turco", "Techo corredizo", "2 habitaciones"],
-    cardPitch: "Espacio para celebrar en grupo, con dos habitaciones independientes.",
+    cardFeatures: ["Jacuzzi para 10", "Turco", "Techo corredizo", "2 cuartos"],
+    cardPitch: "Doble habitación con baño privado, barra social y jacuzzi grupal bajo el cielo.",
     tagline:
       "Presidencial Plata en La Guaca, Armenia: jacuzzi para 10 personas, techo corredizo, turco y dos habitaciones independientes por $200.000 las 6 horas.",
-    headline: "Presidencial Plata: un jacuzzi para 10 y el cielo abierto sobre tu celebración",
+    headline: "Jacuzzi para 10 personas bajo el cielo abierto",
     intro:
-      "Para celebrar en grande sin perder la intimidad. Un jacuzzi para 10 personas, techo corredizo, turco y dos habitaciones independientes con sus propios baños: 6 horas por $200.000.",
+      "Diseñada para fiestas privadas en pareja o en grupo. Cuenta con techo corredizo sobre el jacuzzi XL, baño turco, barra de pole dance y 2 habitaciones independientes ($200.000 / 6 horas).",
     reserveCta: "Apartar Presidencial Plata ($200.000)",
     reserveMessage: "Hola La Guaca, ¿tienen disponible la PRESIDENCIAL PLATA ($200.000 por 6h)?",
     image: photo(
@@ -501,16 +500,16 @@ export const ROOMS: Room[] = [
     ],
     features: [
       {
-        title: "Jacuzzi para 10 personas",
-        text: "Gran formato para compartir con tu grupo, con el techo corredizo abierto al cielo.",
+        title: "Jacuzzi XL con domo móvil",
+        text: "Capacidad hasta para 10 personas con techo corredizo para abrir la noche al cielo.",
       },
       {
-        title: "Turco y zona social",
-        text: "Vapor, mini barra, mini sala y juego de luces para que la noche fluya.",
+        title: "Turco, barra y pole dance",
+        text: "Vapor caliente, mini barra social, luces de fiesta y tubo de show privado.",
       },
       {
-        title: "Dos habitaciones independientes",
-        text: "Cada una con su baño y ducha, para que cada pareja tenga su espacio.",
+        title: "2 suites independientes",
+        text: "Dos dormitorios separados, cada uno con su propio baño y ducha privada.",
       },
     ],
     amenities: [
@@ -531,13 +530,13 @@ export const ROOMS: Room[] = [
     name: "Presidencial Playboy",
     price: 240000,
     highlight: "Zona DJ, video beam y jacuzzi grande",
-    cardFeatures: ["Jacuzzi grande", "Zona DJ", "Video beam", "2 habitaciones"],
-    cardPitch: "Tu fiesta privada más exclusiva: tú pones la música y las luces.",
+    cardFeatures: ["Jacuzzi grande", "Zona DJ", "Video beam", "2 cuartos"],
+    cardPitch: "Tu club privado a puerta cerrada con consola DJ, pantalla gigante e hidromasaje.",
     tagline:
       "Presidencial Playboy en La Guaca, Armenia: zona DJ con consola, video beam, jacuzzi grande y dos habitaciones por $240.000.",
-    headline: "Presidencial Playboy: tu propia fiesta exclusiva, con zona DJ y jacuzzi grande",
+    headline: "Tu propio club privado con cabina DJ y jacuzzi XL",
     intro:
-      "La más exclusiva para celebrar a tu manera. Zona DJ con consola de música, video beam, juego de luces, jacuzzi grande y dos habitaciones con sus propios baños, todo a puerta cerrada por $240.000.",
+      "La suite favorita para una rumba exclusiva a puerta cerrada. Incluye consola DJ, pantalla gigante con video beam, luces rítmicas, jacuzzi grande y 2 habitaciones privadas ($240.000).",
     reserveCta: "Apartar Presidencial Playboy ($240.000)",
     reserveMessage:
       "Hola La Guaca, ¿tienen disponible la PRESIDENCIAL PLAYBOY ($240.000)? ¿Cuántas horas incluye?",
@@ -556,16 +555,16 @@ export const ROOMS: Room[] = [
     ],
     features: [
       {
-        title: "Zona DJ y consola",
-        text: "Conecta tu música y toma el control de la noche con el juego de luces.",
+        title: "Zona DJ y video beam",
+        text: "Consola de sonido, proyección en gran formato y luces de club para armar tu fiesta.",
       },
       {
-        title: "Jacuzzi grande",
-        text: "Hidromasaje amplio entre luces de colores para compartir con tu grupo.",
+        title: "Jacuzzi grande iluminado",
+        text: "Hidromasaje amplio rodeado de luces de color para compartir en grupo.",
       },
       {
-        title: "Dos habitaciones y video beam",
-        text: "Cada habitación con su baño y ducha, y video beam para ver lo que quieran.",
+        title: "2 habitaciones con baño",
+        text: "Privacidad garantizada con dos cuartos independientes y baños completos.",
       },
     ],
     amenities: [
@@ -584,13 +583,13 @@ export const ROOMS: Room[] = [
     price: 280000,
     hours: 6,
     highlight: "Piscina privada, jacuzzi grande y turco",
-    cardFeatures: ["Piscina", "Jacuzzi grande", "Turco", "Zona DJ"],
-    cardPitch: "Nuestra joya: piscina privada y espacio para celebrar sin límites.",
+    cardFeatures: ["Piscina privada", "Jacuzzi XL", "Turco", "Zona DJ", "2 cuartos"],
+    cardPitch: "Nuestra suite cumbre: piscina climatizada al aire libre, vapor y lujo sin límites.",
     tagline:
       "Presidencial Oro en La Guaca, Armenia: piscina privada, jacuzzi grande, turco, zona DJ y dos habitaciones de lujo por $280.000 las 6 horas.",
-    headline: "Presidencial Oro: piscina privada y todo el lujo de La Guaca en un solo lugar",
+    headline: "Piscina privada, jacuzzi XL y turco en un mismo escenario",
     intro:
-      "Nuestra experiencia más completa. Una espectacular piscina privada, jacuzzi grande, turco, zona DJ y dos habitaciones de lujo con tres baños para celebrar en grande: 6 horas por $280.000.",
+      "Nuestra suite insignia para celebraciones inolvidables. Disfruta de piscina privada al aire libre, jacuzzi grande, baño turco, zona DJ y 2 habitaciones de lujo ($280.000 / 6 horas).",
     reserveCta: "Apartar Presidencial Oro ($280.000)",
     reserveMessage: "Hola La Guaca, ¿tienen disponible la PRESIDENCIAL ORO ($280.000 por 6h)?",
     image: photo(
@@ -608,16 +607,16 @@ export const ROOMS: Room[] = [
     ],
     features: [
       {
-        title: "Piscina privada",
-        text: "Agua al aire libre dentro de tu reserva, rodeados de palmas y total privacidad.",
+        title: "Piscina privada al aire libre",
+        text: "Rodeada de palmas y total discreción para disfrutar el agua sin testigos.",
       },
       {
-        title: "Jacuzzi grande y turco",
-        text: "Para alternar entre el vapor, el hidromasaje y la piscina a tu ritmo.",
+        title: "Jacuzzi XL y baño turco",
+        text: "Alterna a tu gusto entre la piscina, el vapor caliente y el hidromasaje.",
       },
       {
-        title: "Zona DJ y zona social",
-        text: "Juego de luces, mini sala y dos habitaciones de lujo con tres baños.",
+        title: "Zona DJ y 2 suites de lujo",
+        text: "Área social con luces profesionales, dos dormitorios independientes y tres baños.",
       },
     ],
     amenities: [
@@ -775,7 +774,7 @@ export const PAYMENT_METHODS =
 
 export const STAY_INFO = [
   { label: "Horario", value: "Abierto 24/7" },
-  { label: "Tarifa base", value: "Incluye 5 horas" },
+  { label: "Tarifa base", value: "Incluye 5 o 6 horas" },
   { label: "Edad", value: "Solo mayores de 18 años" },
   { label: "Pagos", value: PAYMENT_METHODS },
   { label: "Reservas", value: "Por WhatsApp o llamada" },
@@ -785,7 +784,7 @@ export const STAY_INFO = [
 /** "Lo que debes saber" de /habitaciones y de cada habitación: protocolo de privacidad y pagos */
 export const ROOMS_INFO = [
   { label: "Horario", value: "Abierto 24/7" },
-  { label: "Tarifa base", value: "Incluye 5 horas" },
+  { label: "Tarifa base", value: "Incluye 5 o 6 horas" },
   { label: "Edad", value: "Solo mayores de 18 años" },
   {
     label: "Privacidad en recepción y pedidos",
@@ -795,7 +794,7 @@ export const ROOMS_INFO = [
   {
     label: "Ingreso en carro, moto o taxi",
     value:
-      "Parqueadero individual privado con cortina en cada habitación; si llegas en taxi o plataforma, puedes ingresar con total discreción hasta el acceso interno.",
+      "Parqueadero individual privado  en cada habitación; si llegas en taxi o plataforma, puedes ingresar con total discreción hasta el acceso interno.",
   },
   {
     label: "Medios de pago discretos",
@@ -843,9 +842,9 @@ export const UI_LABELS = {
     "Consulta disponibilidad en tiempo real por WhatsApp o reserva tu suite antes de salir.",
   menuCta: "Consultar disponibilidad en vivo",
   menuCtaSecondary: "Apartar una suite",
-  viewRooms: "Explorar las 9 habitaciones y precios",
+  viewRooms: "Ver las 9 suites y precios",
   viewAllRooms: "Ver detalles y precios de las 9 habitaciones",
-  roomCardCta: "Quiero esta habitación por WhatsApp",
+  roomCardCta: "Apartar por WhatsApp",
   roomCardCtaAria: (name: string) =>
     `Quiero la habitación ${name} por WhatsApp (se abre en una pestaña nueva)`,
   roomsCarousel: "Habitaciones",
@@ -930,16 +929,16 @@ export const PAGES = {
   home: {
     hero: {
       label: "Armenia · Km 2 vía Montenegro",
-      title: "Cinco horas de intimidad total con jacuzzi caliente en cada suite",
+      title: "El plan perfecto con jacuzzi caliente en cada suite",
       sideLeft: "Abierto 24/7",
       sideRight: "Parqueadero privado",
       intro:
-        "Escapa de la rutina a solo 5 minutos de Armenia. Nueve habitaciones con jacuzzi, garaje privado independiente y total discreción. Rato de 5 horas desde $75.000.",
+        "Tu refugio privado a 5 minutos de Armenia. Nueve suites con hidromasaje, garaje individual y total discreción desde $75.000 por 5 horas.",
     },
     highlights: [
       {
         label: "En todas las habitaciones",
-        items: ["Jacuzzi privado", "Parqueadero privado con cortina", "Room Service discreto 24/7"],
+        items: ["Jacuzzi privado", "Parqueadero privado ", "Room Service discreto 24/7"],
       },
       {
         label: "Experiencia La Guaca",
@@ -951,67 +950,67 @@ export const PAGES = {
       },
     ],
     intro: {
-      title: "Sin afanes ni interrupciones: 5 horas para desconectarse del mundo",
-      text: "Mientras otros lugares limitan tu encuentro a 3 o 4 horas, en La Guaca la tarifa base te da 5 horas completas (6 en las decoradas y en las presidenciales Plata y Oro) para disfrutar a tu ritmo. Entra directo a tu garaje privado sin cruzar miradas, pide licores o snacks a la habitación con entrega reservada y vive una experiencia diseñada para parejas o encuentros entre amigos.",
+      title: "Cinco horas para disfrutar sin mirar el reloj",
+      text: "Olvídate de las carreras: aquí tienes 5 horas de base (y 6 horas en suites Decoradas y Presidenciales). Entra directo a tu garaje  privada, pide al cuarto sin cruzar miradas y vive el momento en pareja o con amigos.",
       cta: "Comparar habitaciones desde $75.000",
     },
     jacuzzi: {
-      title: "El placer del agua caliente, listo apenas cierras la puerta",
-      text: "Olvídate de esperar o de jacuzzis fríos. Las nueve habitaciones tienen hidromasaje privado; en la VIP Guillotina y las presidenciales es de gran formato, y en la Presidencial Plata caben hasta 10 personas.",
+      title: "Agua caliente lista apenas cierras la puerta",
+      text: "Hidromasaje climatizado garantizado en las 9 suites: desde jacuzzis íntimos para dos hasta formatos XL para 10 personas en nuestras Presidenciales.",
       sideLeft: "Jacuzzi en las 9 habitaciones",
       sideRight: "Para 10 en la Plata",
       cta: "Descubrir las experiencias",
     },
     rooms: {
-      title: "Elige el nivel de tu fantasía",
-      text: "Del jacuzzi para dos de la Junior a la piscina privada de la Presidencial Oro: VIP temáticas para el romance y el juego, dos de ellas decoradas para sorprender, y tres presidenciales para celebrar en grupo. Tarifas desde $75.000.",
+      title: "Elige el escenario de tu próxima escapada",
+      text: "Nueve ambientes diseñados para el romance, el juego erótico o la fiesta privada en grupo. Tarifas desde $75.000.",
     },
     rates: {
       label: "Tarifas transparentes",
-      title: "Todo claro antes de entrar: fracción, amanecida y adicionales",
-      text: "Disfruta con total tranquilidad. La Junior y las VIP incluyen 5 horas completas; las VIP decoradas y las presidenciales Plata y Oro, 6 horas.",
+      title: "Tarifas claras y sin sorpresas",
+      text: "Estadías de 5 horas en Junior y VIP, y 6 horas en Decoradas y Presidenciales.",
       items: [
         {
-          title: "Fracción / Rato (5 o 6 horas)",
-          text: "Disponible las 24 horas en nuestras 9 habitaciones (desde $75.000 hasta $280.000).",
+          title: "Fracción (5 o 6 horas)",
+          text: "Disponible 24/7 en nuestras 9 suites (de $75.000 a $280.000).",
         },
         {
-          title: "Planes de amanecida",
-          text: "Consulta por WhatsApp nuestros horarios y tarifas especiales de amanecida (domingo a jueves y fines de semana/festivos).",
+          title: "Amanecida",
+          text: "Tarifas especiales domingo a jueves y fines de semana.",
           link: { label: "Consultar amanecida", href: whatsappUrl(WHATSAPP_MESSAGES.dawn) },
         },
         {
           title: "Hora adicional",
-          text: "¿Quieren quedarse un rato más? Extiende tu estadía por fracción de hora adicional directamente desde la habitación.",
+          text: "Extiende tu rato fácilmente sin salir de la habitación.",
         },
         {
-          title: "Parejas o amigos (persona adicional)",
-          text: "Las tarifas base aplican para 2 personas. En nuestras suites amplias puedes ingresar con acompañantes adicionales pagando el suplemento por persona.",
+          title: "Persona adicional",
+          text: "Precios base para 2 personas; suma acompañantes en nuestras suites amplias.",
         },
       ] satisfies FeatureItemWithLink[],
     },
     occasions: {
       label: "Noches especiales y aniversarios",
-      title: "Sorprende con una suite decorada a tu medida",
-      text: "¿Aniversario, cumpleaños o reconciliación? La VIP Love y la VIP Fetiche también vienen decoradas: pétalos, bombas, una botella de champaña y una picada de carne para dos te esperan al llegar. 6 horas por $180.000.",
+      title: "Sorprende con una suite decorada",
+      text: "¿Aniversario, cumpleaños o reconciliación? Llega directo a brindar: preparamos tu suite con pétalos, globos, champaña fría y picada caliente para dos. 6 horas por $180.000.",
       cta: "Cotizar decoración romántica",
       items: [
         {
           title: "VIP Love Decorada",
-          text: "Pétalos, bombas de corazón, champaña, picada de carne para dos y jacuzzi listo para la sorpresa.",
+          text: "Ambiente romántico con corazones, camino de pétalos, comedor para dos, columpio y jacuzzi climatizado.",
           link: { label: "Ver la VIP Love Decorada", href: "/habitaciones/vip-love-decorada" },
         },
         {
           title: "VIP Fetiche Decorada",
-          text: "La fantasía con bombas, pétalos, luces rojas, champaña y picada de carne para dos.",
+          text: "Seducción en clave roja con pétalos, iluminación íntima, guillotina, columpio, champaña y cena para dos.",
           link: {
             label: "Ver la VIP Fetiche Decorada",
             href: "/habitaciones/vip-fetiche-decorada",
           },
         },
         {
-          title: "¿Cómo funciona?",
-          text: "Escríbenos con al menos 24 horas de anticipación, elige la categoría de tu suite y abona tu reserva por transferencia para tener todo listo a la hora exacta de tu llegada.",
+          title: "¿Cómo reservarla?",
+          text: "Escríbenos con 24 horas de anticipación y abona por transferencia para tener todo listo a tu llegada.",
         },
       ] satisfies FeatureItemWithLink[],
     },
@@ -1045,43 +1044,43 @@ export const PAGES = {
     ] satisfies ShowcaseItem[],
     privacy: {
       label: "Discreción garantizada",
-      title: "Privacidad absoluta desde que entras hasta que sales",
+      title: "Discreción total desde que entras hasta que sales",
       text: "Diseñamos cada detalle operativo para que nadie interrumpa tu momento ni tengas contacto visual innecesario.",
       items: [
         {
-          title: "Garaje privado individual",
-          text: "Ingresa con tu vehículo o moto directamente al parqueadero privado de tu suite y cierra la puerta antes de bajar.",
+          title: "Garaje individual",
+          text: "Entra en carro o moto directo a tu suite y baja la cortina privada.",
         },
         {
-          title: "Llegada discreta en taxi o plataforma",
-          text: "Si vienes en taxi, Uber o InDrive, el vehículo puede dejarte directamente en el acceso interno de tu habitación con total reserva.",
+          title: "Acceso en taxi o app",
+          text: "Tu Uber, InDrive o taxi te deja directamente frente a la entrada interna.",
         },
         {
-          title: "Atención sin contacto visual",
-          text: "Recepción y entrega de pedidos a la habitación a través de ventanilla/torno privado.",
+          title: "Cero contacto visual",
+          text: "Recibe tu cuenta, datáfono y pedidos a través del torno privado.",
         },
         {
-          title: "Múltiples medios de pago",
-          text: `Paga cómodamente desde tu suite en efectivo, transferencia (Nequi / Daviplata) o tarjetas débito y crédito con datáfono inalámbrico.`,
+          title: "Pago fácil en la suite",
+          text: "Efectivo, Nequi, Daviplata o tarjetas débito y crédito sin salir del cuarto.",
         },
       ] satisfies FeatureItem[],
     },
     roomService: {
       label: "Room service 24 horas",
-      title: "Licores, snacks y juguetería sin salir de la cama",
+      title: "Cocina, licores y boutique 24/7 en tu habitación",
       text: "Pide desde el teléfono de tu habitación o por WhatsApp interno y recibe tu pedido en minutos por el torno privado.",
       items: [
         {
-          title: "Licores y bebidas frías",
-          text: "Cervezas nacionales e importadas, vinos, whisky, tequila, aguardiente, ron, hidratantes y energizantes.",
+          title: "Bar y licores",
+          text: "Cervezas, vinos, champaña, whisky, tequila, ron, aguardiente y energizantes helados.",
         },
         {
-          title: "Snacks y comida 24/7",
-          text: "Opciones rápidas y calientes para recargar energía a cualquier hora del día o la madrugada.",
+          title: "Cocina 24 horas",
+          text: "Picadas y platos recién preparados ($16.500 a $51.700) a cualquier hora.",
         },
         {
-          title: "Boutique íntima y bienestar",
-          text: "Preservativos, lubricantes, aceites de masaje y kits de aseo personal adicionales siempre disponibles.",
+          title: "Boutique íntima",
+          text: "Preservativos, lubricantes, aceites de masaje y kits de aseo con entrega discreta.",
         },
       ] satisfies FeatureItem[],
     },
@@ -1192,7 +1191,7 @@ export const PAGES = {
     hero: {
       label: "Elige el escenario de tu próxima escapada",
       title: "Nuestras 9 habitaciones: compara y elige tu experiencia",
-      text: "Todas tienen jacuzzi privado y parqueadero independiente, con 5 horas en la Junior y las VIP y 6 en las VIP decoradas y las presidenciales Plata y Oro.",
+      text: "Todas incluyen jacuzzi caliente y garaje privado. Elige entre suites para dos (5h), planes decorados con cena y champaña (6h) o suites presidenciales para grupos.",
       sideRight: "Desde 5 horas",
     },
     overview: {
@@ -1206,6 +1205,7 @@ export const PAGES = {
       label: "Tarifas",
       title: "Precios claros, desde 5 horas",
       dawn: { label: "Amanecida", value: DAWN_NOTE },
+      note: "Las tarifas base aplican para 2 personas. ¿Deseas sumar horas adicionales o ingresar en grupo (hasta 10 personas en Presidenciales)? Consúltanos el valor exacto por WhatsApp.",
       cta: "Consultar amanecida o decoración",
     },
     dining: {

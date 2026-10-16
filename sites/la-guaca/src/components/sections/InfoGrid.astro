@@ -11,6 +11,8 @@ export interface Props {
   imageSize?: "wide" | "medium";
   /** Valores grandes (p. ej. tiempos de trayecto) */
   large?: boolean;
+  /** Nota general bajo la lista (p. ej. condiciones comunes a todas las tarifas) */
+  note?: string;
   id?: string;
 }
 
@@ -22,6 +24,7 @@ const {
   image,
   imageSize = "wide",
   large = false,
+  note,
   id,
 } = Astro.props;
 ---
@@ -54,6 +57,13 @@ const {
       }
     </dl>
     {
+      note && (
+        <p class="t-body t-muted info-grid__note" data-reveal>
+          {note}
+        </p>
+      )
+    }
+    {
       Astro.slots.has("default") && (
         <div class="info-grid__actions" data-reveal>
           <slot />
@@ -71,6 +81,12 @@ const {
 </section>
 
 <style>
+  .info-grid__note {
+    max-width: 560px;
+    margin: 48px auto 0;
+    text-align: center;
+  }
+
   .info-grid__actions {
     display: flex;
     justify-content: center;

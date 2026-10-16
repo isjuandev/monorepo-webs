@@ -15,7 +15,6 @@ import {
   PAGES,
   ROOMS,
   ROOMS_INFO,
-  roomExtras,
   UI_LABELS,
   WHATSAPP_MESSAGES,
   whatsappUrl,
@@ -26,7 +25,8 @@ const page = PAGES.rooms;
 
 const rates = ROOMS.map((room) => ({
   label: room.name,
-  value: [UI_LABELS.priceFor(room.price, room.hours), ...roomExtras(room)].join(" · "),
+  // Horas y adicionales comunes van en una sola nota bajo la tabla
+  value: UI_LABELS.priceShort(room.price, room.hours),
 }));
 ---
 
@@ -99,7 +99,12 @@ const rates = ROOMS.map((room) => ({
     numbered
   />
 
-  <InfoGrid label={page.rates.label} title={page.rates.title} items={[...rates, page.rates.dawn]}>
+  <InfoGrid
+    label={page.rates.label}
+    title={page.rates.title}
+    items={[...rates, page.rates.dawn]}
+    note={page.rates.note}
+  >
     <LinkButton href={whatsappUrl(WHATSAPP_MESSAGES.dawnOrDecoration)}>{page.rates.cta}</LinkButton>
   </InfoGrid>
 

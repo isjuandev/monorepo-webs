@@ -121,8 +121,15 @@ const freeCells = (COLUMNS - ((photos.length + 3) % COLUMNS)) % COLUMNS;
       align-items: center;
       justify-content: center;
       gap: 24px;
-      padding: 32px;
+      padding: 24px;
       border: 1px solid var(--color-line-light);
+      text-align: center;
+    }
+
+    /* En una sola celda el botón puede ser más ancho que la tarjeta: se ajusta en dos líneas */
+    .room-gallery__cta :global(.btn) {
+      max-width: 100%;
+      white-space: normal;
       text-align: center;
     }
   }
