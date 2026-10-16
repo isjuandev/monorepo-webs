@@ -8,8 +8,7 @@ import { UI_LABELS, whatsappUrl } from "@/data/content";
   target="_blank"
   rel="noopener noreferrer"
   aria-label={UI_LABELS.whatsappFloatAria}
-  data-intro="fade"
-  style="--intro-delay: 1.4s"
+  data-wa-float
 >
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <path
@@ -37,7 +36,18 @@ import { UI_LABELS, whatsappUrl } from "@/data/content";
     font-size: 15px;
     line-height: 1;
     box-shadow: 0 8px 24px var(--color-shade);
-    transition: transform 0.3s var(--ease-out);
+    transition:
+      opacity 0.4s ease,
+      visibility 0.4s,
+      transform 0.4s var(--ease-out);
+  }
+
+  /* Oculto sobre la primera sección (hero) para no tapar sus CTA; sin JS se ve siempre */
+  :global(.js) .wa-float:not(.is-visible) {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(16px);
+    pointer-events: none;
   }
 
   .wa-float:hover {
@@ -58,4 +68,25 @@ import { UI_LABELS, whatsappUrl } from "@/data/content";
       font-size: 14px;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wa-float {
+      transition: none;
+    }
+  }
 </style>
+
+<script>
+  // Muestra el botón solo cuando la primera sección de la página sale de la pantalla.
+  const float = document.querySelector<HTMLElement>("[data-wa-float]");
+  const firstSection = document.querySelector<HTMLElement>("main > :first-child");
+
+  if (float && firstSection && "IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(([entry]) => {
+      float.classList.toggle("is-visible", !entry.isIntersecting);
+    });
+    observer.observe(firstSection);
+  } else {
+    float?.classList.add("is-visible");
+  }
+</script>
