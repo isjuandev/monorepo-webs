@@ -18,11 +18,13 @@ docs/research/*/visual-qa-report.md
 # Estado y logs locales de pnpm client:run / template:clone
 .pipeline/
 
-# Recursos manuales por cliente (solo se versiona README y _plantilla-cliente)
+# Recursos manuales por cliente (se versionan README, _plantilla-cliente y el ejemplo la-guaca)
 recursos/*
 !recursos/README.md
 !recursos/_plantilla-cliente/
 !recursos/_plantilla-cliente/**
+!recursos/la-guaca/
+!recursos/la-guaca/**
 
 # Environment variables
 .env

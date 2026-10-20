@@ -120,6 +120,20 @@ function preflight(args, brief) {
       `${ghost}/ no tiene package.json (restos ignorados de otra rama): bórrala o muévela antes de seguir.`
     );
   }
+  const roomsDir = path.join(ROOT_DIR, "recursos", args.slug, "fotos", "habitaciones");
+  if (brief.rooms?.length > 0 && fs.existsSync(roomsDir)) {
+    const folders = fs.readdirSync(roomsDir).filter((name) => !name.startsWith("."));
+    const withoutPhotos = brief.rooms.filter((room) => !folders.includes(room));
+    const orphanFolders = folders.filter((folder) => !brief.rooms.includes(folder));
+    if (withoutPhotos.length > 0) {
+      log.warn(`habitaciones del brief sin carpeta de fotos: ${withoutPhotos.join(", ")}`);
+    }
+    if (orphanFolders.length > 0) {
+      log.warn(
+        `carpetas de fotos/habitaciones/ que no coinciden con ningún "### " del brief: ${orphanFolders.join(", ")}`
+      );
+    }
+  }
   if (!args.resume) {
     const dirty = dirtyFiles();
     if (dirty.length > 0) {

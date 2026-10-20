@@ -1,5 +1,7 @@
 # Brief del cliente
 
+> **Brief de referencia del monorepo.** Es el ejemplo completo que sigue `recursos/README.md`: úsalo como guía de formato para clientes nuevos (la plantilla vacía es `recursos/_plantilla-cliente/brief.md`).
+>
 > Completado a partir del contenido actual de `sites/la-guaca` (copy, `ROOMS`, `site.ts`, `theme.css`) y la guía de voz `docs/research/la-guaca/guia-de-voz.md`. Lo que aparece como **Pendiente** no está en ninguna fuente y no se ha inventado. Confirmar con el cliente antes de entregar.
 >
 > Recursos: las fotos, logos y fuentes ya están copiados en esta carpeta desde `sites/la-guaca/public/` (la copia del sitio no se tocó). `textos/`, `referencias/` y `fotos/galeria/` siguen vacías.
