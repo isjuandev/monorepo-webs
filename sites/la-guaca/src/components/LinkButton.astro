@@ -1,0 +1,53 @@
+---
+import { cn } from "@repo/utils";
+import ArrowIcon from "@/components/ArrowIcon.astro";
+import { siteConfig } from "@/config/site";
+import { whatsappUrl } from "@/data/content";
+
+export interface Props {
+  href: string;
+  variant?: "primary" | "secondary";
+  /** "dark" invierte el botón primario para fondos claros */
+  tone?: "light" | "dark";
+  icon?: "right" | "external" | "none";
+  blockMobile?: boolean;
+  class?: string;
+}
+
+const {
+  href,
+  variant = "secondary",
+  tone = "light",
+  icon,
+  blockMobile = false,
+  class: className,
+} = Astro.props;
+
+// Atajos de contenido: "booking" (WhatsApp con mensaje general), "maps", "waze" y "contact".
+const SHORTCUTS: Record<string, string> = {
+  booking: whatsappUrl(),
+  maps: siteConfig.mapsUrl,
+  waze: siteConfig.wazeUrl,
+  contact: "/contacto",
+};
+
+const resolvedHref = SHORTCUTS[href] ?? href;
+const isExternal = /^https?:\/\//.test(resolvedHref);
+const resolvedIcon = icon ?? (isExternal ? "external" : variant === "secondary" ? "right" : "none");
+---
+
+<a
+  href={resolvedHref}
+  class={cn(
+    "btn",
+    `btn--${variant}`,
+    tone === "dark" && "btn--dark",
+    blockMobile && "btn--block-mobile",
+    className
+  )}
+  target={isExternal ? "_blank" : undefined}
+  rel={isExternal ? "noopener noreferrer" : undefined}
+>
+  <slot />
+  {resolvedIcon !== "none" && <ArrowIcon direction={resolvedIcon} />}
+</a>

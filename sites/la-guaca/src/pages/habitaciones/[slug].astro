@@ -1,0 +1,237 @@
+---
+import type { GetStaticPaths } from "astro";
+import ClosingCta from "@/components/ClosingCta.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+import FeatureGrid from "@/components/sections/FeatureGrid.astro";
+import InfoGrid from "@/components/sections/InfoGrid.astro";
+import LocationCta from "@/components/sections/LocationCta.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import RoomGallery from "@/components/sections/RoomGallery.astro";
+import RoomsSlider from "@/components/sections/RoomsSlider.astro";
+import { siteConfig } from "@/config/site";
+import {
+  COMMON_AMENITIES,
+  DAWN_NOTE,
+  PAGES,
+  ROOM_VERSIONS_NOTE,
+  ROOMS,
+  ROOMS_INFO,
+  type Room,
+  roomExtras,
+  UI_LABELS,
+  whatsappUrl,
+} from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+export const getStaticPaths = (() =>
+  ROOMS.map((room) => ({ params: { slug: room.slug }, props: { room } }))) satisfies GetStaticPaths;
+
+export interface Props {
+  room: Room;
+}
+
+const { room } = Astro.props;
+const page = PAGES.room;
+const infoCopy = PAGES.rooms.info;
+const locationCopy = PAGES.rooms.location;
+const photos = [room.image, ...room.gallery];
+// La sección de detalles repite dos fotos de la galería (la segunda y la tercera)
+const [detailPhoto = room.image, detailInset] = room.gallery;
+const otherRooms = ROOMS.filter((item) => item.slug !== room.slug);
+const reserveHref = whatsappUrl(room.reserveMessage);
+
+const detailGroups = [
+  { label: page.groups.own, items: room.amenities },
+  { label: page.groups.common, items: COMMON_AMENITIES },
+  {
+    label: page.groups.rates,
+    items: [UI_LABELS.priceFor(room.price, room.hours), ...roomExtras(room)],
+  },
+  { label: page.groups.notes, items: [...(room.notes ?? []), ROOM_VERSIONS_NOTE, DAWN_NOTE] },
+];
+---
+
+<BaseLayout
+  title={`${room.name} | ${siteConfig.name}`}
+  description={room.tagline}
+  ogImage={room.image.src}
+>
+  <PageHero
+    tone="brown"
+    label={room.badge ?? UI_LABELS.roomNumber(room.number)}
+    title={room.name}
+    sideLeft={UI_LABELS.hoursIncluded(room.hours)}
+    sideRight={room.highlight}
+    bottomLeft={roomExtras(room)[0]}
+    bottomRight={UI_LABELS.priceFor(room.price, room.hours)}
+  />
+
+  <RoomGallery
+    photos={photos}
+    label={UI_LABELS.gallery}
+    hint={UI_LABELS.swipeHint}
+    cta={{ title: UI_LABELS.galleryCtaTitle, label: room.reserveCta, href: reserveHref }}
+  />
+
+  <section class="section overview">
+    <div class="container overview__inner">
+      <p class="t-big overview__text" data-reveal>{room.headline}</p>
+      <p class="t-lead overview__intro" data-reveal>{room.intro}</p>
+      <div data-reveal>
+        <LinkButton href={reserveHref} variant="primary">{room.reserveCta}</LinkButton>
+      </div>
+    </div>
+  </section>
+
+  <FeatureGrid items={room.features} compact />
+
+  <section class="details">
+    <div class="details__media">
+      <div class="media details__main">
+        <img src={detailPhoto.src} alt={detailPhoto.alt} loading="lazy" />
+      </div>
+      {
+        detailInset && (
+          <div class="media details__inset" data-speed="0.08">
+            <img src={detailInset.src} alt={detailInset.alt} loading="lazy" />
+          </div>
+        )
+      }
+    </div>
+    <div class="details__content">
+      <SectionHeading
+        align="left"
+        label={page.details.label}
+        title={page.details.title}
+        text={page.details.text}
+      />
+      <div class="details__groups">
+        {
+          detailGroups.map((group) => (
+            <div class="details__group" data-reveal>
+              <p class="t-label t-muted">{group.label}</p>
+              <ul>
+                {group.items.map((item) => (
+                  <li class="t-body">{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <InfoGrid label={infoCopy.label} title={infoCopy.title} items={ROOMS_INFO} />
+
+  <LocationCta
+    title={locationCopy.title}
+    label={locationCopy.label}
+    wazeLabel={UI_LABELS.wazeShort}
+    mapsLabel={UI_LABELS.googleMapsShort}
+  />
+
+  <RoomsSlider rooms={otherRooms} title={page.moreTitle} tone="brown" />
+
+  <ClosingCta />
+</BaseLayout>
+
+<style>
+  .overview {
+    padding-bottom: 80px;
+  }
+
+  .overview__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    text-align: center;
+  }
+
+  .overview__text {
+    max-width: 880px;
+  }
+
+  .overview__intro {
+    max-width: 640px;
+  }
+
+  .details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 1096px;
+  }
+
+  .details__media {
+    position: relative;
+  }
+
+  .details__main {
+    width: 100%;
+    height: 100%;
+  }
+
+  .details__inset {
+    position: absolute;
+    right: -168px;
+    top: 560px;
+    width: 336px;
+    aspect-ratio: 3 / 4;
+  }
+
+  .details__content {
+    display: flex;
+    flex-direction: column;
+    gap: 120px;
+    padding: 120px var(--gutter) 120px 124px;
+  }
+
+  .details__groups {
+    display: grid;
+    grid-template-columns: repeat(2, 216px);
+    gap: 48px 16px;
+    margin-left: 116px;
+  }
+
+  .details__group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  @media (max-width: 1199px) {
+    .details__inset {
+      display: none;
+    }
+
+    .details__content {
+      padding: 120px var(--gutter);
+    }
+
+    .details__groups {
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .details {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+
+    .details__main {
+      aspect-ratio: 4 / 5;
+    }
+
+    .details__content {
+      gap: 56px;
+      padding: 80px var(--gutter);
+    }
+
+    .details__groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

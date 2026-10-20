@@ -1,0 +1,23 @@
+---
+import LegalContent from "@/components/sections/LegalContent.astro";
+import PageHero from "@/components/sections/PageHero.astro";
+import { siteConfig } from "@/config/site";
+import { PAGES } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const page = PAGES.terms;
+const meta = page.meta(siteConfig.name);
+---
+
+<BaseLayout
+  title={`${meta.title} | ${siteConfig.name}`}
+  description={meta.description}
+  headerTone="dark"
+>
+  <PageHero label={page.hero.label} title={page.hero.title} />
+  <LegalContent
+    updated={page.updated}
+    intro={page.intro(siteConfig.name)}
+    sections={page.sections}
+  />
+</BaseLayout>

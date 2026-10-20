@@ -1,0 +1,66 @@
+---
+import SEO from "@repo/ui/astro/SEO.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import WhatsAppFloat from "@/components/WhatsAppFloat.astro";
+import { siteConfig } from "@/config/site";
+import { UI_LABELS } from "@/data/content";
+import "@/styles/theme.css";
+import "@/styles/global.css";
+
+export interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  /** Color del header sobre el hero: "light" para heroes oscuros, "dark" para heroes claros */
+  headerTone?: "light" | "dark";
+}
+
+const {
+  title = siteConfig.title,
+  description = siteConfig.description,
+  ogImage = siteConfig.ogImage,
+  noindex = false,
+  headerTone = "light",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={siteConfig.locale?.split("_")[0] ?? "es"}>
+  <head>
+    <SEO
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      locale={siteConfig.locale}
+      siteName={siteConfig.name}
+      noindex={noindex}
+    />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    {
+      siteConfig.preloadFonts.map((href) => (
+        <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />
+      ))
+    }
+    <meta name="theme-color" content={siteConfig.themeColor} />
+    <script is:inline>
+      // Marca JS antes del primer pintado para que la intro no parpadee.
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body>
+    <a href="#contenido" class="skip-link">{UI_LABELS.skipToContent}</a>
+    <SiteHeader tone={headerTone} />
+    <main id="contenido">
+      <slot />
+    </main>
+    <SiteFooter />
+    <WhatsAppFloat />
+    <script>
+      import "@/scripts/motion";
+    </script>
+  </body>
+</html>

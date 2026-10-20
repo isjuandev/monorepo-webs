@@ -1,0 +1,136 @@
+---
+import LinkButton from "@/components/LinkButton.astro";
+import SectionHeading from "@/components/SectionHeading.astro";
+
+export interface FeatureGridItem {
+  title: string;
+  text?: string;
+  link?: { label: string; href: string };
+}
+
+export interface Props {
+  items: FeatureGridItem[];
+  title?: string;
+  label?: string;
+  text?: string;
+  /** Sin padding superior (cuando sigue a otro bloque de la misma sección) */
+  compact?: boolean;
+  /** Muestra un índice "01", "02"… sobre cada título */
+  numbered?: boolean;
+  /** Columnas en escritorio: 2 para listas de 4 ítems (cuadrícula 2x2) */
+  columns?: 2 | 3;
+  id?: string;
+}
+
+const {
+  items,
+  title,
+  label,
+  text,
+  compact = false,
+  numbered = false,
+  columns = 3,
+  id,
+} = Astro.props;
+---
+
+<section class:list={["section features", compact && "features--compact"]} id={id}>
+  <div class="container">
+    {title && <SectionHeading title={title} label={label} text={text} />}
+    <ul
+      class:list={[
+        "features__grid",
+        title && "features__grid--spaced",
+        columns === 2 && "features__grid--two",
+      ]}
+    >
+      {
+        items.map((item, i) => (
+          <li class="features__item" data-reveal style={`--reveal-delay: ${(i % 3) * 0.1}s`}>
+            {numbered && (
+              <span class="t-body t-muted features__index">{String(i + 1).padStart(2, "0")}</span>
+            )}
+            <h3 class="t-h3 features__title">{item.title}</h3>
+            {item.text && <p class="t-body features__text">{item.text}</p>}
+            {item.link && <LinkButton href={item.link.href}>{item.link.label}</LinkButton>}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .features--compact {
+    padding-top: 0;
+  }
+
+  .features__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--color-line-dark);
+  }
+
+  .features__grid--spaced {
+    margin-top: 80px;
+  }
+
+  .features__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 72px 32px;
+    text-align: center;
+    border-bottom: 1px solid var(--color-line-dark);
+  }
+
+  .features__item:not(:nth-child(3n + 1)) {
+    border-left: 1px solid var(--color-line-dark);
+  }
+
+  .features__grid--two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .features__grid--two .features__item:not(:nth-child(3n + 1)) {
+    border-left: 0;
+  }
+
+  .features__grid--two .features__item:nth-child(2n) {
+    border-left: 1px solid var(--color-line-dark);
+  }
+
+  .features__grid--two .features__title,
+  .features__grid--two .features__text {
+    max-width: 400px;
+  }
+
+  .features__index {
+    margin-bottom: 12px;
+  }
+
+  .features__title {
+    max-width: 200px;
+  }
+
+  .features__text {
+    max-width: 280px;
+  }
+
+  @media (max-width: 809px) {
+    .features__grid,
+    .features__grid--two {
+      grid-template-columns: 1fr;
+    }
+
+    .features__item:not(:nth-child(3n + 1)),
+    .features__grid--two .features__item:nth-child(2n) {
+      border-left: 0;
+    }
+
+    .features__item {
+      padding: 48px 0;
+    }
+  }
+</style>
