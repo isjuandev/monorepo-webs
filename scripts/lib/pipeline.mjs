@@ -103,10 +103,18 @@ export function branchExists(branch) {
 
 /** Archivos con cambios sin commitear (incluye los no rastreados) */
 export function dirtyFiles() {
-  return git("status", "--porcelain", "--untracked-files=all")
-    .split("\n")
-    .filter(Boolean)
-    .map((line) => line.slice(3).replace(/^.* -> /, ""));
+  // -z: rutas sin comillas ni recortes; en renombrados la ruta de origen va en la entrada siguiente
+  const entries = run("git", ["status", "--porcelain", "-z", "--untracked-files=all"]).output.split(
+    "\0"
+  );
+  const files = [];
+  for (let i = 0; i < entries.length; i += 1) {
+    const entry = entries[i];
+    if (entry.length < 4) continue;
+    files.push(entry.slice(3));
+    if (entry[0] === "R" || entry[0] === "C") i += 1;
+  }
+  return files;
 }
 
 /** Archivos que difieren de la rama base, commiteados o no */
@@ -263,6 +271,45 @@ export function runClaude({
     });
     child.stdin.end(prompt);
   });
+}
+
+/**
+ * Ejecuta el agente y, si termina sin cumplir isDone() (p. ej. tras un informe intermedio),
+ * le pide en la misma sesión que continúe, hasta maxContinues veces.
+ */
+export async function runAgentUntilDone({ slug, prompt, claude, state, isDone, maxContinues = 2 }) {
+  let response = await runClaude({ ...claude, slug, prompt });
+  for (let attempt = 0; ; attempt += 1) {
+    state.sessionId = response.sessionId;
+    state.costUsd = (state.costUsd ?? 0) + response.costUsd;
+    saveState(slug, state);
+    log.info(
+      `Agente: ${response.turns} turnos · $${response.costUsd.toFixed(2)} · sesión ${response.sessionId}`
+    );
+    if (response.isError) {
+      fail(
+        `el agente terminó con error (${response.subtype}). Retoma con --resume --from-step agent.\n${response.result}`
+      );
+    }
+    const missing = isDone();
+    if (!missing) {
+      return;
+    }
+    if (attempt >= maxContinues) {
+      fail(`el agente terminó sin completar el trabajo tras ${maxContinues} avisos: ${missing}`);
+    }
+    log.warn(`El agente terminó antes de tiempo (${missing}). Se le pide continuar.`);
+    response = await runClaude({
+      ...claude,
+      slug,
+      resume: state.sessionId,
+      prompt: [
+        `No has terminado: ${missing}.`,
+        "Continúa ahora con el trabajo completo del prompt inicial, sin resumir lo hecho ni pedir confirmación.",
+        "Solo termina tu turno cuando todo esté hecho y verificado.",
+      ].join(" "),
+    });
+  }
 }
 
 /** Ejecuta las compuertas en orden; devuelve la primera que falle o null */

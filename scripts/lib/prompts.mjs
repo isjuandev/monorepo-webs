@@ -1,4 +1,11 @@
 /**
+ * En modo headless, una respuesta final termina la ejecución: el agente no debe cerrar su turno
+ * con un informe intermedio (p. ej. el de la skill codebase-context), un plan ni una pregunta.
+ */
+export const UNATTENDED_RULE =
+  "Tu respuesta final cierra la ejecución: no la des hasta terminar y verificar todo el trabajo. No termines con un informe de contexto, un plan ni una pregunta, y no invoques skills que solo informan (como codebase-context): consulta el grafo de codebase-memory directamente.";
+
+/**
  * Prompt de creación de un sitio de cliente.
  * - pipeline = false: prompt manual completo (el modelo hace git, recursos y generador).
  * - pipeline = true: para `pnpm client:run`; rama, recursos, generador y activos ya están hechos.
@@ -46,6 +53,7 @@ export function buildClientPrompt({
     `- Imágenes de recursos/${slug}/ optimizadas en sites/${slug}/public/ con su mismo nombre (fotos y logos en images/<nombre>.webp, og-image en images/og-image.jpg, fuentes en fonts/, favicons en la raíz); las que se llaman igual que en la plantilla ya la reemplazaron; el mapa origen → destino está en docs/research/${slug}/assets-manifest.json.`,
     "No ejecutes git (ni commit, ni push, ni cambios de rama): el orquestador commitea al terminar.",
     "Trabajas sin supervisión: si un dato falta, no preguntes; déjalo como pendiente visible y anótalo en el resumen.",
+    UNATTENDED_RULE,
     "",
   ];
 
@@ -80,7 +88,9 @@ export function buildClientPrompt({
     "",
     ...(pipeline ? pipelineSteps : manualSteps),
     "Instrucciones:",
-    `1. Aplica la skill codebase-context y lee el CUSTOMIZE.md de la plantilla base (sites/${plantilla}/CUSTOMIZE.md).`,
+    pipeline
+      ? `1. Lee el CUSTOMIZE.md de la plantilla base (sites/${plantilla}/CUSTOMIZE.md). Para contexto del repo consulta el grafo de codebase-memory (herramientas mcp__codebase-memory-mcp) directamente.`
+      : `1. Aplica la skill codebase-context y lee el CUSTOMIZE.md de la plantilla base (sites/${plantilla}/CUSTOMIZE.md).`,
     ...generatorStep,
     `${step(3)}. Personaliza en este orden, sin hardcodear nada en componentes (AGENTS.md §6):`,
     `   a) sites/${slug}/src/config/site.ts`,
