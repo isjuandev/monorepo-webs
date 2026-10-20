@@ -32,6 +32,10 @@
         "Aspen%2C%20Colorado"
       ]
     },
+    "plantilla-selvra": {
+      "brands": ["Arvenna", "ARVENNA"],
+      "placeholders": ["Retreat address", "HILLSIDE RETREAT"]
+    },
     "la-guaca": {
       "brands": ["La Guaca", "LA GUACA", "laguaca", "motellaguaca"],
       "placeholders": [
