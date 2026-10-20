@@ -117,6 +117,8 @@ pnpm template:clone https://ejemplo.framer.website plantilla-ejemplo
 Si una compuerta falla, el agente la repara en la misma sesión (`--max-repairs`, por defecto 2). El estado y el log del agente se guardan en `.pipeline/<slug>/` (ignorado por Git). Para retomar, usa `--resume [--from-step <paso>]`. Otras opciones: `--no-pr`, `--base`, `--model` y `--max-budget-usd` (`--help` en cada comando).
 
 > Los scripts del pipeline deben estar en la rama base (`main`): el primer paso hace `git checkout <base>`.
+>
+> El prompt de `--dry-run` es el del orquestador (da por hechos la rama y el esqueleto): sirve para revisarlo, no para pegarlo. Para hacerlo en una sesión de Claude genera el prompt manual con `pnpm client-prompt <slug>` o `pnpm template-prompt <url> <plantilla-slug>`; se copia al portapapeles.
 
 ---
 
@@ -267,6 +269,7 @@ docker run --rm -p 8080:80 web-cliente-x
 | `pnpm client:run <slug>` | Pipeline sin supervisión: brief → sitio del cliente → compuertas → PR |
 | `pnpm template:clone <url> <plantilla-slug>` | Pipeline sin supervisión: URL → nueva plantilla → compuertas → PR |
 | `pnpm client-prompt <slug>` | Genera el prompt manual de creación (alternativa a `client:run`) |
+| `pnpm template-prompt <url> <plantilla-slug>` | Descubre las rutas y genera el prompt manual de clonado para pegar en Claude (alternativa a `template:clone`) |
 | `pnpm optimize-assets <slug>` | Optimiza `recursos/<slug>/` (WebP, og-image, fuentes) hacia `sites/<slug>/public/` |
 | `pnpm qa:site <slug>` | Build + Playwright sobre todas las rutas del sitio |
 | `pnpm new-client-site <slug>` | Crea y verifica un nuevo sitio de cliente a partir de `_template` |

@@ -18,6 +18,7 @@
     "client-prompt": "node scripts/client-prompt.mjs",
     "client:run": "node scripts/client-run.mjs",
     "template:clone": "node scripts/template-clone.mjs",
+    "template-prompt": "node scripts/template-prompt.mjs",
     "recursos:new": "node scripts/recursos-new.mjs",
     "optimize-assets": "node scripts/optimize-assets.mjs",
     "customize:check": "node scripts/customize-check.mjs",

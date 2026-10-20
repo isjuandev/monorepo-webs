@@ -264,6 +264,7 @@ Ejecuta siempre los comandos desde la raíz del monorepo (`/monorepo-webs`):
   pnpm recursos:new <slug-cliente>                      # carpeta de recursos y brief
   pnpm client:run <slug-cliente> [--dry-run|--resume|--no-pr|--allow-pending]
   pnpm template:clone <url> <plantilla-slug> [--dry-run|--resume|--no-pr]
+  pnpm template-prompt <url> <plantilla-slug>           # prompt manual de clonado (al portapapeles)
   pnpm optimize-assets <slug-cliente>                   # recursos → public/ (WebP)
   pnpm qa:site <slug-cliente>                           # build + QA de todas las rutas
   ```

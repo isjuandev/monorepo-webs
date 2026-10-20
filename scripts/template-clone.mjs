@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { KEBAB_CASE_REGEX, ROOT_DIR, SITES_DIR } from "./lib/brief.mjs";
+import { buildClonePrompt, discoverRoutes } from "./lib/clone.mjs";
 import {
   AGENT_ALLOWED_TOOLS,
   assertScope,
@@ -26,7 +27,6 @@ import {
   statePaths,
   tail,
 } from "./lib/pipeline.mjs";
-import { UNATTENDED_RULE } from "./lib/prompts.mjs";
 
 const PROBE_SLUG = "tmp-probe-plantilla";
 const CUSTOMIZATION_FILES = ["src/config/site.ts", "src/data/content.ts", "src/styles/theme.css"];
@@ -146,111 +146,6 @@ function probe(slug) {
       fs.rmSync(dir, { recursive: true, force: true });
     }
   }
-}
-
-/** Inventario determinista de rutas: sitemap.xml, robots.txt y enlaces internos de la portada */
-async function discoverRoutes(url) {
-  const origin = new URL(url).origin;
-  const fetchText = async (target) => {
-    try {
-      const response = await fetch(target, { redirect: "follow" });
-      return response.ok ? await response.text() : "";
-    } catch {
-      return "";
-    }
-  };
-  const routes = new Set(["/"]);
-  const toRoute = (href) => {
-    try {
-      const target = new URL(href, origin);
-      if (target.origin !== origin) return null;
-      if (
-        /\.(png|jpe?g|webp|avif|svg|gif|css|js|xml|txt|ico|pdf|mp4|woff2?)$/i.test(target.pathname)
-      ) {
-        return null;
-      }
-      return target.pathname.replace(/\/+$/, "") || "/";
-    } catch {
-      return null;
-    }
-  };
-
-  const robots = await fetchText(`${origin}/robots.txt`);
-  const sitemapUrls = [
-    `${origin}/sitemap.xml`,
-    ...[...robots.matchAll(/^sitemap:\s*(\S+)/gim)].map((match) => match[1]),
-  ];
-  const seenSitemaps = new Set();
-  while (sitemapUrls.length > 0) {
-    const sitemapUrl = sitemapUrls.shift();
-    if (seenSitemaps.has(sitemapUrl) || seenSitemaps.size > 20) continue;
-    seenSitemaps.add(sitemapUrl);
-    const xml = await fetchText(sitemapUrl);
-    for (const [, loc] of xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)) {
-      if (/\.xml$/i.test(loc)) sitemapUrls.push(loc);
-      else {
-        const route = toRoute(loc);
-        if (route) routes.add(route);
-      }
-    }
-  }
-
-  const home = await fetchText(url);
-  for (const [, href] of home.matchAll(/href="([^"#]+)/g)) {
-    const route = toRoute(href);
-    if (route) routes.add(route);
-  }
-  const title = /<title[^>]*>([^<]*)<\/title>/i.exec(home)?.[1]?.trim() ?? "";
-  // Variantes de idioma (/de, /de/stays…): duplican rutas del idioma principal y no se clonan
-  const all = [...routes].sort();
-  const localeRoutes = all.filter((route) => {
-    const match = /^\/([a-z]{2}(?:-[a-z]{2})?)(\/.*)?$/.exec(route);
-    return match && all.includes(match[2] ?? "/");
-  });
-  return {
-    origin,
-    title,
-    routes: all.filter((route) => !localeRoutes.includes(route)),
-    localeRoutes,
-    sitemaps: [...seenSitemaps],
-    reachable: Boolean(home),
-  };
-}
-
-function buildClonePrompt({ url, slug, routesFile, routes, localeRoutes }) {
-  return [
-    `Clona ${url} como la nueva plantilla del monorepo sites/${slug}/ aplicando la skill clone-website (.agents/skills/clone-website/SKILL.md) en modo A — Plantilla: estructura, layout, estilos, animaciones e interacciones reales, con textos, precios, contactos e imágenes de ejemplo (marca ficticia).`,
-    "",
-    "Ya hecho por el orquestador (no lo repitas):",
-    `- Rama creada y sitio base generado con pnpm new-client-site ${slug} (sites/${slug}/, dominio ${slug}.example.com).`,
-    `- Inventario de rutas en ${routesFile} (${routes.length} rutas desde sitemap.xml, robots.txt y enlaces de la portada). Clónalas todas; si alguna no merece clonarse (duplicada, legal genérica, 404), justifícalo en el resumen.`,
-    "No ejecutes git (ni commit, ni push, ni cambios de rama): el orquestador commitea al terminar.",
-    ...(localeRoutes.length > 0
-      ? [
-          `- Variantes de idioma detectadas y excluidas (${localeRoutes.length}: ${localeRoutes.slice(0, 4).join(", ")}${localeRoutes.length > 4 ? ", …" : ""}): la plantilla va en un solo idioma, el principal. No las clones.`,
-        ]
-      : []),
-    "Trabajas sin supervisión: no preguntes; decide con el criterio de la skill y anota los supuestos.",
-    UNATTENDED_RULE,
-    "",
-    "Instrucciones:",
-    "1. Lee la checklist completa de .agents/skills/clone-website/references/full-clone-checklist.md. Para contexto del repo consulta el grafo de codebase-memory (herramientas mcp__codebase-memory-mcp) directamente.",
-    "2. Observa la web de origen en desktop (1440x900) y mobile (390x844) con las herramientas disponibles (navegador, WebFetch, curl o pnpm exec playwright screenshot) y guarda las capturas en docs/design-references/" +
-      `${slug}/source/.`,
-    `3. Construye todas las rutas en sites/${slug}/ respetando la capa de personalización (AGENTS.md §6): src/config/site.ts, src/styles/theme.css, src/data/content.ts (con UI_LABELS) y public/. Nada de marca, contactos ni textos visibles en componentes.`,
-    `4. Escribe sites/${slug}/CUSTOMIZE.md (4 puntos, tamaños de imagen, páginas opcionales, checklist de entrega) siguiendo el de las otras plantilla-*.`,
-    `5. Registra la plantilla en scripts/template-brands.json con sus marcas y datos de ejemplo (es el único archivo fuera de sites/${slug}/ y docs/ que puedes tocar).`,
-    "6. Stack del AGENTS.md §2: Astro + Preact (sin react), CSS puro o lenis para animaciones, sin dependencias nuevas salvo lenis en el package.json del sitio si de verdad hace falta.",
-    "",
-    "Verificación obligatoria antes de terminar:",
-    "- pnpm verify en verde.",
-    `- pnpm qa:site ${slug} (todas las rutas, desktop y mobile, sin overflow horizontal).`,
-    `- node scripts/template-clone.mjs --probe ${slug} en verde (prueba de personalización).`,
-    "",
-    "Cierre:",
-    `- Escribe docs/research/${slug}/agent-summary.md con: tabla de rutas origen → local, tabla de animaciones e interacciones (implementada / justificada), diferencias conocidas y supuestos.`,
-    "",
-  ].join("\n");
 }
 
 function buildPrBody({ slug, url, state }) {
