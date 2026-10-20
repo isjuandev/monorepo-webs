@@ -21,12 +21,12 @@ import {
   PipelineError,
   readIfExists,
   run,
-  runClaude,
+  runAgentUntilDone,
   runSteps,
-  saveState,
   statePaths,
   tail,
 } from "./lib/pipeline.mjs";
+import { UNATTENDED_RULE } from "./lib/prompts.mjs";
 
 const PROBE_SLUG = "tmp-probe-plantilla";
 const CUSTOMIZATION_FILES = ["src/config/site.ts", "src/data/content.ts", "src/styles/theme.css"];
@@ -201,16 +201,23 @@ async function discoverRoutes(url) {
     if (route) routes.add(route);
   }
   const title = /<title[^>]*>([^<]*)<\/title>/i.exec(home)?.[1]?.trim() ?? "";
+  // Variantes de idioma (/de, /de/stays…): duplican rutas del idioma principal y no se clonan
+  const all = [...routes].sort();
+  const localeRoutes = all.filter((route) => {
+    const match = /^\/([a-z]{2}(?:-[a-z]{2})?)(\/.*)?$/.exec(route);
+    return match && all.includes(match[2] ?? "/");
+  });
   return {
     origin,
     title,
-    routes: [...routes].sort(),
+    routes: all.filter((route) => !localeRoutes.includes(route)),
+    localeRoutes,
     sitemaps: [...seenSitemaps],
     reachable: Boolean(home),
   };
 }
 
-function buildClonePrompt({ url, slug, routesFile, routes }) {
+function buildClonePrompt({ url, slug, routesFile, routes, localeRoutes }) {
   return [
     `Clona ${url} como la nueva plantilla del monorepo sites/${slug}/ aplicando la skill clone-website (.agents/skills/clone-website/SKILL.md) en modo A — Plantilla: estructura, layout, estilos, animaciones e interacciones reales, con textos, precios, contactos e imágenes de ejemplo (marca ficticia).`,
     "",
@@ -218,10 +225,16 @@ function buildClonePrompt({ url, slug, routesFile, routes }) {
     `- Rama creada y sitio base generado con pnpm new-client-site ${slug} (sites/${slug}/, dominio ${slug}.example.com).`,
     `- Inventario de rutas en ${routesFile} (${routes.length} rutas desde sitemap.xml, robots.txt y enlaces de la portada). Clónalas todas; si alguna no merece clonarse (duplicada, legal genérica, 404), justifícalo en el resumen.`,
     "No ejecutes git (ni commit, ni push, ni cambios de rama): el orquestador commitea al terminar.",
+    ...(localeRoutes.length > 0
+      ? [
+          `- Variantes de idioma detectadas y excluidas (${localeRoutes.length}: ${localeRoutes.slice(0, 4).join(", ")}${localeRoutes.length > 4 ? ", …" : ""}): la plantilla va en un solo idioma, el principal. No las clones.`,
+        ]
+      : []),
     "Trabajas sin supervisión: no preguntes; decide con el criterio de la skill y anota los supuestos.",
+    UNATTENDED_RULE,
     "",
     "Instrucciones:",
-    "1. Aplica la skill codebase-context y lee la checklist completa de .agents/skills/clone-website/references/full-clone-checklist.md.",
+    "1. Lee la checklist completa de .agents/skills/clone-website/references/full-clone-checklist.md. Para contexto del repo consulta el grafo de codebase-memory (herramientas mcp__codebase-memory-mcp) directamente.",
     "2. Observa la web de origen en desktop (1440x900) y mobile (390x844) con las herramientas disponibles (navegador, WebFetch, curl o pnpm exec playwright screenshot) y guarda las capturas en docs/design-references/" +
       `${slug}/source/.`,
     `3. Construye todas las rutas en sites/${slug}/ respetando la capa de personalización (AGENTS.md §6): src/config/site.ts, src/styles/theme.css, src/data/content.ts (con UI_LABELS) y public/. Nada de marca, contactos ni textos visibles en componentes.`,
@@ -322,6 +335,11 @@ async function main() {
   if (!discovery.reachable) {
     throw new PipelineError(`no se pudo descargar ${url}.`);
   }
+  if (discovery.localeRoutes.length > 0) {
+    log.info(
+      `${discovery.localeRoutes.length} variantes de idioma excluidas: ${discovery.localeRoutes.join(", ")}`
+    );
+  }
   log.ok(
     `${discovery.routes.length} rutas descubiertas en ${discovery.origin}: ${discovery.routes.join(", ")}`
   );
@@ -339,7 +357,13 @@ async function main() {
     maxBudgetUsd: args.maxBudgetUsd || undefined,
     allowedTools: CLONE_ALLOWED_TOOLS,
   };
-  const prompt = buildClonePrompt({ url, slug, routesFile, routes: discovery.routes });
+  const prompt = buildClonePrompt({
+    url,
+    slug,
+    routesFile,
+    routes: discovery.routes,
+    localeRoutes: discovery.localeRoutes,
+  });
   const gates = [
     { name: "verify", command: "pnpm", args: ["verify"] },
     { name: "qa:site", command: "node", args: ["scripts/qa-site.mjs", slug] },
@@ -350,6 +374,15 @@ async function main() {
     },
   ];
   const name = discovery.title.split(/[|–—-]/)[0].trim() || slug;
+
+  // Se reescribe también al retomar el paso agent, para que el agente lea el inventario actual
+  const writeRoutes = () => {
+    fs.mkdirSync(path.join(ROOT_DIR, "docs", "research", slug), { recursive: true });
+    fs.writeFileSync(
+      path.join(ROOT_DIR, routesFile),
+      `${JSON.stringify({ source: url, ...discovery }, null, 2)}\n`
+    );
+  };
 
   const steps = [
     {
@@ -378,11 +411,7 @@ async function main() {
           ],
           { capture: false }
         );
-        fs.mkdirSync(path.join(ROOT_DIR, "docs", "research", slug), { recursive: true });
-        fs.writeFileSync(
-          path.join(ROOT_DIR, routesFile),
-          `${JSON.stringify({ source: url, ...discovery }, null, 2)}\n`
-        );
+        writeRoutes();
         // Una plantilla no nace de otra: .template-origin solo tiene sentido en sitios de cliente
         fs.rmSync(path.join(SITES_DIR, slug, ".template-origin"), { force: true });
         must("pnpm", ["install"], { capture: false });
@@ -396,18 +425,32 @@ async function main() {
       name: "agent",
       title: "clonado con Claude (skill clone-website, sin supervisión)",
       run: async (state) => {
-        const response = await runClaude({ ...claude, slug, prompt });
-        state.sessionId = response.sessionId;
-        state.costUsd = (state.costUsd ?? 0) + response.costUsd;
-        saveState(slug, state);
-        log.info(
-          `Agente: ${response.turns} turnos · $${response.costUsd.toFixed(2)} · sesión ${response.sessionId}`
-        );
-        if (response.isError) {
-          throw new PipelineError(
-            `el agente terminó con error (${response.subtype}). Retoma con --resume --from-step agent.\n${response.result}`
-          );
-        }
+        writeRoutes();
+        const startedAt = Date.now();
+        const summaryPath = path.join(ROOT_DIR, "docs", "research", slug, "agent-summary.md");
+        const brandsPath = path.join(ROOT_DIR, "scripts", "template-brands.json");
+        await runAgentUntilDone({
+          slug,
+          prompt,
+          claude,
+          state,
+          isDone: () => {
+            const missing = [];
+            const pages = fs
+              .readdirSync(path.join(SITES_DIR, slug, "src", "pages"), { recursive: true })
+              .filter((file) => /\.astro$/.test(file) && !/^404\.astro$/.test(file));
+            if (discovery.routes.length > 1 && pages.length < 2) {
+              missing.push(`solo hay ${pages.length} página(s) en sites/${slug}/src/pages`);
+            }
+            if (!(slug in JSON.parse(fs.readFileSync(brandsPath, "utf8")).templates)) {
+              missing.push(`${slug} no está registrada en scripts/template-brands.json`);
+            }
+            if (!fs.existsSync(summaryPath) || fs.statSync(summaryPath).mtimeMs < startedAt) {
+              missing.push(`falta docs/research/${slug}/agent-summary.md`);
+            }
+            return missing.length > 0 ? missing.join("; ") : null;
+          },
+        });
         assertScope(base, allowed);
       },
     },

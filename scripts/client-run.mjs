@@ -21,9 +21,8 @@ import {
   pendingSection,
   readIfExists,
   run,
-  runClaude,
+  runAgentUntilDone,
   runSteps,
-  saveState,
   statePaths,
 } from "./lib/pipeline.mjs";
 import { buildClientPrompt } from "./lib/prompts.mjs";
@@ -366,18 +365,18 @@ async function main() {
       name: "agent",
       title: "personalización con Claude (sin supervisión)",
       run: async (state) => {
-        const response = await runClaude({ ...claude, slug, prompt });
-        state.sessionId = response.sessionId;
-        state.costUsd = (state.costUsd ?? 0) + response.costUsd;
-        saveState(slug, state);
-        log.info(
-          `Agente: ${response.turns} turnos · $${response.costUsd.toFixed(2)} · sesión ${response.sessionId}`
-        );
-        if (response.isError) {
-          throw new PipelineError(
-            `el agente terminó con error (${response.subtype}). Retoma con --resume --from-step agent.\n${response.result}`
-          );
-        }
+        const startedAt = Date.now();
+        const summaryPath = path.join(ROOT_DIR, "docs", "research", slug, "agent-summary.md");
+        await runAgentUntilDone({
+          slug,
+          prompt,
+          claude,
+          state,
+          isDone: () =>
+            fs.existsSync(summaryPath) && fs.statSync(summaryPath).mtimeMs >= startedAt
+              ? null
+              : `falta escribir docs/research/${slug}/agent-summary.md al terminar la personalización`,
+        });
         assertScope(base, allowed);
       },
     },
