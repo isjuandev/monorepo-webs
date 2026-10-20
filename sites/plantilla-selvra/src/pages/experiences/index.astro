@@ -1,0 +1,28 @@
+---
+import CardGrid from "@/components/CardGrid.astro";
+import OfferCard from "@/components/OfferCard.astro";
+import PageIntro from "@/components/PageIntro.astro";
+import { EXPERIENCES, PAGES, UI_LABELS } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const page = PAGES.experiences;
+---
+
+<BaseLayout page={page.seoTitle} description={page.description}>
+  <PageIntro label={page.label} title={page.title} text={page.text} />
+  <CardGrid>
+    {
+      EXPERIENCES.map((experience) => (
+        <OfferCard
+          href={`/experiences/${experience.slug}`}
+          image={experience.image}
+          name={experience.name}
+          facts={[experience.duration, experience.category]}
+          description={experience.summary}
+          linkLabel={UI_LABELS.exploreExperience}
+          headingLevel="h2"
+        />
+      ))
+    }
+  </CardGrid>
+</BaseLayout>

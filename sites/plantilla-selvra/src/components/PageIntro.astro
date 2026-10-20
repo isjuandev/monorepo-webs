@@ -1,0 +1,42 @@
+---
+/** Cabecera de las páginas interiores: rótulo, título grande y entradilla. */
+export interface Props {
+  label: string;
+  title: string;
+  text: string;
+}
+
+const { label, title, text } = Astro.props;
+---
+
+<header class="container page-intro">
+  <p class="t-label">{label}</p>
+  <h1 class="t-h1 page-intro__title">{title}</h1>
+  <p class="t-body page-intro__text">{text}</p>
+</header>
+
+<style>
+  .page-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding-top: 172px;
+  }
+
+  .page-intro__title {
+    max-width: 980px;
+    margin-top: 0;
+  }
+
+  .page-intro__text {
+    max-width: 620px;
+  }
+
+  @media (max-width: 809px) {
+    .page-intro {
+      gap: 20px;
+      padding-top: 132px;
+    }
+  }
+</style>

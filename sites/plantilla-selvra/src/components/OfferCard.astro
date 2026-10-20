@@ -1,0 +1,96 @@
+---
+import Icon from "@/components/Icon.astro";
+import type { ImageAsset } from "@/data/content";
+
+/** Tarjeta de estancia o experiencia (lista, portada y recomendación del detalle). */
+export interface Props {
+  href: string;
+  image: ImageAsset;
+  name: string;
+  facts: string[];
+  description: string;
+  extra?: string;
+  linkLabel: string;
+  /** Alto de la foto en desktop */
+  imageHeight?: number;
+  headingLevel?: "h2" | "h3";
+}
+
+const {
+  href,
+  image,
+  name,
+  facts,
+  description,
+  extra,
+  linkLabel,
+  imageHeight = 240,
+  headingLevel: Heading = "h3",
+} = Astro.props;
+---
+
+<a class="offer-card surface surface--card" href={href} style={`--image-height: ${imageHeight}px`}>
+  <div class="offer-card__media surface__media">
+    <img src={image.src} alt={image.alt} width="544" height={imageHeight} loading="lazy" decoding="async" />
+  </div>
+  <div class="offer-card__details">
+    <Heading class="t-h3">{name}</Heading>
+    <p class="offer-card__facts t-small">{facts.map((fact) => <span>{fact}</span>)}</p>
+    <p class="t-body">{description}</p>
+    {extra && <p class="t-small">{extra}</p>}
+    <span class="t-small text-link">
+      {linkLabel}
+      <Icon name="external" />
+    </span>
+  </div>
+</a>
+
+<style>
+  .offer-card {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 2px 2px 24px;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .offer-card__media {
+    height: var(--image-height);
+    overflow: hidden;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+
+  .offer-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .offer-card__details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding-inline: 22px;
+  }
+
+  .offer-card__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+  }
+
+  @media (hover: hover) {
+    .offer-card:hover {
+      box-shadow: var(--shadow-card-hover);
+    }
+  }
+
+  @media (max-width: 809px) {
+    .offer-card__details {
+      padding-inline: 18px;
+    }
+  }
+</style>

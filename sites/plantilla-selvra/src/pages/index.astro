@@ -1,0 +1,23 @@
+---
+import CtaStrip from "@/components/sections/CtaStrip.astro";
+import FaqList from "@/components/sections/FaqList.astro";
+import HomeHero from "@/components/sections/HomeHero.astro";
+import MaterialScene from "@/components/sections/MaterialScene.astro";
+import Moments from "@/components/sections/Moments.astro";
+import StayChooser from "@/components/sections/StayChooser.astro";
+import { HOME } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout description={HOME.seo.description}>
+  <HomeHero />
+  <MaterialScene />
+  <StayChooser />
+  <Moments />
+  <FaqList />
+  <CtaStrip />
+</BaseLayout>
+
+<script>
+  import "@/scripts/motion";
+</script>

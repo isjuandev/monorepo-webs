@@ -1,0 +1,43 @@
+---
+import type { GetStaticPaths } from "astro";
+import DetailPage from "@/components/DetailPage.astro";
+import { DETAIL, STAYS, type Stay, UI_LABELS } from "@/data/content";
+import { getExperience } from "@/data/lookup";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+export const getStaticPaths = (() =>
+  STAYS.map((stay) => ({ params: { slug: stay.slug }, props: { stay } }))) satisfies GetStaticPaths;
+
+export interface Props {
+  stay: Stay;
+}
+
+const { stay } = Astro.props;
+const experience = getExperience(stay.relatedExperience);
+---
+
+<BaseLayout page={stay.name} description={stay.summary} ogImage={stay.image.src}>
+  <DetailPage
+    back={{ label: UI_LABELS.allStays, href: "/stays" }}
+    name={stay.name}
+    kicker={DETAIL.stay.kicker}
+    summary={stay.summary}
+    image={stay.image}
+    sections={stay.sections}
+    glanceFacts={[stay.guests, stay.area, stay.amenities]}
+    enquireHref={`/enquire?interest=${stay.slug}`}
+    enquireLabel={UI_LABELS.createEnquiry}
+    gallery={[stay.image, stay.galleryImage]}
+    relatedTitle={DETAIL.stay.relatedTitle}
+    relatedText={DETAIL.stay.relatedText}
+    related={{
+      href: `/experiences/${experience.slug}`,
+      image: experience.image,
+      name: experience.name,
+      facts: [experience.duration, experience.category],
+      description: experience.summary,
+      linkLabel: UI_LABELS.exploreExperience,
+      imageHeight: 240,
+    }}
+  />
+</BaseLayout>

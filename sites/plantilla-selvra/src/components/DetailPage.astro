@@ -1,0 +1,258 @@
+---
+import Icon from "@/components/Icon.astro";
+import OfferCard from "@/components/OfferCard.astro";
+import type { ImageAsset, TextBlock } from "@/data/content";
+import { DETAIL } from "@/data/content";
+
+/** Plantilla común del detalle de una estancia o una experiencia. */
+export interface RelatedCard {
+  href: string;
+  image: ImageAsset;
+  name: string;
+  facts: string[];
+  description: string;
+  extra?: string;
+  linkLabel: string;
+  imageHeight: number;
+}
+
+export interface Props {
+  back: { label: string; href: string };
+  name: string;
+  kicker: string;
+  summary: string;
+  image: ImageAsset;
+  sections: TextBlock[];
+  glanceFacts: string[];
+  enquireHref: string;
+  enquireLabel: string;
+  gallery: ImageAsset[];
+  relatedTitle: string;
+  relatedText: string;
+  related: RelatedCard;
+}
+
+const {
+  back,
+  name,
+  kicker,
+  summary,
+  image,
+  sections,
+  glanceFacts,
+  enquireHref,
+  enquireLabel,
+  gallery,
+  relatedTitle,
+  relatedText,
+  related,
+} = Astro.props;
+---
+
+<header class="container detail-intro">
+  <a class="t-small text-link detail-intro__back" href={back.href}>
+    <Icon name="arrow-left" />
+    {back.label}
+  </a>
+  <h1 class="t-h1">{name}</h1>
+  <p class="t-label">{kicker}</p>
+  <p class="t-body detail-intro__summary">{summary}</p>
+</header>
+
+<div class="detail-hero">
+  <img src={image.src} alt={image.alt} width="1440" height="620" fetchpriority="high" decoding="async" />
+</div>
+
+<section class="container detail-body">
+  <div class="detail-body__text">
+    {
+      sections.map((section) => (
+        <div class="detail-body__block">
+          <h2 class="t-h2">{section.title}</h2>
+          <p class="t-body">{section.text}</p>
+        </div>
+      ))
+    }
+  </div>
+  <aside class="glance">
+    <h2 class="t-h3">{DETAIL.glanceTitle}</h2>
+    {glanceFacts.map((fact) => <p class="t-small">{fact}</p>)}
+    <a class="glance__button" href={enquireHref}>
+      {enquireLabel}
+      <Icon name="external" />
+    </a>
+    <p class="t-label">{DETAIL.glanceNote}</p>
+  </aside>
+</section>
+
+<div class="container detail-gallery">
+  {
+    gallery.map((photo) => (
+      <div class="detail-gallery__item">
+        <img src={photo.src} alt={photo.alt} width="548" height="430" loading="lazy" decoding="async" />
+      </div>
+    ))
+  }
+</div>
+
+<section class="container detail-related">
+  <div class="detail-related__text">
+    <h2 class="t-h2">{relatedTitle}</h2>
+    <p class="t-body">{relatedText}</p>
+  </div>
+  <OfferCard {...related} />
+</section>
+
+<style>
+  .detail-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding-top: 164px;
+  }
+
+  .detail-intro__back {
+    padding-block: 11px;
+    margin-bottom: 0;
+  }
+
+  .detail-intro__back:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .detail-intro__summary {
+    max-width: 640px;
+    margin-top: -2px;
+  }
+
+  .detail-hero {
+    height: 620px;
+    margin-top: 72px;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+  }
+
+  .detail-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .detail-body {
+    display: grid;
+    grid-template-columns: 661fr 379fr;
+    gap: 80px;
+    align-items: start;
+    padding-block: 84px 80px;
+  }
+
+  .detail-body__text {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .detail-body__block {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .glance {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+    padding: 24px;
+    background: var(--color-panel);
+  }
+
+  .glance__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px 22px;
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    box-shadow: var(--shadow-soft);
+    font-family: var(--font-ui);
+    font-size: 16px;
+    line-height: 1.5;
+    transition: translate 0.4s var(--ease-out);
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .glance__button:hover {
+      translate: 0 -2px;
+    }
+  }
+
+  .detail-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .detail-gallery__item {
+    aspect-ratio: 548 / 430;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+  }
+
+  .detail-gallery__item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .detail-related {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 80px;
+    align-items: start;
+    padding-block: 144px 80px;
+  }
+
+  .detail-related__text {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  @media (max-width: 809px) {
+    .detail-intro {
+      gap: 20px;
+      padding-top: 124px;
+    }
+
+    .detail-hero {
+      height: 340px;
+      margin-top: 48px;
+    }
+
+    .detail-body {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      padding-block: 48px;
+    }
+
+    .detail-gallery {
+      grid-template-columns: 1fr;
+    }
+
+    .detail-gallery__item {
+      aspect-ratio: 350 / 300;
+    }
+
+    .detail-related {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      padding-block: 80px 64px;
+    }
+  }
+</style>

@@ -1,0 +1,70 @@
+---
+import SEO from "@repo/ui/astro/SEO.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import { pageTitle, siteConfig } from "@/config/site";
+import { UI_LABELS } from "@/data/content";
+import "@/styles/theme.css";
+import "@/styles/global.css";
+
+export interface Props {
+  /** Nombre de la página; se compone como "Página — <logotipo>" */
+  page?: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const {
+  page,
+  description = siteConfig.description,
+  ogImage = siteConfig.ogImage,
+  noindex = false,
+} = Astro.props;
+
+const title = pageTitle(page);
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "LodgingBusiness",
+  name: siteConfig.name,
+  url: siteConfig.url,
+  description: siteConfig.description,
+  telephone: siteConfig.contact.phone,
+  email: siteConfig.contact.email,
+  address: siteConfig.contact.address,
+  image: new URL(siteConfig.ogImage ?? "/images/og-image.jpg", siteConfig.url).href,
+};
+---
+
+<!doctype html>
+<html lang={siteConfig.locale?.split("_")[0] ?? "en"}>
+  <head>
+    <SEO
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      locale={siteConfig.locale}
+      siteName={siteConfig.name}
+      noindex={noindex}
+    />
+    <link rel="icon" type="image/png" href="/favicon.png" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/png" href="/favicon-dark.png" media="(prefers-color-scheme: dark)" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    {
+      siteConfig.preloadFonts.map((href) => (
+        <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />
+      ))
+    }
+    <meta name="theme-color" content={siteConfig.themeColor} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a href="#contenido" class="skip-link">{UI_LABELS.skipToContent}</a>
+    <SiteHeader />
+    <main id="contenido">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

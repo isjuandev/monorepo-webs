@@ -1,0 +1,132 @@
+---
+import Icon from "@/components/Icon.astro";
+import PageIntro from "@/components/PageIntro.astro";
+import { PAGES } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const page = PAGES.place;
+---
+
+<BaseLayout page={page.seoTitle} description={page.description}>
+  <PageIntro label={page.label} title={page.title} text={page.text} />
+
+  <div class="place-hero">
+    <img
+      src={page.heroImage.src}
+      alt={page.heroImage.alt}
+      width="1440"
+      height="600"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </div>
+
+  <section class="container place-story">
+    <div class="place-story__text">
+      <h2 class="t-h2">{page.story.title}</h2>
+      {page.story.paragraphs.map((paragraph) => <p class="t-body">{paragraph}</p>)}
+    </div>
+    <div class="place-story__media">
+      <img
+        src={page.story.image.src}
+        alt={page.story.image.alt}
+        width="520"
+        height="640"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </section>
+
+  <section class="container place-journey">
+    <h2 class="t-h2">{page.journey.title}</h2>
+    <div class="place-journey__text">
+      {page.journey.paragraphs.map((paragraph) => <p class="t-body">{paragraph}</p>)}
+      <a class="btn btn--primary" href={page.journey.cta.href}>
+        {page.journey.cta.label}
+        <Icon name="arrow-right" />
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .place-hero {
+    height: 600px;
+    margin-top: 56px;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+  }
+
+  .place-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .place-story,
+  .place-journey {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 80px;
+  }
+
+  .place-story {
+    align-items: center;
+    padding-block: 80px;
+  }
+
+  .place-story__text,
+  .place-journey__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .place-story__text .t-h2 {
+    margin-bottom: 8px;
+  }
+
+  .place-story__media {
+    aspect-ratio: 520 / 640;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+  }
+
+  .place-story__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .place-journey {
+    align-items: start;
+    padding-block: 64px 80px;
+  }
+
+  @media (max-width: 809px) {
+    .place-hero {
+      height: 340px;
+      margin-top: 48px;
+    }
+
+    .place-story,
+    .place-journey {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .place-story {
+      padding-block: 48px;
+    }
+
+    .place-story__media {
+      aspect-ratio: 350 / 420;
+    }
+
+    .place-journey {
+      padding-block: 48px 80px;
+    }
+  }
+</style>

@@ -1,0 +1,241 @@
+---
+import Icon from "@/components/Icon.astro";
+import { MENU_LINKS, siteConfig } from "@/config/site";
+import { UI_LABELS } from "@/data/content";
+
+/**
+ * Barra de navegación flotante de la fuente: posición absoluta (se va con el scroll),
+ * fondo crema translúcido con blur. En mobile el menú se despliega dentro de la misma barra.
+ */
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header class="site-header" data-menu="closed">
+  <nav class="site-header__bar" aria-label={UI_LABELS.mainNav}>
+    <a class="site-header__logo" href="/" aria-label={`${siteConfig.name} — ${UI_LABELS.homeLink}`}>
+      {siteConfig.logoText}
+    </a>
+    <ul class="site-header__links">
+      {
+        MENU_LINKS.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="site-header__link"
+              aria-current={isActive(link.href) ? "page" : undefined}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <button
+      class="site-header__toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      data-menu-open
+    >
+      <Icon name="menu" size={24} />
+      <span class="visually-hidden">{UI_LABELS.openMenu}</span>
+    </button>
+    <div class="site-header__panel" id="mobile-menu" hidden>
+      <button class="site-header__close" type="button" data-menu-close>
+        {UI_LABELS.closeMenu}
+      </button>
+      <ul class="site-header__mobile-links">
+        {
+          MENU_LINKS.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="site-header__mobile-link"
+                aria-current={isActive(link.href) ? "page" : undefined}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </nav>
+  <div class="site-header__scrim" data-menu-close aria-hidden="true"></div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>(".site-header");
+  const openButton = header?.querySelector<HTMLButtonElement>("[data-menu-open]");
+  const panel = header?.querySelector<HTMLElement>("#mobile-menu");
+
+  function setOpen(open: boolean): void {
+    if (!header || !openButton || !panel) return;
+    header.dataset.menu = open ? "open" : "closed";
+    openButton.setAttribute("aria-expanded", String(open));
+    panel.hidden = !open;
+    if (open) panel.querySelector<HTMLElement>("[data-menu-close]")?.focus();
+    else openButton.focus();
+  }
+
+  openButton?.addEventListener("click", () => setOpen(true));
+  for (const el of header?.querySelectorAll("[data-menu-close]") ?? []) {
+    el.addEventListener("click", () => setOpen(false));
+  }
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && header?.dataset.menu === "open") setOpen(false);
+  });
+  window.matchMedia("(min-width: 810px)").addEventListener("change", (event) => {
+    if (event.matches && header?.dataset.menu === "open") setOpen(false);
+  });
+</script>
+
+<style>
+  .site-header {
+    position: absolute;
+    inset: 20px 40px auto;
+    z-index: 50;
+  }
+
+  .site-header__bar {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    max-width: 1600px;
+    min-height: 76px;
+    padding: 12px 24px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-nav);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-nav);
+  }
+
+  .site-header__logo {
+    margin-right: auto;
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1.4;
+    letter-spacing: 2px;
+  }
+
+  .site-header__links {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+  }
+
+  .site-header__link {
+    font-size: 16px;
+    line-height: 1.4;
+    text-underline-offset: 3px;
+  }
+
+  .site-header__link[aria-current="page"],
+  .site-header__link:hover {
+    text-decoration: underline;
+  }
+
+  .site-header__toggle,
+  .site-header__panel,
+  .site-header__scrim {
+    display: none;
+  }
+
+  @media (max-width: 809px) {
+    .site-header {
+      inset: 16px 16px auto;
+    }
+
+    .site-header__bar {
+      flex-wrap: wrap;
+      min-height: 72px;
+      padding: 12px;
+      background: var(--color-nav-mobile);
+    }
+
+    .site-header__logo {
+      padding-left: 12px;
+      font-size: 24px;
+    }
+
+    .site-header__links {
+      display: none;
+    }
+
+    .site-header__toggle {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+    }
+
+    .site-header__panel:not([hidden]) {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 24px;
+      width: 100%;
+      padding: 0 12px 24px;
+    }
+
+    [data-menu="open"] .site-header__logo,
+    [data-menu="open"] .site-header__toggle {
+      display: none;
+    }
+
+    .site-header__close {
+      padding: 10px 16px;
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+      font-size: 16px;
+    }
+
+    .site-header__mobile-links {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .site-header__mobile-link {
+      font-family: var(--font-display);
+      font-size: 28px;
+      line-height: 1.5;
+    }
+
+    .site-header__mobile-link[aria-current="page"] {
+      text-decoration: underline;
+      text-underline-offset: 5px;
+    }
+
+    [data-menu="open"] .site-header__scrim {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      display: block;
+      background: var(--color-scrim);
+      animation: scrim-in 0.3s ease-out;
+    }
+
+    [data-menu="open"] .site-header__panel {
+      animation: panel-in 0.35s var(--ease-out);
+    }
+  }
+
+  @keyframes scrim-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+</style>

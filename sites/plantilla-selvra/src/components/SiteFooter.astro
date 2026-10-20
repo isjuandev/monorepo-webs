@@ -1,0 +1,73 @@
+---
+import Icon from "@/components/Icon.astro";
+import { FOOTER_LINKS, siteConfig } from "@/config/site";
+import { FOOTER, UI_LABELS } from "@/data/content";
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="t-h2 site-footer__title">{FOOTER.title}</p>
+    <p class="t-label">{siteConfig.footerTagline}</p>
+    <nav aria-label={UI_LABELS.footerNav}>
+      <ul class="site-footer__links">
+        {
+          FOOTER_LINKS.map((link) => (
+            <li>
+              <a href={link.href} class="t-small site-footer__link">
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <p class="t-label">{FOOTER.note}</p>
+    <a href={FOOTER.aboutLink.href} class="t-small text-link site-footer__link">
+      {FOOTER.aboutLink.label}
+      <Icon name="external" />
+    </a>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding: 72px 40px 32px;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .site-footer__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+    max-width: 1120px;
+    margin-inline: auto;
+  }
+
+  .site-footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding-block: 8px;
+    list-style: none;
+  }
+
+  .site-footer__link {
+    text-underline-offset: 3px;
+  }
+
+  .site-footer__link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 809px) {
+    .site-footer {
+      padding: 48px 20px 24px;
+    }
+
+    .site-footer__links {
+      row-gap: 32px;
+    }
+  }
+</style>
