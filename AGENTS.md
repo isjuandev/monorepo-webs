@@ -209,7 +209,9 @@ Un sitio de cliente se personaliza editando **solo 4 puntos**, sin tocar compone
 
 ## 7. Flujo Paso a Paso para Crear un Sitio de Cliente Nuevo
 
-Cuando el usuario pida crear la web de un nuevo cliente, utiliza el generador oficial `new-client-site` (no inventes teléfonos, correos ni direcciones que el usuario no haya proporcionado):
+**Vía automatizada (preferida cuando existe `recursos/<slug>/brief.md`):** `pnpm client:run <slug>` ejecuta todo este flujo sin supervisión y abre un PR (ver README, "Pipeline automatizado"). Para clonar una web como plantilla nueva: `pnpm template:clone <url> <plantilla-slug>`. Si te invoca ese pipeline, no ejecutes git: el orquestador crea la rama, commitea y abre el PR.
+
+Cuando el usuario pida crear la web de un nuevo cliente a mano, utiliza el generador oficial `new-client-site` (no inventes teléfonos, correos ni direcciones que el usuario no haya proporcionado):
 
 1. **Ejecutar el generador:**
    ```bash
@@ -223,7 +225,7 @@ Cuando el usuario pida crear la web de un nuevo cliente, utiliza el generador of
 5. **Validar calidad, aislamiento y QA visual antes de entregar:**
    - `pnpm verify` (equivale a `verify:isolation` + `lint` + `check` + `build`, igual que CI y el hook `pre-push`)
    - O por separado: `pnpm verify:isolation`, `pnpm lint`, `pnpm --filter @sites/<slug-cliente> check`, `pnpm --filter @sites/<slug-cliente> build`
-   - `SITE_FOLDER=<slug-cliente> QA_ROUTES="/,/otra-ruta" pnpm test:visual`
+   - `pnpm qa:site <slug-cliente>` (todas las rutas del build) o `SITE_FOLDER=<slug-cliente> QA_ROUTES="/,/otra-ruta" pnpm test:visual`
 6. **Desplegar:** una aplicación de Coolify por cliente con `docker/Dockerfile`, `SITE_FOLDER` y `SITE_URL` (ver [`docs/deploy-coolify.md`](./docs/deploy-coolify.md)). Activa el hook una vez por clon: `git config core.hooksPath .githooks`.
 
 ---
@@ -255,6 +257,14 @@ Ejecuta siempre los comandos desde la raíz del monorepo (`/monorepo-webs`):
   ```bash
   pnpm new-client-site <slug-cliente> --name "<Nombre>" --domain "<dominio.com>"
   pnpm new-client-site <slug-cliente> --from plantilla-hotellia --name "<Nombre>" --domain "<dominio.com>"
+  ```
+- **Pipeline automatizado (brief/URL → PR, sin supervisión):**
+  ```bash
+  pnpm recursos:new <slug-cliente>                      # carpeta de recursos y brief
+  pnpm client:run <slug-cliente> [--dry-run|--resume|--no-pr|--allow-pending]
+  pnpm template:clone <url> <plantilla-slug> [--dry-run|--resume|--no-pr]
+  pnpm optimize-assets <slug-cliente>                   # recursos → public/ (WebP)
+  pnpm qa:site <slug-cliente>                           # build + QA de todas las rutas
   ```
 - **Auditar restos de plantilla en un sitio de cliente:**
   ```bash

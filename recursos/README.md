@@ -4,15 +4,15 @@ Entrada manual de material de cada cliente. Aquí **tú** dejas logos, fotos, te
 
 ## Cómo usarla
 
-1. Copia la plantilla de carpeta con el slug del cliente (`kebab-case`):
+1. Crea la carpeta del cliente con su slug (`kebab-case`):
 
    ```bash
-   cp -R recursos/_plantilla-cliente recursos/<slug-cliente>
+   pnpm recursos:new <slug-cliente>
    ```
 
 2. Rellena `recursos/<slug-cliente>/brief.md` (datos, contacto, marca, tono). Lo que no tengas, déjalo vacío: el agente lo marcará como pendiente y no inventará nada.
 3. Pon los archivos en sus carpetas (ver abajo).
-4. En el prompt, indica `Recursos: recursos/<slug-cliente>/` y lanza la generación.
+4. Lanza la generación sin supervisión (termina en un PR): `pnpm client:run <slug-cliente>` (prueba antes con `--dry-run`). Alternativa manual: `pnpm client-prompt <slug-cliente>` copia el prompt para pegarlo en Claude.
 
 ## Estructura de cada cliente
 
@@ -39,4 +39,4 @@ recursos/<slug-cliente>/
 - **Fotos:** originales de la mejor calidad disponible; el agente las optimiza al copiarlas a `sites/<slug-cliente>/public/`. Agrupa por habitación y, si importa el orden, numera (`-01`, `-02`).
 - **Sin secretos:** nada de contraseñas, tokens ni datos bancarios.
 - **Git:** el contenido de cada cliente está ignorado por Git (pesado y de terceros). Solo se versionan este `README.md` y `_plantilla-cliente/`.
-- **Solo lectura para el agente:** el agente copia desde aquí hacia `sites/<slug-cliente>/public/`; no modifica ni borra esta carpeta.
+- **Solo lectura para el agente:** `pnpm optimize-assets <slug-cliente>` (que `client:run` ejecuta solo) copia y optimiza `marca/` y `fotos/` hacia `sites/<slug-cliente>/public/` y deja el mapa en `docs/research/<slug-cliente>/assets-manifest.json`; nadie modifica ni borra esta carpeta.
