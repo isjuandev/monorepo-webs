@@ -89,6 +89,35 @@ monorepo-webs/
 
 ---
 
+## Pipeline automatizado: de brief o URL a PR (`pnpm client:run` / `pnpm template:clone`)
+
+Dos comandos locales hacen todo el trabajo sin supervisión y terminan en un **PR listo para revisar**. Tú revisas y mergeas, y Coolify despliega al llegar a `main`. Los pasos deterministas (git, generador, imágenes, compuertas, PR) los hace el script; el trabajo creativo lo hace Claude Code en modo headless (`claude -p`), que no puede ejecutar git y solo puede tocar las rutas del sitio.
+
+```bash
+# Cliente nuevo desde una plantilla
+pnpm recursos:new hotel-sol             # crea recursos/hotel-sol/ (brief + carpetas)
+# … rellena recursos/hotel-sol/brief.md y deja fotos, marca y textos …
+pnpm client:run hotel-sol --dry-run     # valida el brief y el entorno, y muestra el plan y el prompt
+pnpm client:run hotel-sol               # rama → recursos → generador → activos → agente → compuertas → PR
+
+# Nueva plantilla clonada de una web (skill clone-website, modo Plantilla)
+pnpm template:clone https://ejemplo.framer.website plantilla-ejemplo
+```
+
+| Paso | `client:run` | `template:clone` |
+| :-- | :-- | :-- |
+| Preflight | brief válido, árbol limpio, rama libre, `claude`/`gh`, dominio no temporal (o `--allow-pending`) | URL accesible, slug `plantilla-*`, inventario de rutas (`sitemap.xml`, `robots.txt`, enlaces) |
+| Determinista | rama `cliente/[motel-]<slug>`, commit de `recursos/<slug>`, `new-client-site --from`, `optimize-assets` | rama `feat/<slug>`, `new-client-site`, `docs/research/<slug>/routes.json` |
+| Agente | personaliza los 4 puntos (y `motel-copywriting` si es motel) | clona todas las rutas, `CUSTOMIZE.md` y `template-brands.json` |
+| Compuertas | `customize:check --strict`, `verify`, `qa:site` | `verify`, `qa:site`, prueba de personalización (`--probe`) |
+| Cierre | guardia de alcance, commits, push y `gh pr create` con resumen, pendientes, QA y ficha de Coolify | igual |
+
+Si una compuerta falla, el agente la repara en la misma sesión (`--max-repairs`, por defecto 2). El estado y el log del agente se guardan en `.pipeline/<slug>/` (ignorado por Git). Para retomar, usa `--resume [--from-step <paso>]`. Otras opciones: `--no-pr`, `--base`, `--model` y `--max-budget-usd` (`--help` en cada comando).
+
+> Los scripts del pipeline deben estar en la rama base (`main`): el primer paso hace `git checkout <base>`.
+
+---
+
 ## Creación Automatizada de un Nuevo Cliente (`pnpm new-client-site`)
 
 Para crear un sitio nuevo sin modificar `sites/_template`, usa el generador incluido:
@@ -180,7 +209,7 @@ Qué verifica automáticamente:
 - **Cero desbordamiento horizontal** (`document.documentElement.scrollWidth <= window.innerWidth`) tanto en desktop como en mobile.
 - Capturas reproducibles en `docs/design-references/<cliente>/current-{desktop|mobile}-<ruta>.png`, comparación contra snapshots de referencia (si existen) y generación de informe en `docs/research/<cliente>/visual-qa-report.md`. Las capturas `current-*` y los informes son artefactos ignorados por Git.
 
-En CI (`ci.yml`) la suite se ejecuta sobre `_template`.
+`pnpm qa:site <slug>` compila el sitio y ejecuta la suite sobre **todas** las páginas del build (`QA_ROUTES=auto`, que lee `sites/<slug>/dist/`). En CI (`ci.yml`) se ejecuta `qa:site` sobre los sitios cambiados respecto a la base (`scripts/changed-sites.mjs`); si cambia el núcleo compartido, sobre todos, y si no cambia ningún sitio, sobre `_template`.
 
 ---
 
@@ -232,6 +261,12 @@ docker run --rm -p 8080:80 web-cliente-x
 | :--- | :--- |
 | `pnpm install` | Instala las dependencias de todos los workspaces |
 | `pnpm install --frozen-lockfile` | Instalación determinista para CI y producción |
+| `pnpm recursos:new <slug>` | Crea `recursos/<slug>/` (brief y carpetas) desde `recursos/_plantilla-cliente` |
+| `pnpm client:run <slug>` | Pipeline sin supervisión: brief → sitio del cliente → compuertas → PR |
+| `pnpm template:clone <url> <plantilla-slug>` | Pipeline sin supervisión: URL → nueva plantilla → compuertas → PR |
+| `pnpm client-prompt <slug>` | Genera el prompt manual de creación (alternativa a `client:run`) |
+| `pnpm optimize-assets <slug>` | Optimiza `recursos/<slug>/` (WebP, og-image, fuentes) hacia `sites/<slug>/public/` |
+| `pnpm qa:site <slug>` | Build + Playwright sobre todas las rutas del sitio |
 | `pnpm new-client-site <slug>` | Crea y verifica un nuevo sitio de cliente a partir de `_template` |
 | `pnpm verify` | Aislamiento + lint + check + build (lo mismo que CI y el hook `pre-push`) |
 | `pnpm customize:check <slug>` | Audita restos de plantilla en un sitio de cliente (`--strict` falla si hay hallazgos) |

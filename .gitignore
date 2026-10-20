@@ -15,6 +15,8 @@ test-results/
 docs/design-references/*/current-*.png
 docs/research/*/visual-qa-report.json
 docs/research/*/visual-qa-report.md
+# Estado y logs locales de pnpm client:run / template:clone
+.pipeline/
 
 # Recursos manuales por cliente (solo se versiona README y _plantilla-cliente)
 recursos/*

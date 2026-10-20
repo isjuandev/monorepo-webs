@@ -4,7 +4,7 @@
 
 ## Generación
 
-- Plantilla base: <!-- plantilla-hotellia | plantilla-asterre | plantilla-aurelia | _template -->
+- Plantilla base: <!-- carpeta de sites/: _template o plantilla-* (ej. plantilla-hotellia). Ver `ls sites` -->
 - Slug (kebab-case):
 - Nombre comercial:
 - Dominio:

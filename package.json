@@ -15,15 +15,22 @@
     "verify": "pnpm verify:isolation && pnpm lint && pnpm check && pnpm build",
     "verify:isolation": "node scripts/verify-isolation.mjs",
     "new-client-site": "node scripts/new-client-site.mjs",
+    "client-prompt": "node scripts/client-prompt.mjs",
+    "client:run": "node scripts/client-run.mjs",
+    "template:clone": "node scripts/template-clone.mjs",
+    "recursos:new": "node scripts/recursos-new.mjs",
+    "optimize-assets": "node scripts/optimize-assets.mjs",
     "customize:check": "node scripts/customize-check.mjs",
     "test:visual": "playwright test && node scripts/visual-qa-summary.mjs",
     "test:visual:update": "UPDATE_SNAPSHOTS=true playwright test --update-snapshots && node scripts/visual-qa-summary.mjs",
+    "qa:site": "node scripts/qa-site.mjs",
     "clean": "turbo run clean && rm -rf node_modules playwright-report test-results"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.15",
     "@playwright/test": "^1.64.0",
     "@types/node": "^26.6.5",
+    "sharp": "^0.35.5",
     "turbo": "^2.3.0",
     "typescript": "^5.7.0"
   },
