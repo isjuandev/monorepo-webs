@@ -1,0 +1,311 @@
+---
+import Icon from "@/components/Icon.astro";
+import { HOME, UI_LABELS } from "@/data/content";
+
+/**
+ * Hero "One place. Two moods.": paisaje, logotipo gigante y el mismo paisaje recortado con una
+ * máscara SVG (el pabellón queda delante del logotipo). Día/tarde cambian ambas fotos.
+ * Movimiento medido: entrada de 1,1 s (escala 1,06 → 1) y parallax (fotos +0,1 · logotipo −0,15).
+ */
+const { hero } = HOME;
+const letters = hero.wordmark.length;
+const moods = [
+  { id: "day", label: hero.day, src: hero.dayImage },
+  { id: "evening", label: hero.evening, src: hero.eveningImage },
+];
+---
+
+<section class="hero" data-hero data-mood="evening" style={`--hero-mask: url("${hero.mask}")`}>
+  <div class="hero__layers">
+    <div class="hero__layer hero__layer--landscape" data-parallax="0.1">
+      {
+        moods.map((mood) => (
+          <img
+            class="hero__photo"
+            data-mood-photo={mood.id}
+            src={mood.src}
+            alt={mood.id === "evening" ? hero.imageAlt : ""}
+            width="1672"
+            height="941"
+            fetchpriority="high"
+            decoding="async"
+          />
+        ))
+      }
+    </div>
+    <svg
+      class="hero__wordmark"
+      data-parallax="-0.15"
+      data-fit-text
+      viewBox={`0 0 ${letters * 66} 72`}
+      aria-hidden="true"
+    >
+      <text x="0" y="72">{hero.wordmark}</text>
+    </svg>
+    <div class="hero__layer hero__layer--cutout" data-parallax="0.1" aria-hidden="true">
+      {
+        moods.map((mood) => (
+          <img
+            class="hero__photo"
+            data-mood-photo={mood.id}
+            src={mood.src}
+            alt=""
+            width="1672"
+            height="941"
+            decoding="async"
+          />
+        ))
+      }
+    </div>
+    <div class="hero__shade"></div>
+  </div>
+
+  <div class="hero__content">
+    <div class="hero__intro">
+      <h1 class="hero__title">{hero.title}</h1>
+      <a class="btn btn--secondary" href={hero.cta.href}>
+        {hero.cta.label}
+        <Icon name="arrow-right" />
+      </a>
+    </div>
+    <div class="hero__mood">
+      <p class="t-label hero__caption">{hero.moodCaption}</p>
+      <div class="hero__toggle" role="group" aria-label={UI_LABELS.moodGroup}>
+        {
+          moods.map((mood) => (
+            <button
+              type="button"
+              class="hero__mood-button"
+              data-mood-button={mood.id}
+              aria-pressed={mood.id === "evening" ? "true" : "false"}
+            >
+              {mood.label}
+              <span class="hero__check" aria-hidden="true">
+                {UI_LABELS.checkmark}
+              </span>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const hero = document.querySelector<HTMLElement>("[data-hero]");
+  const buttons = hero?.querySelectorAll<HTMLButtonElement>("[data-mood-button]") ?? [];
+
+  for (const button of buttons) {
+    button.addEventListener("click", () => {
+      if (!hero) return;
+      hero.dataset.mood = button.dataset.moodButton;
+      for (const other of buttons) {
+        other.setAttribute("aria-pressed", String(other === button));
+      }
+    });
+  }
+
+  // El logotipo ocupa todo su ancho, como el "fit text" de Framer.
+  const wordmark = hero?.querySelector<SVGSVGElement>("[data-fit-text]");
+  const fit = () => {
+    const text = wordmark?.querySelector("text");
+    if (!wordmark || !text) return;
+    const box = text.getBBox();
+    if (box.width > 0) {
+      wordmark.setAttribute("viewBox", `${box.x} ${box.y} ${box.width} ${box.height}`);
+    }
+  };
+  fit();
+  document.fonts?.ready.then(fit);
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    height: 720px;
+    overflow: hidden;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .hero__layers {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero__layer {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 140%;
+    animation: settle-in 1.1s var(--ease-out) both;
+  }
+
+  .hero__layer--landscape {
+    z-index: 0;
+  }
+
+  .hero__layer--cutout {
+    z-index: 2;
+    -webkit-mask: var(--hero-mask) center / cover no-repeat;
+    mask: var(--hero-mask) center / cover no-repeat luminance;
+  }
+
+  .hero__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.6s ease-in-out;
+  }
+
+  [data-mood="evening"] [data-mood-photo="day"],
+  [data-mood="day"] [data-mood-photo="evening"] {
+    opacity: 0;
+  }
+
+  .hero__wordmark {
+    position: absolute;
+    z-index: 1;
+    top: 76px;
+    right: 40px;
+    width: 80%;
+    height: auto;
+    overflow: visible;
+    fill: var(--color-bg);
+    font-family: var(--font-display);
+    font-size: 88px;
+    letter-spacing: -2px;
+    animation: rise-in 1.1s var(--ease-out) both;
+  }
+
+  .hero__shade {
+    position: absolute;
+    z-index: 3;
+    inset: 252px 0 0;
+    background: linear-gradient(rgb(13 22 17 / 0) 0%, var(--color-hero-shade) 100%);
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    height: 100%;
+    padding: 0 40px 40px;
+  }
+
+  .hero__intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 44px;
+  }
+
+  .hero__title {
+    font-family: var(--font-display);
+    font-size: 64px;
+    font-weight: 400;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+  }
+
+  .hero__mood {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+  }
+
+  .hero__caption {
+    padding: 8px 12px;
+    background: var(--color-primary);
+  }
+
+  .hero__toggle {
+    display: flex;
+    gap: 4px;
+    padding: 6px;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-raised);
+  }
+
+  .hero__mood-button {
+    min-width: 100px;
+    min-height: 46px;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    font-size: 16px;
+    line-height: 1.4;
+    text-align: left;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  .hero__mood-button[aria-pressed="true"] {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .hero__check {
+    display: none;
+  }
+
+  [aria-pressed="true"] .hero__check {
+    display: inline;
+  }
+
+  @media (max-width: 809px) {
+    .hero {
+      height: 680px;
+    }
+
+    .hero__layer {
+      height: 100%;
+    }
+
+    .hero__wordmark {
+      top: 96px;
+      left: 20px;
+      right: 20px;
+      width: auto;
+    }
+
+    .hero__shade {
+      inset: 200px 0 0;
+    }
+
+    .hero__content {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-end;
+      gap: 24px;
+      padding: 0 20px 24px;
+    }
+
+    .hero__intro {
+      gap: 32px;
+    }
+
+    .hero__title {
+      font-size: 38px;
+    }
+
+    .hero__mood {
+      align-items: flex-start;
+      gap: 6px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__layer,
+    .hero__wordmark {
+      animation: none;
+    }
+  }
+</style>

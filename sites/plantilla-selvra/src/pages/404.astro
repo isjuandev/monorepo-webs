@@ -1,12 +1,22 @@
 ---
-import Section from "@repo/ui/astro/Section.astro";
+import Icon from "@/components/Icon.astro";
+import PageIntro from "@/components/PageIntro.astro";
+import { NOT_FOUND } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="Página no encontrada" noindex>
-  <Section>
-    <h1>Página no encontrada</h1>
-    <p>La página que buscas no existe o fue movida.</p>
-    <p><a href="/">Volver al inicio</a></p>
-  </Section>
+<BaseLayout page={NOT_FOUND.seoTitle} description={NOT_FOUND.text} noindex>
+  <PageIntro label={NOT_FOUND.label} title={NOT_FOUND.title} text={NOT_FOUND.text} />
+  <div class="container not-found">
+    <a class="btn btn--primary" href={NOT_FOUND.cta.href}>
+      {NOT_FOUND.cta.label}
+      <Icon name="arrow-right" />
+    </a>
+  </div>
 </BaseLayout>
+
+<style>
+  .not-found {
+    padding-block: 40px 120px;
+  }
+</style>

@@ -1,0 +1,35 @@
+---
+import Icon from "@/components/Icon.astro";
+import { HOME } from "@/data/content";
+---
+
+<section class="cta">
+  <div class="cta__inner">
+    <h2 class="t-h3">{HOME.cta.title}</h2>
+    <a class="btn btn--primary" href={HOME.cta.button.href}>
+      {HOME.cta.button.label}
+      <Icon name="arrow-right" />
+    </a>
+  </div>
+</section>
+
+<style>
+  .cta__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    max-width: var(--max-width);
+    margin-inline: auto;
+    padding: 64px var(--gutter);
+    border-top: 1px solid var(--color-line);
+  }
+
+  @media (max-width: 809px) {
+    .cta__inner {
+      flex-direction: column;
+      align-items: flex-start;
+      padding-block: 40px;
+    }
+  }
+</style>

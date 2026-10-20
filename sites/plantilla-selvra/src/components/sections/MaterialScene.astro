@@ -1,0 +1,165 @@
+---
+import { HOME } from "@/data/content";
+
+/**
+ * "Stone. Wood. Open space.": escenario de fotos fijo (sticky, top 96 px) a la izquierda y tres
+ * textos que pasan a la derecha. Cada foto entra en fundido mientras el borde superior de su texto
+ * cruza del 72 % del viewport hacia arriba (96 px de recorrido, medido en la fuente).
+ * En mobile cada paso muestra su foto encima del texto, sin escenario fijo.
+ */
+const steps = HOME.materials;
+---
+
+<section class="materials" data-materials>
+  <div class="materials__inner">
+    <div class="materials__stage-track" aria-hidden="true">
+      <div class="materials__stage">
+        {
+          steps.map((step, index) => (
+            <img
+              class="materials__photo"
+              data-material-photo={index}
+              src={step.image.src}
+              alt=""
+              width="672"
+              height="630"
+              loading="lazy"
+              decoding="async"
+            />
+          ))
+        }
+      </div>
+    </div>
+    <div class="materials__steps">
+      {
+        steps.map((step, index) => (
+          <article class="materials__step" data-material-step={index}>
+            <img
+              class="materials__inline-photo"
+              src={step.image.src}
+              alt={step.image.alt}
+              width="350"
+              height="420"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="materials__text">
+              <p class="t-label">{step.label}</p>
+              <h2 class="t-h2">{step.title}</h2>
+              <p class="t-body">{step.text}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .materials__inner {
+    display: grid;
+    grid-template-columns: 672fr 384fr;
+    gap: 64px;
+    max-width: var(--max-width);
+    margin-inline: auto;
+    padding: 80px var(--gutter);
+  }
+
+  .materials__stage {
+    position: sticky;
+    top: 96px;
+    height: 630px;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    background: var(--color-primary);
+  }
+
+  .materials__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .materials__photo:not([data-material-photo="0"]) {
+    opacity: 0;
+  }
+
+  .materials__steps {
+    display: flex;
+    flex-direction: column;
+    gap: 342px;
+    padding: 164px 0 150px;
+  }
+
+  .materials__text {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .materials__text .t-h2 {
+    margin-block: 0 -4px;
+  }
+
+  .materials__inline-photo {
+    display: none;
+  }
+
+  @media (max-width: 1199px) {
+    .materials__inner {
+      gap: 40px;
+    }
+
+    .materials__stage {
+      height: 520px;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .materials__inner {
+      display: block;
+      padding-block: 72px 48px;
+    }
+
+    .materials__stage-track {
+      display: none;
+    }
+
+    .materials__steps {
+      gap: 64px;
+      padding: 0;
+    }
+
+    .materials__step {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .materials__inline-photo {
+      display: block;
+      width: 100%;
+      aspect-ratio: 350 / 420;
+      object-fit: cover;
+      border-radius: var(--radius-md);
+    }
+
+    .materials__step:nth-child(2) .materials__inline-photo {
+      order: 1;
+      aspect-ratio: 350 / 300;
+    }
+
+    .materials__step:nth-child(3) .materials__inline-photo {
+      width: calc(100% + 2 * var(--gutter));
+      margin-inline: calc(-1 * var(--gutter));
+      aspect-ratio: 390 / 244;
+      border-radius: 0;
+    }
+
+    .materials__text {
+      gap: 16px;
+    }
+  }
+</style>

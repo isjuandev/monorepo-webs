@@ -1,0 +1,49 @@
+---
+import PageIntro from "@/components/PageIntro.astro";
+import type { TextBlock } from "@/data/content";
+
+/** Página de texto (about y privacidad): cabecera y bloques título + párrafo de 800 px. */
+export interface Props {
+  label: string;
+  title: string;
+  text: string;
+  sections: TextBlock[];
+}
+
+const { label, title, text, sections } = Astro.props;
+---
+
+<PageIntro label={label} title={title} text={text} />
+<div class="container prose">
+  {
+    sections.map((section) => (
+      <section class="prose__block">
+        <h2 class="t-h3">{section.title}</h2>
+        <p class="t-body">{section.text}</p>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .prose {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding-block: 56px 120px;
+  }
+
+  .prose__block {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 800px;
+  }
+
+  @media (max-width: 809px) {
+    .prose {
+      gap: 40px;
+      padding-block: 48px 80px;
+    }
+  }
+</style>

@@ -1,0 +1,30 @@
+---
+/** Rejilla de tres tarjetas de los listados (estancias y experiencias). */
+---
+
+<div class="container card-grid">
+  <slot />
+</div>
+
+<style>
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 32px;
+    padding-block: 136px 80px;
+  }
+
+  @media (max-width: 1199px) {
+    .card-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 809px) {
+    .card-grid {
+      grid-template-columns: 1fr;
+      padding-block: 96px 64px;
+    }
+  }
+</style>

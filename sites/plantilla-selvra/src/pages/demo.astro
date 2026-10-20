@@ -1,0 +1,11 @@
+---
+import ProsePage from "@/components/ProsePage.astro";
+import { PAGES } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const page = PAGES.demo;
+---
+
+<BaseLayout page={page.seoTitle} description={page.description}>
+  <ProsePage label={page.label} title={page.title} text={page.text} sections={page.sections} />
+</BaseLayout>

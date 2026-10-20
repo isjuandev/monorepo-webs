@@ -1,0 +1,30 @@
+---
+import CardGrid from "@/components/CardGrid.astro";
+import OfferCard from "@/components/OfferCard.astro";
+import PageIntro from "@/components/PageIntro.astro";
+import { PAGES, STAYS, UI_LABELS } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const page = PAGES.stays;
+---
+
+<BaseLayout page={page.seoTitle} description={page.description}>
+  <PageIntro label={page.label} title={page.title} text={page.text} />
+  <CardGrid>
+    {
+      STAYS.map((stay) => (
+        <OfferCard
+          href={`/stays/${stay.slug}`}
+          image={stay.image}
+          name={stay.name}
+          facts={[stay.guests, stay.area]}
+          description={stay.summary}
+          extra={stay.amenities}
+          linkLabel={UI_LABELS.exploreStay}
+          imageHeight={360}
+          headingLevel="h2"
+        />
+      ))
+    }
+  </CardGrid>
+</BaseLayout>

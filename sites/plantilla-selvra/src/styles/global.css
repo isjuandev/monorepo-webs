@@ -1,3 +1,5 @@
+/* Estilos globales: consumen los tokens de theme.css. */
+
 *,
 *::before,
 *::after {
@@ -6,53 +8,252 @@
   padding: 0;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.4;
   color: var(--color-text);
   background-color: var(--color-bg);
-  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
 }
 
-.ui-container {
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -80px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Contenedor: 1200 px con 40 px de margen interno (contenido de 1120 px). */
+.container {
   width: 100%;
   max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 1.5rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
 
-.ui-section {
-  padding: 4rem 0;
+/* Estilos de texto medidos en la fuente (presets de Framer). */
+.t-label {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.4;
 }
 
-.ui-footer {
-  padding: 2rem 0;
-  border-top: 1px solid #e2e8f0;
-  color: var(--color-muted);
-  font-size: 0.875rem;
-  text-align: center;
+.t-small {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.4;
 }
 
-.ui-btn {
+.t-body {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+.t-h1,
+.t-h2,
+.t-h3,
+.t-name {
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+
+.t-h1 {
+  font-size: 88px;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+.t-h2 {
+  font-size: 56px;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+.t-h3 {
+  font-size: 32px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.t-name {
+  font-size: 32px;
+  line-height: 1.12;
+}
+
+@media (max-width: 1199px) {
+  .t-h1 {
+    font-size: 64px;
+  }
+
+  .t-h2 {
+    font-size: 44px;
+  }
+}
+
+@media (max-width: 809px) {
+  .t-h1 {
+    font-size: 46px;
+  }
+
+  .t-h2 {
+    font-size: 36px;
+  }
+}
+
+/* Botones (Primary/Secondary de la fuente) con el hover medido: sube 2 px y la flecha avanza 3 px. */
+.btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
+  gap: 12px;
+  min-height: 52px;
+  padding: 15px 24px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-button);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.4;
+  white-space: nowrap;
+  translate: 0 0;
+  transition: translate 0.4s var(--ease-out);
+}
+
+.btn svg {
+  flex: none;
+  translate: 0;
+  transition: translate 0.4s ease-out;
+}
+
+.btn--primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.btn--secondary {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+/* Superficies interactivas: tarjetas, selector de estancias y botones de formulario. */
+.surface {
+  translate: 0 0;
   transition:
-    opacity 0.2s ease,
-    transform 0.15s ease;
-  border: none;
-  padding: 0.75rem 1.5rem;
+    translate 0.4s var(--ease-out),
+    box-shadow 0.4s var(--ease-out);
 }
 
-.ui-btn--primary {
-  background-color: var(--color-accent);
-  color: #ffffff;
+.surface__media img {
+  scale: 1;
+  transition: scale 0.9s var(--ease-out);
 }
 
-.ui-btn--outline {
-  background-color: transparent;
-  border: 1px solid var(--color-primary);
-  color: var(--color-primary);
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .btn:hover,
+  .surface:hover {
+    translate: 0 -2px;
+  }
+
+  .btn:hover svg {
+    translate: 3px;
+  }
+
+  .surface--card:hover {
+    translate: 0 -3px;
+  }
+
+  .surface:hover .surface__media img {
+    scale: 1.025;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn:active,
+  .surface:active {
+    translate: 0 1px;
+  }
+}
+
+/* Enlace de texto con icono ("Explore this stay ↗"). */
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Entrada al cargar la página (hero de inicio). */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes settle-in {
+  from {
+    transform: scale(1.06) translateY(30px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -1,0 +1,149 @@
+---
+import Icon from "@/components/Icon.astro";
+import { HOME, UI_LABELS } from "@/data/content";
+
+/**
+ * Acordeón de preguntas (medido en la fuente): la respuesta se despliega con
+ * grid-template-rows 0fr → 1fr y fundido, 0,75 s ease-in-out; el icono pasa de + a −.
+ */
+const { faq } = HOME;
+---
+
+<section class="faq">
+  <div class="container faq__inner">
+    <h2 class="t-h2 faq__title">{faq.title}</h2>
+    <div class="faq__list" aria-label={UI_LABELS.faq} role="region" data-faq>
+      {
+        faq.items.map((item, index) => (
+          <div class="faq__item">
+            <h3>
+              <button
+                type="button"
+                class="faq__question"
+                id={`faq-question-${index}`}
+                aria-expanded="false"
+                aria-controls={`faq-answer-${index}`}
+              >
+                <span class="t-h3">{item.question}</span>
+                <span class="faq__icon">
+                  <Icon name="plus" class="faq__plus" />
+                  <Icon name="minus" class="faq__minus" />
+                </span>
+              </button>
+            </h3>
+            <div
+              class="faq__answer"
+              id={`faq-answer-${index}`}
+              role="region"
+              aria-labelledby={`faq-question-${index}`}
+            >
+              <div class="faq__answer-inner">
+                <p class="t-body">{item.answer}</p>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  for (const list of document.querySelectorAll<HTMLElement>("[data-faq]")) {
+    for (const button of list.querySelectorAll<HTMLButtonElement>(".faq__question")) {
+      button.addEventListener("click", () => {
+        const open = button.getAttribute("aria-expanded") !== "true";
+        button.setAttribute("aria-expanded", String(open));
+      });
+    }
+  }
+</script>
+
+<style>
+  .faq__inner {
+    display: grid;
+    grid-template-columns: 400fr 640fr;
+    gap: 80px;
+    padding-block: 48px 80px;
+  }
+
+  .faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    width: 100%;
+    padding: 0;
+    text-align: left;
+  }
+
+  .faq__item {
+    padding: 24px 8px;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .faq__icon {
+    display: grid;
+    flex: none;
+    margin-right: 8px;
+  }
+
+  .faq__icon :global(svg) {
+    grid-area: 1 / 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .faq__icon :global(.faq__minus),
+  [aria-expanded="true"] .faq__icon :global(.faq__plus) {
+    opacity: 0;
+  }
+
+  [aria-expanded="true"] .faq__icon :global(.faq__minus) {
+    opacity: 1;
+  }
+
+  .faq__answer {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.75s ease-in-out;
+  }
+
+  .faq__answer-inner {
+    min-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.75s ease-in-out;
+  }
+
+  .faq__answer-inner p {
+    padding-top: 20px;
+    padding-right: 8px;
+  }
+
+  .faq__item:has([aria-expanded="true"]) .faq__answer {
+    grid-template-rows: 1fr;
+  }
+
+  .faq__item:has([aria-expanded="true"]) .faq__answer-inner {
+    opacity: 1;
+  }
+
+  .faq__item:has([aria-expanded="false"]) .faq__answer-inner {
+    visibility: hidden;
+    transition:
+      opacity 0.75s ease-in-out,
+      visibility 0s linear 0.75s;
+  }
+
+  @media (max-width: 809px) {
+    .faq__inner {
+      grid-template-columns: 1fr;
+      gap: 24px;
+      padding-block: 48px;
+    }
+
+    .faq__item {
+      padding-inline: 8px;
+    }
+  }
+</style>

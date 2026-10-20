@@ -1,0 +1,145 @@
+---
+import Icon from "@/components/Icon.astro";
+import OfferCard from "@/components/OfferCard.astro";
+import { HOME, UI_LABELS } from "@/data/content";
+import { getExperience } from "@/data/lookup";
+
+/** "A day with room in it.": experiencia destacada (tarjeta oscura) y dos tarjetas más. */
+const { moments } = HOME;
+const featured = getExperience(moments.featured);
+const others = moments.others.map(getExperience);
+---
+
+<section class="moments">
+  <div class="container moments__inner">
+    <header class="moments__head">
+      <p class="t-label">{moments.label}</p>
+      <h2 class="t-h2">{moments.title}</h2>
+    </header>
+
+    <a class="featured surface surface--card" href={`/experiences/${featured.slug}`}>
+      <div class="featured__media surface__media">
+        <img
+          src={featured.image.src}
+          alt={featured.image.alt}
+          width="1116"
+          height="540"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <div class="featured__details">
+        <div class="featured__name">
+          <h3 class="t-h2">{featured.name}</h3>
+          <p class="t-small">{featured.duration}</p>
+        </div>
+        <div class="featured__text">
+          <p class="t-body">{featured.summary}</p>
+          <span class="t-small text-link">
+            {UI_LABELS.exploreExperience}
+            <Icon name="external" />
+          </span>
+        </div>
+      </div>
+    </a>
+
+    <div class="moments__grid">
+      {
+        others.map((experience) => (
+          <OfferCard
+            href={`/experiences/${experience.slug}`}
+            image={experience.image}
+            name={experience.name}
+            facts={[experience.duration, experience.category]}
+            description={experience.summary}
+            linkLabel={UI_LABELS.exploreExperience}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .moments__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding-block: 80px;
+  }
+
+  .moments__head {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .featured {
+    display: flex;
+    flex-direction: column;
+    padding: 2px;
+    border-radius: var(--radius-md);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    box-shadow: 0 2px 20px 0 rgb(20 30 23 / 0.08);
+  }
+
+  .featured__media {
+    height: 540px;
+    overflow: hidden;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+
+  .featured__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .featured__details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    padding: 40px;
+  }
+
+  .featured__name,
+  .featured__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .moments__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+  }
+
+  @media (max-width: 809px) {
+    .moments__inner {
+      gap: 32px;
+      padding-block: 48px;
+    }
+
+    .moments__head {
+      gap: 24px;
+    }
+
+    .featured__media {
+      height: 340px;
+    }
+
+    .featured__details {
+      grid-template-columns: 1fr;
+      gap: 24px;
+      padding: 28px 20px;
+    }
+
+    .moments__grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+</style>
