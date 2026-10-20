@@ -14,11 +14,13 @@ jobs:
   quality-and-build:
     name: Lockfile, Isolation, Lint, Check, Build & Visual QA
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -47,8 +49,31 @@ jobs:
       - name: Install Playwright Chromium browser
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Run Playwright Visual QA & Functional Suite
-        run: pnpm test:visual
+      - name: Run Playwright Visual QA on changed sites (all routes)
+        env:
+          BASE_REF: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}
+        run: |
+          if [ -z "$BASE_REF" ] || [ "$BASE_REF" = "0000000000000000000000000000000000000000" ]; then
+            BASE_REF="HEAD~1"
+          fi
+          SITES="$(node scripts/changed-sites.mjs "$BASE_REF")"
+          if [ -z "$SITES" ]; then
+            SITES="_template"
+          fi
+          FAILED=""
+          for SITE in $SITES; do
+            echo "::group::Visual QA — sites/$SITE"
+            # Informativo: los dominios temporales (*.nexobite.com) son válidos hasta la entrega
+            if [ -f "sites/$SITE/.template-origin" ]; then
+              pnpm customize:check "$SITE"
+            fi
+            node scripts/qa-site.mjs "$SITE" || FAILED="$FAILED $SITE"
+            echo "::endgroup::"
+          done
+          if [ -n "$FAILED" ]; then
+            echo "::error::Visual QA falló en:$FAILED"
+            exit 1
+          fi
 
       - name: Upload Visual QA report and screenshots on failure
         if: failure()

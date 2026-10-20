@@ -3,10 +3,43 @@ import path from "node:path";
 import { expect, test } from "@playwright/test";
 
 const siteFolder = process.env.SITE_FOLDER || "_template";
-const routes = (process.env.QA_ROUTES || "/")
-  .split(",")
-  .map((r) => r.trim())
-  .filter(Boolean);
+
+/** Rutas de todas las páginas HTML del build (`dist/`), sin la 404 */
+function routesFromBuild(folder: string): string[] {
+  const distDir = path.join(__dirname, "..", "sites", folder, "dist");
+  if (!fs.existsSync(distDir)) {
+    throw new Error(
+      `QA_ROUTES=auto necesita el build de sites/${folder}: ejecuta antes pnpm --filter "./sites/${folder}" build`
+    );
+  }
+  const found: string[] = [];
+  const walk = (dir: string) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (!entry.name.startsWith("_")) {
+          walk(full);
+        }
+      } else if (entry.name.endsWith(".html")) {
+        const relative = path.relative(distDir, full).split(path.sep).join("/");
+        const route = `/${relative.replace(/(^|\/)index\.html$/, "").replace(/\.html$/, "")}`;
+        if (!/^\/404\/?$/.test(route)) {
+          found.push(route.replace(/\/$/, "") || "/");
+        }
+      }
+    }
+  };
+  walk(distDir);
+  return found.sort((a, b) => (a === "/" ? -1 : b === "/" ? 1 : a.localeCompare(b)));
+}
+
+const routes =
+  process.env.QA_ROUTES === "auto"
+    ? routesFromBuild(siteFolder)
+    : (process.env.QA_ROUTES || "/")
+        .split(",")
+        .map((r) => r.trim())
+        .filter(Boolean);
 
 function routeToSlug(routePath: string): string {
   if (routePath === "/" || routePath === "") {
