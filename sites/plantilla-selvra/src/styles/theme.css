@@ -1,0 +1,10 @@
+/* Tema de marca: colores, tipografías y medidas. Es el único archivo de estilos que se edita para cambiar la identidad visual. */
+
+:root {
+  --color-primary: #0f172a;
+  --color-accent: #0284c7;
+  --color-bg: #ffffff;
+  --color-text: #1e293b;
+  --color-muted: #64748b;
+  --max-width: 1200px;
+}

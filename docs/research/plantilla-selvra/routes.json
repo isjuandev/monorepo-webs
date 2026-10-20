@@ -1,0 +1,24 @@
+{
+  "source": "https://selvra-retreat.framer.website",
+  "origin": ["sitemap.xml", "robots.txt", "enlaces de la portada"],
+  "routes": [
+    "/",
+    "/demo",
+    "/enquire",
+    "/experiences",
+    "/experiences/clay-stillness",
+    "/experiences/fire-supper",
+    "/experiences/morning-trail",
+    "/place",
+    "/privacy",
+    "/stays",
+    "/stays/courtyard-loft",
+    "/stays/forest-house",
+    "/stays/stone-suite"
+  ],
+  "excludedLanguageVariants": {
+    "count": 12,
+    "prefix": "/de",
+    "reason": "La plantilla va en un solo idioma (inglés, el principal)."
+  }
+}
