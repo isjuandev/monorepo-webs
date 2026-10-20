@@ -17,13 +17,14 @@ function printUsage() {
 Uso:
   pnpm optimize-assets <slug-cliente> [--force]
 
-Copia y optimiza los activos de recursos/<slug-cliente>/ hacia sites/<slug-cliente>/public/:
-  fotos/<carpeta>/**      → public/images/<carpeta>/**.webp (redimensionadas, EXIF aplicado)
-  marca/logo*.svg         → public/ (copia)
+Copia y optimiza los activos de recursos/<slug-cliente>/ hacia sites/<slug-cliente>/public/,
+con la convención plana de la plantilla la-guaca (mismo nombre de archivo, otra carpeta):
+  fotos/**/<nombre>.*     → public/images/<nombre>.webp (redimensionadas, EXIF aplicado)
+  marca/<imagen>.*        → public/images/<imagen>.webp (svg: copia en public/images/)
+  marca/og-image.*        → public/images/og-image.jpg (1200x630)
   marca/favicon*, apple-touch-icon* → public/ (copia)
-  marca/og-image.*        → public/og-image.jpg (1200x630)
   marca/fuentes/*.woff2   → public/fonts/
-  marca/<otras imágenes>  → public/images/marca/*.webp
+Dos archivos con el mismo nombre en carpetas distintas se reportan y no se pisan.
 Escribe el mapa origen → destino en docs/research/<slug-cliente>/assets-manifest.json.
 Sin --force, omite los archivos cuyo destino ya es más reciente que el origen.
 `);
@@ -47,12 +48,9 @@ function walk(dir) {
   });
 }
 
-/** Normaliza cada segmento de una ruta relativa a kebab-case y cambia la extensión */
-function kebabPath(relative, extension) {
-  const parts = relative.split(path.sep);
-  const file = parts.pop();
-  const base = slugify(path.parse(file).name) || "archivo";
-  return path.join(...parts.map((part) => slugify(part) || part), `${base}${extension}`);
+/** Nombre de archivo en kebab-case con la extensión indicada */
+function kebabName(file, extension) {
+  return `${slugify(path.parse(file).name) || "archivo"}${extension}`;
 }
 
 function isFresh(source, output, force) {
@@ -109,7 +107,7 @@ function planFile(source, recursosDir, publicDir) {
       room,
       action: "webp",
       maxWidth: MAX_WIDTH[folder] ?? DEFAULT_MAX_WIDTH,
-      output: path.join(publicDir, "images", kebabPath(rest.join(path.sep), ".webp")),
+      output: path.join(publicDir, "images", kebabName(name, ".webp")),
     };
   }
 
@@ -119,18 +117,25 @@ function planFile(source, recursosDir, publicDir) {
         ? {
             kind: "fuente",
             action: "copy",
-            output: path.join(publicDir, "fonts", kebabPath(rest.slice(1).join(path.sep), ext)),
+            output: path.join(publicDir, "fonts", kebabName(name, ext)),
           }
         : { skip: "solo se copian fuentes .woff2" };
     }
     if (name.startsWith("og-image") && RASTER_EXTENSIONS.has(ext)) {
-      return { kind: "og-image", action: "og", output: path.join(publicDir, "og-image.jpg") };
+      return {
+        kind: "og-image",
+        action: "og",
+        output: path.join(publicDir, "images", "og-image.jpg"),
+      };
     }
-    if (COPY_AS_IS.test(name) || ext === ".svg" || ext === ".ico") {
+    if (COPY_AS_IS.test(name) || ext === ".ico") {
+      return { kind: "marca", action: "copy", output: path.join(publicDir, kebabName(name, ext)) };
+    }
+    if (ext === ".svg") {
       return {
         kind: "marca",
         action: "copy",
-        output: path.join(publicDir, kebabPath(rest.join(path.sep), ext)),
+        output: path.join(publicDir, "images", kebabName(name, ext)),
       };
     }
     if (RASTER_EXTENSIONS.has(ext)) {
@@ -138,7 +143,7 @@ function planFile(source, recursosDir, publicDir) {
         kind: "marca",
         action: "webp",
         maxWidth: 1200,
-        output: path.join(publicDir, "images", "marca", kebabPath(rest.join(path.sep), ".webp")),
+        output: path.join(publicDir, "images", kebabName(name, ".webp")),
       };
     }
     return { skip: `formato no soportado (${ext})` };
@@ -173,6 +178,7 @@ async function main() {
   const skipped = [];
   let processed = 0;
 
+  const claimed = new Map();
   for (const source of walk(recursosDir)) {
     const plan = planFile(source, recursosDir, publicDir);
     const sourceRel = path.relative(ROOT_DIR, source);
@@ -180,6 +186,11 @@ async function main() {
       skipped.push(`${sourceRel}: ${plan.skip}`);
       continue;
     }
+    if (claimed.has(plan.output)) {
+      skipped.push(`${sourceRel}: mismo nombre que ${claimed.get(plan.output)} (renombra uno)`);
+      continue;
+    }
+    claimed.set(plan.output, sourceRel);
 
     if (!isFresh(source, plan.output, force)) {
       try {

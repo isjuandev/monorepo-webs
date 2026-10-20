@@ -43,7 +43,7 @@ export function buildClientPrompt({
     "Ya hecho por el orquestador (no lo repitas):",
     `- Rama ${branch} creada desde ${base}, con los recursos del cliente ya commiteados.`,
     `- Sitio generado con pnpm new-client-site ${slug} --from ${plantilla} (sites/${slug}/).`,
-    `- Imágenes de recursos/${slug}/ optimizadas en sites/${slug}/public/ (images/, fonts/, og-image.jpg y favicons); el mapa origen → destino está en docs/research/${slug}/assets-manifest.json.`,
+    `- Imágenes de recursos/${slug}/ optimizadas en sites/${slug}/public/ con su mismo nombre (fotos y logos en images/<nombre>.webp, og-image en images/og-image.jpg, fuentes en fonts/, favicons en la raíz); las que se llaman igual que en la plantilla ya la reemplazaron; el mapa origen → destino está en docs/research/${slug}/assets-manifest.json.`,
     "No ejecutes git (ni commit, ni push, ni cambios de rama): el orquestador commitea al terminar.",
     "Trabajas sin supervisión: si un dato falta, no preguntes; déjalo como pendiente visible y anótalo en el resumen.",
     "",

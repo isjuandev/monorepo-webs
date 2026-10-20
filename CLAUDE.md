@@ -5,7 +5,7 @@ Lee y sigue todas las instrucciones definidas en [AGENTS.md](./AGENTS.md).
 ## Resumen rápido para Claude Code
 
 - Solo `pnpm` (nunca `npm`, `npx`, `yarn` ni `bun`); sin `react`/`react-dom`, solo Preact.
-- Sitios actuales en `sites/`: `_template`, `motel-boutique`, `plantilla-asterre`, `plantilla-hotellia` y `plantilla-pinevalley`. Nunca importes código entre sitios.
+- Sitios actuales en `sites/`: `_template`, `la-guaca`, `motel-boutique`, `plantilla-asterre`, `plantilla-hotellia` y `plantilla-pinevalley`. Nunca importes código entre sitios. `la-guaca` es la plantilla por defecto de clientes nuevos: `recursos/_plantilla-cliente/` es su copia literal y su sitio es la `Plantilla base` del brief.
 - Pipeline sin supervisión: `pnpm client:run <slug>` (brief en `recursos/<slug>/` → PR) y `pnpm template:clone <url> <plantilla-slug>` (URL → plantilla → PR). Si te invoca ese pipeline, no ejecutes git.
 - Antes de entregar cambios ejecuta `pnpm verify` (aislamiento + lint + check + build); para QA visual: `pnpm qa:site <slug>` (todas las rutas).
 - Skills en `.agents/skills/` y comandos slash en `.claude/commands/`: `/clone-website`, `/visual-qa`, `/review-monorepo`, `/seo-audit`, `/deploy-client`, `/codebase-context`, `/motel-copywriting` (copy y tono para moteles).

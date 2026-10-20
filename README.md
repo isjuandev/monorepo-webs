@@ -58,6 +58,7 @@ monorepo-webs/
 │   └── visual-qa.spec.ts           # Suite Playwright de rutas, recursos, SEO y overflow
 ├── sites/                          # Sitios web individuales
 │   ├── _template/                  # Plantilla base genérica e intocable
+│   ├── la-guaca/                   # Motel La Guaca: cliente real y plantilla por defecto de clientes nuevos
 │   ├── motel-boutique/             # Motel/hotel boutique en español
 │   ├── plantilla-asterre/          # Plantilla de retiro boutique (clon de asterre.framer.website)
 │   ├── plantilla-hotellia/         # Plantilla de hotel boutique (clon de hotellia.framer.website)
@@ -82,6 +83,7 @@ monorepo-webs/
 | Carpeta | Paquete | Descripción | Idioma |
 | :--- | :--- | :--- | :--- |
 | `sites/_template` | `@sites/_template` | Plantilla base mínima para nuevos clientes | es |
+| `sites/la-guaca` | `@sites/la-guaca` | Motel La Guaca (cliente real): inicio, 9 habitaciones con galería, experiencias, contacto y legales. **Plantilla por defecto** de clientes nuevos (`recursos/_plantilla-cliente/` es su copia literal) | es |
 | `sites/motel-boutique` | `@sites/motel-boutique` | Motel/hotel boutique: home, suites, restaurante y contacto | es |
 | `sites/plantilla-asterre` | `@sites/plantilla-asterre` | Retiro boutique: home, rooms, retreat, experience, contact y legales | en |
 | `sites/plantilla-hotellia` | `@sites/plantilla-hotellia` | Hotel boutique: rooms, offers, wine & dine, menús, gallery, reserve y legales (smooth-scroll con `lenis`) | en |
@@ -157,7 +159,7 @@ Opciones adicionales: `--from`, `--title`, `--locale` (por defecto `es_CO`), `--
 
 ## Personalizar un Sitio de Cliente (4 puntos)
 
-Cada plantilla (`_template`, `plantilla-asterre`, `plantilla-hotellia`, `plantilla-pinevalley`) se personaliza editando **solo cuatro puntos**; los componentes y páginas no contienen marca, textos ni contactos:
+Cada plantilla (`_template`, `la-guaca`, `plantilla-asterre`, `plantilla-hotellia`, `plantilla-pinevalley`) se personaliza editando **solo cuatro puntos**; los componentes y páginas no contienen marca, textos ni contactos:
 
 | # | Qué cambia | Archivo | Contenido |
 | :-- | :-- | :-- | :-- |

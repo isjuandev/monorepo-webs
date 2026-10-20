@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -53,12 +54,13 @@ export function slugify(text) {
     .replace(/^-+|-+$/g, "");
 }
 
-/** Plantillas disponibles en sites/ (carpetas plantilla-* y _template con package.json) */
+/** Plantillas disponibles: sitios registrados en scripts/template-brands.json que existen en sites/ */
 export function listTemplates() {
-  return fs
-    .readdirSync(SITES_DIR)
-    .filter((name) => name === "_template" || name.startsWith("plantilla-"))
-    .filter((name) => fs.existsSync(path.join(SITES_DIR, name, "package.json")));
+  const brandsPath = path.join(ROOT_DIR, "scripts", "template-brands.json");
+  const { templates } = JSON.parse(fs.readFileSync(brandsPath, "utf8"));
+  return Object.keys(templates).filter((name) =>
+    fs.existsSync(path.join(SITES_DIR, name, "package.json"))
+  );
 }
 
 /** Un valor opcional del brief es utilizable si no está vacío ni marcado como pendiente */
@@ -135,4 +137,77 @@ export function parseBrief(slug) {
       address: optional(field(contact, "Dirección")),
     },
   };
+}
+
+export const TEMPLATE_RECURSOS_DIR = path.join(RECURSOS_DIR, "_plantilla-cliente");
+
+// Campos del brief que identifican a un cliente: no pueden quedar con el valor de la plantilla
+const IDENTITY_FIELDS = [
+  ["Generación", "Nombre comercial"],
+  ["Generación", "Dominio"],
+  ["Contacto", "Teléfono"],
+  ["Contacto", "WhatsApp"],
+  ["Contacto", "Correo"],
+  ["Contacto", "Dirección"],
+  ["Contacto", "Enlace de mapa"],
+  ["Contacto", "Redes sociales"],
+];
+
+function briefFields(briefPath) {
+  const sections = parseSections(stripHtmlComments(fs.readFileSync(briefPath, "utf8")));
+  return Object.fromEntries(
+    IDENTITY_FIELDS.map(([section, label]) => [label, field(sections[normalize(section)], label)])
+  );
+}
+
+function listFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) return listFiles(full);
+    return entry.name.startsWith(".") ? [] : [full];
+  });
+}
+
+const hashFile = (file) => crypto.createHash("sha1").update(fs.readFileSync(file)).digest("hex");
+
+/**
+ * Restos de recursos/_plantilla-cliente/ (La Guaca) en recursos/<slug>/: datos de identidad y
+ * contacto con el mismo valor y archivos idénticos. El cliente de origen de la plantilla no aplica.
+ */
+export function recursosLeftovers(slug) {
+  const templateBrief = path.join(TEMPLATE_RECURSOS_DIR, "brief.md");
+  const clientBrief = path.join(RECURSOS_DIR, slug, "brief.md");
+  if (!fs.existsSync(templateBrief) || !fs.existsSync(clientBrief)) {
+    return { fields: [], files: [] };
+  }
+  const templateSlug = cleanValue(
+    field(
+      parseSections(stripHtmlComments(fs.readFileSync(templateBrief, "utf8")))[
+        normalize("Generación")
+      ],
+      "Slug"
+    )
+  );
+  if (slug === templateSlug) {
+    return { fields: [], files: [] };
+  }
+
+  const template = briefFields(templateBrief);
+  const client = briefFields(clientBrief);
+  const fields = Object.keys(template).filter((label) => {
+    const value = cleanValue(template[label]);
+    return value && !/^pendiente$/i.test(value) && cleanValue(client[label]) === value;
+  });
+
+  const templateHashes = new Set(
+    listFiles(TEMPLATE_RECURSOS_DIR)
+      .filter((file) => path.basename(file) !== "brief.md")
+      .map(hashFile)
+  );
+  const files = listFiles(path.join(RECURSOS_DIR, slug))
+    .filter((file) => path.basename(file) !== "brief.md" && templateHashes.has(hashFile(file)))
+    .map((file) => path.relative(ROOT_DIR, file));
+
+  return { fields, files };
 }

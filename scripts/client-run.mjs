@@ -2,7 +2,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { KEBAB_CASE_REGEX, parseBrief, ROOT_DIR } from "./lib/brief.mjs";
+import { KEBAB_CASE_REGEX, parseBrief, ROOT_DIR, recursosLeftovers } from "./lib/brief.mjs";
 import {
   assertScope,
   branchExists,
@@ -120,6 +120,36 @@ function preflight(args, brief) {
       `${ghost}/ no tiene package.json (restos ignorados de otra rama): bórrala o muévela antes de seguir.`
     );
   }
+  const leftovers = recursosLeftovers(args.slug);
+  if (leftovers.fields.length > 0 || leftovers.files.length > 0) {
+    const detail = [
+      ...(leftovers.fields.length > 0 ? [`datos del brief: ${leftovers.fields.join(", ")}`] : []),
+      ...(leftovers.files.length > 0 ? [`${leftovers.files.length} archivo(s) idénticos`] : []),
+    ].join(" y ");
+    if (args.allowPending) {
+      log.warn(
+        `recursos/${args.slug} conserva material de la plantilla (${detail}): irán como provisionales en el PR.`
+      );
+    } else {
+      problems.push(
+        `recursos/${args.slug} conserva material de la plantilla La Guaca (${detail}). Reemplázalo, déjalo como Pendiente o usa --allow-pending.`
+      );
+    }
+  }
+  const roomsDir = path.join(ROOT_DIR, "recursos", args.slug, "fotos", "habitaciones");
+  if (brief.rooms?.length > 0 && fs.existsSync(roomsDir)) {
+    const folders = fs.readdirSync(roomsDir).filter((name) => !name.startsWith("."));
+    const withoutPhotos = brief.rooms.filter((room) => !folders.includes(room));
+    const orphanFolders = folders.filter((folder) => !brief.rooms.includes(folder));
+    if (withoutPhotos.length > 0) {
+      log.warn(`habitaciones del brief sin carpeta de fotos: ${withoutPhotos.join(", ")}`);
+    }
+    if (orphanFolders.length > 0) {
+      log.warn(
+        `carpetas de fotos/habitaciones/ que no coinciden con ningún "### " del brief: ${orphanFolders.join(", ")}`
+      );
+    }
+  }
   if (!args.resume) {
     const dirty = dirtyFiles();
     if (dirty.length > 0) {
@@ -149,6 +179,25 @@ function preflight(args, brief) {
   log.warn(`${message}\n  (dry run: se continúa solo para mostrar el plan)`);
 }
 
+/** Material de la plantilla de recursos que el cliente aún no ha reemplazado */
+function provisionalSection(slug) {
+  const { fields, files } = recursosLeftovers(slug);
+  if (fields.length === 0 && files.length === 0) {
+    return [];
+  }
+  return [
+    "## Recursos provisionales (de la plantilla La Guaca)",
+    "",
+    ...fields.map((label) => `- Brief: **${label}** igual que en la plantilla`),
+    ...(files.length > 0
+      ? [
+          `- ${files.length} archivo(s) idénticos a recursos/_plantilla-cliente/ (${files.slice(0, 5).join(", ")}${files.length > 5 ? ", …" : ""})`,
+        ]
+      : []),
+    "",
+  ];
+}
+
 function buildPrBody({ slug, brief, state, allowPending }) {
   const summary = readIfExists(path.join(ROOT_DIR, "docs", "research", slug, "agent-summary.md"));
   const qa = readIfExists(path.join(ROOT_DIR, "docs", "research", slug, "visual-qa-report.md"));
@@ -163,6 +212,7 @@ function buildPrBody({ slug, brief, state, allowPending }) {
     "",
     pending || "_Ninguno declarado por el agente._",
     "",
+    ...provisionalSection(slug),
     "## Resumen del agente",
     "",
     summary.trim() || "_El agente no escribió docs/research/<slug>/agent-summary.md._",

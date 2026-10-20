@@ -98,13 +98,14 @@ monorepo-webs/
 └── sites/
     ├── _template/                  # Plantilla maestra genérica (intocable salvo mejoras globales)
     ├── motel-boutique/             # Motel/hotel boutique en español (home, nuestras-suites, restaurante, contacto); aún sin theme.css ni CUSTOMIZE.md
+    ├── la-guaca/                   # Motel en español (cliente real) y plantilla por defecto de clientes nuevos: recursos/_plantilla-cliente/ es su copia literal
     ├── plantilla-asterre/          # Retiro boutique en inglés, clon de asterre.framer.website (rooms/[slug], retreat, experience, contact, legales)
     ├── plantilla-hotellia/         # Hotel boutique en inglés, clon de hotellia.framer.website (rooms, offers, wine-dine, menús, gallery, reserve, legales; usa lenis)
     └── plantilla-pinevalley/       # Villa/casa de campo en inglés, landing de una página clon de pinevalley.framer.website (galería con visor, carrusel coverflow, FAQ, mapa; usa lenis)
 ```
 
 ### Sitios existentes y convenciones observadas
-- Todos los sitios exponen `src/config/site.ts`, `src/layouts/BaseLayout.astro`, `src/pages/robots.txt.ts`, `src/pages/404.astro` y `src/styles/global.css`; `_template`, `plantilla-asterre`, `plantilla-hotellia` y `plantilla-pinevalley` además separan los tokens de marca en `src/styles/theme.css` y traen un `CUSTOMIZE.md` (ver sección 6).
+- Todos los sitios exponen `src/config/site.ts`, `src/layouts/BaseLayout.astro`, `src/pages/robots.txt.ts`, `src/pages/404.astro` y `src/styles/global.css`; `_template`, `la-guaca`, `plantilla-asterre`, `plantilla-hotellia` y `plantilla-pinevalley` además separan los tokens de marca en `src/styles/theme.css` y traen un `CUSTOMIZE.md` (ver sección 6).
 - Los sitios clonados (`motel-boutique`, `plantilla-*`) concentran su contenido en `src/data/content.ts`, mantienen secciones en `src/components/sections/` (o directamente en `src/components/`) y usan `src/scripts/*.ts` para animaciones de entrada.
 - Páginas dinámicas (`rooms/[slug].astro`, `offers/[slug].astro`) se generan estáticamente a partir de `src/data/content.ts`.
 - Las plantillas (`plantilla-*`) usan dominios de ejemplo (`*.example.com`); se reemplazan al entregar a un cliente real.
