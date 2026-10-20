@@ -27,7 +27,7 @@ Se clonaron las 13 rutas; ninguna se excluyó. `/demo` y `/privacy` son textos d
 | Hero: logotipo gigante | carga | opacidad 0,69 a 300 ms → 1, +7,5 px → 0 | `rise-in` 1,1 s (opacidad 0, +16 px) | Implementada (curva aproximada) |
 | Hero: parallax | scroll | fotos `translateY = +0,1·scrollY`, logotipo `−0,15·scrollY` | `[data-parallax]` en `scripts/motion.ts` (rAF, `translate`) | Implementada, valores exactos |
 | Hero: recorte del pabellón | — | máscara SVG de luminancia `cover` sobre la misma foto | `mask: url(hero-mask.svg) center / cover luminance` | Implementada |
-| Hero: Day / Evening | clic | cambia la foto de las dos capas, botón activo oscuro con ✓ | botones `aria-pressed`, fundido de opacidad 0,6 s | Implementada (duración del fundido no verificada) |
+| Hero: Day / Evening | clic | cambio instantáneo y simultáneo de la foto en las dos capas (medido fotograma a fotograma: sin fundido); el logotipo nunca queda delante del pabellón | botones `aria-pressed`; foto de día apilada sobre la de tarde y cambio sin transición | Implementada, verificada |
 | Logotipo "fit text" | carga/resize | SVG con viewBox que ocupa el ancho | `<text>` + viewBox ajustado con `getBBox()` | Implementada |
 | Nav | scroll | `position: absolute` (se va con la página), blur 16 | igual | Implementada |
 | Nav: enlaces | hover / página actual | subrayado | subrayado + `aria-current` | Implementada |
@@ -53,7 +53,7 @@ Se clonaron las 13 rutas; ninguna se excluyó. `/demo` y `/privacy` son textos d
 - **Escena de materiales en mobile:** cada paso muestra su foto encima del texto (la fuente intercala el orden en el segundo paso; se replica con `order`, el tercero a sangre).
 - **Tablet (810–1199 px):** no se midió la fuente en este rango; se usan tamaños intermedios (h1 64, h2 44, escenario 520 px).
 - **Formulario:** se añade "Send by email" (`mailto:` a `siteConfig.contact.email`) para que la plantilla sirva a un cliente real; sin correo configurado, el botón no aparece.
-- **Duraciones no verificadas:** fundido Day/Evening (0,6 s), fundido del selector de estancias (0,5 s) y apertura del menú mobile (0,35 s) son estimaciones.
+- **Duraciones no verificadas:** fundido del selector de estancias (0,5 s) y apertura del menú mobile (0,35 s) son estimaciones.
 
 ## Supuestos
 

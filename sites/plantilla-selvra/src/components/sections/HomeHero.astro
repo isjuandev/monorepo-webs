@@ -156,11 +156,16 @@ const moods = [
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: opacity 0.6s ease-in-out;
   }
 
-  [data-mood="evening"] [data-mood-photo="day"],
-  [data-mood="day"] [data-mood-photo="evening"] {
+  /* Como en la fuente, el cambio día/tarde es instantáneo y simultáneo en las dos capas.
+     La foto de día se apila sobre la de tarde (siempre opaca): el recorte nunca pierde
+     opacidad y el logotipo se mantiene detrás del pabellón. */
+  .hero__photo[data-mood-photo="day"] {
+    z-index: 1;
+  }
+
+  [data-mood="evening"] [data-mood-photo="day"] {
     opacity: 0;
   }
 
