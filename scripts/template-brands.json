@@ -4,7 +4,10 @@
     "placeholders": ["573000000000", "+57 300 000 0000", "reservas@example.com"]
   },
   "templates": {
-    "_template": { "brands": [], "placeholders": [] },
+    "_template": {
+      "brands": [],
+      "placeholders": []
+    },
     "motel-boutique": {
       "brands": ["Motel Boutique"],
       "placeholders": ["+57 600 000 0000", "hoteles-template"]
@@ -27,6 +30,17 @@
         "Your City, Region",
         "Aspen, Colorado",
         "Aspen%2C%20Colorado"
+      ]
+    },
+    "la-guaca": {
+      "brands": ["La Guaca", "LA GUACA", "laguaca", "motellaguaca"],
+      "placeholders": [
+        "+57 320 727 4329",
+        "573207274329",
+        "laguacamotel28@gmail.com",
+        "Km 2 vía Montenegro",
+        "pC9Ps9RnKSGE9G8f6",
+        "4.5276421,-75.7167478"
       ]
     }
   }
