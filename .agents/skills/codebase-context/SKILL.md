@@ -9,7 +9,7 @@ Reglas comunes en [AGENTS.md](../../../AGENTS.md). El objetivo es **entender el 
 
 ## 1. Preparar el índice (siempre primero, una vez por sesión)
 
-1. Proyecto: `Users-isjuandev-Documents-WS-NEXOBITE-monorepo-webs` (la ruta de la raíz del repo con `/` → `-`). Si trabajas desde otro clon o worktree, obtén el nombre con `list_projects`.
+1. Proyecto: obtén el nombre con `list_projects` (la ruta de la raíz del repo con `/` → `-`). Por ejemplo, la raíz `/Users/isjuandev/Documents/WS-PERSONAL/monorepo-webs` se indexa como `Users-isjuandev-Documents-WS-PERSONAL-monorepo-webs`. Si trabajas desde otro clon o worktree, comprueba el nombre con `list_projects` antes de consultar.
 2. `index_status(project)`:
    - Si responde `ready` con nodos > 0, **no reindexes**: el índice se refresca solo.
    - Si no existe, está vacío o cambiaste de rama o hiciste ediciones masivas sin que se reflejen → `index_repository(repo_path=<raíz del repo>, mode="full")`.
@@ -44,8 +44,9 @@ Reglas comunes en [AGENTS.md](../../../AGENTS.md). El objetivo es **entender el 
 ## 5. Mapa mínimo del repo (para orientarte sin consultar)
 
 - `packages/ui`, `packages/utils`, `packages/tsconfig`: núcleo compartido (agnóstico a marcas).
-- `sites/_template` y `sites/plantilla-*`/`motel-boutique`: sitios; cada uno se personaliza en 4 puntos (`src/config/site.ts`, `src/styles/theme.css`, `src/data/content.ts`, `public/`), ver AGENTS.md §6.
-- `scripts/`: `new-client-site`, `customize-check`, `verify-isolation`, `visual-qa-summary`.
+- `sites/_template`, `sites/la-guaca` (plantilla por defecto de clientes nuevos), `sites/motel-boutique` y `sites/plantilla-*` (`asterre`, `hotellia`, `pinevalley`, `selvra`): sitios; cada uno se personaliza en 4 puntos (`src/config/site.ts`, `src/styles/theme.css`, `src/data/content.ts`, `public/`), ver AGENTS.md §6.
+- `scripts/`: pipeline `client-run` y `template-clone` (con `client-prompt`, `template-prompt`, `recursos-new`, `optimize-assets` y `lib/`), más `new-client-site`, `customize-check`, `qa-site`, `changed-sites`, `verify-isolation` y `visual-qa-summary`.
+- `recursos/`: briefs y material de cada cliente (entrada del pipeline; `_plantilla-cliente/` es copia de `la-guaca/`).
 
 ## 6. Mantener el contexto al día
 

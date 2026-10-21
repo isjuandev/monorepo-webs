@@ -31,7 +31,7 @@ Para mantener consistencia absoluta entre todos los desarrolladores y LLMs, **NO
   - **PROHIBIDO** instalar `react` o `react-dom`. Si se necesita una librería externa para una isla interactiva, debe ser nativa de Preact o vanilla TS/JS sin dependencias pesadas.
 - **Iconos:** SVGs inline/extraídos como componentes `.astro`/`.tsx`, o `lucide-preact` si se requiere un set de iconos.
 - **Animaciones y Scroll:**
-  - Preferir **CSS puro** (`@keyframes`, `transition`, `IntersectionObserver` + clases CSS) para animaciones de entrada y hover. Los sitios existentes concentran esta lógica en `src/scripts/` (`reveal.ts` en `motel-boutique`, `motion.ts` en `plantilla-asterre`, `plantilla-hotellia` y `plantilla-pinevalley`).
+  - Preferir **CSS puro** (`@keyframes`, `transition`, `IntersectionObserver` + clases CSS) para animaciones de entrada y hover. Los sitios existentes concentran esta lógica en `src/scripts/` (`reveal.ts` en `motel-boutique`, `motion.ts` en `plantilla-asterre`, `plantilla-selvra`, `plantilla-hotellia` y `plantilla-pinevalley`).
   - Si un sitio requiere smooth-scroll o animaciones avanzadas (ej. clones de Framer), usar `lenis` de forma ligera y limpiando siempre los listeners en el ciclo de vida del componente. Hoy lo usan `sites/plantilla-hotellia` y `sites/plantilla-pinevalley` (dependencia propia de cada sitio, nunca en `packages/*`).
 - **Lenguaje:** `TypeScript` en modo `strict` (`@repo/tsconfig`).
 - **Linter y Formateador:** `Biome` (`@biomejs/biome` configurado en `biome.json`) + `astro check` + `.editorconfig`.
@@ -77,11 +77,20 @@ monorepo-webs/
 │   ├── research/                   # Briefs de inspección y reportes de QA por cliente
 │   └── design-references/          # Capturas de referencia y comparación visual por cliente
 ├── scripts/
-│   ├── new-client-site.mjs         # Generador automatizado de nuevos sitios de clientes (admite --from <plantilla>)
+│   ├── changed-sites.mjs           # Decide qué sitios pasan Visual QA en CI (según los cambios respecto a la base)
+│   ├── client-prompt.mjs           # Genera el prompt manual del pipeline de cliente (al portapapeles)
+│   ├── client-run.mjs              # Pipeline sin supervisión: brief → PR (pnpm client:run)
 │   ├── customize-check.mjs         # Auditoría de restos de plantilla en un sitio de cliente
+│   ├── new-client-site.mjs         # Generador automatizado de nuevos sitios de clientes (admite --from <plantilla>)
+│   ├── optimize-assets.mjs         # Optimiza recursos/<slug>/ a public/ (WebP)
+│   ├── qa-site.mjs                 # Build + QA visual de todas las rutas de un sitio (pnpm qa:site)
+│   ├── recursos-new.mjs            # Crea recursos/<slug>/ copiando la plantilla de La Guaca (pnpm recursos:new)
 │   ├── template-brands.json        # Marcas y datos de ejemplo de cada plantilla (usado por customize-check)
+│   ├── template-clone.mjs          # Pipeline sin supervisión: URL → nueva plantilla → PR (pnpm template:clone)
+│   ├── template-prompt.mjs         # Genera el prompt manual de clonado de plantilla (al portapapeles)
 │   ├── verify-isolation.mjs        # Verificador de aislamiento entre clientes y gobernanza
-│   └── visual-qa-summary.mjs       # Generador de informe Markdown de Visual QA
+│   ├── visual-qa-summary.mjs       # Generador de informe Markdown de Visual QA
+│   └── lib/                        # Módulos del pipeline: pipeline.mjs, brief.mjs, prompts.mjs, clone.mjs
 ├── tests/
 │   └── visual-qa.spec.ts           # Suite compartida de Playwright (desktop y mobile)
 ├── package.json                    # Scripts globales con Turborepo, Biome y Playwright
@@ -95,19 +104,24 @@ monorepo-webs/
 │   ├── ui/                         # (@repo/ui) src/astro: SEO, Section, Footer · src/preact: Button
 │   ├── utils/                      # (@repo/utils) normalizeSiteUrl, generateRobotsTxt, buildWhatsAppUrl, cn, SiteMetadata
 │   └── tsconfig/                   # (@repo/tsconfig) Configs base de TS (base, astro, preact)
+├── recursos/                       # Briefs y material de cada cliente (solo se versionan README.md, _plantilla-cliente/ y la-guaca/)
+│   ├── README.md                   # Flujo de recursos y reglas del pipeline
+│   ├── _plantilla-cliente/         # Copia literal de la-guaca: plantilla por defecto de clientes nuevos
+│   └── la-guaca/                   # Brief, marca, fotos y textos del motel La Guaca
 └── sites/
     ├── _template/                  # Plantilla maestra genérica (intocable salvo mejoras globales)
     ├── motel-boutique/             # Motel/hotel boutique en español (home, nuestras-suites, restaurante, contacto); aún sin theme.css ni CUSTOMIZE.md
     ├── la-guaca/                   # Motel en español (cliente real) y plantilla por defecto de clientes nuevos: recursos/_plantilla-cliente/ es su copia literal
-    ├── plantilla-asterre/          # Retiro boutique en inglés, clon de asterre.framer.website (rooms/[slug], retreat, experience, contact, legales)
+    ├── plantilla-asterre/          # Retiro boutique en español, clon de asterre.framer.website localizado al español (rooms/[slug], retreat, experience, contact, legales)
     ├── plantilla-hotellia/         # Hotel boutique en inglés, clon de hotellia.framer.website (rooms, offers, wine-dine, menús, gallery, reserve, legales; usa lenis)
-    └── plantilla-pinevalley/       # Villa/casa de campo en inglés, landing de una página clon de pinevalley.framer.website (galería con visor, carrusel coverflow, FAQ, mapa; usa lenis)
+    ├── plantilla-pinevalley/       # Villa/casa de campo en inglés, landing de una página clon de pinevalley.framer.website (galería con visor, carrusel coverflow, FAQ, mapa; usa lenis)
+    └── plantilla-selvra/           # Retiro boutique en inglés, clon de selvra-retreat.framer.website (stays/[slug], experiences/[slug], place, enquire, demo, privacy; islas StaySelector y EnquiryDraft; sin lenis)
 ```
 
 ### Sitios existentes y convenciones observadas
-- Todos los sitios exponen `src/config/site.ts`, `src/layouts/BaseLayout.astro`, `src/pages/robots.txt.ts`, `src/pages/404.astro` y `src/styles/global.css`; `_template`, `la-guaca`, `plantilla-asterre`, `plantilla-hotellia` y `plantilla-pinevalley` además separan los tokens de marca en `src/styles/theme.css` y traen un `CUSTOMIZE.md` (ver sección 6).
+- Todos los sitios exponen `src/config/site.ts`, `src/layouts/BaseLayout.astro`, `src/pages/robots.txt.ts`, `src/pages/404.astro` y `src/styles/global.css`; `_template`, `la-guaca`, `plantilla-asterre`, `plantilla-hotellia`, `plantilla-pinevalley` y `plantilla-selvra` además separan los tokens de marca en `src/styles/theme.css` y traen un `CUSTOMIZE.md` (ver sección 6).
 - Los sitios clonados (`motel-boutique`, `plantilla-*`) concentran su contenido en `src/data/content.ts`, mantienen secciones en `src/components/sections/` (o directamente en `src/components/`) y usan `src/scripts/*.ts` para animaciones de entrada.
-- Páginas dinámicas (`rooms/[slug].astro`, `offers/[slug].astro`) se generan estáticamente a partir de `src/data/content.ts`.
+- Páginas dinámicas (`rooms/[slug].astro`, `offers/[slug].astro`, y en `plantilla-selvra` también `stays/[slug].astro` y `experiences/[slug].astro`) se generan estáticamente a partir de `src/data/content.ts`.
 - Las plantillas (`plantilla-*`) usan dominios de ejemplo (`*.example.com`); se reemplazan al entregar a un cliente real.
 - Los reportes y capturas en `docs/research/<cliente>/` y `docs/design-references/<cliente>/` (`current-*.png`, `visual-qa-report.*`) son artefactos generados e ignorados por Git; solo se versionan las referencias fuente (`source/`, `local/`, `snapshots/`) y los briefs.
 

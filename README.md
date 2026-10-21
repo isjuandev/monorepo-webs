@@ -62,7 +62,8 @@ monorepo-webs/
 │   ├── motel-boutique/             # Motel/hotel boutique en español
 │   ├── plantilla-asterre/          # Plantilla de retiro boutique (clon de asterre.framer.website)
 │   ├── plantilla-hotellia/         # Plantilla de hotel boutique (clon de hotellia.framer.website)
-│   └── plantilla-pinevalley/       # Plantilla de villa/casa de campo, landing de una página (clon de pinevalley.framer.website)
+│   ├── plantilla-pinevalley/       # Plantilla de villa/casa de campo, landing de una página (clon de pinevalley.framer.website)
+│   └── plantilla-selvra/           # Plantilla de retiro boutique en inglés (clon de selvra-retreat.framer.website)
 ├── packages/                       # Paquetes compartidos entre todos los sitios
 │   ├── ui/                         # Componentes Astro (SEO, Section, Footer) y Preact (Button) (@repo/ui)
 │   ├── utils/                      # Helpers de dominio, robots.txt, WhatsApp y cn (@repo/utils)
@@ -85,9 +86,10 @@ monorepo-webs/
 | `sites/_template` | `@sites/_template` | Plantilla base mínima para nuevos clientes | es |
 | `sites/la-guaca` | `@sites/la-guaca` | Motel La Guaca (cliente real): inicio, 9 habitaciones con galería, experiencias, contacto y legales. **Plantilla por defecto** de clientes nuevos (`recursos/_plantilla-cliente/` es su copia literal) | es |
 | `sites/motel-boutique` | `@sites/motel-boutique` | Motel/hotel boutique: home, suites, restaurante y contacto | es |
-| `sites/plantilla-asterre` | `@sites/plantilla-asterre` | Retiro boutique: home, rooms, retreat, experience, contact y legales | en |
+| `sites/plantilla-asterre` | `@sites/plantilla-asterre` | Retiro boutique: home, rooms, retreat, experience, contact y legales (clon de asterre localizado al español) | es |
 | `sites/plantilla-hotellia` | `@sites/plantilla-hotellia` | Hotel boutique: rooms, offers, wine & dine, menús, gallery, reserve y legales (smooth-scroll con `lenis`) | en |
 | `sites/plantilla-pinevalley` | `@sites/plantilla-pinevalley` | Villa / casa de campo de una página: hero con profundidad, galería con visor, carrusel coverflow, reseñas, mapa, reserva y FAQ (smooth-scroll con `lenis`) | en |
+| `sites/plantilla-selvra` | `@sites/plantilla-selvra` | Retiro boutique: home, place, stays y experiences (con detalle por `[slug]`), enquire, demo y privacy; sin `lenis` | en |
 
 ---
 
@@ -161,7 +163,7 @@ Opciones adicionales: `--from`, `--title`, `--locale` (por defecto `es_CO`), `--
 
 ## Personalizar un Sitio de Cliente (4 puntos)
 
-Cada plantilla (`_template`, `la-guaca`, `plantilla-asterre`, `plantilla-hotellia`, `plantilla-pinevalley`) se personaliza editando **solo cuatro puntos**; los componentes y páginas no contienen marca, textos ni contactos:
+Cada plantilla (`_template`, `la-guaca`, `plantilla-asterre`, `plantilla-hotellia`, `plantilla-pinevalley`, `plantilla-selvra`) se personaliza editando **solo cuatro puntos**; los componentes y páginas no contienen marca, textos ni contactos:
 
 | # | Qué cambia | Archivo | Contenido |
 | :-- | :-- | :-- | :-- |
