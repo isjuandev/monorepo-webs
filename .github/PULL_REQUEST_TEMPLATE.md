@@ -3,12 +3,12 @@
 <!-- Describe brevemente qué hace este PR y a qué cliente(s) o paquete(s) afecta -->
 
 - **Tipo de cambio:**
-  - [ ] Nuevo sitio de cliente (`sites/<slug-cliente>`)
-  - [ ] Clonación / actualización de sitio existente (`sites/<slug-cliente>`)
-  - [ ] Cambio transversal en paquetes compartidos (`packages/*`, `sites/_template`, `docker/`)
+  - [ ] Nuevo sitio de cliente (`clientes/<slug-cliente>`)
+  - [ ] Clonación / actualización de sitio existente (`clientes/<slug-cliente>`)
+  - [ ] Cambio transversal en paquetes compartidos (`packages/*`, `plantillas/_base`, `docker/`)
   - [ ] Infraestructura / CI / Skills / Documentación
 
-- **Sitio(s) afectado(s):** `sites/...`
+- **Sitio(s) afectado(s):** `clientes/...` o `plantillas/...`
 
 ---
 
@@ -20,20 +20,20 @@
 - [ ] `pnpm check` (`tsc --noEmit` + `astro check`) pasa sin errores ni advertencias.
 - [ ] `pnpm build` compila todos los sitios afectados (`output: "static"`, `robots.txt` y `sitemap-index.xml`).
 - [ ] `SITE_FOLDER=<slug-cliente> pnpm test:visual` ejecutado (sin errores de consola, activos rotos ni overflow horizontal en desktop/mobile).
-- [ ] Si es un sitio de cliente real (no plantilla): `pnpm customize:check <slug-cliente> --strict` sin hallazgos (sin marca, textos, contactos ni imágenes de la plantilla de origen).
+- [ ] Si es un sitio de cliente real (no plantilla): `pnpm cliente:check <slug-cliente> --strict` sin hallazgos (sin marca, textos, contactos ni imágenes de la plantilla de origen).
 - [ ] No se incluyen credenciales, archivos `.env` reales ni secretos en el commit.
 
 ---
 
-## Impacto en Núcleo Compartido (`packages/*`, `sites/_template/`, `docker/`)
+## Impacto en Núcleo Compartido (`packages/*`, `plantillas/_base/`, `docker/`)
 
-<!-- Si este PR modifica archivos fuera de un único sites/<slug-cliente>, completa esta sección -->
+<!-- Si este PR modifica archivos fuera de un único clientes/<slug-cliente>, completa esta sección -->
 
 - [ ] No aplica (este PR solo toca un cliente aislado).
-- [ ] Este PR modifica `packages/*`, `sites/_template/` o `docker/` y se verificó que **todos** los sitios del monorepo compilan correctamente con `pnpm build`.
+- [ ] Este PR modifica `packages/*`, `plantillas/_base/` o `docker/` y se verificó que **todos** los sitios del monorepo compilan correctamente con `pnpm build`.
 
 ---
 
 ## Evidencia Visual (Desktop `1440x900` / Mobile `390x844`)
 
-<!-- Adjunta capturas de docs/design-references/<slug-cliente>/ o resumen de docs/research/<slug-cliente>/visual-qa-report.md -->
+<!-- Adjunta capturas de clientes/<slug-cliente>/docs/referencias/ o resumen de clientes/<slug-cliente>/docs/qa/visual-qa-report.md -->

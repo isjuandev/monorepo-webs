@@ -1,6 +1,6 @@
 ---
 name: motel-copywriting
-description: Define la voz de marca, el tono y las reglas de redacción comercial de sitios web de moteles (para adultos): selecciona entre 50 tonos documentados en 10 estilos, redacta todas las secciones de la web y gobierna los CTA hacia reserva por WhatsApp y visita presencial, sin inventar datos. Úsala al escribir o revisar textos de cualquier sitio de motel/hotel por horas en sites/<slug-cliente>.
+description: Define la voz de marca, el tono y las reglas de redacción comercial de sitios web de moteles (para adultos): selecciona entre 50 tonos documentados en 10 estilos, redacta todas las secciones de la web y gobierna los CTA hacia reserva por WhatsApp y visita presencial, sin inventar datos. Úsala al escribir o revisar textos de cualquier sitio de motel/hotel por horas en clientes/<slug-cliente>.
 ---
 
 # Motel Copywriting (`motel-copywriting`)
@@ -13,7 +13,7 @@ Sistema de comunicación para sitios web de moteles. Gobierna **toda la página*
 - **No hace:** inventar servicios, precios, horarios, promociones, ubicación, políticas, números de teléfono ni disponibilidad; ni escribir contenido sexual explícito; ni dirigirse a menores.
 - **Público:** siempre adultos (18+).
 - **Idioma por defecto:** español neutro; ajusta léxico al país si el usuario lo indica (usa `locale` de `siteConfig` cuando exista).
-- **Dentro de este monorepo:** el texto vive en `sites/<slug>/src/data/content.ts` y los contactos en `src/config/site.ts` (ver [AGENTS.md §6](../../../AGENTS.md)). No hardcodees marca, textos ni contactos en componentes. Los enlaces se generan con `buildWhatsAppUrl` de `@repo/utils`.
+- **Dentro de este monorepo:** el texto vive en `clientes/<slug>/src/data/content.ts` y los contactos en `src/config/site.ts` (ver [AGENTS.md §6](../../../AGENTS.md)). No hardcodees marca, textos ni contactos en componentes. Los enlaces se generan con `buildWhatsAppUrl` de `@repo/utils`.
 
 ## 1.1. Fuente de datos: `recursos/<slug-cliente>/` (modo monorepo)
 
@@ -35,7 +35,7 @@ Reglas del modo monorepo:
 - **Campo vacío = pendiente:** aplica la tabla del §9 (marcadores `[..._PENDIENTE]`); no inventes.
 - **Si el estilo o el tono no están en `brief.md`**, aplica el flujo de §5 (tono conservador) y declara el supuesto; no preguntes salvo conflicto entre fuentes o falta total de servicios.
 - **Si el tono principal y el secundario son incompatibles** (ver combinaciones seguras en §5), avisa y propón la alternativa más cercana antes de redactar.
-- **Guía de voz (paso 3):** guárdala en `docs/research/<slug-cliente>/guia-de-voz.md` (no en `recursos/`).
+- **Guía de voz (paso 3):** guárdala en `clientes/<slug-cliente>/docs/guia-de-voz.md` (no en `recursos/`).
 - **Si falta `recursos/<slug-cliente>/brief.md`**, detente y avisa. Si el usuario da datos por chat, tienen prioridad sobre el brief, pero señala la contradicción.
 
 ## 2. Archivos de la skill (cuándo consultar cada uno)
@@ -141,7 +141,7 @@ Datos pendientes: …
 | Políticas (edad, pagos, ingreso) | No las inventes; FAQ: "Consúltanos por WhatsApp" |
 | Tono o estilo no claros | Tono conservador del §5 + declarar supuesto |
 
-Reporta siempre la lista de pendientes en la entrega. En el repositorio, un marcador pendiente en un sitio de cliente real debe resolverse antes de `pnpm customize:check <slug> --strict`.
+Reporta siempre la lista de pendientes en la entrega. En el repositorio, un marcador pendiente en un sitio de cliente real debe resolverse antes de `pnpm cliente:check <slug> --strict`.
 
 ## 10. Ejemplos positivos y negativos (resumen)
 

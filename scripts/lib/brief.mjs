@@ -1,11 +1,9 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { canonicalSlug, listTemplates, RECURSOS_DIR, ROOT_DIR, resolveSite } from "./paths.mjs";
 
-export const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-export const SITES_DIR = path.join(ROOT_DIR, "sites");
-export const RECURSOS_DIR = path.join(ROOT_DIR, "recursos");
+export { RECURSOS_DIR, ROOT_DIR } from "./paths.mjs";
 export const KEBAB_CASE_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export function normalize(text) {
@@ -54,15 +52,6 @@ export function slugify(text) {
     .replace(/^-+|-+$/g, "");
 }
 
-/** Plantillas disponibles: sitios registrados en scripts/template-brands.json que existen en sites/ */
-export function listTemplates() {
-  const brandsPath = path.join(ROOT_DIR, "scripts", "template-brands.json");
-  const { templates } = JSON.parse(fs.readFileSync(brandsPath, "utf8"));
-  return Object.keys(templates).filter((name) =>
-    fs.existsSync(path.join(SITES_DIR, name, "package.json"))
-  );
-}
-
 /** Un valor opcional del brief es utilizable si no está vacío ni marcado como pendiente */
 function optional(value) {
   const clean = cleanValue(value);
@@ -101,10 +90,10 @@ export function parseBrief(slug) {
       `el slug del brief ("${required.Slug.trim()}") no coincide con la carpeta recursos/${slug}/.`
     );
   }
-  const plantilla = cleanValue(required["Plantilla base"]);
+  const plantilla = canonicalSlug(cleanValue(required["Plantilla base"]));
   if (plantilla && !listTemplates().includes(plantilla)) {
     errors.push(
-      `la plantilla "${plantilla}" no existe en sites/ (disponibles: ${listTemplates().join(", ")}).`
+      `la plantilla "${plantilla}" no existe en plantillas/ (disponibles: ${listTemplates().join(", ")}).`
     );
   }
 
@@ -127,7 +116,7 @@ export function parseBrief(slug) {
     domain: cleanValue(required.Dominio),
     locale: /\(([a-z]{2}_[A-Z]{2})\)/.exec(required.Locale)?.[1] ?? cleanValue(required.Locale),
     motel,
-    branch: motel ? `cliente/motel-${slug}` : `cliente/${slug}`,
+    branch: `cliente/${slug}`,
     rooms,
     routes,
     contact: {
@@ -138,8 +127,6 @@ export function parseBrief(slug) {
     },
   };
 }
-
-export const TEMPLATE_RECURSOS_DIR = path.join(RECURSOS_DIR, "_plantilla-cliente");
 
 // Campos del brief que identifican a un cliente: no pueden quedar con el valor de la plantilla
 const IDENTITY_FIELDS = [
@@ -171,43 +158,49 @@ function listFiles(dir) {
 
 const hashFile = (file) => crypto.createHash("sha1").update(fs.readFileSync(file)).digest("hex");
 
+// Recursos versionados que sirven de ejemplo: un cliente nuevo no debe conservar sus datos ni archivos
+const EXAMPLE_RECURSOS = ["_plantilla-cliente", "la-guaca"];
+
 /**
- * Restos de recursos/_plantilla-cliente/ (La Guaca) en recursos/<slug>/: datos de identidad y
- * contacto con el mismo valor y archivos idénticos. El cliente de origen de la plantilla no aplica.
+ * Restos de ejemplo en recursos/<slug>/: datos de identidad y contacto iguales a los de los
+ * recursos de ejemplo (recursos/_plantilla-cliente/ y recursos/la-guaca/) y archivos idénticos a
+ * los de esos ejemplos o a las imágenes de la plantilla base (plantillas/<plantilla>/public/).
  */
-export function recursosLeftovers(slug) {
-  const templateBrief = path.join(TEMPLATE_RECURSOS_DIR, "brief.md");
+export function recursosLeftovers(slug, plantilla) {
   const clientBrief = path.join(RECURSOS_DIR, slug, "brief.md");
-  if (!fs.existsSync(templateBrief) || !fs.existsSync(clientBrief)) {
+  if (!fs.existsSync(clientBrief)) {
     return { fields: [], files: [] };
   }
-  const templateSlug = cleanValue(
-    field(
-      parseSections(stripHtmlComments(fs.readFileSync(templateBrief, "utf8")))[
-        normalize("Generación")
-      ],
-      "Slug"
-    )
+  const examples = EXAMPLE_RECURSOS.filter((name) => name !== slug).map((name) =>
+    path.join(RECURSOS_DIR, name)
   );
-  if (slug === templateSlug) {
-    return { fields: [], files: [] };
+
+  const client = briefFields(clientBrief);
+  const fields = new Set();
+  for (const example of examples) {
+    const exampleBrief = path.join(example, "brief.md");
+    if (!fs.existsSync(exampleBrief)) continue;
+    const template = briefFields(exampleBrief);
+    for (const label of Object.keys(template)) {
+      const value = cleanValue(template[label]);
+      if (value && !/^pendiente$/i.test(value) && cleanValue(client[label]) === value) {
+        fields.add(label);
+      }
+    }
   }
 
-  const template = briefFields(templateBrief);
-  const client = briefFields(clientBrief);
-  const fields = Object.keys(template).filter((label) => {
-    const value = cleanValue(template[label]);
-    return value && !/^pendiente$/i.test(value) && cleanValue(client[label]) === value;
-  });
-
+  const site = plantilla ? resolveSite(plantilla) : null;
   const templateHashes = new Set(
-    listFiles(TEMPLATE_RECURSOS_DIR)
+    [...examples, ...(site ? [path.join(site.dir, "public")] : [])]
+      .flatMap((dir) => listFiles(dir))
       .filter((file) => path.basename(file) !== "brief.md")
       .map(hashFile)
   );
   const files = listFiles(path.join(RECURSOS_DIR, slug))
+    .filter((file) => !file.includes(`${path.sep}entrada${path.sep}`))
+    .filter((file) => !file.includes(`${path.sep}.intake${path.sep}`))
     .filter((file) => path.basename(file) !== "brief.md" && templateHashes.has(hashFile(file)))
     .map((file) => path.relative(ROOT_DIR, file));
 
-  return { fields, files };
+  return { fields: [...fields], files };
 }

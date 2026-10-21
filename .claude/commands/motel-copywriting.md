@@ -1,5 +1,5 @@
 ---
-description: Define tono de marca y redacta/revisa los textos de un sitio de motel (CTA a WhatsApp y visita) para sites/<slug-cliente>, leyendo recursos/<slug-cliente>/.
+description: Define tono de marca y redacta/revisa los textos de un sitio de motel (CTA a WhatsApp y visita) para clientes/<slug-cliente>, leyendo recursos/<slug-cliente>/.
 argument-hint: "<slug-cliente>"
 ---
 

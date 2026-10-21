@@ -27,6 +27,37 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
+  clientes/la-guaca:
+    dependencies:
+      '@astrojs/preact':
+        specifier: ^6.0.6
+        version: 6.0.6(@babel/core@7.29.7)(@types/node@26.6.5)(esbuild@0.27.7)(preact@11.0.1)(rollup@4.64.5)(yaml@2.9.1)
+      '@astrojs/sitemap':
+        specifier: ^3.7.4
+        version: 3.7.4
+      '@repo/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@repo/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      astro:
+        specifier: ^7.3.8
+        version: 7.3.8(@types/node@26.6.5)(esbuild@0.27.7)(yaml@2.9.1)
+      preact:
+        specifier: ^11.0.1
+        version: 11.0.1(preact-render-to-string@6.8.0)
+    devDependencies:
+      '@astrojs/check':
+        specifier: ^0.9.10
+        version: 0.9.10(@emnapi/runtime@1.11.3)(prettier@3.9.10)(typescript@5.9.3)
+      '@repo/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
+
   packages/tsconfig: {}
 
   packages/ui:
@@ -57,7 +88,7 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
-  sites/_template:
+  plantillas/_base:
     dependencies:
       '@astrojs/preact':
         specifier: ^6.0.6
@@ -88,7 +119,7 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
-  sites/la-guaca:
+  plantillas/asterre:
     dependencies:
       '@astrojs/preact':
         specifier: ^6.0.6
@@ -119,69 +150,7 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
-  sites/motel-boutique:
-    dependencies:
-      '@astrojs/preact':
-        specifier: ^6.0.6
-        version: 6.0.6(@babel/core@7.29.7)(@types/node@26.6.5)(esbuild@0.27.7)(preact@11.0.1)(rollup@4.64.5)(yaml@2.9.1)
-      '@astrojs/sitemap':
-        specifier: ^3.7.4
-        version: 3.7.4
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      '@repo/utils':
-        specifier: workspace:*
-        version: link:../../packages/utils
-      astro:
-        specifier: ^7.3.8
-        version: 7.3.8(@types/node@26.6.5)(esbuild@0.27.7)(yaml@2.9.1)
-      preact:
-        specifier: ^11.0.1
-        version: 11.0.1(preact-render-to-string@6.8.0)
-    devDependencies:
-      '@astrojs/check':
-        specifier: ^0.9.10
-        version: 0.9.10(@emnapi/runtime@1.11.3)(prettier@3.9.10)(typescript@5.9.3)
-      '@repo/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
-      typescript:
-        specifier: ^5.7.0
-        version: 5.9.3
-
-  sites/plantilla-asterre:
-    dependencies:
-      '@astrojs/preact':
-        specifier: ^6.0.6
-        version: 6.0.6(@babel/core@7.29.7)(@types/node@26.6.5)(esbuild@0.27.7)(preact@11.0.1)(rollup@4.64.5)(yaml@2.9.1)
-      '@astrojs/sitemap':
-        specifier: ^3.7.4
-        version: 3.7.4
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      '@repo/utils':
-        specifier: workspace:*
-        version: link:../../packages/utils
-      astro:
-        specifier: ^7.3.8
-        version: 7.3.8(@types/node@26.6.5)(esbuild@0.27.7)(yaml@2.9.1)
-      preact:
-        specifier: ^11.0.1
-        version: 11.0.1(preact-render-to-string@6.8.0)
-    devDependencies:
-      '@astrojs/check':
-        specifier: ^0.9.10
-        version: 0.9.10(@emnapi/runtime@1.11.3)(prettier@3.9.10)(typescript@5.9.3)
-      '@repo/tsconfig':
-        specifier: workspace:*
-        version: link:../../packages/tsconfig
-      typescript:
-        specifier: ^5.7.0
-        version: 5.9.3
-
-  sites/plantilla-hotellia:
+  plantillas/hotellia:
     dependencies:
       '@astrojs/preact':
         specifier: ^6.0.6
@@ -215,7 +184,7 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
-  sites/plantilla-pinevalley:
+  plantillas/pinevalley:
     dependencies:
       '@astrojs/preact':
         specifier: ^6.0.6
@@ -249,7 +218,7 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
 
-  sites/plantilla-selvra:
+  plantillas/selvra:
     dependencies:
       '@astrojs/preact':
         specifier: ^6.0.6

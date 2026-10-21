@@ -1,15 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
 import { expect, test } from "@playwright/test";
+import { resolveQaSite } from "./site";
 
-const siteFolder = process.env.SITE_FOLDER || "_template";
+const site = resolveQaSite();
 
 /** Rutas de todas las páginas HTML del build (`dist/`), sin la 404 */
-function routesFromBuild(folder: string): string[] {
-  const distDir = path.join(__dirname, "..", "sites", folder, "dist");
+function routesFromBuild(): string[] {
+  const distDir = site.dist;
   if (!fs.existsSync(distDir)) {
     throw new Error(
-      `QA_ROUTES=auto necesita el build de sites/${folder}: ejecuta antes pnpm --filter "./sites/${folder}" build`
+      `QA_ROUTES=auto necesita el build de ${site.rel}: ejecuta antes pnpm --filter "./${site.rel}" build`
     );
   }
   const found: string[] = [];
@@ -35,7 +36,7 @@ function routesFromBuild(folder: string): string[] {
 
 const routes =
   process.env.QA_ROUTES === "auto"
-    ? routesFromBuild(siteFolder)
+    ? routesFromBuild()
     : (process.env.QA_ROUTES || "/")
         .split(",")
         .map((r) => r.trim())
@@ -48,7 +49,7 @@ function routeToSlug(routePath: string): string {
   return routePath.replace(/^\/+|\/+$/g, "").replace(/[^a-zA-Z0-9-_]/g, "-");
 }
 
-test.describe(`Visual QA & Functional Suite — sites/${siteFolder}`, () => {
+test.describe(`Visual QA & Functional Suite — ${site.rel}`, () => {
   for (const route of routes) {
     const routeSlug = routeToSlug(route);
 
@@ -116,6 +117,27 @@ test.describe(`Visual QA & Functional Suite — sites/${siteFolder}`, () => {
         canonicalHref?.startsWith("http"),
         'Debe existir <link rel="canonical"> con URL absoluta'
       ).toBe(true);
+      expect(
+        new URL(canonicalHref ?? "http://invalido").host,
+        `El canonical debe usar el dominio del sitio (${site.host})`
+      ).toBe(site.host);
+
+      // Compartir en redes: og:url con el dominio del sitio y og:image absoluta
+      const ogUrl = await page.locator('meta[property="og:url"]').getAttribute("content");
+      expect(
+        ogUrl ? new URL(ogUrl).host : "",
+        `og:url debe usar el dominio del sitio (${site.host})`
+      ).toBe(site.host);
+      const ogImage = await page.locator('meta[property="og:image"]').getAttribute("content");
+      expect(
+        ogImage?.startsWith("http"),
+        'Debe existir <meta property="og:image"> con URL absoluta'
+      ).toBe(true);
+
+      // Jerarquía de encabezados: un único <h1> por página
+      expect(await page.locator("h1").count(), "Cada página debe tener exactamente un <h1>").toBe(
+        1
+      );
 
       // Detectar desbordamiento horizontal (scrollWidth > innerWidth)
       const overflowInfo = await page.evaluate(() => {
@@ -160,12 +182,11 @@ test.describe(`Visual QA & Functional Suite — sites/${siteFolder}`, () => {
         await btn.hover();
       }
 
-      // Guardar captura reproducible en docs/design-references/<site>/
+      // Guardar captura reproducible en <sitio>/docs/qa/ (ignorada por Git)
       const projectName = testInfo.project.name;
-      const refsDir = path.resolve(process.cwd(), "docs", "design-references", siteFolder);
-      fs.mkdirSync(refsDir, { recursive: true });
+      fs.mkdirSync(site.qa, { recursive: true });
 
-      const currentScreenshotPath = path.join(refsDir, `current-${projectName}-${routeSlug}.png`);
+      const currentScreenshotPath = path.join(site.qa, `current-${projectName}-${routeSlug}.png`);
       await page.screenshot({
         path: currentScreenshotPath,
         fullPage: true,
@@ -199,11 +220,27 @@ test.describe(`Visual QA & Functional Suite — sites/${siteFolder}`, () => {
     expect(robotsRes.status()).toBe(200);
     const robotsText = await robotsRes.text();
     expect(robotsText).toContain("User-agent: *");
-    expect(robotsText).toContain("sitemap-index.xml");
+    expect(robotsText).toContain(`https://${site.host}/sitemap-index.xml`);
 
     const sitemapRes = await request.get("/sitemap-index.xml");
     expect(sitemapRes.status()).toBe(200);
     const sitemapText = await sitemapRes.text();
     expect(sitemapText).toContain("<sitemapindex");
+
+    // Cada sitemap y cada URL listada deben usar el dominio del sitio
+    const sitemapUrls = [...sitemapText.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+    expect(sitemapUrls.length, "sitemap-index.xml debe listar al menos un sitemap").toBeGreaterThan(
+      0
+    );
+    for (const sitemapUrl of sitemapUrls) {
+      const parsed = new URL(sitemapUrl);
+      expect(parsed.host, `El sitemap debe usar el dominio del sitio (${site.host})`).toBe(
+        site.host
+      );
+      const childText = await (await request.get(parsed.pathname)).text();
+      const pageUrls = [...childText.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+      const foreign = pageUrls.filter((url) => new URL(url).host !== site.host);
+      expect(foreign, "Todas las URL del sitemap deben usar el dominio del sitio").toEqual([]);
+    }
   });
 });

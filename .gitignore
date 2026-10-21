@@ -12,13 +12,14 @@ dist/
 build/
 playwright-report/
 test-results/
-docs/design-references/*/current-*.png
-docs/research/*/visual-qa-report.json
-docs/research/*/visual-qa-report.md
-# Estado y logs locales de pnpm client:run / template:clone
+# Salidas de QA de cada sitio (capturas current-*.png e informes)
+plantillas/*/docs/qa/
+clientes/*/docs/qa/
+# Estado y logs locales de pnpm cliente:crear / plantilla:clonar
 .pipeline/
 
-# Recursos manuales por cliente (se versionan README, _plantilla-cliente y el ejemplo la-guaca)
+# Recursos manuales por cliente (se versionan README, _plantilla-cliente y el ejemplo la-guaca).
+# La bandeja entrada/ y el trabajo del intake (.intake/) nunca se suben, ni en la rama del cliente.
 recursos/*
 !recursos/README.md
 !recursos/_plantilla-cliente/

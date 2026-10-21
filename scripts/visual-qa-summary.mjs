@@ -2,12 +2,18 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { docsPaths, ROOT_DIR, resolveSite } from "./lib/paths.mjs";
 
-const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const siteFolder = process.env.SITE_FOLDER || "_template";
-const reportJsonPath = path.join(ROOT_DIR, "docs", "research", siteFolder, "visual-qa-report.json");
-const reportMdPath = path.join(ROOT_DIR, "docs", "research", siteFolder, "visual-qa-report.md");
+const site = resolveSite(process.env.SITE_FOLDER || "_base");
+if (!site) {
+  console.error(
+    `✖ SITE_FOLDER="${process.env.SITE_FOLDER}" no existe en clientes/ ni plantillas/.`
+  );
+  process.exit(1);
+}
+const qaDir = path.join(ROOT_DIR, docsPaths(site.rel).qa);
+const reportJsonPath = path.join(qaDir, "visual-qa-report.json");
+const reportMdPath = path.join(qaDir, "visual-qa-report.md");
 
 if (!fs.existsSync(reportJsonPath)) {
   console.error(`✖ No se encontró reporte JSON en ${reportJsonPath}`);
@@ -17,10 +23,10 @@ if (!fs.existsSync(reportJsonPath)) {
 const report = JSON.parse(fs.readFileSync(reportJsonPath, "utf8"));
 const stats = report.stats || {};
 const lines = [
-  `# Informe de Control de Calidad Visual (Visual QA) — \`sites/${siteFolder}\``,
+  `# Informe de Control de Calidad Visual (Visual QA) — \`${site.rel}\``,
   "",
   `- **Fecha:** ${new Date().toISOString()}`,
-  `- **Sitio evaluado:** \`sites/${siteFolder}\``,
+  `- **Sitio evaluado:** \`${site.rel}\``,
   `- **Pruebas esperadas (pasadas):** ${stats.expected ?? 0}`,
   `- **Pruebas fallidas (discrepancias):** ${stats.unexpected ?? 0}`,
   `- **Pruebas omitidas:** ${stats.skipped ?? 0}`,

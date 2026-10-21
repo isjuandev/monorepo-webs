@@ -9,11 +9,11 @@ import { buildClientPrompt } from "./lib/prompts.mjs";
 function printUsage() {
   console.log(`
 Uso:
-  pnpm client-prompt <slug-cliente> [opciones]
+  pnpm cliente:prompt <slug-cliente> [opciones]
 
 Valida recursos/<slug-cliente>/brief.md y genera el prompt de creación del sitio.
 El modelo lee el brief y saca todos los datos de ahí; el prompt solo lleva el slug y la rama base.
-Por defecto lo copia al portapapeles. Para hacerlo todo sin supervisión usa pnpm client:run.
+Por defecto lo copia al portapapeles. Para hacerlo todo sin supervisión usa pnpm cliente:crear.
 
 Opciones:
   --base <rama>    Rama desde la que se crea la rama del cliente (por defecto: main)

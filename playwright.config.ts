@@ -1,8 +1,10 @@
 import path from "node:path";
 import { defineConfig, devices } from "@playwright/test";
+import { resolveQaSite } from "./tests/site";
 
-const siteFolder = process.env.SITE_FOLDER || "_template";
-const port = Number(process.env.QA_PORT || 4321);
+const site = resolveQaSite();
+// Puerto propio de QA (no el 4321 de astro dev) para no mezclarse con un servidor de desarrollo
+const port = Number(process.env.QA_PORT || 4599);
 const baseURL = process.env.BASE_URL || `http://localhost:${port}`;
 
 export default defineConfig({
@@ -11,20 +13,13 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   workers: 1,
-  snapshotPathTemplate: path.join(
-    __dirname,
-    "docs",
-    "design-references",
-    siteFolder,
-    "snapshots",
-    "{projectName}-{arg}{ext}"
-  ),
+  snapshotPathTemplate: path.join(site.snapshots, "{projectName}-{arg}{ext}"),
   reporter: [
     ["list"],
     [
       "json",
       {
-        outputFile: path.join(__dirname, "docs", "research", siteFolder, "visual-qa-report.json"),
+        outputFile: path.join(site.qa, "visual-qa-report.json"),
       },
     ],
     ["html", { outputFolder: "playwright-report", open: "never" }],
@@ -56,9 +51,13 @@ export default defineConfig({
   webServer: process.env.BASE_URL
     ? undefined
     : {
-        command: `pnpm --filter "./sites/${siteFolder}" build && pnpm --filter "./sites/${siteFolder}" preview --port ${port} --host`,
+        // cliente:qa ya compiló el sitio (QA_SKIP_BUILD=1); test:visual compila aquí
+        // Servidor estático propio (scripts/lib/static-server.mjs) en vez de `astro preview`, que
+        // se relanza desacoplado y queda huérfano tras la QA
+        command: `${process.env.QA_SKIP_BUILD ? "" : `pnpm --filter "./${site.rel}" build && `}exec node scripts/lib/static-server.mjs "${site.dist}" ${port}`,
         url: baseURL,
-        reuseExistingServer: !process.env.CI,
+        // Nunca reutilizar: un servidor ya levantado puede ser de otro sitio y falsear la QA
+        reuseExistingServer: false,
         timeout: 60000,
       },
 });

@@ -1,7 +1,7 @@
 import { spawn, spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-import { ROOT_DIR } from "./brief.mjs";
+import { listSiteFolders, ROOT_DIR } from "./paths.mjs";
 import { buildRepairPrompt } from "./prompts.mjs";
 
 export const STATE_ROOT = path.join(ROOT_DIR, ".pipeline");
@@ -24,7 +24,8 @@ export const AGENT_ALLOWED_TOOLS = [
   "Bash(node scripts/:*)",
   "Bash(ls:*)",
   "Bash(mkdir:*)",
-  "Bash(rm sites/:*)",
+  "Bash(rm clientes/:*)",
+  "Bash(rm plantillas/:*)",
   "mcp__codebase-memory-mcp",
 ];
 export const AGENT_DISALLOWED_TOOLS = ["Bash(git:*)", "Bash(gh:*)", "Bash(npm:*)", "Bash(npx:*)"];
@@ -42,8 +43,11 @@ export function fail(message) {
   throw new PipelineError(message);
 }
 
-/** Ejecuta un comando y devuelve { ok, status, output }. Con capture = false hereda la terminal. */
-export function run(command, args = [], { capture = true, env, input } = {}) {
+/**
+ * Ejecuta un comando y devuelve { ok, status, output }. Con capture = false hereda la terminal.
+ * timeout (ms) corta comandos que se cuelgan (p. ej. Node que no termina al salir).
+ */
+export function run(command, args = [], { capture = true, env, input, timeout } = {}) {
   const result = spawnSync(command, args, {
     cwd: ROOT_DIR,
     env: { ...process.env, ...env },
@@ -51,8 +55,14 @@ export function run(command, args = [], { capture = true, env, input } = {}) {
     encoding: "utf8",
     stdio: capture ? ["pipe", "pipe", "pipe"] : ["inherit", "inherit", "inherit"],
     maxBuffer: 64 * 1024 * 1024,
+    timeout,
   });
-  const output = `${result.stdout ?? ""}${result.stderr ?? ""}`;
+  const timedOut = result.error?.code === "ETIMEDOUT";
+  const output = `${result.stdout ?? ""}${result.stderr ?? ""}${
+    timedOut
+      ? `\n✖ Tiempo agotado (${Math.round(timeout / 1000)} s): ${command} ${args.join(" ")}`
+      : ""
+  }`;
   return { ok: result.status === 0, status: result.status, output };
 }
 
@@ -79,16 +89,16 @@ export function commandExists(command) {
 }
 
 /**
- * Carpetas de sites/ sin package.json: restos ignorados (dist, node_modules) de otra rama.
- * Rompen verify:isolation, así que el preflight las reporta (no se borran solas).
+ * Carpetas de plantillas/ o clientes/ sin package.json (restos ignorados de otra rama) y la
+ * antigua sites/. Rompen verify:isolation, así que el preflight las reporta (no se borran solas).
  */
 export function ghostSites() {
-  const sitesDir = path.join(ROOT_DIR, "sites");
-  return fs
-    .readdirSync(sitesDir, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .filter((entry) => !fs.existsSync(path.join(sitesDir, entry.name, "package.json")))
-    .map((entry) => `sites/${entry.name}`);
+  return [
+    ...(fs.existsSync(path.join(ROOT_DIR, "sites")) ? ["sites"] : []),
+    ...listSiteFolders()
+      .filter((site) => !site.pkg)
+      .map((site) => site.rel),
+  ];
 }
 
 export function currentBranch() {
@@ -316,7 +326,7 @@ export async function runAgentUntilDone({ slug, prompt, claude, state, isDone, m
 export function runGates(gates) {
   for (const gate of gates) {
     log.step(`Compuerta: ${gate.name}`);
-    const result = run(gate.command, gate.args, { capture: true });
+    const result = run(gate.command, gate.args, { capture: true, timeout: gate.timeout });
     if (!result.ok) {
       log.warn(`Falló: ${gate.name}`);
       return { gate: gate.name, output: tail(result.output) };
@@ -331,7 +341,16 @@ export function runGates(gates) {
  * y se repiten todas, hasta maxRepairs intentos. Tras cada reparación se revisa el alcance.
  * Devuelve el número de reparaciones que hicieron falta.
  */
-export async function gatesWithRepair({ slug, gates, state, maxRepairs, claude, base, allowed }) {
+export async function gatesWithRepair({
+  slug,
+  siteRel,
+  gates,
+  state,
+  maxRepairs,
+  claude,
+  base,
+  allowed,
+}) {
   for (let attempt = 0; ; attempt += 1) {
     const failure = runGates(gates);
     if (!failure) {
@@ -348,7 +367,7 @@ export async function gatesWithRepair({ slug, gates, state, maxRepairs, claude, 
       slug,
       resume: state.sessionId,
       prompt: buildRepairPrompt({
-        slug,
+        siteRel,
         gate: failure.gate,
         output: failure.output,
         attempt: attempt + 1,

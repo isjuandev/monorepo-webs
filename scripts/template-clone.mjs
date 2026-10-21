@@ -2,8 +2,9 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { KEBAB_CASE_REGEX, ROOT_DIR, SITES_DIR } from "./lib/brief.mjs";
+import { KEBAB_CASE_REGEX } from "./lib/brief.mjs";
 import { buildClonePrompt, discoverRoutes } from "./lib/clone.mjs";
+import { canonicalSlug, docsPaths, ROOT_DIR, resolveSite, templateRel } from "./lib/paths.mjs";
 import {
   AGENT_ALLOWED_TOOLS,
   assertScope,
@@ -42,9 +43,9 @@ const CLONE_ALLOWED_TOOLS = [
 function printUsage() {
   console.log(`
 Uso:
-  pnpm template:clone <url> <plantilla-slug> [opciones]
+  pnpm plantilla:clonar <url> <slug> [opciones]
 
-Clona una web como nueva plantilla del monorepo (sites/plantilla-*) con la skill clone-website,
+Clona una web como nueva plantilla del monorepo (plantillas/<slug>) con la skill clone-website,
 en modo A (Plantilla: estructura y estilos reales, textos y datos de ejemplo), y abre un PR:
   routes → branch → generate → agent → gates (con reparación) → commit → pr
 
@@ -106,30 +107,26 @@ function parseArgs(argv) {
  * Prueba de personalización (skill clone-website, "Deliver"): un cliente generado desde la
  * plantilla solo debe tener restos en los 4 puntos de personalización.
  */
-function probe(slug) {
-  const brands = JSON.parse(
-    fs.readFileSync(path.join(ROOT_DIR, "scripts", "template-brands.json"), "utf8")
-  );
-  if (!(slug in brands.templates)) {
-    throw new PipelineError(`sites/${slug} no está registrada en scripts/template-brands.json.`);
+function probe(name) {
+  const site = resolveSite(name);
+  if (site?.kind !== "plantilla") {
+    throw new PipelineError(`"${name}" no es una plantilla de plantillas/.`);
   }
-  if (brands.templates[slug].brands.length === 0) {
-    throw new PipelineError(
-      `scripts/template-brands.json: "${slug}" no declara ninguna marca de ejemplo.`
-    );
+  const { slug } = site;
+  if ((site.manifest?.marcas ?? []).length === 0) {
+    throw new PipelineError(`${site.rel}/plantilla.json no declara ninguna marca de ejemplo.`);
   }
-  const probeDirs = [
-    path.join(SITES_DIR, PROBE_SLUG),
-    path.join(ROOT_DIR, "docs", "research", PROBE_SLUG),
-    path.join(ROOT_DIR, "docs", "design-references", PROBE_SLUG),
-  ];
+  const probeDirs = [path.join(ROOT_DIR, "clientes", PROBE_SLUG)];
   try {
     must("node", ["scripts/new-client-site.mjs", PROBE_SLUG, "--from", slug, "--skip-checks"]);
-    const output = tail(run("node", ["scripts/customize-check.mjs", PROBE_SLUG]).output, 10000);
+    const output = tail(
+      run("node", ["scripts/customize-check.mjs", PROBE_SLUG], { timeout: 120_000 }).output,
+      10000
+    );
     const findings = [...output.matchAll(/^✖ (src\/[^\s:]+):\d+/gm)].map((match) => match[1]);
     if (findings.length === 0) {
       throw new PipelineError(
-        `customize:check no encontró la marca de ejemplo de ${slug} en un cliente recién generado: revisa sus "brands" en scripts/template-brands.json.`
+        `customize:check no encontró la marca de ejemplo de ${slug} en un cliente recién generado: revisa sus "marcas" en ${site.rel}/plantilla.json.`
       );
     }
     const outside = [...new Set(findings.filter((file) => !CUSTOMIZATION_FILES.includes(file)))];
@@ -149,21 +146,22 @@ function probe(slug) {
 }
 
 function buildPrBody({ slug, url, state }) {
-  const summary = readIfExists(path.join(ROOT_DIR, "docs", "research", slug, "agent-summary.md"));
-  const qa = readIfExists(path.join(ROOT_DIR, "docs", "research", slug, "visual-qa-report.md"));
+  const { docs, qa: qaDir } = docsPaths(templateRel(slug));
+  const summary = readIfExists(path.join(ROOT_DIR, docs, "agent-summary.md"));
+  const qa = readIfExists(path.join(ROOT_DIR, qaDir, "visual-qa-report.md"));
   return [
     `## Nueva plantilla \`${slug}\``,
     "",
-    `Clonada de ${url} con \`pnpm template:clone\` (skill clone-website, modo A — Plantilla).`,
+    `Clonada de ${url} con \`pnpm plantilla:clonar\` (skill clone-website, modo A — Plantilla).`,
     "",
     "## Resumen del agente",
     "",
-    summary.trim() || "_El agente no escribió docs/research/<slug>/agent-summary.md._",
+    summary.trim() || `_El agente no escribió ${docs}/agent-summary.md._`,
     "",
     "## Compuertas",
     "",
     "- [x] `pnpm verify` (aislamiento, lint, check, build)",
-    `- [x] \`pnpm qa:site ${slug}\` (todas las rutas, desktop y mobile)`,
+    `- [x] \`pnpm cliente:qa ${slug}\` (todas las rutas, desktop y mobile)`,
     `- [x] Prueba de personalización (\`node scripts/template-clone.mjs --probe ${slug}\`)`,
     `- Reparaciones automáticas: ${state.repairs ?? 0} · coste del agente: $${(state.costUsd ?? 0).toFixed(2)}`,
     "",
@@ -176,7 +174,7 @@ function buildPrBody({ slug, url, state }) {
     "",
     "- [ ] Comparado lado a lado con el original en desktop y mobile",
     "- [ ] Animaciones e interacciones revisadas con input real",
-    "- [ ] `CUSTOMIZE.md` y `template-brands.json` revisados",
+    "- [ ] `CUSTOMIZE.md` y `plantilla.json` revisados",
     "",
     "🤖 Generated with [Claude Code](https://claude.com/claude-code)",
   ].join("\n");
@@ -196,8 +194,8 @@ async function main() {
   const { url, slug, base } = args;
   const problems = [];
   if (!/^https?:\/\//.test(url)) problems.push(`la URL "${url}" debe empezar por http(s)://.`);
-  if (!KEBAB_CASE_REGEX.test(slug) || !slug.startsWith("plantilla-")) {
-    problems.push(`el slug "${slug}" debe ser kebab-case y empezar por "plantilla-".`);
+  if (!KEBAB_CASE_REGEX.test(slug) || canonicalSlug(slug) !== slug) {
+    problems.push(`el slug "${slug}" debe ser kebab-case y sin el prefijo "plantilla-".`);
   }
   if (!Number.isInteger(args.maxRepairs) || args.maxRepairs < 0)
     problems.push("--max-repairs debe ser un entero >= 0.");
@@ -214,7 +212,8 @@ async function main() {
   if (!args.resume) {
     if (dirtyFiles().length > 0)
       problems.push("el árbol de trabajo no está limpio. Sin stash ni reset: revísalo tú.");
-    if (fs.existsSync(path.join(SITES_DIR, slug))) problems.push(`sites/${slug}/ ya existe.`);
+    if (resolveSite(slug))
+      problems.push(`ya existe un sitio "${slug}" (${resolveSite(slug).rel}).`);
     if (branchExists(branch)) problems.push(`la rama ${branch} ya existe (local o en origin).`);
     if (loadState(slug))
       problems.push(`hay una ejecución guardada en .pipeline/${slug}/: usa --resume o bórrala.`);
@@ -225,7 +224,8 @@ async function main() {
     log.warn(`${message}\n  (dry run: se continúa solo para mostrar el plan)`);
   }
 
-  const routesFile = `docs/research/${slug}/routes.json`;
+  const siteRel = templateRel(slug);
+  const routesFile = `${docsPaths(siteRel).docs}/routes.json`;
   const discovery = await discoverRoutes(url);
   if (!discovery.reachable) {
     throw new PipelineError(`no se pudo descargar ${url}.`);
@@ -239,14 +239,8 @@ async function main() {
     `${discovery.routes.length} rutas descubiertas en ${discovery.origin}: ${discovery.routes.join(", ")}`
   );
 
-  const allowed = [
-    `sites/${slug}/`,
-    `docs/research/${slug}/`,
-    `docs/design-references/${slug}/`,
-    "scripts/template-brands.json",
-    "pnpm-lock.yaml",
-  ];
-  const ownedPaths = [`sites/${slug}`, `docs/research/${slug}`, `docs/design-references/${slug}`];
+  const allowed = [`${siteRel}/`, "pnpm-lock.yaml"];
+  const ownedPaths = [siteRel];
   const claude = {
     model: args.model || undefined,
     maxBudgetUsd: args.maxBudgetUsd || undefined,
@@ -261,7 +255,7 @@ async function main() {
   });
   const gates = [
     { name: "verify", command: "pnpm", args: ["verify"] },
-    { name: "qa:site", command: "node", args: ["scripts/qa-site.mjs", slug] },
+    { name: "cliente:qa", command: "node", args: ["scripts/qa-site.mjs", slug] },
     {
       name: "prueba de personalización",
       command: "node",
@@ -272,7 +266,7 @@ async function main() {
 
   // Se reescribe también al retomar el paso agent, para que el agente lea el inventario actual
   const writeRoutes = () => {
-    fs.mkdirSync(path.join(ROOT_DIR, "docs", "research", slug), { recursive: true });
+    fs.mkdirSync(path.join(ROOT_DIR, docsPaths(siteRel).docs), { recursive: true });
     fs.writeFileSync(
       path.join(ROOT_DIR, routesFile),
       `${JSON.stringify({ source: url, ...discovery }, null, 2)}\n`
@@ -291,7 +285,7 @@ async function main() {
     },
     {
       name: "generate",
-      title: "pnpm new-client-site desde _template",
+      title: "pnpm cliente:nuevo --plantilla desde _base",
       run: () => {
         must(
           "node",
@@ -302,13 +296,12 @@ async function main() {
             name,
             "--domain",
             `${slug}.example.com`,
+            "--plantilla",
             "--skip-checks",
           ],
           { capture: false }
         );
         writeRoutes();
-        // Una plantilla no nace de otra: .template-origin solo tiene sentido en sitios de cliente
-        fs.rmSync(path.join(SITES_DIR, slug, ".template-origin"), { force: true });
         must("pnpm", ["install"], { capture: false });
         commit(
           [...ownedPaths, "pnpm-lock.yaml"],
@@ -322,8 +315,8 @@ async function main() {
       run: async (state) => {
         writeRoutes();
         const startedAt = Date.now();
-        const summaryPath = path.join(ROOT_DIR, "docs", "research", slug, "agent-summary.md");
-        const brandsPath = path.join(ROOT_DIR, "scripts", "template-brands.json");
+        const summaryPath = path.join(ROOT_DIR, docsPaths(siteRel).docs, "agent-summary.md");
+        const manifestPath = path.join(ROOT_DIR, siteRel, "plantilla.json");
         await runAgentUntilDone({
           slug,
           prompt,
@@ -332,16 +325,17 @@ async function main() {
           isDone: () => {
             const missing = [];
             const pages = fs
-              .readdirSync(path.join(SITES_DIR, slug, "src", "pages"), { recursive: true })
+              .readdirSync(path.join(ROOT_DIR, siteRel, "src", "pages"), { recursive: true })
               .filter((file) => /\.astro$/.test(file) && !/^404\.astro$/.test(file));
             if (discovery.routes.length > 1 && pages.length < 2) {
-              missing.push(`solo hay ${pages.length} página(s) en sites/${slug}/src/pages`);
+              missing.push(`solo hay ${pages.length} página(s) en ${siteRel}/src/pages`);
             }
-            if (!(slug in JSON.parse(fs.readFileSync(brandsPath, "utf8")).templates)) {
-              missing.push(`${slug} no está registrada en scripts/template-brands.json`);
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+            if ((manifest.marcas ?? []).length === 0 || !manifest.descripcion) {
+              missing.push(`completa "marcas" y "descripcion" en ${siteRel}/plantilla.json`);
             }
             if (!fs.existsSync(summaryPath) || fs.statSync(summaryPath).mtimeMs < startedAt) {
-              missing.push(`falta docs/research/${slug}/agent-summary.md`);
+              missing.push(`falta ${docsPaths(siteRel).docs}/agent-summary.md`);
             }
             return missing.length > 0 ? missing.join("; ") : null;
           },
@@ -355,6 +349,7 @@ async function main() {
       run: async (state) => {
         const repairs = await gatesWithRepair({
           slug,
+          siteRel,
           gates,
           state,
           maxRepairs: args.maxRepairs,
@@ -371,7 +366,7 @@ async function main() {
       run: () => {
         assertScope(base, allowed);
         commit(
-          [...ownedPaths, "scripts/template-brands.json", "pnpm-lock.yaml"],
+          [...ownedPaths, "pnpm-lock.yaml"],
           `feat(${slug}): nueva plantilla clonada de ${discovery.origin.replace(/^https?:\/\//, "")}\n\nCo-Authored-By: Claude <noreply@anthropic.com>`
         );
         const leftovers = dirtyFiles();

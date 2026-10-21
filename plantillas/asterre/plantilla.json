@@ -1,0 +1,10 @@
+{
+  "nombre": "Asterre",
+  "descripcion": "Alojamiento boutique en español (motel, hotel o retiro): inicio, habitaciones con detalle, retiro, experiencias, contacto, legales y botón flotante de WhatsApp. Plantilla por defecto de clientes nuevos.",
+  "idioma": "es",
+  "negocio": ["motel", "hotel", "retiro"],
+  "origen": "https://asterre.framer.website",
+  "demo": "https://casa-serena-template.nexobite.com",
+  "marcas": ["Casa Serena", "Asterre"],
+  "placeholders": ["Dirección del alojamiento"]
+}

@@ -43,7 +43,7 @@ jobs:
       - name: Run TypeScript and Astro diagnostics
         run: pnpm check
 
-      - name: Build all workspaces and client sites
+      - name: Build all workspaces, templates and client sites
         run: pnpm build
 
       - name: Install Playwright Chromium browser
@@ -58,14 +58,14 @@ jobs:
           fi
           SITES="$(node scripts/changed-sites.mjs "$BASE_REF")"
           if [ -z "$SITES" ]; then
-            SITES="_template"
+            SITES="_base"
           fi
           FAILED=""
           for SITE in $SITES; do
-            echo "::group::Visual QA — sites/$SITE"
+            echo "::group::Visual QA — $SITE"
             # Informativo: los dominios temporales (*.nexobite.com) son válidos hasta la entrega
-            if [ -f "sites/$SITE/.template-origin" ]; then
-              pnpm customize:check "$SITE"
+            if [ -f "clientes/$SITE/cliente.json" ]; then
+              pnpm cliente:check "$SITE"
             fi
             node scripts/qa-site.mjs "$SITE" || FAILED="$FAILED $SITE"
             echo "::endgroup::"
@@ -83,6 +83,6 @@ jobs:
           path: |
             playwright-report/
             test-results/
-            docs/design-references/
-            docs/research/
+            plantillas/*/docs/qa/
+            clientes/*/docs/qa/
           retention-days: 7

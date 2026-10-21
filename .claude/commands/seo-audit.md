@@ -1,5 +1,5 @@
 ---
-description: Audit technical SEO, canonical URLs, OpenGraph tags, heading structure, robots.txt, and sitemap for a client site under sites/<slug-cliente>.
+description: Audit technical SEO, canonical URLs, OpenGraph tags, heading structure, robots.txt, and sitemap for a client site under clientes/<slug-cliente>.
 argument-hint: "<slug-cliente>"
 ---
 

@@ -11,7 +11,7 @@
 
 ## 1. Inventario completo ANTES de construir
 
-Guárdalo en `docs/research/<slug>/brief.md`.
+Guárdalo en `plantillas/<slug>/docs/brief.md`.
 
 ### 1.1 Rutas y subpáginas
 - Descarga y lee `/sitemap.xml` y `/robots.txt` de la fuente.
@@ -48,7 +48,7 @@ Registra: elemento, disparador (carga, scroll, hover, clic, tiempo), propiedades
 Lee los keyframes y transiciones del CSS y los atributos tipo `data-animation`; no lo deduzcas de una sola captura. Usa entrada real (rueda, teclado, puntero): el scroll programado no activa lo mismo. Si una medición no es concluyente, anótala como "no verificado".
 
 ### 1.5 Assets
-- Tabla: URL de origen → ruta local en `sites/<slug>/public/` → tipo y dimensiones reales (un `.png` puede ser AVIF).
+- Tabla: URL de origen → ruta local en `plantillas/<slug>/public/` → tipo y dimensiones reales (un `.png` puede ser AVIF).
 - Incluye favicon, `og:image`, logos, imágenes, videos y SVG. En modo A usa marcadores de posición y anótalo.
 
 ### 1.6 SEO por página
@@ -57,7 +57,7 @@ Lee los keyframes y transiciones del CSS y los atributos tipo `data-animation`; 
 
 ## 2. Construcción
 
-- Crea el sitio con `pnpm new-client-site <slug> --name "<nombre>" --domain "<dominio>"`. No toques `sites/_template`.
+- Crea el sitio con `pnpm cliente:nuevo <slug> --name "<nombre>" --domain "<dominio>"`. No toques `plantillas/_base`.
 - Ejecuta `pnpm install` después de crearlo (el generador puede omitirlo) para actualizar el lockfile.
 - Respeta el stack cerrado de [AGENTS.md](../../../../AGENTS.md): sin librerías nuevas sin autorización, TypeScript estricto, sin `any`, Biome, imports con alias `@/`.
 - `.astro` por defecto; Preact solo para interacción con estado, con `client:visible` o `client:idle` salvo que esté sobre el pliegue.
@@ -74,7 +74,7 @@ Lee los keyframes y transiciones del CSS y los atributos tipo `data-animation`; 
 - Compara geometría, tipografía, colores, espaciados y recorte de imágenes; corrige primero las mayores diferencias.
 - Compara cada animación en estado inicial, activo y final, y también al revertir el scroll.
 - Prueba un viewport más ancho que el diseño (1920).
-- Guarda capturas en `docs/design-references/<slug>/` y snapshots en `docs/design-references/<slug>/snapshots/`.
+- Guarda capturas en `plantillas/<slug>/docs/referencias/` y snapshots en `plantillas/<slug>/docs/referencias/snapshots/`.
 
 ## 4. Validación automática
 
@@ -83,8 +83,8 @@ Reporta el resultado real de cada comando:
 ```bash
 pnpm verify:isolation
 pnpm lint
-pnpm --filter @sites/<slug> check
-pnpm --filter @sites/<slug> build
+pnpm --filter @plantillas/<slug> check
+pnpm --filter @plantillas/<slug> build
 QA_ROUTES="<rutas separadas por coma>" SITE_FOLDER=<slug> pnpm test:visual
 ```
 
@@ -121,5 +121,5 @@ Instrucciones de ejecución local, tabla de rutas, tabla de animaciones (origina
 - [ ] Comparación fuente vs local hecha por ruta y viewport, con capturas guardadas.
 - [ ] `verify:isolation`, `lint`, `check`, `build` y `test:visual` pasan, con salida adjunta.
 - [ ] Prueba de interacciones y de movimiento reducido pasa.
-- [ ] Brief completo en `docs/research/<slug>/brief.md`, con diferencias conocidas.
+- [ ] Brief completo en `plantillas/<slug>/docs/brief.md`, con diferencias conocidas.
 - [ ] Rama y PR sin conflictos hacia `main`.
