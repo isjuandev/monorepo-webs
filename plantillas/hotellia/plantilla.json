@@ -1,0 +1,10 @@
+{
+  "nombre": "Hotellia",
+  "descripcion": "Hotel boutique en inglés: habitaciones, ofertas, restaurante y menús, galería y reservas (smooth-scroll con lenis).",
+  "idioma": "en",
+  "negocio": ["hotel"],
+  "origen": "https://hotellia.framer.website",
+  "demo": "https://hotellia-template.nexobite.com",
+  "marcas": ["Hotellia", "Ember", "Grove & Grain", "Marco Delacroix"],
+  "placeholders": ["022 5259-5200", "02252595200", "welcome@hotellia.com"]
+}

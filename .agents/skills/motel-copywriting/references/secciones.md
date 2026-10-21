@@ -48,7 +48,7 @@ Cada sección tiene **una función comercial** y **una promesa propia**. No repi
 ## Dónde vive el texto (monorepo `monorepo-webs`)
 
 Si trabajas dentro de este repositorio, respeta [AGENTS.md §6](../../../../AGENTS.md):
-- Los textos visibles (titulares, descripciones, FAQ, `alt`, `aria-label`, microcopy) van en `sites/<slug>/src/data/content.ts` (incluidas las etiquetas de interfaz en `UI_LABELS`).
-- Teléfono, WhatsApp, dirección, mapas y horarios van en `sites/<slug>/src/config/site.ts`.
+- Los textos visibles (titulares, descripciones, FAQ, `alt`, `aria-label`, microcopy) van en `clientes/<slug>/src/data/content.ts` (incluidas las etiquetas de interfaz en `UI_LABELS`).
+- Teléfono, WhatsApp, dirección, mapas y horarios van en `clientes/<slug>/src/config/site.ts`.
 - Nunca hardcodees marca, textos ni contactos en componentes. Genera los enlaces con `buildWhatsAppUrl` de `@repo/utils`.
-- Para clientes nuevos usa `pnpm new-client-site` y valida con `pnpm customize:check <slug> --strict`.
+- Para clientes nuevos usa `pnpm cliente:nuevo` y valida con `pnpm cliente:check <slug> --strict`.

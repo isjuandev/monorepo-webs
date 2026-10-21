@@ -15,10 +15,11 @@ const slug = (process.argv[2] ?? "").trim();
 if (!slug || slug === "--help" || slug === "-h") {
   console.log(`
 Uso:
-  pnpm recursos:new <slug-cliente>
+  pnpm cliente:recursos <slug-cliente>
 
-Crea recursos/<slug-cliente>/ desde recursos/_plantilla-cliente/ con el slug ya escrito en el brief.
-Después rellena brief.md, deja las fotos y la marca en sus carpetas y lanza pnpm client:run <slug-cliente>.
+Crea recursos/<slug-cliente>/ desde recursos/_plantilla-cliente/ (brief vacío y carpetas) con el
+slug ya escrito en el brief. Después deja todo el material del cliente en entrada/ y lanza
+/nuevo-cliente <slug-cliente> en Claude Code (o pnpm cliente:crear <slug-cliente>).
 `);
   process.exit(slug ? 0 : 1);
 }
@@ -43,6 +44,11 @@ fs.writeFileSync(
   brief.replace(/^- Slug \(kebab-case\):.*$/m, `- Slug (kebab-case): ${slug}`)
 );
 
-console.log(
-  `✔ Creado ${path.relative(ROOT_DIR, target)}/. Rellena brief.md y añade fotos y marca.`
-);
+const rel = path.relative(ROOT_DIR, target);
+console.log(`✔ Creado ${rel}/.
+
+Siguiente paso: deja en ${rel}/entrada/ todo lo que mandó el cliente (fotos con cualquier nombre,
+HEIC, logo, PDF, documentos, chat de WhatsApp exportado) y ejecuta en Claude Code:
+
+  /nuevo-cliente ${slug}
+`);

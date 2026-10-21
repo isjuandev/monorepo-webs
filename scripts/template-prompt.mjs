@@ -3,18 +3,19 @@
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-import { KEBAB_CASE_REGEX, SITES_DIR } from "./lib/brief.mjs";
+import { KEBAB_CASE_REGEX } from "./lib/brief.mjs";
 import { buildClonePrompt, discoverRoutes } from "./lib/clone.mjs";
+import { canonicalSlug, docsPaths, resolveSite, templateRel } from "./lib/paths.mjs";
 
 function printUsage() {
   console.log(`
 Uso:
-  pnpm template-prompt <url> <plantilla-slug> [opciones]
+  pnpm plantilla:prompt <url> <slug> [opciones]
 
 Descubre las rutas de <url> (sitemap.xml, robots.txt y enlaces de la portada, sin variantes de
 idioma) y genera el prompt manual para clonarla como plantilla en una sesión de Claude: el modelo
 hace la rama, el esqueleto, el clon, la verificación y los commits. Por defecto lo copia al
-portapapeles. Para hacerlo todo sin supervisión usa pnpm template:clone.
+portapapeles. Para hacerlo todo sin supervisión usa pnpm plantilla:clonar.
 
 Opciones:
   --no-copy        No copiar al portapapeles (solo imprimir)
@@ -59,11 +60,11 @@ async function main() {
   if (!/^https?:\/\//.test(args.url)) {
     fail(`la URL "${args.url}" debe empezar por http(s)://.`);
   }
-  if (!KEBAB_CASE_REGEX.test(args.slug) || !args.slug.startsWith("plantilla-")) {
-    fail(`el slug "${args.slug}" debe ser kebab-case y empezar por "plantilla-".`);
+  if (!KEBAB_CASE_REGEX.test(args.slug) || canonicalSlug(args.slug) !== args.slug) {
+    fail(`el slug "${args.slug}" debe ser kebab-case y sin el prefijo "plantilla-".`);
   }
-  if (fs.existsSync(path.join(SITES_DIR, args.slug))) {
-    fail(`sites/${args.slug}/ ya existe.`);
+  if (resolveSite(args.slug)) {
+    fail(`ya existe un sitio "${args.slug}" (${resolveSite(args.slug).rel}).`);
   }
 
   const discovery = await discoverRoutes(args.url);
@@ -74,7 +75,7 @@ async function main() {
   const prompt = buildClonePrompt({
     url: args.url,
     slug: args.slug,
-    routesFile: `docs/research/${args.slug}/routes.json`,
+    routesFile: `${docsPaths(templateRel(args.slug)).docs}/routes.json`,
     routes: discovery.routes,
     localeRoutes: discovery.localeRoutes,
     manual: true,

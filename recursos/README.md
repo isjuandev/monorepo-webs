@@ -1,62 +1,60 @@
 # recursos/
 
-Entrada manual del material de cada cliente. Aquí **tú** dejas datos, logos, fotos y textos. `pnpm client:run <slug>` los lee para generar `sites/<slug>/` y abrir el PR.
+Material de cada cliente. Aquí **tú** dejas lo que mande el cliente y el pipeline lo convierte en su sitio: `pnpm cliente:crear <slug>` (o `/nuevo-cliente <slug>` en Claude Code) lo lee para generar `clientes/<slug>/` y abrir el PR. Guía completa: [docs/guias/01-crear-cliente.md](../docs/guias/01-crear-cliente.md).
 
-> **La plantilla es La Guaca, literal.** [`_plantilla-cliente/`](./_plantilla-cliente/) es una copia exacta de [`la-guaca/`](./la-guaca/): brief relleno, 9 habitaciones con fotos, marca y fuentes. Su sitio [`sites/la-guaca/`](../sites/la-guaca/) es la plantilla base (`Plantilla base: la-guaca`). Cada cliente nuevo nace como La Guaca y se reemplaza **todo**: datos, fotos, logos y fuentes.
+- [`_plantilla-cliente/`](./_plantilla-cliente/): esqueleto **vacío** (brief sin datos y carpetas) que copia `pnpm cliente:recursos <slug>`.
+- [`la-guaca/`](./la-guaca/): **ejemplo relleno** de un cliente real (brief completo, fotos por habitación, marca y fuentes). Sirve de referencia, no se copia: el pipeline avisa si un cliente nuevo conserva sus datos o archivos.
 
 ## Flujo
 
 ```bash
-pnpm recursos:new <slug-cliente>                 # 1. copia la plantilla (La Guaca) y escribe el slug
-# 2. reemplaza el brief y los archivos de La Guaca por los del cliente (abajo)
-pnpm client:run <slug-cliente> --dry-run         # 3. valida el brief y muestra el plan
-pnpm client:run <slug-cliente>                   # 4. genera el sitio y abre el PR
+pnpm cliente:recursos <slug>                  # 1. crea recursos/<slug>/ con el slug escrito en el brief
+# 2. deja TODO el material del cliente en recursos/<slug>/entrada/, sin ordenar ni renombrar
+pnpm cliente:crear <slug> --intake-only       # 3. (opcional) ordena entrada/, redacta brief.md y preguntas.md
+pnpm cliente:crear <slug>                     # 4. genera el sitio y abre el PR (o /nuevo-cliente <slug>)
 ```
 
-`client:run` se detiene si quedan datos de identidad o contacto de La Guaca en el brief (nombre, dominio, teléfono, WhatsApp, correo, dirección, mapa, redes) o archivos idénticos a los de la plantilla. Con `--allow-pending` sigue y los lista en el PR como **provisionales** (útil si aún no tienes las fotos del cliente). Lo mismo con un dominio temporal (`*.nexobite.com`). Alternativa manual: `pnpm client-prompt <slug-cliente>` copia el prompt para pegarlo en Claude.
+El paso **intake** (skill [`recursos-intake`](../.agents/skills/recursos-intake/SKILL.md)):
 
-## Estructura (tal como está en La Guaca)
+- Convierte HEIC y documentos y genera miniaturas en `.intake/`.
+- El agente mira cada foto, la copia con su nombre definitivo a `fotos/` o `marca/` y completa `brief.md`.
+- Deja en `preguntas.md` lo que solo el cliente puede responder.
+- Solo se repite si `entrada/` cambia (o con `--reintake`).
+- Si ya sabes un dato, escríbelo en `brief.md`: lo que escribe una persona manda sobre el intake.
+
+`cliente:crear` se detiene si faltan datos obligatorios del brief, si quedan datos o archivos de los ejemplos (La Guaca o la plantilla), o si el dominio es temporal (`*.nexobite.com`). Con `--allow-pending` sigue y los lista en el PR como **provisionales**.
+
+## Estructura
 
 ```text
 recursos/<slug-cliente>/
+├── entrada/                         # bandeja cruda: lo que mande el cliente, tal cual (nunca se sube a Git)
+├── .intake/                         # trabajo del intake: índice, miniaturas, clasificación (nunca se sube)
 ├── brief.md                         # datos, tono, contacto, marca, habitaciones, páginas y FAQ
+├── preguntas.md                     # lo que falta, en lenguaje del cliente (lo escribe el intake)
 ├── marca/
 │   ├── logo.webp                    # logo principal (svg, png o webp)
 │   ├── logo-mark.webp               # variante corta o isotipo (opcional)
-│   ├── favicon.png                  # favicon (svg, o png de 512x512 si existe; La Guaca usa 64x64)
+│   ├── favicon.png                  # favicon (svg, o png de 512x512)
 │   ├── apple-touch-icon.png         # icono iOS 180x180 (opcional)
 │   ├── og-image.jpg                 # imagen para compartir en redes (1200x630)
-│   └── fuentes/
-│       ├── forum-400.woff2          # <familia>-<peso>.woff2
-│       └── almarai-400.woff2
+│   └── fuentes/<familia>-<peso>.woff2
 ├── fotos/
-│   ├── hero/
-│   │   ├── hero-1.webp              # horizontal (escritorio)
-│   │   ├── hero-1-mobile.webp       # vertical (móvil), mismo número
-│   │   └── …                        # hero-2, hero-3…
-│   ├── habitaciones/
-│   │   ├── junior/                  # una carpeta por habitación = slug del "### " del brief
-│   │   │   ├── junior-01.webp       # <habitacion>-01, -02…; la 01 es la portada
-│   │   │   └── …
-│   │   └── vip-love-decorada/
-│   │       └── vip-love-decorada-01.webp
-│   ├── instalaciones/
-│   │   ├── fachada.webp             # fachada, recepción, parqueadero, zonas comunes
-│   │   └── fachada-mobile.webp
-│   └── galeria/                     # resto de fotos que no son de una habitación
-├── textos/                          # material del cliente: carta, tarifas, FAQ, políticas (.md, .txt, .docx, .pdf)
+│   ├── hero/hero-1.webp             # horizontal (escritorio) + hero-1-mobile.webp (vertical)
+│   ├── habitaciones/<habitacion>/   # una carpeta por "### " del brief, fotos <habitacion>-01… (la 01 es la portada)
+│   ├── instalaciones/               # fachada, recepción, parqueadero, zonas comunes
+│   └── galeria/                     # resto de fotos
+├── textos/                          # material del cliente ya ordenado (opcional; el intake lee entrada/)
 └── referencias/                     # capturas o enlaces de inspiración (solo referencia visual)
 ```
 
-Las carpetas vacías se dejan (La Guaca tiene `galeria/`, `textos/` y `referencias/` vacías): el agente las marca como pendientes. Si el cliente tiene otras habitaciones, borra las carpetas de La Guaca que no apliquen y crea las suyas.
-
-**Mantén los nombres de archivo de La Guaca** cuando el papel sea el mismo (`logo.webp`, `logo-mark.webp`, `og-image.jpg`, `favicon.png`, `hero-1.webp`/`hero-1-mobile.webp`, `fachada.webp`, `forum-400.woff2`…). El sitio de la plantilla ya los referencia, así que al optimizar reemplazan las imágenes de La Guaca sin tocar código. Una fuente distinta (otra familia) sí exige cambiar `theme.css`; eso lo hace el agente.
+Con el intake no hace falta tocar `marca/` ni `fotos/` a mano. Si los rellenas tú, sigue las reglas de nombres de abajo.
 
 ## Qué hace el pipeline con cada archivo
 
-`pnpm optimize-assets <slug>` (lo ejecuta `client:run`) copia y optimiza hacia `sites/<slug>/public/` con la convención plana de La Guaca (el nombre se conserva y la carpeta se aplana), y deja el mapa en `docs/research/<slug>/assets-manifest.json`. Con los recursos de La Guaca produce exactamente su `public/`:
+`pnpm cliente:activos <slug>` (lo ejecuta `cliente:crear`) copia y optimiza hacia `clientes/<slug>/public/` con una convención plana (el nombre se conserva y la carpeta se aplana), y deja el mapa en `clientes/<slug>/docs/assets-manifest.json`:
 
-| En `recursos/<slug>/` | Resultado en `sites/<slug>/public/` |
+| En `recursos/<slug>/` | Resultado en `clientes/<slug>/public/` |
 | :-- | :-- |
 | `fotos/hero/*` | `images/<nombre>.webp` (ancho máx. 2400) |
 | `fotos/habitaciones/<hab>/*` | `images/<nombre>.webp` (ancho máx. 1600) |
@@ -68,6 +66,7 @@ Las carpetas vacías se dejan (La Guaca tiene `galeria/`, `textos/` y `referenci
 
 Como todo acaba en `images/`, dos archivos no pueden llamarse igual en carpetas distintas (por eso las fotos de habitación llevan el prefijo de la habitación). Si pasa, el segundo se omite y se avisa.
 | `brief.md`, `textos/`, `referencias/` | no se copian: el agente solo los lee |
+| `entrada/`, `.intake/` | se ignoran: el intake ya copió lo útil a `fotos/` y `marca/` |
 
 Formatos de foto aceptados: jpg, png, webp, avif y tiff. HEIC (iPhone) no: expórtalo a JPG antes.
 
@@ -80,16 +79,16 @@ Formatos de foto aceptados: jpg, png, webp, avif y tiff. HEIC (iPhone) no: expó
 - **Calidad:** sube los originales de mejor calidad; el pipeline los comprime. Si solo hay versiones comprimidas, dilo en el brief (`Marca → Originales en alta`).
 - **Datos:** lo que no sepas, déjalo vacío o escribe `Pendiente`. Nunca un dato inventado ni "de ejemplo".
 - **Sin secretos:** nada de contraseñas, tokens ni datos bancarios.
-- **Solo lectura:** nadie (ni el agente ni el pipeline) modifica ni borra estas carpetas; solo se leen.
+- **Solo lectura:** nadie borra ni modifica `entrada/`. El intake solo escribe `brief.md`, `preguntas.md`, `.intake/` y copias ordenadas en `fotos/` y `marca/`.
 
 ## Git
 
-El contenido de cada cliente está ignorado por Git (pesado y de terceros). Se versionan este `README.md`, `_plantilla-cliente/` y `la-guaca/` (el cliente de origen de la plantilla). Si actualizas La Guaca y quieres que la plantilla cambie también, copia `la-guaca/` sobre `_plantilla-cliente/` y vuelve a ajustar la cabecera del brief. Los recursos de un cliente nuevo se suben forzados (`git add -f`) solo en su rama `cliente/<slug>` (`client:run` lo hace en el paso `recursos`).
+El contenido de cada cliente está ignorado por Git (pesado y de terceros). Se versionan este `README.md`, `_plantilla-cliente/` y el ejemplo `la-guaca/`. Los recursos de un cliente nuevo se suben forzados (`git add -f`) solo en su rama `cliente/<slug>`, y **sin** `entrada/` ni `.intake/` (`cliente:crear` lo hace en el paso `recursos`).
 
-## Checklist antes de lanzar
+## Checklist antes de lanzar (si no usas el intake)
 
 - [ ] `brief.md`: los 6 campos de **Generación** completos (sin `Pendiente`) y ningún dato de La Guaca.
 - [ ] Una carpeta en `fotos/habitaciones/` por cada `### ` del brief, con el mismo slug.
-- [ ] `marca/` con logo, favicon y og-image del cliente (no los de La Guaca).
+- [ ] `marca/` con logo, favicon y og-image del cliente.
 - [ ] Fuentes en `marca/fuentes/` si la marca usa tipografías propias (y su licencia indicada en el brief).
-- [ ] `pnpm client:run <slug> --dry-run` sin errores de preflight.
+- [ ] `pnpm cliente:crear <slug> --dry-run` sin errores de preflight.

@@ -1,11 +1,11 @@
 ---
 name: deploy-client
-description: Prepare and validate the production deployment configuration for a client website under sites/<slug-cliente> targeting a VPS (Coolify, Dokploy, or Docker + Nginx) without executing unauthorized live deployments.
+description: Prepare and validate the production deployment configuration for a client website under clientes/<slug-cliente> targeting a VPS (Coolify, Dokploy, or Docker + Nginx) without executing unauthorized live deployments.
 ---
 
 # Deploy Client (`deploy-client`) — Diseño y Procedimiento
 
-Prepara, verifica y documenta el empaquetado de producción de un sitio de cliente (`sites/<slug-cliente>`) para su despliegue aislado en VPS (Coolify / Dokploy / Docker + Nginx), respetando [AGENTS.md](../../../AGENTS.md).
+Prepara, verifica y documenta el empaquetado de producción de un sitio de cliente (`clientes/<slug-cliente>`) para su despliegue aislado en VPS (Coolify / Dokploy / Docker + Nginx), respetando [AGENTS.md](../../../AGENTS.md).
 
 ## 1. Propósito
 
@@ -13,7 +13,7 @@ Asegurar que un sitio de cliente cumpla todos los requisitos técnicos, de domin
 
 ## 2. Entradas
 
-- **`slug-cliente`**: Nombre de la carpeta en `sites/<slug-cliente>`.
+- **`slug-cliente`**: Nombre de la carpeta en `clientes/<slug-cliente>`.
 - **`CLIENT_DOMAIN`**: Dominio de producción asignado al cliente (ej. `clientex.com`).
 - **Plataforma de destino en VPS**: Coolify, Dokploy o Docker Engine + Nginx.
 
@@ -24,14 +24,14 @@ Asegurar que un sitio de cliente cumpla todos los requisitos técnicos, de domin
      ```bash
      pnpm verify:isolation
      pnpm lint
-     pnpm --filter @sites/<slug-cliente> check
-     pnpm --filter @sites/<slug-cliente> build
+     pnpm --filter @clientes/<slug-cliente> check
+     pnpm --filter @clientes/<slug-cliente> build
      SITE_FOLDER=<slug-cliente> pnpm test:visual
      ```
 2. **Validación de Poda del Monorepo (`turbo prune`):**
-   - Verificar que el paquete `@sites/<slug-cliente>` pueda ser podado limpiamente para Docker:
+   - Verificar que el paquete `@clientes/<slug-cliente>` pueda ser podado limpiamente para Docker:
      ```bash
-     pnpm dlx turbo@2.11.7 prune @sites/<slug-cliente> --docker --out-dir /tmp/prune-<slug-cliente>
+     pnpm dlx turbo@2.11.7 prune @clientes/<slug-cliente> --docker --out-dir /tmp/prune-<slug-cliente>
      rm -rf /tmp/prune-<slug-cliente>
      ```
 3. **Verificación de Imagen Docker Local (cuando Docker esté disponible):**

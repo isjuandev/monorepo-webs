@@ -1,6 +1,6 @@
 # Framer and animated pages
 
-Use for Framer-generated pages or animation beyond simple hover transitions. Framer is the publishing tool; reproduce its rendered design and behavior in the target Astro + Preact site (`sites/<slug-cliente>`).
+Use for Framer-generated pages or animation beyond simple hover transitions. Framer is the publishing tool; reproduce its rendered design and behavior in the target Astro + Preact site (`plantillas/<slug-cliente>`).
 
 ## Framer inspection
 

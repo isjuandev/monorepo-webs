@@ -4,6 +4,14 @@ import fs from "node:fs";
 import path from "node:path";
 import { KEBAB_CASE_REGEX, parseBrief, ROOT_DIR, recursosLeftovers } from "./lib/brief.mjs";
 import {
+  clientRel,
+  DEFAULT_TEMPLATE,
+  docsPaths,
+  GLOBAL_PLACEHOLDERS,
+  listTemplates,
+  resolveSite,
+} from "./lib/paths.mjs";
+import {
   assertScope,
   branchExists,
   commandExists,
@@ -25,17 +33,21 @@ import {
   runSteps,
   statePaths,
 } from "./lib/pipeline.mjs";
-import { buildClientPrompt } from "./lib/prompts.mjs";
+import { buildClientPrompt, buildIntakePrompt } from "./lib/prompts.mjs";
+import { entradaFingerprint, intakePaths, intakePending } from "./recursos-intake.mjs";
 
 const AGENT_TRAILER = "\n\nCo-Authored-By: Claude <noreply@anthropic.com>";
 
 function printUsage() {
   console.log(`
 Uso:
-  pnpm client:run <slug-cliente> [opciones]
+  pnpm cliente:crear <slug-cliente> [opciones]
 
-Crea la web de un cliente sin supervisión, de recursos/<slug>/brief.md a un PR listo para revisar:
-  branch → recursos → generate → assets → agent → gates (con reparación) → commit → pr
+Crea la web de un cliente sin supervisión, de recursos/<slug>/ a un PR listo para revisar:
+  intake → branch → recursos → generate → assets → agent → gates (con reparación) → commit → pr
+
+intake solo se ejecuta si recursos/<slug>/entrada/ tiene material nuevo: el agente clasifica las
+fotos, redacta brief.md y deja en preguntas.md lo que solo el cliente puede responder.
 
 Opciones:
   --dry-run              Valida el brief y el entorno, e imprime los pasos y el prompt (no cambia nada)
@@ -44,7 +56,9 @@ Opciones:
   --base <rama>          Rama base (por defecto: main)
   --no-pr                Termina tras los commits locales, sin push ni PR
   --max-repairs <n>      Intentos de reparación automática por compuertas (por defecto: 2)
-  --allow-pending        customize:check sin --strict (datos pendientes se listan en el PR)
+  --allow-pending        cliente:check sin --strict (datos pendientes se listan en el PR)
+  --reintake             Repite el intake aunque entrada/ no haya cambiado
+  --intake-only          Solo ejecuta el intake y valida el brief (muestra preguntas.md)
   --model <modelo>       Modelo para el agente (por defecto: el de tu Claude Code)
   --max-budget-usd <n>   Tope de gasto por llamada al agente
   -h, --help             Mostrar esta ayuda
@@ -61,6 +75,8 @@ function parseArgs(argv) {
     pr: true,
     maxRepairs: 2,
     allowPending: false,
+    reintake: false,
+    intakeOnly: false,
     model: "",
     maxBudgetUsd: "",
     help: false,
@@ -79,6 +95,8 @@ function parseArgs(argv) {
     else if (arg === "--resume") result.resume = true;
     else if (arg === "--no-pr") result.pr = false;
     else if (arg === "--allow-pending") result.allowPending = true;
+    else if (arg === "--reintake") result.reintake = true;
+    else if (arg === "--intake-only") result.intakeOnly = true;
     else if (arg in valueFlags) {
       result[valueFlags[arg]] = (argv[i + 1] ?? "").trim();
       i += 1;
@@ -103,23 +121,20 @@ function preflight(args, brief) {
   if (args.pr && commandExists("gh") && !run("gh", ["auth", "status"]).ok) {
     problems.push("gh no tiene sesión iniciada (gh auth login) o usa --no-pr.");
   }
-  const { global } = JSON.parse(
-    fs.readFileSync(path.join(ROOT_DIR, "scripts", "template-brands.json"), "utf8")
-  );
-  const exampleDomain = global.domains.find(
+  const exampleDomain = GLOBAL_PLACEHOLDERS.domains.find(
     (item) => brief.domain === item || brief.domain?.endsWith(`.${item}`)
   );
   if (exampleDomain && !args.allowPending) {
     problems.push(
-      `el dominio del brief (${brief.domain}) es temporal (*.${exampleDomain}) y customize:check --strict nunca pasará: usa --allow-pending o pon el dominio definitivo.`
+      `el dominio del brief (${brief.domain}) es temporal (*.${exampleDomain}) y cliente:check --strict nunca pasará: usa --allow-pending o pon el dominio definitivo.`
     );
   }
   for (const ghost of ghostSites()) {
     problems.push(
-      `${ghost}/ no tiene package.json (restos ignorados de otra rama): bórrala o muévela antes de seguir.`
+      `${ghost}/ sobra (restos ignorados de otra rama o de la antigua sites/): bórrala antes de seguir.`
     );
   }
-  const leftovers = recursosLeftovers(args.slug);
+  const leftovers = recursosLeftovers(args.slug, brief.plantilla);
   if (leftovers.fields.length > 0 || leftovers.files.length > 0) {
     const detail = [
       ...(leftovers.fields.length > 0 ? [`datos del brief: ${leftovers.fields.join(", ")}`] : []),
@@ -131,7 +146,7 @@ function preflight(args, brief) {
       );
     } else {
       problems.push(
-        `recursos/${args.slug} conserva material de la plantilla La Guaca (${detail}). Reemplázalo, déjalo como Pendiente o usa --allow-pending.`
+        `recursos/${args.slug} conserva material de ejemplo o de la plantilla (${detail}). Reemplázalo, déjalo como Pendiente o usa --allow-pending.`
       );
     }
   }
@@ -159,8 +174,8 @@ function preflight(args, brief) {
     if (brief.branch && branchExists(brief.branch)) {
       problems.push(`la rama ${brief.branch} ya existe (local o en origin).`);
     }
-    if (fs.existsSync(path.join(ROOT_DIR, "sites", args.slug))) {
-      problems.push(`sites/${args.slug}/ ya existe.`);
+    if (resolveSite(args.slug)) {
+      problems.push(`ya existe un sitio "${args.slug}" (${resolveSite(args.slug).rel}/).`);
     }
     if (loadState(args.slug)) {
       problems.push(
@@ -171,7 +186,12 @@ function preflight(args, brief) {
   if (problems.length === 0) {
     return;
   }
-  const message = `preflight:\n  - ${problems.join("\n  - ")}`;
+  const questions = readIfExists(path.join(ROOT_DIR, "recursos", args.slug, "preguntas.md")).trim();
+  const message = `preflight:\n  - ${problems.join("\n  - ")}${
+    questions
+      ? `\n\nPreguntas para el cliente (recursos/${args.slug}/preguntas.md):\n${questions}`
+      : ""
+  }`;
   if (!args.dryRun) {
     throw new PipelineError(message);
   }
@@ -179,18 +199,18 @@ function preflight(args, brief) {
 }
 
 /** Material de la plantilla de recursos que el cliente aún no ha reemplazado */
-function provisionalSection(slug) {
-  const { fields, files } = recursosLeftovers(slug);
+function provisionalSection(slug, plantilla) {
+  const { fields, files } = recursosLeftovers(slug, plantilla);
   if (fields.length === 0 && files.length === 0) {
     return [];
   }
   return [
-    "## Recursos provisionales (de la plantilla La Guaca)",
+    "## Recursos provisionales (material de ejemplo o de la plantilla)",
     "",
     ...fields.map((label) => `- Brief: **${label}** igual que en la plantilla`),
     ...(files.length > 0
       ? [
-          `- ${files.length} archivo(s) idénticos a recursos/_plantilla-cliente/ (${files.slice(0, 5).join(", ")}${files.length > 5 ? ", …" : ""})`,
+          `- ${files.length} archivo(s) idénticos al ejemplo o a la plantilla (${files.slice(0, 5).join(", ")}${files.length > 5 ? ", …" : ""})`,
         ]
       : []),
     "",
@@ -198,32 +218,47 @@ function provisionalSection(slug) {
 }
 
 function buildPrBody({ slug, brief, state, allowPending }) {
-  const summary = readIfExists(path.join(ROOT_DIR, "docs", "research", slug, "agent-summary.md"));
-  const qa = readIfExists(path.join(ROOT_DIR, "docs", "research", slug, "visual-qa-report.md"));
-  const customize = run("node", ["scripts/customize-check.mjs", slug]).output.trim();
+  const siteRel = clientRel(slug);
+  const { docs, qa: qaDir } = docsPaths(siteRel);
+  const summary = readIfExists(path.join(ROOT_DIR, docs, "agent-summary.md"));
+  const qa = readIfExists(path.join(ROOT_DIR, qaDir, "visual-qa-report.md"));
+  const questions = readIfExists(path.join(ROOT_DIR, "recursos", slug, "preguntas.md")).trim();
+  const customize = run("node", ["scripts/customize-check.mjs", slug], {
+    timeout: 120_000,
+  }).output.trim();
   const pending = pendingSection(summary);
   return [
     `## Cliente \`${slug}\` — ${brief.name}`,
     "",
-    `Generado con \`pnpm client:run ${slug}\` desde \`${brief.plantilla}\` (brief: \`recursos/${slug}/brief.md\`).`,
+    `Generado con \`pnpm cliente:crear ${slug}\` desde la plantilla \`${brief.plantilla}\` (brief: \`recursos/${slug}/brief.md\`).`,
     "",
     "## Datos pendientes",
     "",
     pending || "_Ninguno declarado por el agente._",
     "",
-    ...provisionalSection(slug),
+    ...(questions
+      ? [
+          "## Preguntas para el cliente",
+          "",
+          "Listas para reenviar por WhatsApp:",
+          "",
+          questions,
+          "",
+        ]
+      : []),
+    ...provisionalSection(slug, brief.plantilla),
     "## Resumen del agente",
     "",
-    summary.trim() || "_El agente no escribió docs/research/<slug>/agent-summary.md._",
+    summary.trim() || `_El agente no escribió ${docs}/agent-summary.md._`,
     "",
     "## Compuertas",
     "",
-    `- [x] \`pnpm customize:check ${slug}${allowPending ? "" : " --strict"}\``,
+    `- [x] \`pnpm cliente:check ${slug}${allowPending ? "" : " --strict"}\``,
     "- [x] `pnpm verify` (aislamiento, lint, check, build)",
-    `- [x] \`pnpm qa:site ${slug}\` (todas las rutas, desktop y mobile)`,
+    `- [x] \`pnpm cliente:qa ${slug}\` (todas las rutas en desktop y mobile, SEO: canonical, og, h1 y sitemap con el dominio)`,
     `- Reparaciones automáticas: ${state.repairs ?? 0} · coste del agente: $${(state.costUsd ?? 0).toFixed(2)}`,
     "",
-    "<details><summary>customize:check</summary>",
+    "<details><summary>cliente:check</summary>",
     "",
     "```",
     customize,
@@ -235,23 +270,87 @@ function buildPrBody({ slug, brief, state, allowPending }) {
     qa.trim() || "_Sin informe._",
     "</details>",
     "",
-    "## Despliegue en Coolify (tras el merge a main)",
+    "## Ficha de Coolify (tras el merge a main)",
     "",
-    "Ver `docs/deploy-coolify.md` §2:",
-    `- Build args: \`SITE_FOLDER=${slug}\`, \`SITE_URL=https://${brief.domain}\``,
-    `- Dominio: \`https://${brief.domain}\` · Health check: \`/healthz\` · Puerto: \`80\``,
-    `- Watch paths: \`sites/${slug}/**\`, \`packages/**\`, \`docker/**\`, \`pnpm-lock.yaml\`, \`package.json\`, \`turbo.json\``,
+    "Nueva aplicación en el proyecto Monorepo-Webs (guía: `docs/guias/03-desplegar.md`):",
+    "",
+    "| Campo | Valor |",
+    "| :-- | :-- |",
+    "| Repositorio / rama | `isjuandev/monorepo-webs` · `main` |",
+    "| Build Pack · Dockerfile | `Dockerfile` · `/docker/Dockerfile` (Base Directory `/`) |",
+    `| Build Variables | \`SITE_FOLDER=${slug}\` · \`SITE_URL=https://${brief.domain}\` |`,
+    `| Dominio | \`https://${brief.domain}\` |`,
+    "| Puerto · Health check | `80` · `/healthz` |",
+    `| Watch Paths | \`${siteRel}/**\` \`packages/**\` \`docker/**\` \`pnpm-lock.yaml\` \`package.json\` \`turbo.json\` |`,
+    "",
+    `- [ ] DNS: registro \`A\` de \`${brief.domain}\` al IP del VPS (y \`www\` si aplica)`,
+    `- [ ] Tras el primer despliegue: \`https://${brief.domain}/healthz\`, \`/robots.txt\` y \`/sitemap-index.xml\` responden`,
+    `- [ ] \`${siteRel}/cliente.json\`: \`estado\` → \`produccion\` y \`coolify\` → nombre de la app`,
     "",
     "## Revisión humana",
     "",
-    "- [ ] Revisado el sitio en local (`pnpm --filter @sites/" +
-      slug +
-      " dev`) en desktop y mobile",
+    `- [ ] Revisado el sitio en local (\`pnpm --filter @clientes/${slug} dev\`) en desktop y mobile`,
     "- [ ] Copy y tono aprobados",
-    "- [ ] Datos pendientes resueltos o aceptados como provisionales",
+    "- [ ] Datos pendientes y preguntas resueltos o aceptados como provisionales",
     "",
     "🤖 Generated with [Claude Code](https://claude.com/claude-code)",
   ].join("\n");
+}
+
+/**
+ * Paso intake: si recursos/<slug>/entrada/ tiene material nuevo, prepara el índice, el agente
+ * clasifica las fotos y redacta brief.md y preguntas.md, y se aplica la clasificación.
+ * Trabaja solo sobre recursos/ (ignorada por Git), así que no necesita rama.
+ */
+async function runIntake(args, claude) {
+  const { slug } = args;
+  const paths = intakePaths(slug);
+  const { count } = entradaFingerprint(slug);
+  if (count === 0) {
+    return;
+  }
+  if (!args.reintake && !intakePending(slug)) {
+    log.info(`Intake al día (${count} archivos en recursos/${slug}/entrada/).`);
+    return;
+  }
+  if (args.dryRun) {
+    log.step(
+      `Intake: se ordenarían ${count} archivos de recursos/${slug}/entrada/ (omitido en dry run)`
+    );
+    return;
+  }
+  if (!commandExists("claude")) {
+    throw new PipelineError('falta el comando "claude" en el PATH (lo necesita el intake).');
+  }
+  log.step(`Intake: ${count} archivos en recursos/${slug}/entrada/`);
+  must("node", ["scripts/recursos-intake.mjs", slug, "--prepare"], { capture: false });
+  const startedAt = Date.now();
+  const outputs = [
+    paths.clasificacion,
+    path.join(paths.base, "brief.md"),
+    path.join(paths.base, "preguntas.md"),
+  ];
+  const state = loadState(`${slug}/intake`) ?? { slug, done: [] };
+  await runAgentUntilDone({
+    slug: `${slug}/intake`,
+    prompt: buildIntakePrompt({
+      slug,
+      templates: listTemplates(),
+      defaultTemplate: DEFAULT_TEMPLATE,
+    }),
+    claude,
+    state,
+    isDone: () => {
+      const missing = outputs.filter(
+        (file) => !fs.existsSync(file) || fs.statSync(file).mtimeMs < startedAt
+      );
+      return missing.length > 0
+        ? `faltan ${missing.map((file) => path.relative(ROOT_DIR, file)).join(", ")}`
+        : null;
+    },
+  });
+  must("node", ["scripts/recursos-intake.mjs", slug, "--apply", "--force"], { capture: false });
+  log.ok(`Intake listo: revisa recursos/${slug}/brief.md y recursos/${slug}/preguntas.md`);
 }
 
 async function main() {
@@ -265,7 +364,26 @@ async function main() {
   }
 
   const { slug, base } = args;
+  const claude = {
+    model: args.model || undefined,
+    maxBudgetUsd: args.maxBudgetUsd || undefined,
+  };
+  await runIntake(args, claude);
   const brief = parseBrief(slug);
+  if (args.intakeOnly) {
+    const questions = readIfExists(path.join(ROOT_DIR, "recursos", slug, "preguntas.md")).trim();
+    if (questions) {
+      log.step(`Preguntas para el cliente (recursos/${slug}/preguntas.md)`);
+      console.log(questions);
+    }
+    if (brief.errors.length > 0) {
+      throw new PipelineError(`brief incompleto:\n  - ${brief.errors.join("\n  - ")}`);
+    }
+    log.ok(
+      `Brief válido: ${brief.name} · ${brief.domain} · plantilla ${brief.plantilla}. Siguiente: pnpm cliente:crear ${slug}`
+    );
+    return;
+  }
   preflight(args, brief);
   if (brief.errors.length > 0) {
     return;
@@ -274,27 +392,19 @@ async function main() {
     `Brief válido: ${brief.name} · ${brief.domain} · plantilla ${brief.plantilla} · rama ${brief.branch}`
   );
 
-  const allowed = [
-    `sites/${slug}/`,
-    `docs/research/${slug}/`,
-    `docs/design-references/${slug}/`,
-    `recursos/${slug}/`,
-    "pnpm-lock.yaml",
-  ];
-  const sitePaths = [`sites/${slug}`, `docs/research/${slug}`, `docs/design-references/${slug}`];
-  const claude = {
-    model: args.model || undefined,
-    maxBudgetUsd: args.maxBudgetUsd || undefined,
-  };
+  const siteRel = clientRel(slug);
+  const allowed = [`${siteRel}/`, `recursos/${slug}/`, "pnpm-lock.yaml"];
+  const sitePaths = [siteRel];
   const prompt = buildClientPrompt({ slug, base, ...brief, pipeline: true });
   const gates = [
     {
-      name: `customize:check${args.allowPending ? "" : " --strict"}`,
+      name: `cliente:check${args.allowPending ? "" : " --strict"}`,
       command: "node",
       args: ["scripts/customize-check.mjs", slug, ...(args.allowPending ? [] : ["--strict"])],
+      timeout: 120_000,
     },
     { name: "verify", command: "pnpm", args: ["verify"] },
-    { name: "qa:site", command: "node", args: ["scripts/qa-site.mjs", slug] },
+    { name: "cliente:qa", command: "node", args: ["scripts/qa-site.mjs", slug] },
   ];
 
   const steps = [
@@ -311,7 +421,15 @@ async function main() {
       name: "recursos",
       title: `commit de recursos/${slug}/`,
       run: () => {
-        must("git", ["add", "-f", `recursos/${slug}`]);
+        // entrada/ y .intake/ (material crudo, chats y datos personales) nunca se suben
+        must("git", [
+          "add",
+          "-f",
+          "--",
+          `recursos/${slug}`,
+          `:(exclude)recursos/${slug}/entrada`,
+          `:(exclude)recursos/${slug}/.intake`,
+        ]);
         const staged = git("diff", "--cached", "--name-only").split("\n").filter(Boolean);
         const outside = staged.filter((file) => !file.startsWith(`recursos/${slug}/`));
         if (outside.length > 0) {
@@ -327,7 +445,7 @@ async function main() {
     },
     {
       name: "generate",
-      title: `pnpm new-client-site --from ${brief.plantilla}`,
+      title: `pnpm cliente:nuevo --from ${brief.plantilla}`,
       run: () => {
         must(
           "node",
@@ -366,7 +484,7 @@ async function main() {
       title: "personalización con Claude (sin supervisión)",
       run: async (state) => {
         const startedAt = Date.now();
-        const summaryPath = path.join(ROOT_DIR, "docs", "research", slug, "agent-summary.md");
+        const summaryPath = path.join(ROOT_DIR, docsPaths(siteRel).docs, "agent-summary.md");
         await runAgentUntilDone({
           slug,
           prompt,
@@ -375,17 +493,18 @@ async function main() {
           isDone: () =>
             fs.existsSync(summaryPath) && fs.statSync(summaryPath).mtimeMs >= startedAt
               ? null
-              : `falta escribir docs/research/${slug}/agent-summary.md al terminar la personalización`,
+              : `falta escribir ${siteRel}/docs/agent-summary.md al terminar la personalización`,
         });
         assertScope(base, allowed);
       },
     },
     {
       name: "gates",
-      title: "customize:check, verify y QA visual (con reparación)",
+      title: "cliente:check, verify y QA visual (con reparación)",
       run: async (state) => {
         const repairs = await gatesWithRepair({
           slug,
+          siteRel,
           gates,
           state,
           maxRepairs: args.maxRepairs,
@@ -401,8 +520,9 @@ async function main() {
       title: "commit del trabajo del agente",
       run: () => {
         assertScope(base, allowed);
+        // recursos/<slug>/ entra también: el brief ya está versionado y puede haberse completado
         commit(
-          sitePaths,
+          [...sitePaths, `recursos/${slug}`],
           `feat(${slug}): personaliza contenido, marca y páginas del cliente${AGENT_TRAILER}`
         );
         const leftovers = dirtyFiles();
@@ -461,6 +581,6 @@ main().catch((error) => {
   console.error(
     `\n\x1b[31m✖ ${error instanceof PipelineError ? error.message : error.stack}\x1b[0m`
   );
-  console.error("  Retoma con: pnpm client:run <slug> --resume [--from-step <paso>]");
+  console.error("  Retoma con: pnpm cliente:crear <slug> --resume [--from-step <paso>]");
   process.exit(1);
 });

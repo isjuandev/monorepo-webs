@@ -3,24 +3,31 @@
 import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const SITES_DIR = path.join(ROOT_DIR, "sites");
+import {
+  BASE_TEMPLATE,
+  clientRel,
+  DEFAULT_TEMPLATE,
+  ROOT_DIR,
+  resolveSite,
+  templateRel,
+} from "./lib/paths.mjs";
 
 function printUsage() {
   console.log(`
 Uso:
-  pnpm new-client-site <slug-cliente> [opciones]
+  pnpm cliente:nuevo <slug-cliente> [opciones]
+
+Crea clientes/<slug>/ copiando una plantilla de plantillas/ (con --plantilla, crea plantillas/<slug>/).
 
 Ejemplos:
-  pnpm new-client-site cafe-aurora --name "Café Aurora" --domain "cafeaurora.co"
-  pnpm new-client-site hotel-sol --from plantilla-hotellia --name "Hotel Sol" --domain "hotelsol.co"
+  pnpm cliente:nuevo cafe-aurora --name "Café Aurora" --domain "cafeaurora.co"
+  pnpm cliente:nuevo hotel-sol --from hotellia --name "Hotel Sol" --domain "hotelsol.co"
 
 Opciones:
   --slug <slug>              Identificador en kebab-case (ej: cafe-aurora)
-  --from <sitio>             Carpeta de sites/ a copiar en lugar de _template
-                             (ej: plantilla-hotellia). Conserva diseño, páginas y contenido.
+  --from <plantilla>         Plantilla de plantillas/ a copiar (por defecto: ${DEFAULT_TEMPLATE};
+                             con --plantilla: ${BASE_TEMPLATE}). Conserva diseño, páginas y contenido.
+  --plantilla                Crea una plantilla nueva en plantillas/<slug>/ (lo usa plantilla:clonar)
   --name "<Nombre>"          Nombre comercial del cliente
   --domain "<dominio.com>"   Dominio del cliente (sin protocolo)
   --title "<Título SEO>"     Título SEO principal
@@ -43,7 +50,8 @@ function parseArgs(argv) {
   const result = {
     slug: "",
     name: "",
-    from: "_template",
+    from: "",
+    plantilla: false,
     domain: "",
     title: "",
     description: "",
@@ -62,6 +70,8 @@ function parseArgs(argv) {
       result.help = true;
     } else if (arg === "--skip-checks") {
       result.skipChecks = true;
+    } else if (arg === "--plantilla") {
+      result.plantilla = true;
     } else if (arg.startsWith("--")) {
       const key = arg.slice(2);
       const nextVal = argv[i + 1];
@@ -101,7 +111,9 @@ function copyTemplateDir(src, dest) {
       entry.name === "node_modules" ||
       entry.name === "dist" ||
       entry.name === ".astro" ||
-      entry.name === ".turbo"
+      entry.name === ".turbo" ||
+      // Documentación y manifiesto son de la plantilla de origen, no del sitio nuevo
+      (src === sourceDir && ["docs", "plantilla.json", "cliente.json"].includes(entry.name))
     ) {
       continue;
     }
@@ -130,27 +142,25 @@ if (!KEBAB_CASE_REGEX.test(args.slug) || args.slug === "template") {
   process.exit(1);
 }
 
-if (!KEBAB_CASE_REGEX.test(args.from) && args.from !== "_template") {
-  console.error(`\x1b[31m✖ Error: El valor de --from "${args.from}" no es válido.\x1b[0m`);
-  process.exit(1);
-}
-
-const sourceDir = path.join(SITES_DIR, args.from);
-if (args.from === args.slug || !fs.existsSync(path.join(sourceDir, "package.json"))) {
+const kind = args.plantilla ? "plantilla" : "cliente";
+const source = resolveSite(args.from || (args.plantilla ? BASE_TEMPLATE : DEFAULT_TEMPLATE));
+if (source?.kind !== "plantilla") {
   console.error(
-    `\x1b[31m✖ Error: No se encontró un sitio de origen válido en sites/${args.from}.\x1b[0m`
+    `\x1b[31m✖ Error: "${args.from}" no es una plantilla de plantillas/ (los clientes no se copian).\x1b[0m`
   );
   process.exit(1);
 }
-const fromTemplate = args.from === "_template";
+const sourceDir = source.dir;
+const fromTemplate = source.slug === BASE_TEMPLATE;
 
-const targetSiteDir = path.join(ROOT_DIR, "sites", args.slug);
-if (fs.existsSync(targetSiteDir)) {
+if (resolveSite(args.slug)) {
   console.error(
-    `\x1b[31m✖ Error: El sitio "sites/${args.slug}" ya existe. Se aborta para no sobrescribir archivos existentes.\x1b[0m`
+    `\x1b[31m✖ Error: Ya existe un sitio "${args.slug}" (${resolveSite(args.slug).rel}). Se aborta para no sobrescribir archivos existentes.\x1b[0m`
   );
   process.exit(1);
 }
+const siteRel = args.plantilla ? templateRel(args.slug) : clientRel(args.slug);
+const targetSiteDir = path.join(ROOT_DIR, siteRel);
 
 const brandName = args.name || slugToTitle(args.slug);
 const clientDomain = (args.domain || `${args.slug}.example.com`)
@@ -158,15 +168,32 @@ const clientDomain = (args.domain || `${args.slug}.example.com`)
   .replace(/\/+$/, "");
 const siteTitle = args.title || `${brandName} | Sitio Web Oficial`;
 const siteDescription = args.description || `Sitio web oficial de ${brandName}.`;
-const packageName = `@sites/${args.slug}`;
+const packageName = args.plantilla ? `@plantillas/${args.slug}` : `@clientes/${args.slug}`;
 
-console.log(`\n▶ Creando nuevo sitio de cliente en sites/${args.slug}...`);
+console.log(`\n▶ Creando ${kind} en ${siteRel} desde ${source.rel}...`);
 
-// 1. Copiar el sitio de origen (por defecto sites/_template, que queda intacto) hacia sites/<slug>
+// 1. Copiar la plantilla de origen (queda intacta) hacia clientes/<slug> o plantillas/<slug>
 copyTemplateDir(sourceDir, targetSiteDir);
 
-// Registra la plantilla de origen para que `pnpm customize:check` sepa qué restos buscar
-fs.writeFileSync(path.join(targetSiteDir, ".template-origin"), `${args.from}\n`, "utf8");
+// Manifiesto: en un cliente registra la plantilla de origen (customize:check sabe qué restos
+// buscar); en una plantilla nueva deja los campos que completa plantilla:clonar
+const manifest = args.plantilla
+  ? {
+      nombre: brandName,
+      descripcion: "",
+      idioma: (args.locale || "es_CO").slice(0, 2),
+      negocio: [],
+      origen: "",
+      demo: "",
+      marcas: [],
+      placeholders: [],
+    }
+  : { nombre: brandName, plantilla: source.slug, estado: "en-construccion", coolify: "" };
+fs.writeFileSync(
+  path.join(targetSiteDir, args.plantilla ? "plantilla.json" : "cliente.json"),
+  `${JSON.stringify(manifest, null, 2)}\n`,
+  "utf8"
+);
 
 // 2. Actualizar package.json del nuevo cliente
 const pkgJsonPath = path.join(targetSiteDir, "package.json");
@@ -257,25 +284,17 @@ if (fromTemplate) {
 } else {
   unpatchedFields = patchCopiedSiteConfig();
   // Mantiene el formato de Biome tras reemplazar valores largos
-  execSync(`pnpm exec biome format --write sites/${args.slug}/src/config/site.ts`, {
+  execSync(`pnpm exec biome format --write ${siteRel}/src/config/site.ts`, {
     cwd: ROOT_DIR,
     stdio: "inherit",
   });
 }
 
-// 4. Crear carpetas de documentación e investigación del cliente
-const researchDir = path.join(ROOT_DIR, "docs", "research", args.slug);
-const designRefsDir = path.join(ROOT_DIR, "docs", "design-references", args.slug);
-fs.mkdirSync(researchDir, { recursive: true });
-fs.mkdirSync(designRefsDir, { recursive: true });
+// 4. Carpeta de documentación del sitio (investigación, resúmenes del agente, referencias y QA)
+fs.mkdirSync(path.join(targetSiteDir, "docs"), { recursive: true });
 fs.writeFileSync(
-  path.join(researchDir, ".gitkeep"),
-  `# Investigación y mapeo de activos para ${args.slug}\n`,
-  "utf8"
-);
-fs.writeFileSync(
-  path.join(designRefsDir, ".gitkeep"),
-  `# Capturas de referencia y comparación visual para ${args.slug}\n`,
+  path.join(targetSiteDir, "docs", ".gitkeep"),
+  `# Investigación, referencias y QA de ${args.slug}\n`,
   "utf8"
 );
 
@@ -289,16 +308,16 @@ if (!args.skipChecks) {
   execSync(`pnpm --filter ${packageName} build`, { cwd: ROOT_DIR, stdio: "inherit" });
 }
 
-if (!fromTemplate) {
+if (!fromTemplate && !args.plantilla) {
   console.log(`
-\x1b[33m⚠ Sitio copiado desde sites/${args.from}. Personalízalo en 4 puntos (ver sites/${args.slug}/CUSTOMIZE.md):\x1b[0m
-  1. Identidad y contacto: sites/${args.slug}/src/config/site.ts${
+\x1b[33m⚠ Sitio copiado desde ${source.rel}. Personalízalo en 4 puntos (ver ${siteRel}/CUSTOMIZE.md):\x1b[0m
+  1. Identidad y contacto: ${siteRel}/src/config/site.ts${
     unpatchedFields.length > 0 ? ` (no se pudo ajustar: ${unpatchedFields.join(", ")})` : ""
   }
-  2. Marca visual:         sites/${args.slug}/src/styles/theme.css
-  3. Textos y datos:       sites/${args.slug}/src/data/content.ts
-  4. Imágenes y logos:     sites/${args.slug}/public/
-Cuando termines: pnpm customize:check ${args.slug} --strict`);
+  2. Marca visual:         ${siteRel}/src/styles/theme.css
+  3. Textos y datos:       ${siteRel}/src/data/content.ts
+  4. Imágenes y logos:     ${siteRel}/public/
+Cuando termines: pnpm cliente:check ${args.slug} --strict`);
   execSync(`node scripts/customize-check.mjs ${args.slug}`, { cwd: ROOT_DIR, stdio: "inherit" });
 }
 
@@ -306,10 +325,10 @@ console.log(`
 \x1b[32m✔ Sitio "${brandName}" (${packageName}) creado y verificado con éxito.\x1b[0m
 
 Archivos principales:
-  - Configuración de dominio y SEO: sites/${args.slug}/src/config/site.ts
-  - Estilos y variables de marca:   sites/${args.slug}/src/styles/theme.css
-  - Página de inicio:               sites/${args.slug}/src/pages/index.astro
-  - Investigación / Referencias:    docs/research/${args.slug}/
+  - Configuración de dominio y SEO: ${siteRel}/src/config/site.ts
+  - Estilos y variables de marca:   ${siteRel}/src/styles/theme.css
+  - Página de inicio:               ${siteRel}/src/pages/index.astro
+  - Investigación / Referencias:    ${siteRel}/docs/
 
 Comandos para trabajar en este cliente:
   pnpm --filter ${packageName} dev

@@ -3,11 +3,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const SITES_DIR = path.join(ROOT_DIR, "sites");
-const CONFIG_PATH = path.join(ROOT_DIR, "scripts", "template-brands.json");
+import { GLOBAL_PLACEHOLDERS, listSites, resolveSite } from "./lib/paths.mjs";
 
 const TEXT_EXTENSIONS = new Set([".astro", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".css", ".json"]);
 const IGNORED_DIRS = new Set(["node_modules", "dist", ".astro", ".turbo", ".git"]);
@@ -15,9 +11,9 @@ const IGNORED_DIRS = new Set(["node_modules", "dist", ".astro", ".turbo", ".git"
 function printUsage() {
   console.log(`
 Uso:
-  pnpm customize:check <slug-cliente> [--strict]
+  pnpm cliente:check <slug-cliente> [--strict]
 
-Detecta restos de la plantilla de origen en sites/<slug-cliente>: dominio de ejemplo,
+Detecta restos de la plantilla de origen en clientes/<slug-cliente>: dominio de ejemplo,
 nombres de marca, contactos placeholder e imágenes idénticas a las de la plantilla.
 
 Opciones:
@@ -69,29 +65,30 @@ if (argv.includes("--help") || argv.includes("-h") || !slug) {
   process.exit(argv.includes("--help") || argv.includes("-h") ? 0 : 1);
 }
 
-const config = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
-const siteDir = path.join(SITES_DIR, slug);
+const site = resolveSite(slug);
 
-if (!fs.existsSync(path.join(siteDir, "package.json"))) {
-  console.error(`\x1b[31m✖ Error: No existe el sitio sites/${slug}.\x1b[0m`);
+if (!site) {
+  console.error(
+    `\x1b[31m✖ Error: No existe el sitio ${slug} en clientes/ ni en plantillas/.\x1b[0m`
+  );
   process.exit(1);
 }
 
-if (slug in config.templates) {
-  console.log(`ℹ sites/${slug} es una plantilla del monorepo, no un sitio de cliente: no aplica.`);
+if (site.kind === "plantilla") {
+  console.log(`ℹ ${site.rel} es una plantilla del monorepo, no un sitio de cliente: no aplica.`);
   process.exit(0);
 }
+const siteDir = site.dir;
 
-// Plantilla de origen: la registra new-client-site en .template-origin; si falta, se comparan todas.
-const originFile = path.join(siteDir, ".template-origin");
-const origin = fs.existsSync(originFile) ? fs.readFileSync(originFile, "utf8").trim() : "";
-const originNames = origin && origin in config.templates ? [origin] : Object.keys(config.templates);
+// Plantilla de origen: la registra cliente:nuevo en cliente.json; si falta, se comparan todas.
+const origin = resolveSite(site.manifest?.plantilla ?? "");
+const originSites = origin?.kind === "plantilla" ? [origin] : listSites("plantilla");
 
-const brands = [...new Set(originNames.flatMap((name) => config.templates[name].brands))];
+const brands = [...new Set(originSites.flatMap((item) => item.manifest?.marcas ?? []))];
 const placeholders = [
   ...new Set([
-    ...config.global.placeholders,
-    ...originNames.flatMap((name) => config.templates[name].placeholders),
+    ...GLOBAL_PLACEHOLDERS.placeholders,
+    ...originSites.flatMap((item) => item.manifest?.placeholders ?? []),
   ]),
 ];
 
@@ -109,7 +106,9 @@ if (!fs.existsSync(siteConfigPath)) {
   const domain = match ? match[1] : "";
   if (!domain) {
     errors.push("src/config/site.ts: no se encontró CLIENT_DOMAIN.");
-  } else if (config.global.domains.some((item) => domain === item || domain.endsWith(`.${item}`))) {
+  } else if (
+    GLOBAL_PLACEHOLDERS.domains.some((item) => domain === item || domain.endsWith(`.${item}`))
+  ) {
     errors.push(`src/config/site.ts: CLIENT_DOMAIN "${domain}" es un dominio de ejemplo.`);
   }
 }
@@ -144,11 +143,11 @@ for (const filePath of walkFiles(path.join(siteDir, "src"))) {
 
 // 3. Imágenes y archivos de public/ idénticos a los de la plantilla de origen
 const templateHashes = new Map();
-for (const name of originNames) {
-  const publicDir = path.join(SITES_DIR, name, "public");
+for (const item of originSites) {
+  const publicDir = path.join(item.dir, "public");
   for (const filePath of walkFiles(publicDir)) {
     if (/\.(woff2?|ttf|otf)$/i.test(filePath)) continue;
-    templateHashes.set(hashFile(filePath), `${name}/${path.relative(publicDir, filePath)}`);
+    templateHashes.set(hashFile(filePath), `${item.slug}/${path.relative(publicDir, filePath)}`);
   }
 }
 const identicalImages = [];
@@ -168,7 +167,7 @@ if (identicalImages.length > 0) {
 }
 
 console.log(
-  `\nAuditoría de personalización: sites/${slug}${origin ? ` (origen: ${origin})` : ""}\n`
+  `\nAuditoría de personalización: ${site.rel}${origin ? ` (origen: ${origin.rel})` : ""}\n`
 );
 
 for (const message of warnings) console.log(`\x1b[33m⚠ ${message}\x1b[0m`);
@@ -180,6 +179,6 @@ if (errors.length === 0 && warnings.length === 0) {
 }
 
 console.log(
-  `\n${errors.length} hallazgo(s) y ${warnings.length} aviso(s). Guía: sites/${slug}/CUSTOMIZE.md\n`
+  `\n${errors.length} hallazgo(s) y ${warnings.length} aviso(s). Guía: ${site.rel}/CUSTOMIZE.md\n`
 );
 process.exit(strict && errors.length > 0 ? 1 : 0);

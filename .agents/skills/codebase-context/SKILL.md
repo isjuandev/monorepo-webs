@@ -9,7 +9,7 @@ Reglas comunes en [AGENTS.md](../../../AGENTS.md). El objetivo es **entender el 
 
 ## 1. Preparar el índice (siempre primero, una vez por sesión)
 
-1. Proyecto: `Users-isjuandev-Documents-WS-NEXOBITE-monorepo-webs` (la ruta de la raíz del repo con `/` → `-`). Si trabajas desde otro clon o worktree, obtén el nombre con `list_projects`.
+1. Proyecto: obtén el nombre con `list_projects` (la ruta de la raíz del repo con `/` → `-`). Por ejemplo, la raíz `/Users/isjuandev/Documents/WS-PERSONAL/monorepo-webs` se indexa como `Users-isjuandev-Documents-WS-PERSONAL-monorepo-webs`. Si trabajas desde otro clon o worktree, comprueba el nombre con `list_projects` antes de consultar.
 2. `index_status(project)`:
    - Si responde `ready` con nodos > 0, **no reindexes**: el índice se refresca solo.
    - Si no existe, está vacío o cambiaste de rama o hiciste ediciones masivas sin que se reflejen → `index_repository(repo_path=<raíz del repo>, mode="full")`.
@@ -19,7 +19,7 @@ Reglas comunes en [AGENTS.md](../../../AGENTS.md). El objetivo es **entender el 
 ## 2. Obtener el panorama general (barato)
 
 - `get_architecture(project, aspects=["overview"])`: conteos, paquetes, puntos de entrada, hotspots, límites entre paquetes y clusters.
-- Para un sitio concreto: `get_architecture(project, aspects=["structure"], path="sites/<slug>")`.
+- Para un sitio concreto: `get_architecture(project, aspects=["structure"], path="clientes/<slug>")`.
 - Complementa con `AGENTS.md` (reglas y comandos) y, si existe, el ADR (`manage_adr`) en vez de reexplorar.
 
 ## 3. Elegir la herramienta según la pregunta
@@ -38,14 +38,15 @@ Reglas comunes en [AGENTS.md](../../../AGENTS.md). El objetivo es **entender el 
 
 - Los componentes `.astro`, los `.md`, el CSS fino y `docker/nginx.conf` no se modelan como código: el grafo cubre sobre todo TypeScript (`.ts`/`.tsx`) y la estructura de archivos. Para `.astro` y estilos usa `search_code`/`grep` y lectura puntual.
 - Se excluyen `node_modules`, `dist`, `.astro`, `.turbo`, imágenes y fuentes: nunca esperes hallazgos ahí.
-- Carpetas residuales ignoradas por Git (p. ej. un `sites/<x>` sin código, solo con `dist`) pueden aparecer como ruido.
+- Carpetas residuales ignoradas por Git (p. ej. un `clientes/<x>` sin código, solo con `dist`) pueden aparecer como ruido.
 - El índice es "mejor esfuerzo": si una ruta citada importa, compruébala con `check_index_coverage` o léela.
 
 ## 5. Mapa mínimo del repo (para orientarte sin consultar)
 
 - `packages/ui`, `packages/utils`, `packages/tsconfig`: núcleo compartido (agnóstico a marcas).
-- `sites/_template` y `sites/plantilla-*`/`motel-boutique`: sitios; cada uno se personaliza en 4 puntos (`src/config/site.ts`, `src/styles/theme.css`, `src/data/content.ts`, `public/`), ver AGENTS.md §6.
-- `scripts/`: `new-client-site`, `customize-check`, `verify-isolation`, `visual-qa-summary`.
+- `plantillas/` (`_base`, `asterre` (por defecto), `hotellia`, `pinevalley`, `selvra`, cada una con `plantilla.json`) y `clientes/` (`la-guaca`, cada uno con `cliente.json`): sitios; cada uno se personaliza en 4 puntos (`src/config/site.ts`, `src/styles/theme.css`, `src/data/content.ts`, `public/`), ver AGENTS.md §6. Su documentación, referencias y QA viven en `<sitio>/docs/`.
+- `scripts/`: pipeline `client-run` (`pnpm cliente:crear`, con paso intake de `recursos-intake`) y `template-clone` (`pnpm plantilla:clonar`), sobre `lib/` (`paths.mjs` resuelve plantillas y clientes, `pipeline.mjs`, `brief.mjs`, `prompts.mjs`, `clone.mjs`); más `new-client-site`, `customize-check`, `qa-site`, `optimize-assets`, `templates-list`, `changed-sites`, `verify-isolation` y `visual-qa-summary`.
+- `recursos/`: material de cada cliente (bandeja `entrada/`, brief y fotos ordenadas); `_plantilla-cliente/` es el esqueleto vacío y `la-guaca/` el ejemplo relleno.
 
 ## 6. Mantener el contexto al día
 

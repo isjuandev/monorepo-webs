@@ -3,7 +3,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
-import { KEBAB_CASE_REGEX, RECURSOS_DIR, ROOT_DIR, SITES_DIR, slugify } from "./lib/brief.mjs";
+import { KEBAB_CASE_REGEX, RECURSOS_DIR, ROOT_DIR, slugify } from "./lib/brief.mjs";
+import { clientRel, docsPaths } from "./lib/paths.mjs";
 
 const RASTER_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif", ".tif", ".tiff"]);
 const COPY_AS_IS = /^(favicon|apple-touch-icon)/;
@@ -15,17 +16,18 @@ const WEBP_QUALITY = 80;
 function printUsage() {
   console.log(`
 Uso:
-  pnpm optimize-assets <slug-cliente> [--force]
+  pnpm cliente:activos <slug-cliente> [--force]
 
-Copia y optimiza los activos de recursos/<slug-cliente>/ hacia sites/<slug-cliente>/public/,
-con la convención plana de la plantilla la-guaca (mismo nombre de archivo, otra carpeta):
+Copia y optimiza los activos de recursos/<slug-cliente>/ hacia clientes/<slug-cliente>/public/,
+con una convención plana (mismo nombre de archivo, otra carpeta):
   fotos/**/<nombre>.*     → public/images/<nombre>.webp (redimensionadas, EXIF aplicado)
   marca/<imagen>.*        → public/images/<imagen>.webp (svg: copia en public/images/)
   marca/og-image.*        → public/images/og-image.jpg (1200x630)
   marca/favicon*, apple-touch-icon* → public/ (copia)
   marca/fuentes/*.woff2   → public/fonts/
 Dos archivos con el mismo nombre en carpetas distintas se reportan y no se pisan.
-Escribe el mapa origen → destino en docs/research/<slug-cliente>/assets-manifest.json.
+Escribe el mapa origen → destino en clientes/<slug-cliente>/docs/assets-manifest.json.
+Ignora entrada/ y .intake/ (material crudo que ordena el paso intake de cliente:crear).
 Sin --force, omite los archivos cuyo destino ya es más reciente que el origen.
 `);
 }
@@ -42,7 +44,7 @@ function walk(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      return walk(full);
+      return entry.name.startsWith(".") || entry.name === "entrada" ? [] : walk(full);
     }
     return entry.name.startsWith(".") ? [] : [full];
   });
@@ -165,12 +167,12 @@ async function main() {
   }
 
   const recursosDir = path.join(RECURSOS_DIR, slug);
-  const siteDir = path.join(SITES_DIR, slug);
+  const siteDir = path.join(ROOT_DIR, clientRel(slug));
   if (!fs.existsSync(recursosDir)) {
     fail(`no existe recursos/${slug}/.`);
   }
   if (!fs.existsSync(path.join(siteDir, "package.json"))) {
-    fail(`no existe sites/${slug}/. Genera el sitio antes con pnpm new-client-site.`);
+    fail(`no existe ${clientRel(slug)}/. Genera el sitio antes con pnpm cliente:nuevo.`);
   }
 
   const publicDir = path.join(siteDir, "public");
@@ -221,13 +223,13 @@ async function main() {
     });
   }
 
-  const manifestPath = path.join(ROOT_DIR, "docs", "research", slug, "assets-manifest.json");
+  const manifestPath = path.join(ROOT_DIR, docsPaths(clientRel(slug)).docs, "assets-manifest.json");
   fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
   fs.writeFileSync(manifestPath, `${JSON.stringify({ slug, items, skipped }, null, 2)}\n`);
 
   const totalKb = Math.round(items.reduce((sum, item) => sum + item.bytes, 0) / 1024);
   console.log(
-    `✔ ${items.length} activos en sites/${slug}/public/ (${processed} procesados, ${totalKb} KB en total).`
+    `✔ ${items.length} activos en ${clientRel(slug)}/public/ (${processed} procesados, ${totalKb} KB en total).`
   );
   console.log(`  Manifiesto: ${path.relative(ROOT_DIR, manifestPath)}`);
   if (skipped.length > 0) {

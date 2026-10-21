@@ -1,5 +1,5 @@
 ---
-description: Rebuild one or more websites as a working Astro + Preact client site under sites/<slug-cliente> matching their content, assets, responsive layout, and interactions. Use for website cloning, replication, or reverse engineering.
+description: Rebuild one or more websites as a working Astro + Preact client site under plantillas/<slug-cliente> matching their content, assets, responsive layout, and interactions. Use for website cloning, replication, or reverse engineering.
 argument-hint: "<url1> [<url2> ...]"
 ---
 

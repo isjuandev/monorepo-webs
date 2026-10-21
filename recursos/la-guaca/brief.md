@@ -1,12 +1,12 @@
 # Brief del cliente
 
-> Completado a partir del contenido actual de `sites/la-guaca` (copy, `ROOMS`, `site.ts`, `theme.css`) y la guía de voz `docs/research/la-guaca/guia-de-voz.md`. Lo que aparece como **Pendiente** no está en ninguna fuente y no se ha inventado. Confirmar con el cliente antes de entregar.
+> Completado a partir del contenido actual de `clientes/la-guaca` (copy, `ROOMS`, `site.ts`, `theme.css`) y la guía de voz `clientes/la-guaca/docs/guia-de-voz.md`. Lo que aparece como **Pendiente** no está en ninguna fuente y no se ha inventado. Confirmar con el cliente antes de entregar.
 >
-> Recursos: las fotos, logos y fuentes ya están copiados en esta carpeta desde `sites/la-guaca/public/` (la copia del sitio no se tocó). `textos/`, `referencias/` y `fotos/galeria/` siguen vacías.
+> Recursos: las fotos, logos y fuentes ya están copiados en esta carpeta desde `clientes/la-guaca/public/` (la copia del sitio no se tocó). `textos/`, `referencias/` y `fotos/galeria/` siguen vacías.
 
 ## Generación
 
-- Plantilla base: plantilla-asterre
+- Plantilla base: asterre
 - Slug (kebab-case): la-guaca
 - Nombre comercial: La Guaca (Motel La Guaca)
 - Dominio: la-guaca.nexobite.com (temporal; dominio definitivo del cliente: Pendiente)

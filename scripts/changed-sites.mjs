@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
 import { spawnSync } from "node:child_process";
-import fs from "node:fs";
-import path from "node:path";
-import { ROOT_DIR, SITES_DIR } from "./lib/brief.mjs";
+import { listSites, ROOT_DIR } from "./lib/paths.mjs";
 
 // Cambios en estas rutas afectan a todos los sitios
 const SHARED_PATHS = [
@@ -21,16 +19,14 @@ if (!base || base === "--help" || base === "-h") {
 Uso:
   node scripts/changed-sites.mjs <ref-base>
 
-Imprime (uno por línea) los sitios de sites/ que cambian respecto a <ref-base>.
+Imprime (uno por línea) los slugs de plantillas/ y clientes/ que cambian respecto a <ref-base>.
 Si cambia el núcleo compartido (${SHARED_PATHS.join(", ")}), imprime todos.
 `);
   process.exit(base ? 0 : 1);
 }
 
-const allSites = fs
-  .readdirSync(SITES_DIR)
-  .filter((name) => fs.existsSync(path.join(SITES_DIR, name, "package.json")))
-  .sort();
+const sites = listSites().sort((a, b) => a.slug.localeCompare(b.slug));
+const allSites = sites.map((site) => site.slug);
 
 const diff = spawnSync("git", ["diff", "--name-only", `${base}...HEAD`], {
   cwd: ROOT_DIR,
@@ -49,7 +45,9 @@ const shared = files.some((file) =>
 );
 const changed = shared
   ? allSites
-  : allSites.filter((site) => files.some((file) => file.startsWith(`sites/${site}/`)));
+  : sites
+      .filter((site) => files.some((file) => file.startsWith(`${site.rel}/`)))
+      .map((site) => site.slug);
 
 if (changed.length > 0) {
   console.log(changed.join("\n"));

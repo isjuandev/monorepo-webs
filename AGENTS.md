@@ -1,19 +1,24 @@
-# AGENTS.md — Guía de Contexto y Reglas para LLMs y Agentes de IA
+# AGENTS.md — Reglas y contexto para LLMs y agentes de IA
 
-> **IMPORTANTE PARA TODOS LOS LLMs (Antigravity, Gemini, Claude, Cursor, Copilot, Codex, Windsurf):**  
-> Lee y respeta este documento antes de proponer, crear o modificar código en este repositorio. Este archivo es la fuente única de verdad sobre la arquitectura, librerías aprobadas, estilo de código, linting, pruebas visuales y flujo de trabajo obligatorio del monorepo colaborativo.
+> **Para todos los LLMs (Claude, Gemini, Cursor, Copilot, Codex, Windsurf):** lee y respeta este documento antes de proponer, crear o modificar código. Es la fuente única de verdad sobre arquitectura, stack, estilo, aislamiento y flujo de trabajo. Las guías paso a paso para personas están en [`docs/guias/`](./docs/guias/).
 
 ---
 
-## 1. Contexto General del Proyecto
+## 1. Qué es este repositorio
 
-Este repositorio (`monorepo-webs`) es la fábrica colaborativa de sitios web de **Nexobite** para desarrollar, clonar con fidelidad visual, mantener y desplegar **múltiples páginas web independientes para múltiples clientes**.
+`monorepo-webs` es la **fábrica de sitios web de Nexobite**: fabrica N sitios de clientes a partir de un catálogo de plantillas, con la menor intervención humana posible.
 
-### Principios clave del negocio y arquitectura:
-1. **100% Estático / Sin Backend inicialmente:** Todos los sitios se compilan como sitios estáticos (`output: "static"` en Astro) para máxima velocidad, seguridad, SEO y bajo costo de infraestructura.
-2. **Un dominio propio por cliente:** Cada sitio dentro de `sites/<cliente>` tiene su propio dominio de producción (ej. `https://clientex.com`) configurado de forma independiente.
-3. **Código base compartido, marcas aisladas:** Los clientes comparten utilidades (`@repo/utils`), configuraciones (`@repo/tsconfig`) y primitivos de UI (`@repo/ui`), pero la identidad visual, textos, activos y dominio de cada cliente viven estrictamente aislados en su propia carpeta dentro de `sites/`.
-4. **Despliegue en VPS propio:** Cada sitio se despliega como una aplicación independiente en un VPS (Coolify / Dokploy / Docker + Nginx) apuntando a su dominio correspondiente.
+```text
+recursos/<slug>/entrada/  →  /nuevo-cliente <slug>  →  PR con clientes/<slug>/  →  merge  →  Coolify
+(material crudo)             (intake + agente + QA)     (listo para producción)              (1 app por cliente)
+```
+
+Principios:
+1. **100 % estático:** Astro con `output: "static"`; sin backend.
+2. **Un dominio y una app de Coolify por cliente.**
+3. **Plantillas → clientes:** un cliente nace copiando una plantilla y se personaliza en 4 puntos (§6). Las plantillas no llevan datos reales; los clientes no se usan como plantilla.
+4. **Núcleo compartido mínimo y agnóstico a marcas:** `packages/*`.
+5. **Automatización primero:** el pipeline `pnpm cliente:crear` hace intake, generación, personalización, QA y PR. Una persona solo deja el material, responde las preguntas y revisa el PR.
 
 ---
 
@@ -31,85 +36,72 @@ Para mantener consistencia absoluta entre todos los desarrolladores y LLMs, **NO
   - **PROHIBIDO** instalar `react` o `react-dom`. Si se necesita una librería externa para una isla interactiva, debe ser nativa de Preact o vanilla TS/JS sin dependencias pesadas.
 - **Iconos:** SVGs inline/extraídos como componentes `.astro`/`.tsx`, o `lucide-preact` si se requiere un set de iconos.
 - **Animaciones y Scroll:**
-  - Preferir **CSS puro** (`@keyframes`, `transition`, `IntersectionObserver` + clases CSS) para animaciones de entrada y hover. Los sitios existentes concentran esta lógica en `src/scripts/` (`reveal.ts` en `motel-boutique`, `motion.ts` en `plantilla-asterre`, `plantilla-hotellia` y `plantilla-pinevalley`).
-  - Si un sitio requiere smooth-scroll o animaciones avanzadas (ej. clones de Framer), usar `lenis` de forma ligera y limpiando siempre los listeners en el ciclo de vida del componente. Hoy lo usan `sites/plantilla-hotellia` y `sites/plantilla-pinevalley` (dependencia propia de cada sitio, nunca en `packages/*`).
+  - Preferir **CSS puro** (`@keyframes`, `transition`, `IntersectionObserver` + clases CSS) para animaciones de entrada y hover. Los sitios existentes concentran esta lógica en `src/scripts/` (`motion.ts` en todas las plantillas).
+  - Si un sitio requiere smooth-scroll o animaciones avanzadas (ej. clones de Framer), usar `lenis` de forma ligera y limpiando siempre los listeners en el ciclo de vida del componente. Hoy lo usan `plantillas/hotellia` y `plantillas/pinevalley` (dependencia propia de cada sitio, nunca en `packages/*`).
 - **Lenguaje:** `TypeScript` en modo `strict` (`@repo/tsconfig`).
 - **Linter y Formateador:** `Biome` (`@biomejs/biome` configurado en `biome.json`) + `astro check` + `.editorconfig`.
 - **Control de calidad visual y funcional:** `Playwright` (`@playwright/test` en `playwright.config.ts` y `tests/visual-qa.spec.ts`).
 - **Servidor de producción:** `Nginx` sobre Docker multi-stage con `turbo prune` (`docker/Dockerfile` y `docker/nginx.conf`, con `/healthz`, caché inmutable en `/_astro/` y cabeceras de seguridad básicas).
-- **Plataforma de despliegue:** Coolify en VPS (una aplicación por cliente), ver [`docs/deploy-coolify.md`](./docs/deploy-coolify.md).
+- **Plataforma de despliegue:** Coolify en VPS (una aplicación por cliente), ver [`docs/guias/03-desplegar.md`](./docs/guias/03-desplegar.md).
 
 ---
 
-## 3. Estructura del Monorepo y Responsabilidades
+## 3. Estructura del monorepo
 
 ```text
 monorepo-webs/
-├── AGENTS.md                       # Este documento de contexto y reglas para LLMs
-├── CLAUDE.md                       # Puntero a AGENTS.md para Claude Code
-├── README.md                       # Documentación general de uso, skills y despliegue
-├── .nvmrc                          # Versión de Node.js recomendada (22 LTS)
-├── .editorconfig                   # Reglas de formato de archivo universales
-├── .dockerignore                   # Exclusiones del contexto de build de Docker
-├── biome.json                      # Configuración estricta de Linter y Formatter (Biome)
-├── playwright.config.ts            # Configuración compartida de pruebas visuales/funcionales
-├── .githooks/
-│   └── pre-push                    # Ejecuta `pnpm verify` antes de cada push (activar con core.hooksPath)
-├── .github/
-│   ├── CODEOWNERS                  # Propietarios de código del núcleo compartido
-│   ├── PULL_REQUEST_TEMPLATE.md    # Plantilla de PR con checklist de calidad
-│   └── workflows/
-│       └── ci.yml                  # Pipeline de CI (lockfile, aislamiento, lint, check, build, visual QA)
-├── .agents/
-│   └── skills/                     # Skills especializadas para agentes de IA
-│       ├── clone-website/          # Clonar/reconstruir sitios web en sites/<cliente> (incluye references/)
-│       ├── visual-qa/              # Validación visual/funcional desktop y mobile con Playwright
-│       ├── review-monorepo/        # Auditoría de PR, aislamiento e impacto en paquetes
-│       ├── seo-audit/              # Auditoría de SEO técnico, canonicals, OG, sitemap y robots.txt
-│       ├── deploy-client/          # Preparación y validación de despliegue en VPS/Docker
-│       ├── codebase-context/       # Contexto del repo desde el grafo de codebase-memory (ahorra tokens)
-│       └── motel-copywriting/      # Tonos de marca, redacción de la web y CTA a WhatsApp/visita para moteles (50 tonos, 10 estilos)
-├── .claude/
-│   └── commands/                   # Comandos slash (/clone-website, /visual-qa, /review-monorepo, /seo-audit, /deploy-client, /codebase-context, /motel-copywriting)
-├── docs/
-│   ├── governance.md               # Reglas de protección de main y cambios en núcleo compartido
-│   ├── deploy-coolify.md           # Flujo local → GitHub → Coolify (una app por cliente)
-│   ├── research/                   # Briefs de inspección y reportes de QA por cliente
-│   └── design-references/          # Capturas de referencia y comparación visual por cliente
-├── scripts/
-│   ├── new-client-site.mjs         # Generador automatizado de nuevos sitios de clientes (admite --from <plantilla>)
-│   ├── customize-check.mjs         # Auditoría de restos de plantilla en un sitio de cliente
-│   ├── template-brands.json        # Marcas y datos de ejemplo de cada plantilla (usado por customize-check)
-│   ├── verify-isolation.mjs        # Verificador de aislamiento entre clientes y gobernanza
-│   └── visual-qa-summary.mjs       # Generador de informe Markdown de Visual QA
-├── tests/
-│   └── visual-qa.spec.ts           # Suite compartida de Playwright (desktop y mobile)
-├── package.json                    # Scripts globales con Turborepo, Biome y Playwright
-├── pnpm-lock.yaml                  # Lockfile único y reproducible del workspace
-├── pnpm-workspace.yaml             # Define los workspaces: sites/* y packages/*
-├── turbo.json                      # Pipeline de tareas (dev, build, preview, check, clean)
-├── docker/
-│   ├── Dockerfile                  # Build multi-stage con turbo prune y pnpm --frozen-lockfile
-│   └── nginx.conf                  # Nginx: gzip, caché, cabeceras de seguridad y /healthz
+├── README.md · AGENTS.md · CLAUDE.md
+├── plantillas/                     # Catálogo de diseños (pnpm plantilla:lista)
+│   ├── README.md                   # Catálogo generado (pnpm plantilla:lista --write)
+│   ├── _base/                      # Esqueleto mínimo: punto de partida de plantilla:clonar
+│   ├── asterre/                    # Alojamiento boutique en español (por defecto para moteles)
+│   ├── hotellia/                   # Hotel boutique en inglés (lenis)
+│   ├── pinevalley/                 # Villa de una página en inglés (lenis)
+│   └── selvra/                     # Retiro boutique en inglés
+├── clientes/                       # Un sitio por cliente real
+│   ├── README.md
+│   └── la-guaca/                   # Motel La Guaca (desde asterre)
+├── recursos/                       # Material de cada cliente (ignorado por Git salvo el ejemplo)
+│   ├── README.md
+│   ├── _plantilla-cliente/         # Esqueleto vacío: brief, entrada/, fotos/, marca/, textos/
+│   └── la-guaca/                   # Ejemplo relleno de un cliente real
 ├── packages/
-│   ├── ui/                         # (@repo/ui) src/astro: SEO, Section, Footer · src/preact: Button
-│   ├── utils/                      # (@repo/utils) normalizeSiteUrl, generateRobotsTxt, buildWhatsAppUrl, cn, SiteMetadata
-│   └── tsconfig/                   # (@repo/tsconfig) Configs base de TS (base, astro, preact)
-└── sites/
-    ├── _template/                  # Plantilla maestra genérica (intocable salvo mejoras globales)
-    ├── motel-boutique/             # Motel/hotel boutique en español (home, nuestras-suites, restaurante, contacto); aún sin theme.css ni CUSTOMIZE.md
-    ├── la-guaca/                   # Motel en español (cliente real) y plantilla por defecto de clientes nuevos: recursos/_plantilla-cliente/ es su copia literal
-    ├── plantilla-asterre/          # Retiro boutique en inglés, clon de asterre.framer.website (rooms/[slug], retreat, experience, contact, legales)
-    ├── plantilla-hotellia/         # Hotel boutique en inglés, clon de hotellia.framer.website (rooms, offers, wine-dine, menús, gallery, reserve, legales; usa lenis)
-    └── plantilla-pinevalley/       # Villa/casa de campo en inglés, landing de una página clon de pinevalley.framer.website (galería con visor, carrusel coverflow, FAQ, mapa; usa lenis)
+│   ├── ui/                         # (@repo/ui) SEO, Section, Footer · Button (Preact)
+│   ├── utils/                      # (@repo/utils) normalizeSiteUrl, generateRobotsTxt, buildWhatsAppUrl, cn
+│   └── tsconfig/                   # (@repo/tsconfig) base, astro, preact
+├── scripts/                        # CLI de la fábrica (comandos en §9)
+│   ├── lib/                        # paths (resuelve plantillas/clientes), pipeline, brief, prompts, clone
+│   ├── client-run.mjs              # pnpm cliente:crear — intake → … → PR
+│   ├── recursos-intake.mjs         # pnpm cliente:intake — prepara y aplica el intake
+│   ├── template-clone.mjs          # pnpm plantilla:clonar — URL → plantilla → PR
+│   └── …                           # new-client-site, customize-check, qa-site, optimize-assets, templates-list, verify-isolation
+├── tests/                          # Suite Playwright compartida (visual, funcional y SEO)
+├── docker/                         # Dockerfile (SITE_FOLDER=<slug>) y nginx.conf
+├── docs/guias/                     # 01-crear-cliente · 02-crear-plantilla · 03-desplegar · 04-reglas
+├── .agents/skills/                 # Skills para agentes (§8)
+└── .claude/commands/               # Comandos slash, incluido /nuevo-cliente
 ```
 
-### Sitios existentes y convenciones observadas
-- Todos los sitios exponen `src/config/site.ts`, `src/layouts/BaseLayout.astro`, `src/pages/robots.txt.ts`, `src/pages/404.astro` y `src/styles/global.css`; `_template`, `la-guaca`, `plantilla-asterre`, `plantilla-hotellia` y `plantilla-pinevalley` además separan los tokens de marca en `src/styles/theme.css` y traen un `CUSTOMIZE.md` (ver sección 6).
-- Los sitios clonados (`motel-boutique`, `plantilla-*`) concentran su contenido en `src/data/content.ts`, mantienen secciones en `src/components/sections/` (o directamente en `src/components/`) y usan `src/scripts/*.ts` para animaciones de entrada.
-- Páginas dinámicas (`rooms/[slug].astro`, `offers/[slug].astro`) se generan estáticamente a partir de `src/data/content.ts`.
-- Las plantillas (`plantilla-*`) usan dominios de ejemplo (`*.example.com`); se reemplazan al entregar a un cliente real.
-- Los reportes y capturas en `docs/research/<cliente>/` y `docs/design-references/<cliente>/` (`current-*.png`, `visual-qa-report.*`) son artefactos generados e ignorados por Git; solo se versionan las referencias fuente (`source/`, `local/`, `snapshots/`) y los briefs.
+### Anatomía de un sitio (igual en plantillas y clientes)
+
+```text
+<plantillas|clientes>/<slug>/
+├── plantilla.json | cliente.json   # Manifiesto (catálogo / plantilla de origen y estado)
+├── CUSTOMIZE.md                    # Guía de los 4 puntos de personalización
+├── astro.config.mjs · package.json # @plantillas/<slug> o @clientes/<slug>
+├── docs/                           # Brief, agent-summary, guía de voz, assets-manifest
+│   ├── referencias/                # Capturas de la fuente y snapshots de QA (versionadas)
+│   └── qa/                         # Informes y capturas de cliente:qa (ignorada por Git)
+├── public/                         # Activos (punto 4)
+└── src/
+    ├── config/site.ts              # Identidad, contacto y dominio (punto 1)
+    ├── styles/theme.css            # Marca visual (punto 2) · global.css
+    ├── data/content.ts             # Textos y datos, UI_LABELS (punto 3)
+    ├── layouts/BaseLayout.astro    # <SEO /> de @repo/ui
+    ├── components/ (sections/)     # Secciones del sitio
+    ├── scripts/motion.ts           # Animaciones de entrada
+    └── pages/                      # index, 404, robots.txt.ts y páginas (dinámicas con [slug])
+```
 
 ---
 
@@ -134,7 +126,7 @@ Todo código generado por cualquier LLM debe ser **indistinguible** del resto de
   - En componentes `.tsx` (Preact): declara `export interface NombreComponenteProps { ... }` y usa named exports (`export function NombreComponente(...)`).
 
 ### 4.3. Convenciones de Nomenclatura
-- **Carpetas de clientes (`sites/<slug-cliente>`):** `kebab-case` en minúsculas (ej. `sites/clinica-dental`, `sites/cafe-aurora`).
+- **Carpetas de sitios (`clientes/<slug>`, `plantillas/<slug>`):** `kebab-case` en minúsculas y **únicas entre ambas carpetas** (ej. `clientes/clinica-dental`, `plantillas/hotellia`). Las plantillas no llevan prefijo `plantilla-`.
 - **Páginas de Astro (`src/pages/`):** `kebab-case` (ej. `index.astro`, `sobre-nosotros.astro`, `contacto.astro`).
 - **Componentes (`.astro` y `.tsx`):** `PascalCase` descriptivo (ej. `HeroBanner.astro`, `PricingCard.astro`, `MobileMenu.tsx`).
 - **Funciones, variables y helpers (`.ts`):** `camelCase` (ej. `buildWhatsAppUrl`, `normalizeSiteUrl`, `siteConfig`).
@@ -152,23 +144,23 @@ Respeta siempre este orden de imports en `.astro`, `.ts` y `.tsx`:
 3. Archivos internos del sitio usando el alias `@/` (`@/layouts/...`, `@/components/...`, `@/config/site`).
 4. Hojas de estilo (`@/styles/theme.css` y después `@/styles/global.css`).
 
-> **Regla:** Dentro de `sites/<cliente>/src/`, usa siempre el alias `@/...` en lugar de rutas relativas encadenadas (`../../components/...`).
+> **Regla:** Dentro de `<sitio>/src/`, usa siempre el alias `@/...` en lugar de rutas relativas encadenadas (`../../components/...`).
 
 ---
 
 ## 5. Reglas Arquitectónicas y de Gobernanza (Do's & Don'ts)
 
-### 5.1. Aislamiento estricto entre clientes (verificado por `pnpm verify:isolation`)
-- **PROHIBIDO** importar código, imágenes o estilos desde `sites/cliente-a` hacia `sites/cliente-b`.
+### 5.1. Aislamiento estricto entre sitios (verificado por `pnpm verify:isolation`)
+- **PROHIBIDO** importar código, imágenes o estilos entre sitios: de un cliente a otro, de una plantilla a un cliente o al revés. Un cliente **copia** su plantilla al nacer (`pnpm cliente:nuevo`) y desde ahí evoluciona solo.
 - **PROHIBIDO** guardar logos, textos comerciales, teléfonos o colores específicos de un cliente dentro de `packages/ui` o `packages/utils`.
-- **No uses `sites/_template` para un cliente específico:** `sites/_template` debe mantenerse limpio como plantilla base.
+- **Las plantillas no son clientes:** nunca pongas datos reales de un cliente en `plantillas/*`, y nunca uses un cliente como plantilla de otro. Si un cliente aporta una mejora genérica, pórtala a su plantilla con datos de ejemplo.
 - **Cero secretos en Git:** Nunca almacenes tokens, claves SSH ni archivos `.env` reales en el repositorio.
 
-### 5.2. Dónde crear cada componente (`packages/ui` vs `sites/<cliente>`)
+### 5.2. Dónde crear cada componente (`packages/ui` vs sitio)
 - **En `packages/ui` (`@repo/ui`):**
   - Componentes transversales que sirven a 2 o más sitios (`SEO.astro`, `Section.astro`, `Footer.astro`, botones, modales, acordeones de FAQ, botones flotantes de WhatsApp).
   - Deben ser agnósticos a la marca: reciben contenido por `props` / `<slot />` y usan clases con prefijo `ui-` y variables CSS (`var(--color-primary)`, `var(--color-accent)`).
-- **En `sites/<cliente>/src/components/`:**
+- **En `clientes/<slug>/src/components/` o `plantillas/<slug>/src/components/`:**
   - Secciones o bloques hechos a la medida de ese cliente (`HeroRestaurante.astro`, `CatalogoServicios.astro`, `GaleriaProyecto.astro`).
 
 ### 5.3. Arquitectura de Islas: Astro primero, Preact solo cuando sea necesario
@@ -179,7 +171,7 @@ Respeta siempre este orden de imports en `.astro`, `.ts` y `.tsx`:
   - Prefiere `client:visible` o `client:idle` para componentes interactivos en el resto de la página.
 
 ### 5.4. Manejo de Dominios y SEO Técnico por Cliente
-- Cada sitio tiene su configuración centralizada en `sites/<cliente>/src/config/site.ts`.
+- Cada sitio tiene su configuración centralizada en `<sitio>/src/config/site.ts`.
 - El dominio del cliente se define en la constante `CLIENT_DOMAIN` (ej. `"micliente.com"`), y `normalizeSiteUrl(CLIENT_DOMAIN)` genera `https://micliente.com`.
 - **NUNCA hardcodees el dominio** en etiquetas `<head>`, páginas o componentes. Usa siempre `siteConfig` de `@/config/site` o `Astro.site`.
 - Todo sitio nuevo debe conservar:
@@ -203,114 +195,70 @@ Un sitio de cliente se personaliza editando **solo 4 puntos**, sin tocar compone
 **Reglas para cualquier LLM o desarrollador:**
 - **PROHIBIDO** escribir en componentes `.astro`/`.tsx` o páginas nombres de marca, nombres de personas, teléfonos, correos, dominios o textos visibles para el usuario (incluidos `aria-label`, `alt`, `placeholder` y mensajes de formulario). Léelos de `siteConfig` (`@/config/site`) o de `@/data/content`.
 - Los valores de color y tipografía viven solo en `theme.css`; `global.css` y los `<style>` de componentes consumen `var(--...)`.
-- Cada plantilla (`_template`, `plantilla-*`) incluye un `CUSTOMIZE.md` en su raíz con los 4 puntos, tamaños de imagen sugeridos, páginas opcionales y checklist de entrega. Un clon nuevo debe nacer con esta convención y su `CUSTOMIZE.md`.
-- `pnpm customize:check <slug-cliente>` audita un sitio de cliente (dominio de ejemplo, marcas de la plantilla de origen, contactos placeholder e imágenes idénticas) usando `scripts/template-brands.json`; con `--strict` falla si hay hallazgos. Al agregar una plantilla nueva, registra sus marcas y datos de ejemplo en ese JSON. Es obligatorio en verde antes de entregar un cliente real y no aplica a las plantillas.
+- Cada plantilla incluye un `CUSTOMIZE.md` en su raíz con los 4 puntos, tamaños de imagen sugeridos, páginas opcionales y checklist de entrega, y un `plantilla.json` (nombre, idioma, tipo de negocio, demo, `marcas` y `placeholders` de ejemplo). Una plantilla nueva nace con ambos.
+- `pnpm cliente:check <slug>` audita un cliente (dominio de ejemplo, marcas y datos de ejemplo de su plantilla de origen según `cliente.json` → `plantilla.json`, e imágenes idénticas); con `--strict` falla si hay hallazgos. Es obligatorio en verde antes de entregar un cliente real y no aplica a las plantillas.
 
 ---
 
-## 7. Flujo Paso a Paso para Crear un Sitio de Cliente Nuevo
+## 7. Flujo para crear un cliente
 
-**Vía automatizada (preferida cuando existe `recursos/<slug>/brief.md`):** `pnpm client:run <slug>` ejecuta todo este flujo sin supervisión y abre un PR (ver README, "Pipeline automatizado"). Para clonar una web como plantilla nueva: `pnpm template:clone <url> <plantilla-slug>`. Si te invoca ese pipeline, no ejecutes git: el orquestador crea la rama, commitea y abre el PR.
+**Vía automatizada (siempre que se pueda):** guía completa en [`docs/guias/01-crear-cliente.md`](./docs/guias/01-crear-cliente.md).
 
-Cuando el usuario pida crear la web de un nuevo cliente a mano, utiliza el generador oficial `new-client-site` (no inventes teléfonos, correos ni direcciones que el usuario no haya proporcionado):
+1. `pnpm cliente:recursos <slug>`: crea `recursos/<slug>/` con el esqueleto.
+2. Deja el material del cliente, tal como llegue, en `recursos/<slug>/entrada/`.
+3. En Claude Code: `/nuevo-cliente <slug>`, o `pnpm cliente:crear <slug>`. El pipeline ejecuta:
+   - **intake:** el agente ordena las fotos, redacta `brief.md` y `preguntas.md`.
+   - **generate:** `cliente:nuevo` desde la plantilla del brief.
+   - **assets:** `cliente:activos`.
+   - **agent:** personalización de los 4 puntos.
+   - **gates:** `cliente:check --strict`, `verify` y `cliente:qa`, con reparación automática.
+   - **commit y PR,** con la ficha de Coolify.
+4. Una persona revisa el PR, hace merge y crea la app de Coolify con la ficha ([`docs/guias/03-desplegar.md`](./docs/guias/03-desplegar.md)).
 
-1. **Ejecutar el generador:**
-   ```bash
-   pnpm new-client-site <slug-cliente> --name "<Nombre Comercial>" --domain "<dominio.com>"
-   pnpm new-client-site <slug-cliente> --from plantilla-hotellia --name "<Nombre Comercial>" --domain "<dominio.com>"
-   ```
-   *(El generador valida el `kebab-case`, se detiene si el sitio ya existe, copia `sites/_template` (o la plantilla indicada con `--from`) sin modificar el origen, configura `@sites/<slug-cliente>` y `src/config/site.ts`, crea las carpetas en `docs/` y ejecuta las comprobaciones iniciales. Con `--from` conserva diseño, páginas y contenido de la plantilla, solo ajusta paquete, dominio y los campos `name/title/description/locale` pasados, registra el origen en `.template-origin` y muestra un resumen de `customize:check`. Nunca copies sitios a mano).*
-2. **Personalizar los 4 puntos** descritos en la sección 6, en este orden: `site.ts` → `theme.css` → `content.ts` → `public/`. Sigue el `CUSTOMIZE.md` del sitio. No inventes datos que el usuario no haya dado: deja visibles como pendientes los que falten.
-3. **Construir las páginas y secciones** que la plantilla no cubra: desarrolla las secciones en `sites/<slug-cliente>/src/components/` y ensámblalas en `src/pages/` reutilizando `BaseLayout.astro` y `@repo/ui`, respetando las reglas de la sección 6.
-4. **Auditar restos de plantilla** (solo clientes reales): `pnpm customize:check <slug-cliente> --strict`.
-5. **Validar calidad, aislamiento y QA visual antes de entregar:**
-   - `pnpm verify` (equivale a `verify:isolation` + `lint` + `check` + `build`, igual que CI y el hook `pre-push`)
-   - O por separado: `pnpm verify:isolation`, `pnpm lint`, `pnpm --filter @sites/<slug-cliente> check`, `pnpm --filter @sites/<slug-cliente> build`
-   - `pnpm qa:site <slug-cliente>` (todas las rutas del build) o `SITE_FOLDER=<slug-cliente> QA_ROUTES="/,/otra-ruta" pnpm test:visual`
-6. **Desplegar:** una aplicación de Coolify por cliente con `docker/Dockerfile`, `SITE_FOLDER` y `SITE_URL` (ver [`docs/deploy-coolify.md`](./docs/deploy-coolify.md)). Activa el hook una vez por clon: `git config core.hooksPath .githooks`.
+**Si te invoca el pipeline** (prompt headless de `cliente:crear` o `plantilla:clonar`), **no ejecutes git**: el orquestador crea la rama, commitea y abre el PR. Trabaja solo dentro de las rutas que indique el prompt; la guardia de alcance rechaza el resto.
 
----
+**A mano** (solo si el usuario lo pide): `pnpm cliente:nuevo <slug> --from <plantilla> --name "<Nombre>" --domain "<dominio>"`. Después edita los 4 puntos (§6) siguiendo el `CUSTOMIZE.md`, y valida con `pnpm cliente:check <slug> --strict`, `pnpm verify` y `pnpm cliente:qa <slug>`. No inventes teléfonos, correos ni direcciones.
 
-## 8. Catálogo de Skills del Monorepo (`.agents/skills/`)
-
-Antes de ejecutar tareas especializadas, lee la skill correspondiente:
-
-- **`clone-website`** ([`.agents/skills/clone-website/SKILL.md`](./.agents/skills/clone-website/SKILL.md)): Clonar o reconstruir sitios web existentes (incluyendo Framer y páginas animadas) dentro de `sites/<slug-cliente>/`.
-- **`visual-qa`** ([`.agents/skills/visual-qa/SKILL.md`](./.agents/skills/visual-qa/SKILL.md)): Ejecutar pruebas funcionales y visuales con Playwright en desktop (`1440x900`) y mobile (`390x844`), detectar overflow horizontal, guardar capturas y comparar contra referencias.
-- **`review-monorepo`** ([`.agents/skills/review-monorepo/SKILL.md`](./.agents/skills/review-monorepo/SKILL.md)): Auditar ramas antes de un PR verificando aislamiento entre clientes, impacto en paquetes compartidos, linting, tipos y build.
-- **`seo-audit`** ([`.agents/skills/seo-audit/SKILL.md`](./.agents/skills/seo-audit/SKILL.md)): Auditar SEO técnico, canonicals, OpenGraph, jerarquía de encabezados, `robots.txt` y `sitemap-index.xml`.
-- **`deploy-client`** ([`.agents/skills/deploy-client/SKILL.md`](./.agents/skills/deploy-client/SKILL.md)): Validar la poda con `turbo prune` y preparar la ficha de despliegue para VPS (Coolify / Dokploy / Docker + Nginx) sin ejecutar despliegues no autorizados.
-- **`codebase-context`** ([`.agents/skills/codebase-context/SKILL.md`](./.agents/skills/codebase-context/SKILL.md)): Obtener contexto del repo desde el grafo de `codebase-memory-mcp` (índice, arquitectura, símbolos y relaciones) en vez de releer archivos. **Úsala al iniciar una sesión y antes de explorar código.**
-- **`motel-copywriting`** ([`.agents/skills/motel-copywriting/SKILL.md`](./.agents/skills/motel-copywriting/SKILL.md)): Elegir el tono de marca y redactar todos los textos de sitios de moteles (hero, habitaciones, tarifas, FAQ, microcopy) con CTA a reserva por WhatsApp y visita presencial, sin inventar datos. Úsala siempre que escribas o revises copy de un motel.
+**Plantilla nueva:** `pnpm plantilla:clonar <url> <slug>`. Guía: [`docs/guias/02-crear-plantilla.md`](./docs/guias/02-crear-plantilla.md).
 
 ---
 
-## 9. Comandos Oficiales del Monorepo (Solo `pnpm`)
+## 8. Skills del monorepo (`.agents/skills/`)
 
-Ejecuta siempre los comandos desde la raíz del monorepo (`/monorepo-webs`):
+Antes de una tarea especializada, lee su skill (también como comando slash en `.claude/commands/`):
 
-- **Instalar dependencias (respetando lockfile):**
-  ```bash
-  pnpm install
-  pnpm install --frozen-lockfile
-  ```
-- **Crear un nuevo sitio de cliente:**
-  ```bash
-  pnpm new-client-site <slug-cliente> --name "<Nombre>" --domain "<dominio.com>"
-  pnpm new-client-site <slug-cliente> --from plantilla-hotellia --name "<Nombre>" --domain "<dominio.com>"
-  ```
-- **Pipeline automatizado (brief/URL → PR, sin supervisión):**
-  ```bash
-  pnpm recursos:new <slug-cliente>                      # carpeta de recursos y brief
-  pnpm client:run <slug-cliente> [--dry-run|--resume|--no-pr|--allow-pending]
-  pnpm template:clone <url> <plantilla-slug> [--dry-run|--resume|--no-pr]
-  pnpm template-prompt <url> <plantilla-slug>           # prompt manual de clonado (al portapapeles)
-  pnpm optimize-assets <slug-cliente>                   # recursos → public/ (WebP)
-  pnpm qa:site <slug-cliente>                           # build + QA de todas las rutas
-  ```
-- **Auditar restos de plantilla en un sitio de cliente:**
-  ```bash
-  pnpm customize:check <slug-cliente>
-  pnpm customize:check <slug-cliente> --strict   # falla si hay hallazgos
-  ```
-- **Verificación completa (aislamiento + lint + check + build, lo mismo que CI):**
-  ```bash
-  pnpm verify
-  ```
-- **Verificar aislamiento entre clientes y gobernanza:**
-  ```bash
-  pnpm verify:isolation
-  ```
-- **Levantar servidor de desarrollo de un único cliente:**
-  ```bash
-  pnpm --filter @sites/<slug-cliente> dev
-  ```
-- **Compilar un único cliente para producción / previsualizar el build:**
-  ```bash
-  pnpm --filter @sites/<slug-cliente> build
-  pnpm --filter @sites/<slug-cliente> preview
-  ```
-- **Verificar tipos y diagnósticos de Astro/TS:**
-  ```bash
-  pnpm check
-  pnpm --filter @sites/<slug-cliente> check
-  ```
-- **Ejecutar linter y formato en todo el monorepo (Biome):**
-  ```bash
-  pnpm lint
-  pnpm lint:fix
-  pnpm format
-  ```
-- **Ejecutar pruebas funcionales y de calidad visual con Playwright:**
-  ```bash
-  SITE_FOLDER=<slug-cliente> pnpm test:visual
-  SITE_FOLDER=<slug-cliente> QA_ROUTES="/,/rooms" pnpm test:visual   # rutas específicas
-  SITE_FOLDER=<slug-cliente> pnpm test:visual:update
-  ```
-  Sin `SITE_FOLDER` se prueba `_template`. Variables opcionales: `QA_PORT` (por defecto `4321`) y `BASE_URL` (usa un servidor ya levantado).
-- **Construir imagen Docker de producción para un cliente específico:**
-  ```bash
-  docker build -f docker/Dockerfile --build-arg SITE_FOLDER=<slug-cliente> -t web-<slug-cliente> .
-  docker run --rm -p 8080:80 web-<slug-cliente>   # http://localhost:8080 y /healthz
-  ```
-- **Limpiar artefactos:** `pnpm clean`
+- **`recursos-intake`**: ordena `recursos/<slug>/entrada/` y redacta el brief y las preguntas para el cliente.
+- **`motel-copywriting`**: tono de marca y textos de moteles (CTA a WhatsApp y visita, sin inventar datos).
+- **`clone-website`**: clonar una web como plantilla (o cliente) con fidelidad visual.
+- **`visual-qa`**: QA visual y funcional con Playwright en desktop (`1440x900`) y mobile (`390x844`).
+- **`seo-audit`**: SEO técnico (canonicals, OpenGraph, encabezados, robots y sitemap).
+- **`review-monorepo`**: auditoría de PR (aislamiento, impacto en el núcleo, lint, tipos y build).
+- **`deploy-client`**: validación de la poda con `turbo prune` y ficha de despliegue.
+- **`codebase-context`**: contexto del repo desde el grafo de `codebase-memory-mcp`. **Úsala al iniciar sesión.**
+
+Comando de alto nivel: **`/nuevo-cliente <slug>`** ([`.claude/commands/nuevo-cliente.md`](./.claude/commands/nuevo-cliente.md)) orquesta el flujo del §7 de punta a punta.
+
+---
+
+## 9. Comandos (solo `pnpm`, desde la raíz)
+
+| Comando | Qué hace |
+| :-- | :-- |
+| `pnpm install` | Instala dependencias (en CI: `--frozen-lockfile`) |
+| `pnpm verify` | `verify:isolation` + `lint` + `check` + `build` (igual que CI y el hook `pre-push`) |
+| `pnpm cliente:recursos <slug>` | Crea `recursos/<slug>/` con el esqueleto y la bandeja `entrada/` |
+| `pnpm cliente:crear <slug>` | Pipeline completo hasta el PR (`--dry-run`, `--intake-only`, `--resume`, `--from-step`, `--allow-pending`, `--no-pr`) |
+| `pnpm cliente:intake <slug> --prepare\|--apply\|--status` | Pasos sueltos del intake (depuración) |
+| `pnpm cliente:nuevo <slug> --from <plantilla>` | Genera `clientes/<slug>/` copiando una plantilla (`--plantilla`: genera `plantillas/<slug>/`) |
+| `pnpm cliente:activos <slug>` | Optimiza `recursos/<slug>/{fotos,marca}` hacia `clientes/<slug>/public/` (WebP) |
+| `pnpm cliente:check <slug> [--strict]` | Audita restos de plantilla en un cliente |
+| `pnpm cliente:qa <slug>` | Build y QA visual, funcional y SEO de todas las rutas (cliente o plantilla) |
+| `pnpm cliente:prompt <slug>` | Prompt manual equivalente a `cliente:crear` (al portapapeles) |
+| `pnpm plantilla:lista [--write]` | Catálogo de plantillas (con `--write` actualiza `plantillas/README.md`) |
+| `pnpm plantilla:clonar <url> <slug>` | Clona una web como plantilla nueva hasta el PR |
+| `pnpm plantilla:prompt <url> <slug>` | Prompt manual de clonado (al portapapeles) |
+| `pnpm --filter @clientes/<slug> dev` | Servidor de desarrollo de un sitio (`@plantillas/<slug>` para plantillas) |
+| `pnpm lint` · `pnpm lint:fix` · `pnpm check` | Biome y diagnósticos de Astro/TS |
+| `docker build -f docker/Dockerfile --build-arg SITE_FOLDER=<slug> -t web-<slug> .` | Imagen de producción de un sitio |
+
+Activa el hook una vez por clon: `git config core.hooksPath .githooks`.

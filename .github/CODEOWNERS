@@ -11,7 +11,7 @@
 /biome.json @isjuandev
 /playwright.config.ts @isjuandev
 /packages/ @isjuandev
-/sites/_template/ @isjuandev
+/plantillas/ @isjuandev
 /docker/ @isjuandev
 /scripts/ @isjuandev
 /tests/ @isjuandev
