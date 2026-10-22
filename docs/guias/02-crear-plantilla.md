@@ -39,5 +39,5 @@ Si un cliente añade algo genérico (por ejemplo, un botón flotante de WhatsApp
 ```bash
 pnpm verify
 pnpm cliente:qa <plantilla>
-node scripts/template-clone.mjs --probe <plantilla>
+pnpm plantilla:probe <plantilla>
 ```

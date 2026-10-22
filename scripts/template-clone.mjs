@@ -162,7 +162,7 @@ function buildPrBody({ slug, url, state }) {
     "",
     "- [x] `pnpm verify` (aislamiento, lint, check, build)",
     `- [x] \`pnpm cliente:qa ${slug}\` (todas las rutas, desktop y mobile)`,
-    `- [x] Prueba de personalización (\`node scripts/template-clone.mjs --probe ${slug}\`)`,
+    `- [x] Prueba de personalización (\`pnpm plantilla:probe ${slug}\`)`,
     `- Reparaciones automáticas: ${state.repairs ?? 0} · coste del agente: $${(state.costUsd ?? 0).toFixed(2)}`,
     "",
     "<details><summary>Informe de Visual QA</summary>",
