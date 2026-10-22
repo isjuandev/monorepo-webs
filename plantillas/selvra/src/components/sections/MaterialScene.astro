@@ -3,8 +3,8 @@ import { HOME } from "@/data/content";
 
 /**
  * "Stone. Wood. Open space.": escenario de fotos fijo (sticky, top 48 px) a la izquierda y tres
- * textos que pasan a la derecha. Cada foto entra con fundido y zoom suaves (CSS) cuando el borde
- * superior de su texto cruza el 62 % del viewport; la lógica está en `scripts/motion.ts`.
+ * textos que pasan a la derecha. Cada foto entra con fundido y zoom suaves (CSS) cuando el centro de su paso
+ * cruza el 60 % del viewport; la lógica está en `scripts/motion.ts`.
  * En mobile cada paso muestra su foto encima del texto, sin escenario fijo.
  */
 const steps = HOME.materials;
@@ -109,14 +109,35 @@ const steps = HOME.materials;
   .materials__steps {
     display: flex;
     flex-direction: column;
-    gap: 342px;
-    padding: 164px 0 177px;
+  }
+
+  .materials__step {
+    display: flex;
+    align-items: center;
+    height: 902px;
   }
 
   .materials__text {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .materials__step.is-visible .materials__text {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .materials__text {
+      transition: none;
+      transform: none;
+    }
   }
 
   .materials__text .t-h2 {
@@ -149,13 +170,13 @@ const steps = HOME.materials;
 
     .materials__steps {
       gap: 64px;
-      padding: 0;
     }
 
     .materials__step {
-      display: flex;
       flex-direction: column;
+      align-items: stretch;
       gap: 24px;
+      height: auto;
     }
 
     .materials__inline-photo {

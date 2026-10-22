@@ -2,13 +2,14 @@
  * Movimiento ligado al scroll, medido en la fuente (Framer, sin smooth scroll):
  * - `[data-parallax]`: desplaza el elemento `factor` px por px de scroll mientras el hero es visible
  *   (fotos del hero +0,1 · logotipo −0,15).
- * - `[data-materials]`: cuando un texto cruza el 62 % del viewport, su foto entra en el escenario
+ * - `[data-materials]`: cuando el centro de un paso cruza el 60 % del viewport, su foto entra en el escenario
  *   fijo con un fundido y zoom suaves (CSS); la saliente queda debajo hasta terminar. Con
- *   movimiento reducido el cambio es instantáneo.
+ *   movimiento reducido el cambio es instantáneo. Cada texto aparece (fundido + desplazamiento) al entrar en vista.
  */
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-const MATERIAL_SWITCH_AT = 0.62;
+const MATERIAL_SWITCH_AT = 0.6;
+const MATERIAL_REVEAL_AT = 0.85;
 const MATERIAL_LEAVE_MS = 1100;
 
 function updateParallax(): void {
@@ -51,7 +52,10 @@ function updateMaterials(): void {
     const photos = [...scene.querySelectorAll<HTMLElement>("[data-material-photo]")];
     let active = 0;
     steps.forEach((step, index) => {
-      if (step.getBoundingClientRect().top <= threshold) active = index;
+      const rect = step.getBoundingClientRect();
+      const center = rect.top + rect.height / 2;
+      if (center <= threshold) active = index;
+      if (center <= window.innerHeight * MATERIAL_REVEAL_AT) step.classList.add("is-visible");
     });
     setActivePhoto(photos, active);
   }
