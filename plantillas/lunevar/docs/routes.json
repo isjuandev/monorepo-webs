@@ -1,0 +1,32 @@
+{
+  "source": "https://extraordinary-wombat-796551.framer.app",
+  "origin": "https://extraordinary-wombat-796551.framer.app",
+  "title": "Lunevar — A desert retreat that lives by the sun",
+  "routes": [
+    "/",
+    "/a-day-here",
+    "/dining",
+    "/journal",
+    "/journal/a-field-guide-to-a-bortle-1-sky",
+    "/journal/clay-water-patience-a-morning-with-the-nahat-family",
+    "/journal/eleven-minutes-of-noon-designing-the-slit-of-light",
+    "/journal/growing-food-where-it-almost-never-rains",
+    "/journal/the-mineral-breakfast-explained",
+    "/journal/what-two-nights-in-our-sleep-lab-taught-400-guests",
+    "/journal/why-we-built-a-hotel-without-clocks",
+    "/longevity",
+    "/plan-your-stay",
+    "/suites",
+    "/suites/canyon-room",
+    "/suites/courtyard-villa",
+    "/suites/dune-suite",
+    "/suites/mesa-suite",
+    "/suites/shadow-house",
+    "/suites/star-loft"
+  ],
+  "localeRoutes": [],
+  "sitemaps": [
+    "https://extraordinary-wombat-796551.framer.app/sitemap.xml"
+  ],
+  "reachable": true
+}
