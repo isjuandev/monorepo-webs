@@ -1,7 +1,7 @@
 {
   "nombre": "Hotellia",
-  "descripcion": "Hotel boutique en inglés: habitaciones, ofertas, restaurante y menús, galería y reservas (smooth-scroll con lenis).",
-  "idioma": "en",
+  "descripcion": "Hotel boutique: habitaciones, ofertas, restaurante y menús, galería y reservas (smooth-scroll con lenis).",
+  "idioma": "es",
   "negocio": ["hotel"],
   "origen": "https://hotellia.framer.website",
   "demo": "https://hotellia-template.nexobite.com",

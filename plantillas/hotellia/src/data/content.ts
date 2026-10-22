@@ -69,34 +69,34 @@ export interface LegalBlock {
 const img = (file: string, alt = ""): ImageAsset => ({ src: `/images/${file}`, alt });
 
 export const IMAGES = {
-  homeHero: img("home-hero.jpg", "The hotel main view"),
+  homeHero: img("home-hero.jpg", "Vista principal del hotel"),
   logoWhite: "/images/logo-white.png",
   logoBlack: "/images/logo-black.png",
   signature: "/images/signature.png",
-  barEmber: img("bar-ember.jpg", "Ember - Main bar of the hotel"),
-  restaurantGrove: img("restaurant-grove.jpg", "Grove & Grain resutaurant interior"),
+  barEmber: img("bar-ember.jpg", "Ember - Bar principal del hotel"),
+  restaurantGrove: img("restaurant-grove.jpg", "Interior del restaurante Grove & Grain"),
 };
 
 export const HOME_HERO = {
-  left: "A boutique hotel designed for slow living",
-  right: "Life, Unhurried",
+  left: "Un hotel boutique diseñado para vivir despacio",
+  right: "La vida, sin prisa",
 };
 
 export const TICKER_OFFERS = [
-  { title: "SUMMER ESCAPE", text: "Up to 30% off", href: "/offers/summer-escape" },
-  { title: "SPRING SALE", text: "Up to 40% off", href: "/offers/summer-escape" },
-  { title: "SPRING SALE", text: "Up to 40% off", href: "/offers/summer-escape" },
+  { title: "ESCAPADA DE VERANO", text: "Hasta 30% de descuento", href: "/offers/summer-escape" },
+  { title: "OFERTA DE PRIMAVERA", text: "Hasta 40% de descuento", href: "/offers/summer-escape" },
+  { title: "OFERTA DE PRIMAVERA", text: "Hasta 40% de descuento", href: "/offers/summer-escape" },
 ];
 
 export const DINE_INTRO: SectionIntro = {
-  title: "wine & dine",
-  text: "Whether you're settling into Ember for an evening cocktail or sitting down to a full dinner at Grove & Grain, every visit is an occasion worth savouring.",
+  title: "vinos y cenas",
+  text: "Ya sea que te instales en Ember para un cóctel al atardecer o que te sientes a cenar en Grove & Grain, cada visita es una ocasión que vale la pena saborear.",
 };
 
 export const DINE_CARDS = [
-  { title: "Bar menu", subtitle: "Ember", href: "/bar-menu", image: IMAGES.barEmber },
+  { title: "Menú del bar", subtitle: "Ember", href: "/bar-menu", image: IMAGES.barEmber },
   {
-    title: "Restaurant menu",
+    title: "Menú del restaurante",
     subtitle: "Grove & Grain",
     href: "/restaurant-menu",
     image: IMAGES.restaurantGrove,
@@ -104,304 +104,304 @@ export const DINE_CARDS = [
 ];
 
 export const EXPERIENCES_INTRO: SectionIntro = {
-  title: "Total escape",
-  text: "From intimate candlelit dinners to sun-drenched terrace breakfasts, our dining venues offer an unforgettable culinary journey crafted for every occasion.",
+  title: "Escape total",
+  text: "Desde cenas íntimas a la luz de las velas hasta desayunos en terrazas bañadas por el sol, nuestros espacios gastronómicos ofrecen un recorrido culinario inolvidable, pensado para cada ocasión.",
 };
 
 export const EXPERIENCES = [
   {
-    title: "UNWIND",
-    text: "Sink into pure relaxation with access to our spa, pool, and wellness amenities designed to melt the day away.",
-    image: img("exp-unwind.jpg", "Exterior view of the hotel"),
+    title: "DESCANSO",
+    text: "Relájate por completo con acceso a nuestro spa, piscina y servicios de bienestar, pensados para disolver el día.",
+    image: img("exp-unwind.jpg", "Vista exterior del hotel"),
   },
   {
-    title: "FEAST",
-    text: "Savor thoughtfully crafted dishes and seasonal menus that bring local flavors to your table, morning to night",
-    image: img("exp-feast.jpg", "Outdoor cafe with sea view"),
+    title: "BANQUETE",
+    text: "Saborea platos cuidadosamente elaborados y menús de temporada que llevan los sabores locales a tu mesa, de la mañana a la noche",
+    image: img("exp-feast.jpg", "Cafetería al aire libre con vista al mar"),
   },
   {
-    title: "EXPLORE",
-    text: "Discover the best of the area with curated local tips, guided tours, and everything you need to venture out with confidence.",
-    image: img("exp-explore.jpg", "Exterior of the hotel with main road"),
+    title: "EXPLORA",
+    text: "Descubre lo mejor de la zona con recomendaciones locales seleccionadas, visitas guiadas y todo lo que necesitas para salir con confianza.",
+    image: img("exp-explore.jpg", "Fachada del hotel con la calle principal"),
   },
   {
-    title: "REST",
-    text: "Experience the art of a perfect night's sleep with premium bedding, a serene atmosphere, and every comfort taken care of.",
-    image: img("exp-rest.jpg", "Lounging area"),
+    title: "REPOSO",
+    text: "Vive el arte de una noche de sueño perfecta, con ropa de cama premium, un ambiente sereno y todas las comodidades cuidadas.",
+    image: img("exp-rest.jpg", "Zona de descanso"),
   },
 ];
 
 export const ROOMS_INTRO: SectionIntro = {
-  title: "rooms",
-  text: "Each room is a sanctuary — designed with care, finished with character, and made to feel like yours from the moment you arrive.",
+  title: "habitaciones",
+  text: "Cada habitación es un santuario: diseñada con cuidado, terminada con carácter y pensada para que se sienta tuya desde el momento en que llegas.",
 };
 
 export const ROOMS: Room[] = [
   {
     slug: "double-deluxe",
-    name: "Double Deluxe",
+    name: "Doble Deluxe",
     summary:
-      "Warm light, garden stillness, and a queen bed dressed for long mornings. Your private patio awaits just beyond the door.",
-    image: img("room-double-deluxe.jpg", "Double room bedroom view"),
+      "Luz cálida, quietud de jardín y una cama queen preparada para mañanas largas. Tu patio privado te espera al otro lado de la puerta.",
+    image: img("room-double-deluxe.jpg", "Vista del dormitorio de la habitación doble"),
     properties: [
-      { icon: "bed", label: "Queen Bed" },
-      { icon: "users", label: "2 Guests" },
-      { icon: "area", label: "55 Sqm" },
+      { icon: "bed", label: "Cama queen" },
+      { icon: "users", label: "2 huéspedes" },
+      { icon: "area", label: "55 m²" },
     ],
     price: "$199",
     photos: [
-      img("room-double-deluxe-bath.jpg", "Double room bathroom photo"),
-      img("room-terrace.jpg", "Outdoor view of double room"),
+      img("room-double-deluxe-bath.jpg", "Foto del baño de la habitación doble"),
+      img("room-terrace.jpg", "Vista exterior de la habitación doble"),
     ],
     intro:
-      "With sweeping views of the whitewashed village and shimmering Aegean Sea are ideal for couples or solo travellers seeking comfort and calm in the heart of Santorini.",
+      "Con vistas panorámicas al pueblo blanco encalado y al mar Egeo, que brilla bajo el sol, es ideal para parejas o viajeros solos que buscan confort y calma en el corazón de Santorini.",
     highlights: [
-      "55 sqm",
-      "1 King Bed",
-      "Caldera & Village View",
-      "Private Terrace",
-      "Complimentary WiFi",
-      "Rainfall Shower",
+      "55 m²",
+      "1 cama king",
+      "Vista a la caldera y al pueblo",
+      "Terraza privada",
+      "WiFi gratuito",
+      "Ducha de lluvia",
     ],
     description:
-      "The room features clean Cycladic design with whitewashed walls, stone accents, and a king bed dressed in crisp linen. A private terrace opens to uninterrupted views of the Aegean, while floor-to-ceiling glass doors flood the interior with natural light. The bathroom offers a rainfall shower with locally sourced ceramic finishes.",
+      "La habitación tiene un diseño cicládico limpio, con paredes encaladas, detalles de piedra y una cama king vestida con lino fresco. Una terraza privada se abre a vistas sin interrupciones del Egeo, mientras que las puertas de cristal de suelo a techo inundan el interior de luz natural. El baño cuenta con ducha de lluvia y acabados cerámicos de origen local.",
   },
   {
     slug: "junior-suite",
     name: "Junior Suite",
     summary:
-      "Generous space, a king bed, and a sitting area made for unhurried evenings. Comfort elevated to something quietly luxurious.",
-    image: img("room-junior-suite.jpg", "Double room bedroom view"),
+      "Amplio espacio, cama king y una zona de estar pensada para tardes sin prisa. Confort elevado a algo discretamente lujoso.",
+    image: img("room-junior-suite.jpg", "Vista del dormitorio de la habitación doble"),
     properties: [
-      { icon: "bed", label: "King Bed" },
-      { icon: "users", label: "2 Guests" },
-      { icon: "area", label: "76 sqm" },
+      { icon: "bed", label: "Cama king" },
+      { icon: "users", label: "2 huéspedes" },
+      { icon: "area", label: "76 m²" },
     ],
     price: "$450",
     photos: [
-      img("room-junior-suite-bath.jpg", "Double room bathroom photo"),
-      img("room-terrace.jpg", "Outdoor view of double room"),
+      img("room-junior-suite-bath.jpg", "Foto del baño de la habitación doble"),
+      img("room-terrace.jpg", "Vista exterior de la habitación doble"),
     ],
     intro:
-      "These Junior Suites offer an elevated sense of space with panoramic views of the Caldera and the Aegean horizon, perfect for couples celebrating a special occasion or travellers who simply want more room to breathe.",
+      "Estas Junior Suites ofrecen una sensación de espacio elevada, con vistas panorámicas a la caldera y al horizonte del Egeo, perfectas para parejas que celebran una ocasión especial o viajeros que simplemente quieren más espacio para respirar.",
     highlights: [
-      "76 sqm",
-      "1 King Bed",
-      "Caldera & Sea View",
-      "Private Terrace",
-      "Complimentary WiFi",
-      "Rainfall Shower & Deep Soak Bathtub",
-      "Seating Area",
+      "76 m²",
+      "1 cama king",
+      "Vista a la caldera y al mar",
+      "Terraza privada",
+      "WiFi gratuito",
+      "Ducha de lluvia y bañera de inmersión profunda",
+      "Zona de estar",
     ],
     description:
-      "The suite features an open-plan layout with Cycladic whitewashed walls, volcanic stone detailing, and a plush king bed facing the sea. A dedicated seating area with lounge chairs invites you to unwind indoors, while the private terrace extends the living space under the open Aegean sky. The bathroom is finished with handcrafted ceramic tiles and offers both a deep soak bathtub and a rainfall shower.",
+      "La suite tiene una distribución abierta, con paredes encaladas de estilo cicládico, detalles en piedra volcánica y una cama king mullida frente al mar. Una zona de estar con sillones invita a relajarse en el interior, mientras que la terraza privada extiende el espacio bajo el cielo abierto del Egeo. El baño combina azulejos cerámicos artesanales e incluye una bañera de inmersión profunda y una ducha de lluvia.",
   },
   {
     slug: "family-suite",
-    name: "Family Suite",
+    name: "Suite familiar",
     summary:
-      "Two king bedrooms, a shared living space, and room to breathe. Everything a family needs, nothing they don't.",
-    image: img("room-family-suite.jpg", "Double room bedroom view"),
+      "Dos dormitorios king, un espacio común y mucho lugar para respirar. Todo lo que necesita una familia, nada de lo que no.",
+    image: img("room-family-suite.jpg", "Vista del dormitorio de la habitación doble"),
     properties: [
-      { icon: "bed", label: "2 King Beds" },
-      { icon: "users", label: "4 Guests" },
-      { icon: "area", label: "125 sqm" },
+      { icon: "bed", label: "2 camas king" },
+      { icon: "users", label: "4 huéspedes" },
+      { icon: "area", label: "125 m²" },
     ],
     price: "$799",
     photos: [
-      img("room-family-suite-bath.jpg", "Double room bathroom photo"),
-      img("room-family-suite-terrace.jpg", "Outdoor view of double room"),
+      img("room-family-suite-bath.jpg", "Foto del baño de la habitación doble"),
+      img("room-family-suite-terrace.jpg", "Vista exterior de la habitación doble"),
     ],
     intro:
-      "These generous Family Suites are designed for families who refuse to compromise on space or beauty. With separate sleeping areas and sweeping views of the Aegean, it's a home away from home perched on the edge of the caldera.",
+      "Estas amplias Suites familiares están pensadas para familias que no quieren renunciar ni al espacio ni a la belleza. Con zonas de descanso separadas y vistas panorámicas al Egeo, es un hogar lejos de casa sobre el borde de la caldera.",
     highlights: [
-      "125 sqm",
-      "2 King Beds",
-      "Caldera & Village View",
-      "Spacious Private Terrace",
-      "Complimentary WiFi",
-      "Rainfall Shower & Deep Soak Bathtub",
-      "Separate Children's Sleeping Area",
-      "Seating & Dining Area",
-      "Room Allows Extra Bed",
+      "125 m²",
+      "2 camas king",
+      "Vista a la caldera y al pueblo",
+      "Terraza privada amplia",
+      "WiFi gratuito",
+      "Ducha de lluvia y bañera de inmersión profunda",
+      "Zona de descanso separada para niños",
+      "Zona de estar y comedor",
+      "La habitación permite una cama extra",
     ],
     description:
-      "The suite is arranged across a thoughtful open-plan layout with a distinct adult sleeping area and a separate nook for children, each finished in the signature Cycladic style — whitewashed walls, cool stone floors, and soft linen textures. A generous seating and dining area anchors the living space, while the expansive private terrace offers unobstructed Aegean views the whole family can enjoy together. The bathroom features both a rainfall shower and a deep soak bathtub.",
+      "La suite se distribuye en un diseño abierto y bien pensado, con una zona de dormitorio para adultos y un rincón separado para los niños, ambos con el estilo cicládico característico: paredes encaladas, suelos de piedra fresca y texturas suaves de lino. Una amplia zona de estar y comedor ancla el espacio común, mientras que la gran terraza privada ofrece vistas sin obstáculos al Egeo que toda la familia puede disfrutar junta. El baño incluye ducha de lluvia y bañera de inmersión profunda.",
   },
 ];
 
 export const OFFERS_INTRO: SectionIntro = {
-  title: "OFFERS",
-  text: "Exceptional stays, made even more rewarding. Our latest offers are waiting.",
+  title: "OFERTAS",
+  text: "Estancias excepcionales, aún más gratificantes. Nuestras últimas ofertas te esperan.",
 };
 
 export const OFFERS: Offer[] = [
   {
     slug: "weekend-retreat",
-    title: "Weekend Retreat — Complimentary Spa",
+    title: "Escapada de fin de semana — Spa de cortesía",
     summary:
-      "Arrive Friday, leave refreshed on Sunday. Every weekend stay includes access to our spa and wellness facilities.",
-    image: img("offer-weekend-retreat.jpg", "Spa area view"),
-    heroAlt: "Spa area view",
+      "Llega el viernes y vete renovado el domingo. Cada estancia de fin de semana incluye acceso a nuestro spa y a las instalaciones de bienestar.",
+    image: img("offer-weekend-retreat.jpg", "Vista del área del spa"),
+    heroAlt: "Vista del área del spa",
     paragraphs: [
-      "From the moment you check in on Friday afternoon, your time becomes your own. Settle into your beautifully appointed room, slip into plush robes and slippers, and begin your unwind ritual. Whether you choose to ease into the warmth of the sauna, drift in the heated indoor pool, or simply relax in the tranquil lounge with herbal tea in hand, every detail is designed to restore balance and calm.",
-      "Each two-night stay includes luxury accommodation for Friday and Saturday evening, unlimited access to our spa facilities, daily wellness experiences such as guided yoga or stretching sessions, and late checkout on Sunday so your relaxation never feels rushed. Guests also enjoy a welcome drink upon arrival and exclusive savings on pre-booked spa treatments should you wish to enhance your stay with a massage, facial, or bespoke wellness ritual.",
-      "Spend your Saturday morning starting slowly with breakfast and a peaceful swim, followed by a revitalizing steam session or a quiet moment on the sun terrace. In the evening, savor exceptional dining or retreat to your room for a cozy night in. However you choose to experience your weekend, the rhythm is entirely yours.",
+      "Desde el momento en que te registras el viernes por la tarde, tu tiempo es solo tuyo. Instálate en tu habitación, ponte batas y pantuflas suaves, y comienza tu ritual de descanso. Ya sea que decidas relajarte en el calor de la sauna, flotar en la piscina climatizada interior o simplemente descansar en el tranquilo salón con una infusión en la mano, cada detalle está pensado para restaurar el equilibrio y la calma.",
+      "Cada estancia de dos noches incluye alojamiento de lujo para las noches del viernes y el sábado, acceso ilimitado a nuestras instalaciones del spa, experiencias diarias de bienestar como sesiones guiadas de yoga o de estiramientos, y salida tardía el domingo para que tu relajación nunca se sienta apresurada. Los huéspedes también disfrutan de una bebida de bienvenida al llegar y de descuentos exclusivos en tratamientos de spa reservados con antelación, por si quieres complementar tu estancia con un masaje, un facial o un ritual de bienestar a medida.",
+      "Pasa tu sábado por la mañana empezando despacio, con el desayuno y un baño tranquilo, seguido de una sesión de vapor revitalizante o de un momento de calma en la terraza solárium. Por la noche, disfruta de una cena excepcional o retírate a tu habitación para una velada acogedora. Como elijas vivir tu fin de semana, el ritmo es completamente tuyo.",
     ],
   },
   {
     slug: "summer-escape",
-    title: "Summer Escape — 30% Off",
+    title: "Escapada de verano — 30% de descuento",
     summary:
-      "Book direct and save on stays of 3 nights or more. Includes daily breakfast and late checkout.",
+      "Reserva directamente y ahorra en estancias de 3 noches o más. Incluye desayuno diario y salida tardía.",
     image: img("offer-summer-escape.jpg", ""),
-    heroAlt: "Spa area view",
+    heroAlt: "Vista del área del spa",
     paragraphs: [
-      "Make this summer unforgettable with an exclusive offer designed for longer, more relaxed stays. Enjoy 30% off when you book direct and stay three nights or more — the perfect excuse to extend your getaway and truly settle into vacation mode.",
+      "Haz de este verano algo inolvidable con una oferta exclusiva pensada para estancias más largas y relajadas. Disfruta de un 30% de descuento al reservar directamente y quedarte tres noches o más: la excusa perfecta para extender tu escapada y entrar de lleno en modo vacaciones.",
       "",
-      "Wake slowly each morning to a freshly prepared daily breakfast, included with your stay. Spend sun-filled days exploring, lounging by the pool, or discovering local attractions, then return to the comfort of your beautifully appointed room. With late checkout included, there’s no rush on departure day — just one more morning to savor the moment.",
+      "Despierta despacio cada mañana con un desayuno recién preparado, incluido en tu estancia. Dedica los días soleados a explorar, a descansar junto a la piscina o a descubrir los atractivos de la zona, y luego regresa a la comodidad de tu habitación. Con la salida tardía incluida, no hay prisa el día de partida: una mañana más para saborear el momento.",
       "",
-      "Whether you’re planning a romantic retreat, a friends’ getaway, or a well-deserved solo break, our Summer Escape gives you the time and space to unwind without watching the clock. Longer stays mean deeper relaxation, more experiences, and better value — all while enjoying the comfort, service, and atmosphere that make every stay special.",
+      "Ya sea que planees una escapada romántica, un viaje con amigos o una merecida pausa en solitario, nuestra Escapada de verano te da tiempo y espacio para desconectar sin mirar el reloj. Las estancias más largas significan una relajación más profunda, más experiencias y mejor valor, todo mientras disfrutas de la comodidad, el servicio y el ambiente que hacen especial cada estancia.",
       "",
-      "Book direct to unlock this exclusive rate and make the most of your summer. Sunshine, savings, and unforgettable memories await.",
+      "Reserva directamente para acceder a esta tarifa exclusiva y aprovechar al máximo tu verano. Sol, ahorro y recuerdos inolvidables te esperan.",
     ],
   },
 ];
 
 export const REVIEWS_INTRO: SectionIntro = {
-  title: "visitor reviews",
-  text: "Don't just take our word for it — hear from the guests who've personally experienced every moment for themselves.",
+  title: "opiniones de huéspedes",
+  text: "No te fíes solo de nuestra palabra: escucha a los huéspedes que vivieron cada momento en carne propia.",
 };
 
 export const REVIEWS_INTRO_SHORT: SectionIntro = {
-  title: "visitor reviews",
-  text: "Don't just take our word for it — hear from the guests who've experienced it for themselves.",
+  title: "opiniones de huéspedes",
+  text: "No te fíes solo de nuestra palabra: escucha a los huéspedes que lo vivieron en carne propia.",
 };
 
 export const REVIEWS: Review[] = [
   {
     quote:
-      '"From the moment we arrived, every detail was perfectly taken care of. The rooms are stunning, the service impeccable, and the views absolutely breathtaking. We will absolutely be returning."',
+      '"Desde que llegamos, cada detalle estuvo perfectamente cuidado. Las habitaciones son espectaculares, el servicio impecable y las vistas absolutamente impresionantes. Sin duda volveremos."',
     author: "Sarah M. | TripAdvisor",
   },
   {
     quote:
-      'A truly world-class experience. The spa alone is worth the stay — we left feeling completely renewed. The staff remembered our names from day one, which made all the difference."',
+      '"Una experiencia de primer nivel. Solo el spa vale la estancia: nos fuimos sintiéndonos completamente renovados. El personal recordó nuestros nombres desde el primer día, y eso marcó toda la diferencia."',
     author: "James & Clara R. | Google Reviews",
   },
   {
     quote:
-      '"We celebrated our anniversary here and it exceeded every expectation. The attention to detail, the cuisine, the ambiance — everything felt curated just for us. Simply unforgettable."',
+      '"Celebramos nuestro aniversario aquí y superó todas nuestras expectativas. La atención al detalle, la gastronomía, el ambiente: todo se sintió diseñado solo para nosotros. Simplemente inolvidable."',
     author: "Elena V. | Booking.com",
   },
   {
     quote:
-      '"I travel frequently for work and this property stands in a league of its own. The rooms are thoughtfully designed, the beds incredibly comfortable, and the breakfast exceptional."',
+      '"Viajo con frecuencia por trabajo y esta propiedad está en una liga aparte. Las habitaciones están pensadas con mucho cuidado, las camas son increíblemente cómodas y el desayuno, excepcional."',
     author: "Michael T. | Hotels.com",
   },
   {
     quote:
-      '"Peaceful, luxurious, and effortlessly elegant. The terrace restaurant at sunset is an experience I will never forget. If you are looking for the perfect escape, look no further."',
+      '"Tranquilo, lujoso y con una elegancia sin esfuerzo. La terraza del restaurante al atardecer es una experiencia que nunca olvidaré. Si buscas la escapada perfecta, no busques más."',
     author: "Nadia & Omar K. | Expedia",
   },
 ];
 
 export const MANAGER_NOTE = {
-  greeting: "DEAR GUEST,",
+  greeting: "ESTIMADO HUÉSPED,",
   paragraphs: [
-    "Welcome to Hotellia. We are honoured to have you with us. This hotel was built around a single idea — that a great stay is felt in the details. From the thread count of your sheets to the view from your window, everything here has been chosen with one purpose: your complete comfort.",
-    "Our team is available around the clock to assist with anything you may need — whether that is a dinner reservation, local recommendations, extra pillows, or simply a question. We are here, and we are glad you are here too.",
-    "We hope your time with us feels like a genuine pause from the ordinary. Rest well, explore freely, and make yourself entirely at home.",
+    "Bienvenido a Hotellia. Nos honra tenerte con nosotros. Este hotel nació de una sola idea: que una gran estancia se siente en los detalles. Desde el número de hilos de tus sábanas hasta la vista desde tu ventana, todo aquí se ha elegido con un único propósito: tu confort absoluto.",
+    "Nuestro equipo está disponible las 24 horas para ayudarte con lo que necesites, ya sea una reserva para cenar, recomendaciones locales, almohadas extra o simplemente una pregunta. Estamos aquí, y nos alegra que tú también estés aquí.",
+    "Esperamos que tu tiempo con nosotros se sienta como una pausa genuina de lo cotidiano. Descansa bien, explora con libertad y siéntete como en casa.",
   ],
-  signatureAlt: "Marco Delacroix signature",
-  signedBy: "Marco Delacroix, General Manager",
+  signatureAlt: "Firma de Marco Delacroix",
+  signedBy: "Marco Delacroix, gerente general",
 };
 
 export const FAQ_INTRO: SectionIntro = {
-  title: "GOT QUESTIONS?",
-  text: "Everything you need to know, plan, and prepare before you arrive at your doorstep",
+  title: "¿TIENES PREGUNTAS?",
+  text: "Todo lo que necesitas saber, planificar y preparar antes de llegar",
 };
 
 export const FAQ_INTRO_SHORT: SectionIntro = {
-  title: "GOT QUESTIONS?",
-  text: "Everything you need to know before you arrive",
+  title: "¿TIENES PREGUNTAS?",
+  text: "Todo lo que necesitas saber antes de llegar",
 };
 
 export const FAQS: Faq[] = [
   {
-    question: "What time is check-in and check-out?",
+    question: "¿A qué hora son la llegada y la salida?",
     answer:
-      "Check-in is available from 3:00 PM, and check-out is by 11:00 AM. Early check-in or late check-out may be arranged upon request, subject to availability.",
+      "La llegada es a partir de las 3:00 p. m. y la salida es hasta las 11:00 a. m. Se puede coordinar un check-in anticipado o un check-out tardío bajo solicitud, sujeto a disponibilidad.",
   },
   {
-    question: "Do you offer airport transfers?",
+    question: "¿Ofrecen traslados desde el aeropuerto?",
     answer:
-      "Yes, we can arrange private airport transfers for a smooth and comfortable arrival or departure. Please contact us in advance to schedule this service.",
+      "Sí, podemos organizar traslados privados desde y hacia el aeropuerto para una llegada o salida cómoda y sin contratiempos. Contáctanos con antelación para programar este servicio.",
   },
   {
-    question: "Is breakfast included in the stay?",
+    question: "¿El desayuno está incluido en la estancia?",
     answer:
-      "Breakfast options vary depending on your reservation. Please refer to your booking details or contact our team for more information.",
+      "Las opciones de desayuno varían según tu reserva. Consulta los detalles de tu reserva o contacta a nuestro equipo para más información.",
   },
   {
-    question: "Is the hotel suitable for families or children?",
+    question: "¿El hotel es apto para familias o niños?",
     answer:
-      "Our hotel warmly welcomes guests of all ages. If you’re traveling with children, feel free to reach out so we can help ensure a comfortable stay.",
+      "Nuestro hotel da una cálida bienvenida a huéspedes de todas las edades. Si viajas con niños, escríbenos para ayudarte a garantizar una estancia cómoda.",
   },
   {
-    question: "Do you offer concierge or local experience services?",
+    question: "¿Ofrecen servicios de conserjería o experiencias locales?",
     answer:
-      "Yes, our team is happy to assist with restaurant reservations, local recommendations, and curated experiences to help you make the most of your stay.",
+      "Sí, nuestro equipo puede ayudarte con reservas en restaurantes, recomendaciones locales y experiencias seleccionadas para aprovechar al máximo tu estancia.",
   },
   {
-    question: "What is your cancellation policy?",
+    question: "¿Cuál es la política de cancelación?",
     answer:
-      "Cancellation policies depend on the rate and dates of your reservation. Please review your booking confirmation or contact us directly for specific details.",
+      "Las políticas de cancelación dependen de la tarifa y las fechas de tu reserva. Revisa la confirmación de tu reserva o contáctanos directamente para conocer los detalles específicos.",
   },
 ];
 
 export const FOOTER_TAGLINE =
-  "Thoughtfully crafted spaces where every detail invites you to slow down and stay a little longer.";
+  "Espacios cuidadosamente diseñados, donde cada detalle te invita a bajar el ritmo y quedarte un poco más.";
 
 const AMENITY_BASE: Amenity[] = [
-  { icon: "bathtub", label: "Private Bath" },
-  { icon: "wifi", label: "High-speed Wifi" },
-  { icon: "clock", label: "24/7 Service" },
-  { icon: "roomService", label: "Room Service" },
+  { icon: "bathtub", label: "Baño privado" },
+  { icon: "wifi", label: "WiFi de alta velocidad" },
+  { icon: "clock", label: "Servicio 24/7" },
+  { icon: "roomService", label: "Servicio a la habitación" },
 ];
 
 export const ROOMS_AMENITIES: Amenity[] = [
   ...AMENITY_BASE,
-  { icon: "croissant", label: "Breakfast Available" },
-  { icon: "flower", label: "Wellness Center" },
-  { icon: "bicycle", label: "Bicycles" },
+  { icon: "croissant", label: "Desayuno disponible" },
+  { icon: "flower", label: "Centro de bienestar" },
+  { icon: "bicycle", label: "Bicicletas" },
 ];
 
 export const ROOM_AMENITIES: Amenity[] = [
   ...AMENITY_BASE,
-  { icon: "parking", label: "Parking Space" },
-  { icon: "car", label: "Shuttle Service" },
-  { icon: "gym", label: "Gym & Spa" },
-  { icon: "luggage", label: "Luggage Storage" },
+  { icon: "parking", label: "Estacionamiento" },
+  { icon: "car", label: "Servicio de traslado" },
+  { icon: "gym", label: "Gimnasio y spa" },
+  { icon: "luggage", label: "Depósito de equipaje" },
 ];
 
 const ROOMS_PAGE_TEXT =
-  "From intimate candlelit dinners to sun-drenched terrace breakfasts, our dining venues offer an unforgettable culinary journey crafted for every occasion. From intimate candlelit dinners to sun-drenched terrace breakfasts, our dining venues offer an unforgettable culinary journey crafted for every occasion.";
+  "Desde cenas íntimas a la luz de las velas hasta desayunos en terrazas bañadas por el sol, nuestros espacios gastronómicos ofrecen un recorrido culinario inolvidable, pensado para cada ocasión. Desde cenas íntimas a la luz de las velas hasta desayunos en terrazas bañadas por el sol, nuestros espacios gastronómicos ofrecen un recorrido culinario inolvidable, pensado para cada ocasión.";
 
 export const ROOMS_PAGE = {
-  intro: { title: "Make yourself at home", text: ROOMS_PAGE_TEXT },
-  amenities: { title: "What’s Included", text: ROOMS_PAGE_TEXT },
+  intro: { title: "Siéntete como en casa", text: ROOMS_PAGE_TEXT },
+  amenities: { title: "Lo que incluye", text: ROOMS_PAGE_TEXT },
 };
 
 export const ROOM_AMENITIES_INTRO: SectionIntro = {
-  title: "Amenities",
-  text: "We've thought of it all. From the essentials to the little extras, your comfort is at the heart of everything we provide.",
+  title: "Comodidades",
+  text: "Lo hemos pensado todo. Desde lo esencial hasta los pequeños extras, tu confort está en el centro de todo lo que ofrecemos.",
 };
 
 export const WINE_DINE_PAGE = {
   intro: {
-    title: "FROM BAR TO TABLE",
-    text: "From a morning espresso to a late-night digestif, our venues move with you through the day. Come hungry. Come thirsty. Come with no particular plans.",
+    title: "DE LA BARRA A LA MESA",
+    text: "Desde un espresso matutino hasta un digestivo a medianoche, nuestros espacios te acompañan durante todo el día. Ven con hambre. Ven con sed. Ven sin planes particulares.",
   },
   slides: [
     img("gallery-events-3.jpg"),
@@ -411,13 +411,13 @@ export const WINE_DINE_PAGE = {
   ],
   bar: {
     title: "Bar Ember",
-    text: "Step into a world of hand-crafted cocktails, rare pours, and effortless conversation. Our bar blends the warmth of a neighborhood haunt with the refinement of a world-class hotel — whether you're winding down after a long journey or celebrating something worth toasting.",
+    text: "Entra en un mundo de cócteles de autor, licores selectos y conversación sin esfuerzo. Nuestro bar combina la calidez de un lugar de barrio con la elegancia de un hotel de primer nivel, ya sea que estés descansando tras un largo viaje o celebrando algo que merezca un brindis.",
     href: "/bar-menu",
     image: img("bar-ember.jpg"),
   },
   restaurant: {
-    title: "restaurant Grove & Grain",
-    text: "From intimate candlelit dinners to sun-drenched terrace breakfasts, our kitchen tells the story of local ingredients and global inspiration. Each dish is crafted to linger — in flavor, in memory, and in conversation.",
+    title: "restaurante Grove & Grain",
+    text: "Desde cenas íntimas a la luz de las velas hasta desayunos en terrazas bañadas por el sol, nuestra cocina cuenta la historia de los ingredientes locales y las inspiraciones globales. Cada plato está hecho para perdurar: en el sabor, en la memoria y en la conversación.",
     href: "/restaurant-menu",
     image: img("gallery-dine-1.jpg"),
   },
@@ -425,8 +425,8 @@ export const WINE_DINE_PAGE = {
 
 export const GALLERY_PAGE = {
   outdoors: {
-    title: "Outdoors",
-    text: "Where terracotta walls meet open skies — our outdoor spaces are as much a part of the experience as the food itself. Dine beneath ancient olive trees, linger over breakfast on sun-warmed stone, and let the garden set the mood.",
+    title: "Exteriores",
+    text: "Donde los muros de terracota se encuentran con cielos abiertos: nuestros espacios al aire libre son parte de la experiencia tanto como la comida. Cena bajo olivos centenarios, disfruta del desayuno sobre piedra cálida por el sol y deja que el jardín marque el ambiente.",
     feature: img("exp-explore.jpg"),
     images: [
       img("gallery-outdoors-1.jpg"),
@@ -438,8 +438,8 @@ export const GALLERY_PAGE = {
     ],
   },
   dine: {
-    title: "Wine & Dine",
-    text: "Exposed timber beams, warm lantern light, and tables set with quiet intention — our dining rooms are spaces where time slows and conversation flows. Each venue carries its own character, united by a shared commitment to exceptional food and genuine hospitality.",
+    title: "Vinos y cenas",
+    text: "Vigas de madera expuestas, luz cálida de faroles y mesas dispuestas con intención tranquila: nuestros comedores son espacios donde el tiempo se detiene y la conversación fluye. Cada espacio tiene su propio carácter, unidos por un compromiso compartido con la excelente comida y la hospitalidad genuina.",
     images: [
       img("bar-ember.jpg"),
       img("gallery-dine-1.jpg"),
@@ -448,212 +448,218 @@ export const GALLERY_PAGE = {
     ],
   },
   events: {
-    title: "events",
-    text: "From sun-filled celebrations beneath the pergola to candlelit evenings in the courtyard, our estate provides an extraordinary setting for moments that matter. Every event is shaped around you — your guests, your vision, your story.",
+    title: "eventos",
+    text: "Desde celebraciones llenas de sol bajo la pérgola hasta veladas a la luz de las velas en el patio, nuestra finca ofrece un escenario extraordinario para los momentos que importan. Cada evento se diseña a tu medida: tus invitados, tu visión, tu historia.",
     images: [1, 2, 3, 4, 5, 6, 7, 8].map((n) => img(`gallery-events-${n}.jpg`)),
   },
 };
 
 export const RESERVE_PAGE = {
   intro: {
-    title: "YOUR STAY STARTS HERE",
-    text: "Whether you're planning a weekend escape or a longer retreat, securing your room is just the beginning. Fill in your details below and our team will ensure every aspect of your stay is taken care of.",
+    title: "TU ESTANCIA EMPIEZA AQUÍ",
+    text: "Ya sea que planees una escapada de fin de semana o una pausa más larga, asegurar tu habitación es solo el comienzo. Completa tus datos a continuación y nuestro equipo se encargará de cada detalle de tu estancia.",
   },
-  roomOptions: ["Double Deluxe", "Superior", "Family Suite"],
+  roomOptions: ["Doble Deluxe", "Superior", "Suite familiar"],
 };
 
 export const MENU: MenuCategory[] = [
   {
-    title: "Starters",
+    title: "Entrantes",
     items: [
-      { name: "CHEFS SOUP OF THE DAY", description: "Contains allergens", price: "12" },
+      { name: "SOPA DEL DÍA DEL CHEF", description: "Contiene alérgenos", price: "12" },
       {
-        name: "SPINACH AND ARTICHOKE DIP",
-        description: "Tortilla chips | Salsa | Sour cream",
+        name: "SALSA DE ESPINACA Y ALCACHOFA",
+        description: "Totopos | Salsa | Crema agria",
         price: "15",
       },
       {
-        name: "STRACCIATELLA BREAD",
-        description: "Warm ricotta dip | Extra virgin olive oil | Olive tapenade",
+        name: "PAN CON STRACCIATELLA",
+        description:
+          "Salsa de ricota caliente | Aceite de oliva extra virgen | Tapenade de aceitunas",
         price: "18",
       },
       {
-        name: "HEARTS OF ROMAINE SALAD",
-        description: "Romaine | Caesar dressing | Shaved parmesan | Ciabatta croutons",
+        name: "ENSALADA DE CORAZONES DE ROMANA",
+        description: "Romana | Aderezo César | Parmesano en lascas | Croutons de ciabatta",
         price: "11",
       },
-      { name: "ADD PROTEIN", description: "Grilled shrimp | Grilled chicken", price: "22" },
       {
-        name: "MOHONK HOUSE SALAD",
-        description: "Artisan lettuce | Tomatoes | Carrots | Cucumbers | Lemon dijon dressing",
+        name: "AGREGAR PROTEÍNA",
+        description: "Camarones a la plancha | Pollo a la plancha",
+        price: "22",
+      },
+      {
+        name: "ENSALADA DE LA CASA MOHONK",
+        description:
+          "Lechuga artesanal | Tomates | Zanahorias | Pepinos | Aderezo de limón y mostaza dijon",
         price: "13",
       },
     ],
   },
   {
-    title: "SANDWICHES",
+    title: "SÁNDWICHES",
     items: [
       {
-        name: "HOUSE HALF POUND BEEF BURGER",
-        description: "Cheese | House Burger sauce | Red onion jam",
+        name: "HAMBURGUESA DE RES DE LA CASA (MEDIA LIBRA)",
+        description: "Queso | Salsa de la casa | Mermelada de cebolla morada",
         price: "32",
       },
       {
-        name: "VEGETARIAN BURGER",
-        description: "Cheese | Caramelized onions | Portobello mushroom",
+        name: "HAMBURGUESA VEGETARIANA",
+        description: "Queso | Cebolla caramelizada | Champiñón portobello",
         price: "29",
       },
       {
-        name: "CRISPY KOREAN STYLE CHICKEN SANDWICH",
-        description: "Kimchee coleslaw | Bread & butter pickles | Gochujang aioli",
+        name: "SÁNDWICH CRUJIENTE DE POLLO ESTILO COREANO",
+        description: "Ensalada de repollo kimchi | Pepinillos agridulces | Alioli de gochujang",
         price: "27",
       },
       {
-        name: "CHICKEN QUESADILLA",
-        description: "Roasted chilies | Pepperjack cheese",
+        name: "QUESADILLA DE POLLO",
+        description: "Chiles asados | Queso pepperjack",
         price: "25",
       },
     ],
   },
   {
-    title: "DESSERTS",
+    title: "POSTRES",
     items: [
       {
-        name: "CHOCOLATE CRÉMEUX",
-        description: "Vanilla sabayon | Apricots | Strawberries",
+        name: "CREMOSO DE CHOCOLATE",
+        description: "Sabayón de vainilla | Albaricoques | Fresas",
         price: "15",
       },
-      { name: "BASQUE CHEESECAKE", description: "Sabayon | Orange syrup", price: "15" },
+      { name: "CHEESECAKE VASCO", description: "Sabayón | Jarabe de naranja", price: "15" },
       {
-        name: "TIRAMISU",
-        description: "Espresso sabayon | Chocolate covered espresso beans",
+        name: "TIRAMISÚ",
+        description: "Sabayón de espresso | Granos de café cubiertos de chocolate",
         price: "15",
       },
       {
-        name: "WARM CITRUS BREAD PUDDING",
-        description: "Orange syrup | Vanilla ice cream",
+        name: "PUDÍN DE PAN CÍTRICO CALIENTE",
+        description: "Jarabe de naranja | Helado de vainilla",
         price: "15",
       },
-      { name: "HOUSE MADE ICE CREAM", description: "Gluten-free", price: "9" },
+      { name: "HELADO ARTESANAL DE LA CASA", description: "Sin gluten", price: "9" },
     ],
   },
 ];
 
-export const LEGAL_UPDATED = "Last Updated: February 2026";
+export const LEGAL_UPDATED = "Última actualización: febrero de 2026";
 
 export const TERMS: LegalBlock[] = [
   {
-    title: "Reservations & Payment",
+    title: "Reservas y pago",
     paragraphs: [
-      "All bookings are confirmed upon receipt of a confirmation email. Payment is required at the time of booking via credit card or other accepted methods. Rates are subject to availability and applicable taxes.",
+      "Todas las reservas se confirman al recibir un correo electrónico de confirmación. El pago se exige en el momento de reservar con tarjeta de crédito u otros métodos aceptados. Las tarifas están sujetas a disponibilidad e impuestos aplicables.",
     ],
   },
   {
-    title: "Check-In & Check-Out",
+    title: "Entrada y salida",
     paragraphs: [
-      "Check-in: 3:00 PM Check-out: 11:00 AM Valid photo ID and credit card required at check-in Guests must be 18 years or older",
+      "Entrada: 3:00 p. m. Salida: 11:00 a. m. Se requiere un documento de identidad con foto y una tarjeta de crédito válidos al momento de la entrada. Los huéspedes deben tener 18 años o más.",
     ],
   },
   {
-    title: "Cancellation Policy",
+    title: "Política de cancelación",
     paragraphs: [
-      "Free cancellation up to 48 hours before arrival. Cancellations made within 48 hours or no-shows will be charged one night's accommodation. Non-refundable rates are not eligible for cancellation.",
+      "Cancelación gratuita hasta 48 horas antes de la llegada. Las cancelaciones realizadas dentro de las 48 horas o las no presentaciones se cobrarán con una noche de alojamiento. Las tarifas no reembolsables no son elegibles para cancelación.",
     ],
   },
   {
-    title: "Guest Responsibilities",
+    title: "Responsabilidades del huésped",
     paragraphs: [
-      "Guests agree to respect other visitors and hotel property. Smoking is prohibited indoors. Any damages to rooms or facilities will be charged to the guest's account. Pets are allowed only in designated pet-friendly rooms.",
+      "Los huéspedes se comprometen a respetar a otros visitantes y a la propiedad del hotel. Está prohibido fumar en interiores. Los daños a habitaciones o instalaciones se cargarán a la cuenta del huésped. Las mascotas solo se admiten en habitaciones designadas para ellas.",
     ],
   },
   {
-    title: "Liability",
+    title: "Responsabilidad",
     paragraphs: [
-      "The hotel is not responsible for lost or stolen personal belongings. We recommend using in-room safes for valuables. Our liability is limited to the total booking amount.",
+      "El hotel no se hace responsable de pertenencias perdidas o robadas. Recomendamos usar las cajas fuertes de las habitaciones para los objetos de valor. Nuestra responsabilidad se limita al monto total de la reserva.",
     ],
   },
   {
-    title: "Privacy",
+    title: "Privacidad",
     paragraphs: [
-      "Your personal information is collected and used in accordance with our Privacy Policy and applicable data protection laws.",
+      "Tu información personal se recopila y utiliza de acuerdo con nuestra Política de privacidad y las leyes de protección de datos aplicables.",
     ],
   },
   {
-    title: "Contact Us",
-    paragraphs: ["For questions about these terms, please contact us at:"],
+    title: "Contáctanos",
+    paragraphs: ["Para preguntas sobre estos términos, contáctanos en:"],
     contact: [
-      { label: "Email:", value: "info@hotellia.com", href: "mailto:info@hotellia.com" },
-      { label: "Phone:", value: "+1 (555) 123-4567", href: "tel:+15551234567" },
+      { label: "Correo:", value: "info@hotellia.com", href: "mailto:info@hotellia.com" },
+      { label: "Teléfono:", value: "+1 (555) 123-4567", href: "tel:+15551234567" },
     ],
   },
 ];
 
 export const PRIVACY: LegalBlock[] = [
   {
-    title: "Information We Collect",
+    title: "Información que recopilamos",
     paragraphs: [
-      "We collect information you provide when making a reservation, including your name, email address, phone number, payment details, and any special requests or preferences. We may also collect information about your stay and use of our facilities.",
+      "Recopilamos la información que nos proporcionas al hacer una reserva, incluido tu nombre, correo electrónico, número de teléfono, datos de pago y cualquier solicitud o preferencia especial. También podemos recopilar información sobre tu estancia y el uso de nuestras instalaciones.",
     ],
   },
   {
-    title: "How We Use Your Information",
-    paragraphs: ["Your information is used to:"],
+    title: "Cómo usamos tu información",
+    paragraphs: ["Tu información se utiliza para:"],
     list: [
-      "Process and manage your reservations",
-      "Communicate with you about your booking",
-      "Provide personalized services during your stay",
-      "Process payments and prevent fraud",
-      "Send promotional offers (with your consent)",
-      "Improve our services and guest experience",
+      "Procesar y gestionar tus reservas",
+      "Comunicarnos contigo sobre tu reserva",
+      "Ofrecer servicios personalizados durante tu estancia",
+      "Procesar pagos y prevenir fraudes",
+      "Enviar ofertas promocionales (con tu consentimiento)",
+      "Mejorar nuestros servicios y la experiencia de los huéspedes",
     ],
   },
   {
-    title: "Information Sharing",
+    title: "Intercambio de información",
     paragraphs: [
-      "We do not sell your personal information. We may share your data with trusted third-party service providers who assist in operating our hotel (payment processors, booking platforms, etc.). We may also disclose information when required by law.",
+      "No vendemos tu información personal. Podemos compartir tus datos con proveedores de servicios de confianza que nos ayudan a operar el hotel (procesadores de pago, plataformas de reserva, etc.). También podemos divulgar información cuando la ley lo requiera.",
     ],
   },
   {
-    title: "Data Security",
+    title: "Seguridad de los datos",
     paragraphs: [
-      "We implement appropriate security measures to protect your personal information from unauthorized access, alteration, or disclosure. Payment information is encrypted and processed through secure channels.",
+      "Implementamos medidas de seguridad adecuadas para proteger tu información personal contra el acceso, la alteración o la divulgación no autorizados. La información de pago se cifra y se procesa a través de canales seguros.",
     ],
   },
   {
-    title: "Your Rights",
-    paragraphs: ["You have the right to:"],
+    title: "Tus derechos",
+    paragraphs: ["Tienes derecho a:"],
     list: [
-      "Access the personal data we hold about you",
-      "Request corrections to inaccurate information",
-      "Request deletion of your data (subject to legal requirements)",
-      "Opt out of marketing communications at any time",
-      "Object to certain processing of your data",
+      "Acceder a los datos personales que tenemos sobre ti",
+      "Solicitar correcciones de información inexacta",
+      "Solicitar la eliminación de tus datos (sujeto a requisitos legales)",
+      "Darte de baja de las comunicaciones de marketing en cualquier momento",
+      "Oponerte a ciertos tratamientos de tus datos",
     ],
   },
   {
     title: "Cookies",
     paragraphs: [
-      "Our website uses cookies to enhance your browsing experience and analyze site usage. You can control cookie settings through your browser preferences.",
+      "Nuestro sitio web utiliza cookies para mejorar tu experiencia de navegación y analizar el uso del sitio. Puedes controlar la configuración de cookies desde las preferencias de tu navegador.",
     ],
   },
   {
-    title: "Data Retention",
+    title: "Retención de datos",
     paragraphs: [
-      "We retain your information only as long as necessary to fulfill the purposes outlined in this policy or as required by law.",
+      "Conservamos tu información solo durante el tiempo necesario para cumplir los fines descritos en esta política o según lo exija la ley.",
     ],
   },
 ];
 
 /** Títulos "fit text" de los heroes: viewBox medido en la fuente. */
 export const HERO_TITLES = {
-  rooms: { text: "ROOMS", width: 1200, height: 274 },
-  gallery: { text: "GALLERY", width: 1200, height: 227 },
-  reserve: { text: "RESERVE", width: 1200, height: 234 },
-  wineDine: { text: "WINE & DINE", width: 2076, height: 274 },
-  barMenu: { text: "BAR MENU", width: 1200, height: 195 },
-  restaurantMenu: { text: "RESTAURANT MENU", width: 1200, height: 104 },
-  terms: { text: "TERMS & CONDITIONS", width: 1200, height: 92 },
-  privacy: { text: "PRIVACY POLICY", width: 1200, height: 127 },
+  rooms: { text: "HABITACIONES", width: 1200, height: 274 },
+  gallery: { text: "GALERÍA", width: 1200, height: 227 },
+  reserve: { text: "RESERVAR", width: 1200, height: 234 },
+  wineDine: { text: "VINOS Y CENAS", width: 2076, height: 274 },
+  barMenu: { text: "MENÚ DEL BAR", width: 1200, height: 195 },
+  restaurantMenu: { text: "MENÚ DEL RESTAURANTE", width: 1200, height: 104 },
+  terms: { text: "TÉRMINOS Y CONDICIONES", width: 1200, height: 92 },
+  privacy: { text: "POLÍTICA DE PRIVACIDAD", width: 1200, height: 127 },
   brand: { text: "HOTELLIA", width: 1408, height: 234 },
 };
 
@@ -662,42 +668,47 @@ export const HERO_TITLES = {
  * Cámbialas aquí al traducir o adaptar el sitio; los componentes no contienen texto propio.
  */
 export const UI_LABELS = {
-  skipToContent: "Skip to content",
-  mainNav: "Main",
-  footerNav: "Footer",
-  menu: "Menu",
-  home: "home",
-  reserve: "Reserve",
-  offers: "Offers",
-  perNight: "/night",
-  viewMenu: "View Menu",
-  followFacebook: "Follow us on Facebook",
-  followInstagram: "Our Instagram",
-  reviews: "Visitor reviews",
-  selectReview: "Select review",
-  slideshow: "Wine & Dine",
-  previousSlide: "Previous slide",
-  nextSlide: "Next slide",
+  skipToContent: "Ir al contenido",
+  mainNav: "Principal",
+  footerNav: "Pie de página",
+  menu: "Menú",
+  close: "Cerrar",
+  home: "inicio",
+  reserve: "Reservar",
+  offers: "Ofertas",
+  perNight: "/noche",
+  viewMenu: "Ver menú",
+  readMore: "Leer más",
+  followFacebook: "Síguenos en Facebook",
+  followInstagram: "Nuestro Instagram",
+  reviews: "Opiniones de huéspedes",
+  selectReview: "Seleccionar opinión",
+  slideshow: "Vinos y cenas",
+  slideCounter: "Diapositiva",
+  previousSlide: "Diapositiva anterior",
+  nextSlide: "Diapositiva siguiente",
   form: {
-    firstName: "First Name",
-    lastName: "Last Name",
-    email: "Email",
-    phone: "Phone",
-    roomType: "Room Type",
-    checkIn: "Check in",
-    checkOut: "Check out",
-    firstNamePlaceholder: "Jane",
-    lastNamePlaceholder: "Smith",
-    emailPlaceholder: "jane@example.com",
+    firstName: "Nombre",
+    lastName: "Apellidos",
+    email: "Correo electrónico",
+    phone: "Teléfono",
+    roomType: "Tipo de habitación",
+    checkIn: "Llegada",
+    checkOut: "Salida",
+    firstNamePlaceholder: "María",
+    lastNamePlaceholder: "Pérez",
+    emailPlaceholder: "maria@ejemplo.com",
     phonePlaceholder: "+00 000 000 000",
-    select: "Select…",
-    submit: "Submit",
+    select: "Seleccionar…",
+    submit: "Enviar",
+    subject: "Solicitud de reserva",
+    sent: "¡Gracias! Se abrirá tu aplicación de correo para enviar la solicitud.",
   },
 } as const;
 
 /** Página 404. */
 export const NOT_FOUND = {
-  title: "Oops!",
-  text: "Looks like this page doesn’t exist.",
-  cta: "HOME",
+  title: "¡Vaya!",
+  text: "Parece que esta página no existe.",
+  cta: "INICIO",
 } as const;

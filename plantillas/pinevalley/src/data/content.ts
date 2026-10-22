@@ -44,81 +44,81 @@ export interface FaqItem {
 
 export const HERO = {
   id: "home",
-  trustedBy: "Trusted by +200 people",
+  trustedBy: "Con la confianza de más de 200 personas",
   avatars: [
-    { src: "/images/avatars/hero-1.webp", alt: "Guest 1" },
-    { src: "/images/avatars/hero-2.webp", alt: "Guest 2" },
-    { src: "/images/avatars/hero-3.webp", alt: "Guest 3" },
-    { src: "/images/avatars/hero-4.webp", alt: "Guest 4" },
+    { src: "/images/avatars/hero-1.webp", alt: "Huésped 1" },
+    { src: "/images/avatars/hero-2.webp", alt: "Huésped 2" },
+    { src: "/images/avatars/hero-3.webp", alt: "Huésped 3" },
+    { src: "/images/avatars/hero-4.webp", alt: "Huésped 4" },
   ] satisfies ImageAsset[],
-  title: "Your Next Getaway Starts Here",
-  text: "Escape to a modern retreat where timeless design, premium\namenities, and peaceful surroundings create the perfect getaway.",
-  cta: "Reserve Now",
+  title: "Tu próxima escapada empieza aquí",
+  text: "Escápate a un refugio moderno donde el diseño atemporal, las comodidades premium\ny los alrededores tranquilos crean la escapada perfecta.",
+  cta: "Reservar ahora",
   background: {
     src: "/images/hero-background.webp",
-    alt: "Modern white villa with arches on a grassy hill under a clear blue sky",
+    alt: "Villa blanca moderna con arcos en una colina cubierta de hierba bajo un cielo azul despejado",
   } satisfies ImageAsset,
   /** Recorte con transparencia de la casa: se superpone al título para crear profundidad */
   foreground: { src: "/images/hero-foreground.webp", alt: "" } satisfies ImageAsset,
 };
 
 export const OVERVIEW = {
-  label: "Property Overview",
+  label: "Descripción de la propiedad",
   statement:
-    "Designed for travelers seeking comfort, breathtaking views, and unforgettable moments surrounded by nature.",
+    "Diseñada para viajeros que buscan confort, vistas impresionantes y momentos inolvidables rodeados de naturaleza.",
   image: {
     src: "/images/overview.webp",
-    alt: "Living room with arched windows opening onto an infinity pool and rolling hills",
+    alt: "Sala de estar con ventanas arqueadas que se abren a una piscina infinita y a colinas ondulantes",
   } satisfies ImageAsset,
   features: [
-    { icon: "users", label: "Up to 6 people" },
-    { icon: "bed", label: "3 cozy rooms" },
-    { icon: "bath", label: "2 modern baths" },
-    { icon: "car", label: "Private parking" },
-    { icon: "pet", label: "Pet Friendly" },
-    { icon: "wifi", label: "High-Speed WiFi" },
-    { icon: "utensils", label: "Fully Equipped Kitchen" },
-    { icon: "trees", label: "Forest Views" },
+    { icon: "users", label: "Hasta 6 personas" },
+    { icon: "bed", label: "3 habitaciones acogedoras" },
+    { icon: "bath", label: "2 baños modernos" },
+    { icon: "car", label: "Estacionamiento privado" },
+    { icon: "pet", label: "Admite mascotas" },
+    { icon: "wifi", label: "WiFi de alta velocidad" },
+    { icon: "utensils", label: "Cocina totalmente equipada" },
+    { icon: "trees", label: "Vistas al bosque" },
   ] satisfies IconItem[],
 };
 
 export const GALLERY = {
   intro: {
     id: "gallery",
-    label: "Gallery",
-    title: "Explore Every Corner",
-    text: "From cozy interiors to breathtaking outdoor spaces, discover\nevery detail designed to make your stay unforgettable.",
+    label: "Galería",
+    title: "Explora cada rincón",
+    text: "Desde interiores acogedores hasta espacios exteriores impresionantes, descubre\ncada detalle pensado para que tu estancia sea inolvidable.",
   } satisfies SectionIntro,
-  cta: "View gallery",
+  cta: "Ver galería",
   images: [
     {
       src: "/images/gallery/gallery-1.webp",
-      alt: "White domed villa between olive trees",
+      alt: "Villa blanca con cúpula entre olivos",
       shape: "landscape",
     },
     {
       src: "/images/gallery/gallery-2.webp",
-      alt: "Infinity pool with sun loungers in front of the villa",
+      alt: "Piscina infinita con tumbonas frente a la villa",
       shape: "portrait",
     },
     {
       src: "/images/gallery/gallery-3.webp",
-      alt: "Aerial view of the villa and its curved pool",
+      alt: "Vista aérea de la villa y de su piscina curva",
       shape: "portrait",
     },
     {
       src: "/images/gallery/gallery-4.webp",
-      alt: "Outdoor lounge facing the pool and the hills",
+      alt: "Zona de descanso exterior frente a la piscina y las colinas",
       shape: "landscape",
     },
     {
       src: "/images/gallery/gallery-5.webp",
-      alt: "Villa with arched terraces at sunset",
+      alt: "Villa con terrazas arqueadas al atardecer",
       shape: "landscape",
     },
     {
       src: "/images/gallery/gallery-6.webp",
-      alt: "Villa lit up at dusk with the pool glowing",
+      alt: "Villa iluminada al anochecer con la piscina brillando",
       shape: "portrait",
     },
   ] satisfies GalleryImage[],
@@ -127,25 +127,31 @@ export const GALLERY = {
 export const EXPERIENCE = {
   intro: {
     id: "experience",
-    label: "The Experience",
-    title: "More Than Just a Place to Stay",
-    text: "Experience a destination designed to inspire\nrelaxation, connection, and unforgettable memories.",
+    label: "La experiencia",
+    title: "Mucho más que un lugar para dormir",
+    text: "Vive un destino diseñado para inspirar\nrelajación, conexión y recuerdos inolvidables.",
   } satisfies SectionIntro,
   cards: [
     {
-      title: "Explore Nature",
+      title: "Explora la naturaleza",
       image: {
         src: "/images/experience/experience-1.webp",
-        alt: "Aerial view of a forested valley",
+        alt: "Vista aérea de un valle boscoso",
       },
     },
     {
-      title: "Evenings by the Fire",
-      image: { src: "/images/experience/experience-2.webp", alt: "Campfire in the garden at dusk" },
+      title: "Noches junto al fuego",
+      image: {
+        src: "/images/experience/experience-2.webp",
+        alt: "Fogata en el jardín al anochecer",
+      },
     },
     {
-      title: "Under the Stars",
-      image: { src: "/images/experience/experience-3.webp", alt: "Milky Way over the treeline" },
+      title: "Bajo las estrellas",
+      image: {
+        src: "/images/experience/experience-3.webp",
+        alt: "La Vía Láctea sobre la línea de los árboles",
+      },
     },
   ] satisfies { title: string; image: ImageAsset }[],
 };
@@ -153,53 +159,56 @@ export const EXPERIENCE = {
 export const AMENITIES = {
   intro: {
     id: "amenities",
-    label: "Amenities",
-    title: "Everything You Need\nfor a Comfortable Stay",
-    text: "Enjoy thoughtfully selected amenities designed to make\nevery stay comfortable, convenient, and truly unforgettable.",
+    label: "Comodidades",
+    title: "Todo lo que necesitas\npara una estancia cómoda",
+    text: "Disfruta de comodidades cuidadosamente seleccionadas, pensadas para que\ncada estancia sea cómoda, práctica y realmente inolvidable.",
   } satisfies SectionIntro,
   items: [
-    { icon: "flame", label: "Cozy Fireplace" },
-    { icon: "pool", label: "Private Pool" },
-    { icon: "bath", label: "Hot Tub" },
-    { icon: "grill", label: "BBQ Area" },
-    { icon: "coffee", label: "Coffee Station" },
+    { icon: "flame", label: "Chimenea acogedora" },
+    { icon: "pool", label: "Piscina privada" },
+    { icon: "bath", label: "Jacuzzi" },
+    { icon: "grill", label: "Zona de parrilla" },
+    { icon: "coffee", label: "Estación de café" },
     { icon: "tv", label: "Smart TV" },
-    { icon: "washer", label: "Washer & Dryer" },
-    { icon: "key", label: "Self Check-in" },
-    { icon: "airVent", label: "Air Conditioning" },
-    { icon: "sofa", label: "Outdoor Lounge" },
-    { icon: "utensils", label: "Patio & Terrace" },
-    { icon: "cctv", label: "Security Cameras" },
+    { icon: "washer", label: "Lavadora y secadora" },
+    { icon: "key", label: "Entrada autónoma" },
+    { icon: "airVent", label: "Aire acondicionado" },
+    { icon: "sofa", label: "Zona de descanso exterior" },
+    { icon: "utensils", label: "Patio y terraza" },
+    { icon: "cctv", label: "Cámaras de seguridad" },
   ] satisfies IconItem[],
 };
 
 export const ROOMS = {
   intro: {
     id: "rooms",
-    label: "Rooms",
-    title: "More Than Just a Place to Stay",
-    text: "Experience a destination designed to inspire\nrelaxation, connection, and unforgettable memories.",
+    label: "Habitaciones",
+    title: "Mucho más que un lugar para dormir",
+    text: "Vive un destino diseñado para inspirar\nrelajación, conexión y recuerdos inolvidables.",
   } satisfies SectionIntro,
   items: [
     {
-      title: "Master Bedroom",
-      image: { src: "/images/rooms/room-1.webp", alt: "Master bedroom with arched windows" },
+      title: "Dormitorio principal",
+      image: {
+        src: "/images/rooms/room-1.webp",
+        alt: "Dormitorio principal con ventanas arqueadas",
+      },
     },
     {
-      title: "Living Room",
-      image: { src: "/images/rooms/room-2.webp", alt: "Living room with a curved sofa" },
+      title: "Sala de estar",
+      image: { src: "/images/rooms/room-2.webp", alt: "Sala de estar con un sofá curvo" },
     },
     {
-      title: "Kitchen & Dining",
-      image: { src: "/images/rooms/room-3.webp", alt: "Kitchen and dining area" },
+      title: "Cocina y comedor",
+      image: { src: "/images/rooms/room-3.webp", alt: "Zona de cocina y comedor" },
     },
     {
-      title: "Bathroom",
-      image: { src: "/images/rooms/room-4.webp", alt: "Bathroom with natural light" },
+      title: "Baño",
+      image: { src: "/images/rooms/room-4.webp", alt: "Baño con luz natural" },
     },
     {
-      title: "Outdoor Terrace",
-      image: { src: "/images/rooms/room-5.webp", alt: "Terrace with lounge chairs at sunset" },
+      title: "Terraza exterior",
+      image: { src: "/images/rooms/room-5.webp", alt: "Terraza con sillones al atardecer" },
     },
   ] satisfies { title: string; image: ImageAsset }[],
 };
@@ -207,55 +216,55 @@ export const ROOMS = {
 export const REVIEWS = {
   intro: {
     id: "reviews",
-    label: "Guest Reviews",
-    title: "Loved by Guests\nAround the World",
+    label: "Opiniones de huéspedes",
+    title: "Queridos por huéspedes\nde todo el mundo",
   } satisfies SectionIntro,
   items: [
     {
       name: "Emily Carter",
-      stayed: "Stayed 2 days ago",
+      stayed: "Estuvo hace 2 días",
       quote:
-        '"The cabin was even more beautiful than the photos.\nEverything was spotless, cozy, and surrounded by\nincredible scenery. We can\'t wait to come back."',
+        '"La cabaña fue aún más hermosa que en las fotos.\nTodo estaba impecable, acogedor y rodeado de\nun paisaje increíble. Ya tenemos ganas de volver."',
       rating: 5,
       avatar: { src: "/images/avatars/review-1.webp", alt: "Emily Carter" },
     },
     {
       name: "Sophie Martin",
-      stayed: "Stayed 1 week ago",
+      stayed: "Estuvo hace 1 semana",
       quote:
-        '"Perfect for a weekend escape. The\nfireplace, peaceful atmosphere, and attention\nto detail made our stay unforgettable."',
+        '"Perfecta para una escapada de fin de semana. La\nchimenea, el ambiente tranquilo y la atención\na los detalles hicieron inolvidable nuestra estancia."',
       rating: 5,
       avatar: { src: "/images/avatars/review-2.webp", alt: "Sophie Martin" },
     },
     {
       name: "James Wilson",
-      stayed: "Stayed 2 weeks ago",
+      stayed: "Estuvo hace 2 semanas",
       quote:
-        '"A truly relaxing experience. The home was\nbeautifully designed, the kitchen had everything\nwe needed, and every sunset felt magical."',
+        '"Una experiencia realmente relajante. La casa estaba\nmuy bien diseñada, la cocina tenía todo lo que\nnecesitábamos y cada atardecer fue mágico."',
       rating: 5,
       avatar: { src: "/images/avatars/review-3.webp", alt: "James Wilson" },
     },
     {
       name: "Olivia Thompson",
-      stayed: "Stayed 1 months ago",
+      stayed: "Estuvo hace 1 mes",
       quote:
-        '"An unforgettable getaway with\nstunning views, thoughtful details,\nand everything we needed to relax."',
+        '"Una escapada inolvidable, con vistas\nespectaculares, detalles bien pensados\ny todo lo necesario para relajarnos."',
       rating: 5,
       avatar: { src: "/images/avatars/review-4.webp", alt: "Olivia Thompson" },
     },
     {
       name: "Lucas Oliveira",
-      stayed: "Stayed 2 months ago",
+      stayed: "Estuvo hace 2 meses",
       quote:
-        '"The perfect place to disconnect from\nthe city. Quiet mornings, beautiful nature,\nand plenty of space for the whole family."',
+        '"El lugar perfecto para desconectarse de la\nciudad. Mañanas tranquilas, naturaleza hermosa\ny mucho espacio para toda la familia."',
       rating: 5,
       avatar: { src: "/images/avatars/review-5.webp", alt: "Lucas Oliveira" },
     },
     {
       name: "Leo Delane",
-      stayed: "Stayed 3 months ago",
+      stayed: "Estuvo hace 3 meses",
       quote:
-        '"From the elegant interiors to the\nrelaxing outdoor areas, every detail was\nbeautifully curated for a perfect escape."',
+        '"Desde los interiores elegantes hasta las zonas\nexteriores relajantes, cada detalle estaba\nmuy bien cuidado para una escapada perfecta."',
       rating: 5,
       avatar: { src: "/images/avatars/review-6.webp", alt: "Leo Delane" },
     },
@@ -265,35 +274,35 @@ export const REVIEWS = {
 export const LOCATION = {
   intro: {
     id: "location",
-    label: "Location",
-    title: "Discover the Surroundings",
-    text: "Perfectly located to offer privacy, breathtaking views, and\neasy access to local attractions and everyday essentials.",
+    label: "Ubicación",
+    title: "Descubre los alrededores",
+    text: "Ubicación perfecta para ofrecer privacidad, vistas impresionantes y\nacceso fácil a atractivos locales y servicios cotidianos.",
   } satisfies SectionIntro,
   nearby: [
-    { icon: "coffee", name: "Coffee Station", time: "5 min" },
-    { icon: "waves", name: "Lake", time: "2 min" },
-    { icon: "cart", name: "Grocery Store", time: "10 min" },
-    { icon: "fuel", name: "Gas Station", time: "10 min" },
-    { icon: "mountain", name: "Hiking Trails", time: "15 min" },
-    { icon: "utensils", name: "Local Restaurant", time: "8 min" },
+    { icon: "coffee", name: "Estación de café", time: "5 min" },
+    { icon: "waves", name: "Lago", time: "2 min" },
+    { icon: "cart", name: "Supermercado", time: "10 min" },
+    { icon: "fuel", name: "Gasolinera", time: "10 min" },
+    { icon: "mountain", name: "Senderos para caminar", time: "15 min" },
+    { icon: "utensils", name: "Restaurante local", time: "8 min" },
   ] satisfies NearbyPlace[],
 };
 
 export const BOOKING = {
   intro: {
     id: "booking",
-    label: "Booking",
-    title: "Ready for Your Next Escape?",
-    text: "Book your stay today and experience the perfect\nbalance of comfort, nature, and unforgettable moments.",
+    label: "Reservas",
+    title: "¿Listo para tu próxima escapada?",
+    text: "Reserva tu estancia hoy y vive el equilibrio perfecto entre\ncomodidad, naturaleza y momentos inolvidables.",
   } satisfies SectionIntro,
-  price: "From $420 / night",
-  rating: "4.9 (248 Reviews)",
+  price: "Desde $420 / noche",
+  rating: "4.9 (248 opiniones)",
   stars: 5,
-  text: "Reserve your stay today and experience\nthe perfect balance of comfort and nature.",
-  cta: "Reserve Now",
+  text: "Reserva tu estancia hoy y vive el equilibrio perfecto\nentre comodidad y naturaleza.",
+  cta: "Reservar ahora",
   background: {
     src: "/images/booking.webp",
-    alt: "The villa at dusk with warm lights on",
+    alt: "La villa al atardecer con las luces cálidas encendidas",
   } satisfies ImageAsset,
 };
 
@@ -301,92 +310,92 @@ export const FAQ = {
   intro: {
     id: "faq",
     label: "FAQ",
-    title: "Frequently Asked Questions",
-    text: "Find answers to the most common questions about\nyour stay, booking process, and property policies.",
+    title: "Preguntas frecuentes",
+    text: "Encuentra respuestas a las preguntas más comunes sobre\ntu estancia, el proceso de reserva y las políticas de la propiedad.",
   } satisfies SectionIntro,
   items: [
     {
-      question: "What time is check-in and check-out?",
+      question: "¿A qué hora son la entrada y la salida?",
       answer:
-        "Check-in begins at 3:00 PM, and check-out is until 11:00 AM. Early check-in or late check-out may be available upon request.",
+        "La entrada es a partir de las 3:00 p. m. y la salida es hasta las 11:00 a. m. Bajo solicitud, puede haber disponibilidad para entrada anticipada o salida tardía.",
     },
     {
-      question: "Are pets allowed?",
+      question: "¿Se admiten mascotas?",
       answer:
-        "Yes, pets are welcome. Please let us know in advance\nso we can prepare everything for a comfortable stay.",
+        "Sí, las mascotas son bienvenidas. Avísanos con antelación\npara preparar todo y garantizar una estancia cómoda.",
     },
     {
-      question: "Is free parking available?",
-      answer: "Yes, the property includes free private parking for all guests during their stay.",
+      question: "¿Hay estacionamiento gratuito?",
+      answer:
+        "Sí, la propiedad incluye estacionamiento privado gratuito para todos los huéspedes durante su estancia.",
     },
     {
-      question: "Is WiFi included?",
-      answer:
-        "Absolutely. High-speed WiFi is available throughout the entire property at no additional cost.",
+      question: "¿Incluye WiFi?",
+      answer: "Por supuesto. Hay WiFi de alta velocidad en toda la propiedad, sin costo adicional.",
     },
     {
-      question: "How do I make a reservation?",
+      question: "¿Cómo hago una reserva?",
       answer:
-        "Simply click the Reserve Now button to check availability and complete your booking through our preferred reservation platform.",
+        "Solo haz clic en el botón Reservar ahora para consultar disponibilidad y completar tu reserva a través de nuestra plataforma de reservas preferida.",
     },
     {
-      question: "What is the cancellation policy?",
+      question: "¿Cuál es la política de cancelación?",
       answer:
-        "Cancellation policies may vary depending on your booking platform. Please review the cancellation terms before confirming your reservation.",
+        "Las políticas de cancelación pueden variar según la plataforma de reservas. Revisa los términos de cancelación antes de confirmar tu reserva.",
     },
     {
-      question: "Is the kitchen fully equipped?",
+      question: "¿La cocina está totalmente equipada?",
       answer:
-        "Yes, the kitchen includes everything you need to prepare meals, from cookware and utensils to modern appliances.",
+        "Sí, la cocina incluye todo lo necesario para preparar comidas, desde utensilios y vajilla hasta electrodomésticos modernos.",
     },
     {
-      question: "How many guests can the property accommodate?",
+      question: "¿Cuántos huéspedes puede alojar la propiedad?",
       answer:
-        "The property comfortably accommodates up to 6 guests, making it perfect for families, couples, or small groups.",
+        "La propiedad aloja cómodamente hasta 6 huéspedes, ideal para familias, parejas o grupos pequeños.",
     },
   ] satisfies FaqItem[],
 };
 
 export const FOOTER = {
-  text: "Experience a peaceful escape surrounded by\ncomfort, nature, and unforgettable moments.",
-  cta: "Reserve Now",
+  text: "Vive una escapada tranquila rodeado de\ncomodidad, naturaleza y momentos inolvidables.",
+  cta: "Reservar ahora",
   logoMark: { src: "/images/logo-mark.webp", alt: "" } satisfies ImageAsset,
   background: { src: "/images/footer.webp", alt: "" } satisfies ImageAsset,
-  navigationTitle: "Navigation",
-  contactTitle: "Contact",
-  followTitle: "Follow",
+  navigationTitle: "Navegación",
+  contactTitle: "Contacto",
+  followTitle: "Síguenos",
   copyright: "© {year} Pine Valley Retreat",
-  available: "Available for Booking",
+  available: "Disponible para reservar",
 };
 
 export const NOT_FOUND = {
-  title: "Page not found",
+  title: "Página no encontrada",
   label: "404",
-  text: "The page you are looking for doesn't exist or has been moved.",
-  cta: "Back to home",
+  text: "La página que buscas no existe o ha sido movida.",
+  cta: "Volver al inicio",
 };
 
 export const UI_LABELS = {
-  skipToContent: "Skip to content",
-  mainNav: "Main",
-  footerNav: "Footer",
-  home: "home",
-  headerCta: "Book Your Stay",
-  openMenu: "Open menu",
-  closeMenu: "Close menu",
-  rating: "{n} out of 5 stars",
-  openImage: "Open image {n} of {total}",
-  lightbox: "Photo gallery",
-  closeLightbox: "Close gallery",
-  previousImage: "Previous image",
-  nextImage: "Next image",
+  skipToContent: "Ir al contenido",
+  mainNav: "Principal",
+  footerNav: "Pie de página",
+  home: "inicio",
+  headerCta: "Reserva tu estancia",
+  openMenu: "Abrir menú",
+  closeMenu: "Cerrar menú",
+  rating: "{n} de 5 estrellas",
+  openImage: "Abrir imagen {n} de {total}",
+  lightbox: "Galería de fotos",
+  closeLightbox: "Cerrar galería",
+  previousImage: "Imagen anterior",
+  nextImage: "Imagen siguiente",
   imageCounter: "{n} / {total}",
-  rooms: "Rooms",
-  previousRoom: "Previous room",
-  nextRoom: "Next room",
-  mapTitle: "Property location map",
-  address: "Address",
-  phone: "Phone",
+  rooms: "Habitaciones",
+  previousRoom: "Habitación anterior",
+  nextRoom: "Habitación siguiente",
+  mapTitle: "Mapa de ubicación de la propiedad",
+  address: "Dirección",
+  phone: "Teléfono",
 };
 
 /** Sustituye `{clave}` en las etiquetas de interfaz. */

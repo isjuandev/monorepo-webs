@@ -39,7 +39,7 @@ export function ReviewsCarousel({ reviews }: ReviewsCarouselProps) {
             role="tab"
             class={index === active ? "reviews-card__dot is-active" : "reviews-card__dot"}
             aria-selected={index === active}
-            aria-label={`Review ${index + 1}`}
+            aria-label={`${UI_LABELS.selectReview} ${index + 1}`}
             tabIndex={index === active ? 0 : -1}
             onClick={() => setActive(index)}
           />

@@ -21,6 +21,8 @@ const splitWords = (label: string) => label.split(" ");
         aria-expanded="false"
         aria-controls="site-menu"
         data-menu-toggle
+        data-label-open={UI_LABELS.menu}
+        data-label-close={UI_LABELS.close}
       >
         <span data-menu-label>{UI_LABELS.menu}</span>
       </button>
@@ -221,7 +223,7 @@ const splitWords = (label: string) => label.split(" ");
     const setOpen = (open: boolean) => {
       window.clearTimeout(closeTimer);
       toggle.setAttribute("aria-expanded", String(open));
-      label.textContent = open ? "Close" : "Menu";
+      label.textContent = open ? (toggle.dataset.labelClose ?? "") : (toggle.dataset.labelOpen ?? "");
       setScrollLocked(open);
       if (open) {
         menu.hidden = false;

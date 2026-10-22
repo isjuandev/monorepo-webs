@@ -1,6 +1,6 @@
 # Personalizar este sitio (selvra)
 
-Retiro/alojamiento boutique con varias estancias y experiencias, en inglés (clon de `selvra-retreat.framer.website`). Todo lo específico de un cliente vive en **4 puntos**: los componentes y páginas no contienen marca, textos ni contactos, así que no hace falta editarlos para entregar un sitio.
+Retiro/alojamiento boutique con varias estancias y experiencias, en español (adaptado de la fuente en inglés, clon de `selvra-retreat.framer.website`). Todo lo específico de un cliente vive en **4 puntos**: los componentes y páginas no contienen marca, textos ni contactos, así que no hace falta editarlos para entregar un sitio.
 
 | # | Qué cambia | Archivo | Qué contiene |
 | :-- | :-- | :-- | :-- |

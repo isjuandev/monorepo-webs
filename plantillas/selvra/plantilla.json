@@ -1,10 +1,10 @@
 {
   "nombre": "Selvra",
-  "descripcion": "Retiro boutique en inglés: estancias y experiencias con detalle, lugar, solicitud de reserva y privacidad.",
-  "idioma": "en",
+  "descripcion": "Retiro boutique: estancias y experiencias con detalle, lugar, solicitud de reserva y privacidad.",
+  "idioma": "es",
   "negocio": ["retiro", "glamping"],
   "origen": "https://selvra-retreat.framer.website",
   "demo": "",
   "marcas": ["Arvenna", "ARVENNA"],
-  "placeholders": ["Retreat address", "HILLSIDE RETREAT"]
+  "placeholders": ["Dirección del retiro", "RETIRO EN LA LADERA"]
 }
