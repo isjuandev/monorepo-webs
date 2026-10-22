@@ -3,8 +3,8 @@ import { HOME } from "@/data/content";
 
 /**
  * "Stone. Wood. Open space.": escenario de fotos fijo (sticky, top 96 px) a la izquierda y tres
- * textos que pasan a la derecha. Cada foto entra en fundido mientras el borde superior de su texto
- * cruza del 72 % del viewport hacia arriba (96 px de recorrido, medido en la fuente).
+ * textos que pasan a la derecha. Cada foto entra con fundido y zoom suaves (CSS) cuando el borde
+ * superior de su texto cruza el 62 % del viewport; la lógica está en `scripts/motion.ts`.
  * En mobile cada paso muestra su foto encima del texto, sin escenario fijo.
  */
 const steps = HOME.materials;
@@ -17,13 +17,13 @@ const steps = HOME.materials;
         {
           steps.map((step, index) => (
             <img
-              class="materials__photo"
+              class:list={["materials__photo", { "is-active": index === 0 }]}
               data-material-photo={index}
               src={step.image.src}
               alt=""
               width="672"
               height="630"
-              loading="lazy"
+              loading="eager"
               decoding="async"
             />
           ))
@@ -80,10 +80,30 @@ const steps = HOME.materials;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    opacity: 0;
+    transform: scale(1.07);
+    transition:
+      opacity 1s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 1.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: opacity, transform;
   }
 
-  .materials__photo:not([data-material-photo="0"]) {
-    opacity: 0;
+  .materials__photo.is-leaving {
+    z-index: 1;
+    opacity: 1;
+  }
+
+  .materials__photo.is-active {
+    z-index: 2;
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .materials__photo {
+      transition: none;
+      transform: none;
+    }
   }
 
   .materials__steps {
