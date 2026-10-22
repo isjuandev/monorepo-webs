@@ -25,6 +25,7 @@
     "plantilla:lista": "node scripts/templates-list.mjs",
     "plantilla:clonar": "node scripts/template-clone.mjs",
     "plantilla:prompt": "node scripts/template-prompt.mjs",
+    "plantilla:probe": "node scripts/template-clone.mjs --probe",
     "test:visual": "playwright test && node scripts/visual-qa-summary.mjs",
     "test:visual:update": "UPDATE_SNAPSHOTS=true playwright test --update-snapshots && node scripts/visual-qa-summary.mjs",
     "clean": "turbo run clean && rm -rf node_modules playwright-report test-results"

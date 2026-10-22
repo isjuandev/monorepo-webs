@@ -257,6 +257,7 @@ Comando de alto nivel: **`/nuevo-cliente <slug>`** ([`.claude/commands/nuevo-cli
 | `pnpm plantilla:lista [--write]` | Catálogo de plantillas (con `--write` actualiza `plantillas/README.md`) |
 | `pnpm plantilla:clonar <url> <slug>` | Clona una web como plantilla nueva hasta el PR |
 | `pnpm plantilla:prompt <url> <slug>` | Prompt manual de clonado (al portapapeles) |
+| `pnpm plantilla:probe <plantilla>` | Prueba de personalización: genera un cliente temporal y exige que los restos estén solo en `site.ts`, `content.ts` y `theme.css` |
 | `pnpm --filter @clientes/<slug> dev` | Servidor de desarrollo de un sitio (`@plantillas/<slug>` para plantillas) |
 | `pnpm lint` · `pnpm lint:fix` · `pnpm check` | Biome y diagnósticos de Astro/TS |
 | `docker build -f docker/Dockerfile --build-arg SITE_FOLDER=<slug> -t web-<slug> .` | Imagen de producción de un sitio |
