@@ -1,0 +1,220 @@
+---
+import Icon from "@/components/Icon.astro";
+import PageHero from "@/components/PageHero.astro";
+import SplitHeading from "@/components/SplitHeading.astro";
+import SuiteCard from "@/components/SuiteCard.astro";
+import { SUITES, SUITES_PAGE, UI_LABELS } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { formatPrice } from "@/lib/format";
+
+const { hero, filters, compare, cta } = SUITES_PAGE;
+---
+
+<BaseLayout page={SUITES_PAGE.meta.seoTitle} description={SUITES_PAGE.meta.description} headerTone="dark" ogImage={hero.image.src}>
+  <PageHero title={hero.title} image={hero.image}>
+    <dl class="suites-counts" data-load style="--load-delay: 0.45s">
+      {
+        hero.counts.map((count) => (
+          <div>
+            <dt>{count.label}</dt>
+            <dd>{count.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </PageHero>
+
+  <section class="suites-list" data-tone="light" data-filter-scope>
+    <div class="suites-list__filters">
+      <div class="container filter-bar" data-filter-group role="group" aria-label={UI_LABELS.filterLabel}>
+        {
+          filters.map((filter, index) => (
+            <button type="button" class="filter-btn" data-filter={filter.value} aria-pressed={index === 0 ? "true" : "false"}>
+              {filter.label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+    <ul class="container suites-list__grid">
+      {
+        SUITES.map((suite, index) => (
+          <li data-filter-item data-tags={suite.kind} data-reveal style={`--reveal-delay: ${(index % 3) * 0.1}s`}>
+            <SuiteCard suite={suite} headingLevel="h2" />
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="compare" data-tone="light">
+    <div class="container">
+      <SplitHeading title={compare.title} size="s" inline />
+      <div class="compare__scroll" data-reveal>
+        <table class="compare__table">
+          <thead>
+            <tr>
+              <th scope="col"><span class="visually-hidden">{UI_LABELS.suiteColumn}</span></th>
+              {compare.columns.map((column) => <th scope="col">{column}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {
+              SUITES.map((suite) => (
+                <tr>
+                  <th scope="row">
+                    <a href={`/suites/${suite.slug}`}>{suite.name}</a>
+                  </th>
+                  <td>{suite.area} m²</td>
+                  <td>{suite.guests}</td>
+                  <td>{suite.facing}</td>
+                  <td>{suite.signature}</td>
+                  <td class="compare__price">{formatPrice(suite.price)}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="suites-cta" data-tone="dark">
+    <div class="container suites-cta__inner">
+      <SplitHeading title={cta.title} size="s" />
+      <a class="btn btn--accent" href={cta.button.href} data-reveal>
+        {cta.button.label}
+        <Icon name="arrow-right" />
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import "@/scripts/filters";
+</script>
+
+<style>
+  .suites-counts {
+    display: flex;
+    gap: 34px;
+  }
+
+  .suites-counts div {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .suites-counts dd {
+    font-family: var(--font-display);
+    font-size: 45px;
+    line-height: 1.1;
+  }
+
+  .suites-counts dt {
+    font-size: 10px;
+    color: rgb(245 237 225 / 0.7);
+  }
+
+  .suites-list {
+    padding-bottom: 150px;
+  }
+
+  .suites-list__filters {
+    padding: 36px 0 26px;
+    margin-bottom: 80px;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .suites-list__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 100px 44px;
+  }
+
+  .compare {
+    padding: 120px 0;
+    background: var(--color-sand-deep);
+  }
+
+  .compare__scroll {
+    margin-top: 64px;
+    overflow-x: auto;
+  }
+
+  .compare__table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+  }
+
+  .compare__table th,
+  .compare__table td {
+    padding: 22px 16px 22px 0;
+    border-bottom: 1px solid var(--color-line);
+    font-size: 16px;
+    font-weight: 400;
+    text-align: left;
+    color: rgb(42 29 20 / 0.8);
+  }
+
+  .compare__table thead th {
+    padding-bottom: 12px;
+    border-bottom-color: rgb(42 29 20 / 0.35);
+    font-size: 10px;
+    color: var(--color-subtle);
+  }
+
+  .compare__table tbody th {
+    font-family: var(--font-display);
+    font-size: 26px;
+    color: var(--color-text);
+  }
+
+  .compare__table tbody th a:hover {
+    color: var(--color-accent);
+  }
+
+  .compare__table thead th:last-child,
+  .compare__table .compare__price {
+    text-align: right;
+    color: var(--color-text);
+  }
+
+  .suites-cta {
+    padding: 120px 0;
+    background: var(--color-primary);
+    color: var(--color-on-dark);
+  }
+
+  .suites-cta__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+  }
+
+  @media (max-width: 999px) {
+    .suites-list__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 64px 24px;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .suites-list__filters {
+      margin-bottom: 48px;
+    }
+
+    .suites-list__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .suites-cta__inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

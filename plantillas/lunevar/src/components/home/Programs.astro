@@ -1,0 +1,359 @@
+---
+import Icon from "@/components/Icon.astro";
+import SplitHeading from "@/components/SplitHeading.astro";
+import { PLAN_HREF } from "@/config/site";
+import { HOME, PROGRAMS, UI_LABELS } from "@/data/content";
+import { formatPrice } from "@/lib/format";
+
+/**
+ * "Quédate más. Envejece despacio.": arco con la directora médica a la izquierda y los programas en
+ * acordeón (uno abierto, oscuro; los cerrados en arena) a la derecha.
+ */
+const { programs } = HOME;
+---
+
+<section class="programs" data-tone="light">
+  <div class="container programs__inner">
+    <div class="programs__left">
+      <SplitHeading title={programs.title} size="l" />
+      <p class="lede" data-reveal>{programs.text}</p>
+      <div class="media media--arch programs__arch" data-reveal>
+        <img src={programs.image.src} alt={programs.image.alt} width="560" height="760" loading="lazy" decoding="async" data-parallax="-0.06" />
+        <div class="programs__doctor">
+          <p class="programs__doctor-label">{programs.doctor.label}</p>
+          <p class="programs__doctor-name">{programs.doctor.name}</p>
+          <p class="programs__doctor-role">{programs.doctor.role}</p>
+        </div>
+      </div>
+    </div>
+
+    <ul class="programs__list" data-accordion>
+      {
+        PROGRAMS.map((program, index) => (
+          <li class:list={["program", { "is-open": index === 0 }]} data-accordion-item data-reveal style={`--reveal-delay: ${index * 0.1}s`}>
+            <div class="program__top">
+              <span class="program__numeral">{program.numeral}</span>
+              <h3 class="program__name">{program.name}</h3>
+              <div class="chip-row program__chips">
+                <span class="chip"><Icon name="moon" />{UI_LABELS.nights(program.nights)}</span>
+                <span class="chip"><Icon name="tag" />{UI_LABELS.from} {formatPrice(program.pricePerson)}</span>
+              </div>
+              <button
+                type="button"
+                class="program__toggle"
+                aria-expanded={index === 0 ? "true" : "false"}
+                aria-controls={`program-${program.slug}`}
+                aria-label={index === 0 ? UI_LABELS.closeProgram : UI_LABELS.openProgram}
+                data-label-open={`${UI_LABELS.openProgram}: ${program.name}`}
+                data-label-close={`${UI_LABELS.closeProgram}: ${program.name}`}
+                data-accordion-toggle
+              >
+                <Icon name="plus" size={18} class="program__plus" />
+                <Icon name="minus" size={18} class="program__minus" />
+              </button>
+            </div>
+            <p class="program__description">{program.description}</p>
+            <div class="program__panel" id={`program-${program.slug}`} data-accordion-panel>
+              <div class="program__panel-inner">
+                <div class="program__details">
+                  <div class="media program__image">
+                    <img src={program.image.src} alt={program.image.alt} width="220" height="280" loading="lazy" decoding="async" />
+                  </div>
+                  <ol class="program__highlights">
+                    {program.highlights.map((highlight, row) => (
+                      <li>
+                        <span>{String(row + 1).padStart(2, "0")}</span>
+                        {highlight}
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+                <div class="program__buttons">
+                  <a class="btn btn--accent" href={`${PLAN_HREF}?program=${program.slug}`}>
+                    {programs.primaryCta} {program.name}
+                    <Icon name="arrow-right" />
+                  </a>
+                  <a class="btn btn--ghost-light" href={programs.secondaryCta.href}>
+                    {programs.secondaryCta.label}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<script>
+  import "@/scripts/accordion";
+</script>
+
+<style>
+  .programs {
+    padding: 120px 0;
+    background: var(--color-sand-deep);
+  }
+
+  .programs__inner {
+    display: grid;
+    grid-template-columns: 560fr 720fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .programs__left {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .programs__left .lede {
+    max-width: 500px;
+  }
+
+  .programs__arch {
+    position: relative;
+    aspect-ratio: 560 / 640;
+    margin-top: 20px;
+  }
+
+  .programs__arch img {
+    position: absolute;
+    inset: -8% 0;
+    height: 116%;
+  }
+
+  .programs__doctor {
+    position: absolute;
+    left: 24px;
+    bottom: 28px;
+    padding: 18px 18px 14px;
+    border-radius: var(--radius-sm);
+    background: rgb(245 237 225 / 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .programs__doctor-label {
+    font-size: 10px;
+    color: rgb(42 29 20 / 0.6);
+  }
+
+  .programs__doctor-name {
+    margin: 2px 0;
+    font-size: 15px;
+  }
+
+  .programs__doctor-role {
+    font-size: 13px;
+    color: var(--color-muted);
+  }
+
+  .programs__list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .program {
+    padding: 28px 32px;
+    border-radius: 28px;
+    background: rgb(245 237 225 / 0.7);
+    transition:
+      background-color 0.5s var(--ease-out),
+      color 0.5s var(--ease-out);
+  }
+
+  .program.is-open {
+    background: var(--color-primary);
+    color: var(--color-on-dark);
+  }
+
+  .program__top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .program__numeral {
+    width: 40px;
+    flex: none;
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-style: italic;
+    color: var(--color-accent);
+  }
+
+  .program.is-open .program__numeral {
+    color: var(--color-glow);
+  }
+
+  .program__chips {
+    flex-wrap: nowrap;
+  }
+
+  .program__name {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-display);
+    font-size: clamp(34px, 3.3vw, 48px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  .program.is-open .chip {
+    border-color: rgb(245 237 225 / 0.2);
+    background: rgb(245 237 225 / 0.06);
+    color: rgb(245 237 225 / 0.95);
+  }
+
+  .program__toggle {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgb(42 29 20 / 0.25);
+    border-radius: 50%;
+    transition:
+      background-color 0.3s var(--ease-out),
+      border-color 0.3s var(--ease-out);
+  }
+
+  .program.is-open .program__toggle {
+    border-color: var(--color-glow);
+    background: var(--color-glow);
+    color: var(--color-primary);
+  }
+
+  .program :global(.program__minus),
+  .program.is-open :global(.program__plus) {
+    display: none;
+  }
+
+  .program.is-open :global(.program__minus) {
+    display: block;
+  }
+
+  .program__description {
+    max-width: 560px;
+    margin: 26px 0 0 56px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  .program.is-open .program__description {
+    font-size: 17px;
+    color: rgb(245 237 225 / 0.8);
+  }
+
+  .program__panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.6s var(--ease-out);
+  }
+
+  .program.is-open .program__panel {
+    grid-template-rows: 1fr;
+  }
+
+  .program__panel-inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .program__details {
+    display: flex;
+    gap: 28px;
+    padding-top: 26px;
+  }
+
+  .program__image {
+    flex: none;
+    width: 220px;
+    height: 280px;
+    border-radius: var(--radius-sm);
+  }
+
+  .program__highlights {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .program__highlights li {
+    display: flex;
+    gap: 18px;
+    padding: 13px 0;
+    border-bottom: 1px solid rgb(245 237 225 / 0.14);
+    font-size: 15px;
+    line-height: 1.4;
+    color: rgb(245 237 225 / 0.9);
+  }
+
+  .program__highlights span {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    line-height: 1.9;
+    color: var(--color-glow);
+  }
+
+  .program__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 28px;
+  }
+
+  @media (max-width: 1100px) {
+    .programs__inner {
+      grid-template-columns: 1fr;
+      gap: 56px;
+    }
+
+    .programs__arch {
+      max-width: 560px;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .programs {
+      padding: 100px 0;
+    }
+
+    .program {
+      padding: 22px 18px;
+      border-radius: var(--radius-md);
+    }
+
+    .program__top {
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .program__numeral {
+      width: auto;
+    }
+
+    .program__chips {
+      order: 3;
+      width: 100%;
+    }
+
+    .program__description {
+      margin-left: 0;
+    }
+
+    .program__details {
+      flex-direction: column;
+    }
+
+    .program__image {
+      width: 100%;
+      height: 200px;
+    }
+  }
+</style>

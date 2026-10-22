@@ -1,0 +1,236 @@
+---
+import ArticleCard from "@/components/ArticleCard.astro";
+import Icon from "@/components/Icon.astro";
+import NewsletterForm from "@/components/NewsletterForm.astro";
+import SplitHeading from "@/components/SplitHeading.astro";
+import { ARTICLES, JOURNAL, JOURNAL_FEATURED, LONGEVITY, UI_LABELS } from "@/data/content";
+import { getArticle } from "@/data/lookup";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { formatDate } from "@/lib/format";
+
+const featured = getArticle(JOURNAL_FEATURED);
+const author = LONGEVITY.team[featured.author];
+const others = ARTICLES.filter((article) => article.slug !== featured.slug);
+const categories = [...new Set(ARTICLES.map((article) => article.category))];
+const tagOf = (category: string) => category.toLowerCase().replace(/[^a-z0-9áéíóúñ]+/g, "-");
+---
+
+<BaseLayout page={JOURNAL.meta.seoTitle} description={JOURNAL.meta.description}>
+  <section class="journal-top" data-tone="light">
+    <div class="container">
+      <h1 class="display display-xl display--inline journal-top__title">
+        <span data-load style="--load-delay: 0.15s">{JOURNAL.title.lead}</span>{" "}
+        <span class="accent" data-load style="--load-delay: 0.3s">{JOURNAL.title.accent}</span>
+      </h1>
+      <a class="featured" href={`/journal/${featured.slug}`} data-reveal>
+        <div class="media featured__media">
+          <img src={featured.cover.src} alt={featured.cover.alt} width="800" height="600" fetchpriority="high" decoding="async" />
+        </div>
+        <div class="featured__copy">
+          <div class="chip-row">
+            <span class="chip chip--accent">{JOURNAL.featuredLabel}</span>
+            <span class="chip chip--accent">{featured.category}</span>
+            <span class="chip chip--accent"><Icon name="clock" />{JOURNAL.minutes(featured.minutes)}</span>
+          </div>
+          <h2 class="featured__title">{featured.title}</h2>
+          <p class="featured__excerpt">{featured.excerpt}</p>
+          {
+            author && (
+              <div class="byline">
+                <img src={author.image.src} alt={author.image.alt} width="40" height="40" loading="lazy" />
+                <div>
+                  <p class="byline__name">{author.name}</p>
+                  <p class="byline__meta">{formatDate(featured.date)}</p>
+                </div>
+              </div>
+            )
+          }
+          <span class="link-arrow">
+            {JOURNAL.readLetter}
+            <Icon name="arrow-right" />
+          </span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="journal-list" data-tone="light" data-filter-scope>
+    <div class="container">
+      <div class="filter-bar" data-filter-group role="group" aria-label={UI_LABELS.filterLabel} data-reveal>
+        <button type="button" class="filter-btn" data-filter="all" aria-pressed="true">{JOURNAL.allLabel}</button>
+        {
+          categories.map((category) => (
+            <button type="button" class="filter-btn" data-filter={tagOf(category)} aria-pressed="false">
+              {category}
+            </button>
+          ))
+        }
+      </div>
+      <ul class="journal-list__grid">
+        {
+          others.map((article, index) => (
+            <li data-filter-item data-tags={tagOf(article.category)} data-reveal style={`--reveal-delay: ${(index % 3) * 0.08}s`}>
+              <ArticleCard article={article} />
+            </li>
+          ))
+        }
+      </ul>
+      <p class="journal-list__empty" data-filter-empty hidden>{JOURNAL.empty}</p>
+    </div>
+  </section>
+
+  <section class="journal-letter" data-tone="dark">
+    <div class="container journal-letter__inner">
+      <SplitHeading title={JOURNAL.newsletter.title} size="s" inline />
+      <p class="journal-letter__text" data-reveal>{JOURNAL.newsletter.text}</p>
+      <div data-reveal class="journal-letter__form">
+        <NewsletterForm variant="dark" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import "@/scripts/filters";
+</script>
+
+<style>
+  .journal-top {
+    padding: 190px 0 110px;
+  }
+
+  .journal-top__title {
+    margin-bottom: 72px;
+  }
+
+  .featured {
+    display: grid;
+    grid-template-columns: 800fr 560fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .featured__media {
+    aspect-ratio: 800 / 600;
+    border-radius: var(--radius-md);
+  }
+
+  .featured__media img {
+    transition: transform 1.2s var(--ease-out);
+  }
+
+  .featured:hover .featured__media img {
+    transform: scale(1.03);
+  }
+
+  .featured__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .featured__title {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 3.7vw, 53px);
+    font-weight: 400;
+    line-height: 1.08;
+  }
+
+  .featured__excerpt {
+    max-width: 440px;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--color-muted);
+  }
+
+  .byline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .byline img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .byline__name {
+    font-size: 14px;
+  }
+
+  .byline__meta {
+    font-size: 11px;
+    color: var(--color-subtle);
+  }
+
+  .journal-list {
+    padding: 100px 0 150px;
+    background: var(--color-sand-deep);
+  }
+
+  .journal-list__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 64px 44px;
+    margin-top: 56px;
+  }
+
+  .journal-list__empty {
+    margin-top: 48px;
+    color: var(--color-muted);
+  }
+
+  .journal-letter {
+    padding: 120px 0;
+    background: var(--color-primary);
+    color: var(--color-on-dark);
+  }
+
+  .journal-letter__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    text-align: center;
+  }
+
+  .journal-letter__text {
+    font-size: 15px;
+    color: rgb(245 237 225 / 0.7);
+  }
+
+  .journal-letter__form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 999px) {
+    .featured {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .journal-list__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .journal-top {
+      padding: 140px 0 80px;
+    }
+
+    .journal-top__title {
+      margin-bottom: 48px;
+    }
+
+    .journal-list__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

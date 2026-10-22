@@ -1,0 +1,58 @@
+---
+import { StayPlanner } from "@/components/planner/StayPlanner";
+import { PLAN_HREF, siteConfig } from "@/config/site";
+import { PLAN, PLANNER_LABELS, PROGRAMS, SUN } from "@/data/content";
+import { getSuite } from "@/data/lookup";
+import "@/styles/planner.css";
+
+export interface Props {
+  variant: "compact" | "full";
+}
+
+/** Prepara los datos serializables del planificador (casas, programas, etiquetas) para la isla. */
+const { variant } = Astro.props;
+const houses = PLAN.houses.map(getSuite).map((suite) => ({
+  slug: suite.slug,
+  name: suite.name,
+  price: suite.price,
+  image: suite.image,
+}));
+const programs = PROGRAMS.map((program) => ({
+  slug: program.slug,
+  name: program.name,
+  nights: program.nights,
+  price: program.pricePerson,
+}));
+---
+
+{
+  variant === "full" ? (
+    <StayPlanner
+      client:load
+      variant="full"
+      houses={houses}
+      programs={programs}
+      defaults={{ ...PLAN.defaults, leadDays: SUN.defaultLeadDays }}
+      booked={PLAN.bookedDates}
+      sunrise={SUN.sunrise}
+      currencySymbol={siteConfig.currencySymbol}
+      contactEmail={siteConfig.contact.email}
+      planHref={PLAN_HREF}
+      labels={PLANNER_LABELS}
+    />
+  ) : (
+    <StayPlanner
+      client:visible
+      variant="compact"
+      houses={houses}
+      programs={programs}
+      defaults={{ ...PLAN.defaults, leadDays: SUN.defaultLeadDays }}
+      booked={PLAN.bookedDates}
+      sunrise={SUN.sunrise}
+      currencySymbol={siteConfig.currencySymbol}
+      contactEmail={siteConfig.contact.email}
+      planHref={PLAN_HREF}
+      labels={PLANNER_LABELS}
+    />
+  )
+}

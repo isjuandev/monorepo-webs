@@ -1,0 +1,228 @@
+---
+import Icon from "@/components/Icon.astro";
+import NewsletterForm from "@/components/NewsletterForm.astro";
+import SplitHeading from "@/components/SplitHeading.astro";
+import { FOOTER_COLUMNS, siteConfig } from "@/config/site";
+import { FOOTER } from "@/data/content";
+
+/**
+ * Pie de la fuente: se "descubre" bajo el contenido al llegar al final (en la fuente es sticky
+ * detrás del contenido). Aquí sigue en el flujo y su interior se retrasa respecto al scroll con
+ * `transform` (factor LAG): el efecto es parecido, pero nada lo tapa y sus controles siguen siendo
+ * accesibles. El sol sale tras el logotipo según avanza el descubrimiento.
+ */
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer" data-tone="light" data-footer>
+  <div class="container site-footer__inner" data-footer-inner>
+    <div class="site-footer__columns">
+      <div class="site-footer__newsletter">
+        <SplitHeading title={FOOTER.title} size="xs" reveal={false} />
+        <p class="site-footer__text">{FOOTER.text}</p>
+        <NewsletterForm />
+      </div>
+      <nav class="site-footer__links">
+        {
+          FOOTER_COLUMNS.map((column) => (
+            <div>
+              <p class="eyebrow">{column.title}</p>
+              <ul>
+                {column.links.map((link) => (
+                  <li>
+                    <a href={link.href}>{link.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </nav>
+    </div>
+    <div class="site-footer__bottom">
+      <p class="site-footer__legal">© {year} {siteConfig.legalName}</p>
+      <p class="chip site-footer__sunrise">
+        <Icon name="sunrise" />
+        {FOOTER.tomorrowSunrise}
+      </p>
+      <a href={siteConfig.socials.instagram} target="_blank" rel="noopener noreferrer">
+        {FOOTER.instagram}
+      </a>
+    </div>
+    <div class="site-footer__wordmark" aria-hidden="true">
+      <span class="site-footer__sun" data-footer-sun></span>
+      <span class="site-footer__word" data-fit-text>{siteConfig.wordmark}</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Desplaza el interior para que el pie parezca fijo bajo el contenido y hace subir el sol.
+  const footer = document.querySelector<HTMLElement>("[data-footer]");
+  const inner = footer?.querySelector<HTMLElement>("[data-footer-inner]");
+  const sun = footer?.querySelector<HTMLElement>("[data-footer-sun]");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const desktop = window.matchMedia("(min-width: 810px)");
+  // 1 = pegado al borde inferior (como el sticky de la fuente); <1 deja que el interior acompañe un
+  // poco al scroll, así al llegar al final siempre está en su sitio y sus controles responden.
+  const LAG = 0.6;
+  let ticking = false;
+
+  function update(): void {
+    ticking = false;
+    if (!footer || !inner || !sun) return;
+    const vh = window.innerHeight;
+    const height = footer.offsetHeight;
+    const top = footer.getBoundingClientRect().top;
+    const progress = Math.min(Math.max((vh - top) / height, 0), 1);
+    const lagging = desktop.matches && !reduce.matches && height <= vh && top > vh - height;
+    inner.style.transform = lagging
+      ? `translateY(${((vh - height - top) * LAG).toFixed(1)}px)`
+      : "";
+    sun.style.setProperty("--rise", reduce.matches ? "1" : progress.toFixed(3));
+  }
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    },
+    { passive: true }
+  );
+  window.addEventListener("resize", update, { passive: true });
+  update();
+</script>
+
+<style>
+  .site-footer {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #e3b58b 0%, #ecd2b4 30%, var(--color-sand) 62%, var(--color-sand) 100%);
+  }
+
+  .site-footer__inner {
+    padding-top: 90px;
+  }
+
+  .site-footer__columns {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    padding-bottom: 66px;
+  }
+
+  .site-footer__newsletter {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .site-footer__text {
+    max-width: 420px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  .site-footer__links {
+    display: grid;
+    grid-template-columns: repeat(2, 200px);
+  }
+
+  .site-footer__links ul {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 36px;
+  }
+
+  .site-footer__links a,
+  .site-footer__bottom a {
+    font-size: 16px;
+    transition: color 0.3s var(--ease-out);
+  }
+
+  .site-footer__links a:hover,
+  .site-footer__bottom a:hover {
+    color: var(--color-accent);
+  }
+
+  .site-footer__bottom {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-line);
+    font-size: 14px;
+  }
+
+  .site-footer__legal {
+    color: var(--color-subtle);
+  }
+
+  .site-footer__bottom a {
+    justify-self: end;
+    font-size: 14px;
+  }
+
+  .site-footer__wordmark {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding: 86px 0 0;
+    line-height: 0.8;
+  }
+
+  .site-footer__word {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 20vw;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    color: var(--color-text);
+  }
+
+  .site-footer__sun {
+    --rise: 0;
+    position: absolute;
+    left: 50%;
+    top: 40px;
+    width: min(760px, 70vw);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(232 135 80 / 0.85) 0%, rgb(236 160 110 / 0.45) 35%, transparent 68%);
+    transform: translate(-50%, calc((1 - var(--rise)) * 40%));
+    opacity: calc(0.35 + var(--rise) * 0.65);
+  }
+
+  @media (max-width: 809px) {
+    .site-footer__columns {
+      flex-direction: column;
+      gap: 56px;
+    }
+
+    .site-footer__links {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .site-footer__bottom {
+      grid-template-columns: 1fr auto;
+      row-gap: 16px;
+    }
+
+    .site-footer__sunrise {
+      grid-row: 2;
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+
+    .site-footer__wordmark {
+      padding-top: 48px;
+    }
+  }
+</style>

@@ -1,0 +1,184 @@
+---
+import { SUN } from "@/data/content";
+import { arcPath, arcPoint, sunProgress } from "@/lib/sun";
+
+export interface Props {
+  /** Horas marcadas en el arco ("HH:MM"); la primera y la última suelen ser amanecer y atardecer */
+  marks: string[];
+  /**
+   * Qué mueve el sol: "cards" = las tarjetas `[data-arc-step]` de la sección (la tarjeta en el
+   * centro de la pantalla marca la hora); "section" = el avance del scroll dentro de la sección.
+   */
+  driver: "cards" | "section";
+  variant?: "path" | "dome";
+  class?: string;
+}
+
+/**
+ * Arco del sol entre amanecer y atardecer. Trazo punteado de fondo, trazo continuo hasta el sol,
+ * marcas que se rellenan al pasar y la etiqueta activa en cobre (scripts/sun-arc.ts).
+ */
+const { marks, driver, variant = "path", class: className } = Astro.props;
+const isDome = variant === "dome";
+const width = isDome ? 1440 : 680;
+const height = isDome ? 640 : 330;
+const cx = width / 2;
+const cy = isDome ? 610 : 300;
+const r = isDome ? 642 : 268;
+const points = marks.map((time) => {
+  const progress = sunProgress(time, SUN.sunrise, SUN.sunset);
+  const point = arcPoint(progress, cx, cy, r);
+  const label = arcPoint(progress, cx, cy, r + (isDome ? 34 : 22));
+  let anchor = progress < 0.4 ? "end" : progress > 0.6 ? "start" : "middle";
+  // En el horizonte la etiqueta sube para no pisar la línea (en la cúpula, hacia dentro del margen).
+  const atStart = progress < 0.05;
+  const atEnd = progress > 0.95;
+  if (!isDome && (atStart || atEnd)) label.y -= 16;
+  if (isDome && (atStart || atEnd)) {
+    label.x = atStart ? cx - r - 58 : cx + r + 58;
+    label.y = cy - (atStart ? 100 : 170);
+    anchor = atStart ? "start" : "end";
+  }
+  return { time, progress, point, label, anchor };
+});
+const ticks = isDome
+  ? Array.from({ length: 13 }, (_, index) => {
+      const progress = index / 12;
+      return { a: arcPoint(progress, cx, cy, r), b: arcPoint(progress, cx, cy, r - 16) };
+    })
+  : [];
+---
+
+<div
+  class:list={["sun-arc", `sun-arc--${variant}`, className]}
+  data-sun-arc
+  data-driver={driver}
+  data-sunrise={SUN.sunrise}
+  data-sunset={SUN.sunset}
+  aria-hidden="true"
+>
+  <svg viewBox={`0 0 ${width} ${height}`} data-cx={cx} data-cy={cy} data-r={r}>
+    <defs>
+      <radialGradient id={`sun-glow-${variant}`}>
+        <stop offset="0" class="sun-arc__glow" stop-opacity="0.35"></stop>
+        <stop offset="1" class="sun-arc__glow" stop-opacity="0"></stop>
+      </radialGradient>
+    </defs>
+    {isDome && <path d={arcPath(cx, cy, r - 65)} class="sun-arc__inner"></path>}
+    <path d={arcPath(cx, cy, r)} class="sun-arc__track"></path>
+    <path d={arcPath(cx, cy, r)} class="sun-arc__fill" pathLength="1" data-dial-fill></path>
+    {
+      ticks.map((tick) => (
+        <line x1={tick.a.x} y1={tick.a.y} x2={tick.b.x} y2={tick.b.y} class="sun-arc__tick" />
+      ))
+    }
+    {!isDome && <line x1={cx - r - 36} y1={cy + 0.5} x2={cx + r + 36} y2={cy + 0.5} class="sun-arc__horizon" />}
+    {isDome && <line x1={cx - r} y1={cy} x2={cx - r + 14} y2={cy} class="sun-arc__horizon" />}
+    {
+      points.map((mark) => (
+        <g class="sun-arc__mark" data-arc-mark={mark.progress.toFixed(4)}>
+          {!isDome && <circle cx={mark.point.x} cy={mark.point.y} r="4.5" class="sun-arc__dot" />}
+          <text x={mark.label.x} y={mark.label.y + 4} text-anchor={mark.anchor} class="sun-arc__label">
+            {mark.time}
+          </text>
+        </g>
+      ))
+    }
+    <circle cx={cx - r} cy={cy} r={isDome ? 70 : 45} fill={`url(#sun-glow-${variant})`} data-dial-glow></circle>
+    <circle cx={cx - r} cy={cy} r={isDome ? 21 : 11} class="sun-arc__sun" data-dial-sun></circle>
+  </svg>
+</div>
+
+<script>
+  import "@/scripts/sun-arc";
+</script>
+
+<style>
+  .sun-arc__glow {
+    stop-color: var(--color-accent);
+  }
+
+  .sun-arc svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .sun-arc__track {
+    fill: none;
+    stroke: var(--color-text);
+    stroke-width: 1.2;
+    stroke-dasharray: 2 5;
+    stroke-opacity: 0.8;
+  }
+
+  .sun-arc__fill {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 2;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  .sun-arc__horizon {
+    stroke: var(--color-text);
+    stroke-opacity: 0.7;
+  }
+
+  .sun-arc__dot {
+    fill: var(--color-bg);
+    stroke: var(--color-accent);
+    stroke-width: 1.2;
+    transition: fill 0.3s var(--ease-out);
+  }
+
+  .sun-arc__label {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    fill: var(--color-text);
+    transition: fill 0.3s var(--ease-out);
+  }
+
+  .sun-arc__mark.is-passed .sun-arc__dot {
+    fill: var(--color-accent);
+  }
+
+  .sun-arc__mark.is-current .sun-arc__label {
+    fill: var(--color-accent);
+  }
+
+  .sun-arc__sun {
+    fill: var(--color-accent);
+  }
+
+  /* Variante "dome": arco gigante del hero de "Un día aquí". */
+  .sun-arc--dome .sun-arc__track {
+    stroke: #8a6c55;
+    stroke-width: 1.6;
+    stroke-dasharray: none;
+  }
+
+  .sun-arc--dome .sun-arc__fill {
+    stroke: none;
+  }
+
+  .sun-arc--dome .sun-arc__inner {
+    fill: none;
+    stroke: #8a6c55;
+    stroke-width: 1.4;
+    stroke-dasharray: 1.5 9;
+    stroke-linecap: round;
+  }
+
+  .sun-arc--dome .sun-arc__tick,
+  .sun-arc--dome .sun-arc__horizon {
+    stroke: #8a6c55;
+    stroke-width: 1.6;
+  }
+
+  .sun-arc--dome .sun-arc__label {
+    font-size: 15px;
+  }
+</style>

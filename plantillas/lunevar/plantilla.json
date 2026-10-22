@@ -1,0 +1,10 @@
+{
+  "nombre": "Lunevar",
+  "descripcion": "Retiro boutique en el desierto con casa de longevidad: portada con reloj solar en vivo y arco del sol ligado al scroll, suites con comparativa y detalle con galería, un día de rituales, programas con precios, gastronomía con reserva de mesa, diario y planificador de estancia con calendario.",
+  "idioma": "es",
+  "negocio": ["retiro", "hotel boutique", "spa", "longevidad"],
+  "origen": "https://extraordinary-wombat-796551.framer.app",
+  "demo": "",
+  "marcas": ["Almara", "ALMARA"],
+  "placeholders": ["Dirección del retiro", "Mesa Alta", "Tomás Arenal", "Dra. Inés Moreno"]
+}

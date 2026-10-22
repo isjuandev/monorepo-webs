@@ -1,0 +1,81 @@
+---
+import Icon from "@/components/Icon.astro";
+import { type Suite, UI_LABELS } from "@/data/content";
+import { formatPrice } from "@/lib/format";
+
+export interface Props {
+  suite: Suite;
+  /** Nivel del nombre (h3 en listados) */
+  headingLevel?: "h2" | "h3";
+  class?: string;
+}
+
+/** Tarjeta de suite: foto en arco, nombre, "Desde $X / noche", y chips de tamaño, huéspedes y rasgo. */
+const { suite, headingLevel: Heading = "h3", class: className } = Astro.props;
+---
+
+<a class:list={["suite-card", className]} href={`/suites/${suite.slug}`}>
+  <div class="media media--arch suite-card__media">
+    <img src={suite.image.src} alt={suite.image.alt} width="424" height="560" loading="lazy" decoding="async" />
+  </div>
+  <div class="suite-card__title">
+    <Heading class="suite-card__name">{suite.name}</Heading>
+    <p class="suite-card__price">
+      <span>{UI_LABELS.from}</span>
+      {`${formatPrice(suite.price)} ${UI_LABELS.perNight}`}
+    </p>
+  </div>
+  <div class="chip-row suite-card__chips">
+    <span class="chip"><Icon name="area" />{suite.area} m²</span>
+    <span class="chip"><Icon name="users" />{UI_LABELS.guests(suite.guests)}</span>
+    <span class="chip"><Icon name="pin" />{suite.feature}</span>
+  </div>
+</a>
+
+<style>
+  .suite-card {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .suite-card__media {
+    aspect-ratio: 424 / 560;
+  }
+
+  .suite-card__media img {
+    transition: transform 1.2s var(--ease-out);
+  }
+
+  .suite-card:hover .suite-card__media img {
+    transform: scale(1.04);
+  }
+
+  .suite-card__title {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .suite-card__name {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 2.5vw, 36px);
+    font-weight: 400;
+    line-height: 1.15;
+  }
+
+  .suite-card__price {
+    flex: none;
+    font-size: 15px;
+    text-align: right;
+  }
+
+  .suite-card__price span {
+    display: block;
+    font-size: 10px;
+    color: var(--color-subtle);
+  }
+</style>

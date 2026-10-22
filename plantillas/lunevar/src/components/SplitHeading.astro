@@ -1,0 +1,32 @@
+---
+import type { SplitTitle } from "@/data/content";
+
+export interface Props {
+  title: SplitTitle;
+  /** Nivel del encabezado */
+  as?: "h1" | "h2" | "h3";
+  /** Tamaño de la escala display de global.css */
+  size?: "xl" | "l" | "m" | "s" | "xs";
+  /** En una línea ("Compara, en calma.") en vez de dos */
+  inline?: boolean;
+  class?: string;
+  reveal?: boolean;
+}
+
+/** Título de dos partes de la fuente: primera línea recta, segunda en cursiva de acento. */
+const {
+  title,
+  as: Tag = "h2",
+  size = "l",
+  inline = false,
+  class: className,
+  reveal = true,
+} = Astro.props;
+---
+
+<Tag
+  class:list={["display", `display-${size}`, { "display--inline": inline }, className]}
+  data-reveal={reveal ? "" : undefined}
+>
+  <span>{title.lead}</span>{inline ? " " : ""}<span class="accent">{title.accent}</span>
+</Tag>

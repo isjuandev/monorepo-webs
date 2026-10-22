@@ -1,0 +1,48 @@
+---
+import StayPlannerIsland from "@/components/planner/StayPlannerIsland.astro";
+import { HOME } from "@/data/content";
+
+/** "Tu estancia empieza al amanecer": de la noche al amanecer, con el planificador compacto. */
+---
+
+<section class="plan-teaser" data-tone="dark">
+  <div class="container">
+    <h2 class="display display-xl plan-teaser__title" data-reveal>
+      <span>{HOME.plan.title.lead}</span>
+      <span class="accent">{HOME.plan.title.accent}</span>
+    </h2>
+    <div data-reveal>
+      <StayPlannerIsland variant="compact" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .plan-teaser {
+    padding: 160px 0;
+    background: linear-gradient(
+      180deg,
+      var(--color-night) 0%,
+      #2a1c21 30%,
+      #6e3f37 58%,
+      #c08b6a 82%,
+      #e3b58b 100%
+    );
+    color: var(--color-cream);
+  }
+
+  .plan-teaser__title {
+    margin-bottom: 72px;
+    text-align: center;
+  }
+
+  @media (max-width: 809px) {
+    .plan-teaser {
+      padding: 100px 0;
+    }
+
+    .plan-teaser__title {
+      margin-bottom: 48px;
+    }
+  }
+</style>

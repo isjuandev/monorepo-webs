@@ -1,0 +1,631 @@
+---
+import type { GetStaticPaths } from "astro";
+import Icon from "@/components/Icon.astro";
+import Lightbox from "@/components/Lightbox.astro";
+import SplitHeading from "@/components/SplitHeading.astro";
+import { PLAN_HREF } from "@/config/site";
+import { PLAN, SUITE_DETAIL, SUITES, SUN, type Suite, UI_LABELS } from "@/data/content";
+import { getSuite } from "@/data/lookup";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { formatPrice } from "@/lib/format";
+
+export const getStaticPaths = (() =>
+  SUITES.map((suite) => ({
+    params: { slug: suite.slug },
+    props: { suite },
+  }))) satisfies GetStaticPaths;
+
+export interface Props {
+  suite: Suite;
+}
+
+const { suite } = Astro.props;
+const [first = suite.name, ...rest] = suite.name.split(" ");
+const related = suite.related.map(getSuite);
+const price = `${formatPrice(suite.price)} ${UI_LABELS.perNight}`;
+const facts = [
+  { value: `${suite.area} m²`, label: SUITE_DETAIL.facts.area },
+  { value: String(suite.guests), label: SUITE_DETAIL.facts.guests },
+  { value: String(suite.bedrooms), label: SUITE_DETAIL.facts.bedrooms },
+  { value: suite.nightTemp, label: SUITE_DETAIL.facts.nightTemp },
+];
+const reserveHref = `${PLAN_HREF}?house=${suite.slug}`;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HotelRoom",
+  name: suite.name,
+  description: suite.summary,
+  floorSize: { "@type": "QuantitativeValue", value: suite.area, unitCode: "MTK" },
+  occupancy: { "@type": "QuantitativeValue", maxValue: suite.guests },
+};
+---
+
+<BaseLayout page={suite.name} description={suite.summary} ogImage={suite.image.src} jsonLd={jsonLd}>
+  <section class="suite-hero" data-tone="light">
+    <div class="container suite-hero__inner">
+      <div class="suite-hero__copy">
+        <div class="chip-row" data-load style="--load-delay: 0.1s">
+          <a class="chip" href="/suites"><Icon name="bed" />{UI_LABELS.suitesKicker}</a>
+          <span class="chip"><Icon name="pin" />{suite.name}</span>
+        </div>
+        <h1 class="display display-xl">
+          <span data-load style="--load-delay: 0.2s">{first}</span>
+          <span class="accent" data-load style="--load-delay: 0.32s">{rest.length > 0 ? `${rest.join(" ")}.` : ""}</span>
+        </h1>
+        <p class="suite-hero__summary" data-load style="--load-delay: 0.45s">{suite.summary}</p>
+        <dl class="suite-hero__facts" data-load style="--load-delay: 0.55s">
+          {
+            facts.map((fact) => (
+              <div>
+                <dt>{fact.label}</dt>
+                <dd>{fact.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <div class="suite-hero__actions" data-load style="--load-delay: 0.65s">
+          <a class="btn btn--accent" href={reserveHref}>
+            {UI_LABELS.checkDates}
+            <Icon name="arrow-right" />
+          </a>
+          <p class="suite-hero__price">
+            <span>{UI_LABELS.from}</span>
+            {price}
+          </p>
+        </div>
+      </div>
+      <div class="suite-hero__visual">
+        <div class="media media--arch suite-hero__arch">
+          <img src={suite.image.src} alt={suite.image.alt} width="1200" height="1600" fetchpriority="high" decoding="async" data-parallax="-0.06" />
+        </div>
+        <div class="media suite-hero__inset" data-reveal>
+          <img src={suite.inset.src} alt={suite.inset.alt} width="230" height="230" loading="lazy" decoding="async" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="suite-gallery" data-tone="light">
+    <div class="container">
+      <ul class="suite-gallery__grid">
+        {
+          suite.gallery.map((image, index) => (
+            <li data-reveal style={`--reveal-delay: ${index * 0.1}s`}>
+              <button type="button" class="media suite-gallery__item" data-lightbox-open="suite-gallery" data-index={index} aria-label={UI_LABELS.galleryOpen(index + 1)}>
+                <img src={image.src} alt={image.alt} width="443" height="500" loading="lazy" decoding="async" />
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="suite-gallery__hint">
+        {SUITE_DETAIL.galleryHint}
+        <Icon name="expand" size={16} />
+      </p>
+    </div>
+    <Lightbox images={suite.gallery} id="suite-gallery" />
+  </section>
+
+  <section class="suite-light" data-tone="light">
+    <div class="container">
+      <SplitHeading title={SUITE_DETAIL.lightTitle(suite.name)} size="s" />
+      <ol class="suite-light__line">
+        {
+          suite.light.map((moment, index) => (
+            <li data-reveal style={`--reveal-delay: ${index * 0.08}s`}>
+              <span class:list={["suite-light__dot", { "is-first": index === 0 }]} aria-hidden="true" />
+              <p class="suite-light__time">{moment.time}</p>
+              <h3 class="suite-light__title">{moment.title}</h3>
+              <p class="suite-light__text">{moment.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="suite-house" data-tone="light">
+    <div class="container suite-house__inner">
+      <div>
+        <h2 class="display display-xs" data-reveal>{SUITE_DETAIL.amenitiesTitle}</h2>
+        <ul class="suite-house__amenities" data-reveal>
+          {suite.amenities.map((amenity) => <li>{amenity}</li>)}
+        </ul>
+      </div>
+      <aside class="booking-card" data-reveal data-lead={SUN.defaultLeadDays}>
+        <p class="booking-card__from">{UI_LABELS.from}</p>
+        <p class="booking-card__price">{price}</p>
+        <div class="booking-card__dates">
+          <div>
+            <span>{PLAN.summary.arrive}</span>
+            <strong data-booking-date="0">—</strong>
+          </div>
+          <div>
+            <span>{PLAN.summary.depart}</span>
+            <strong data-booking-date={PLAN.defaults.nights}>—</strong>
+          </div>
+        </div>
+        <div class="booking-card__guests">
+          <span>{PLAN.summary.guests}</span>
+          <strong>{PLAN.guests}</strong>
+        </div>
+        <dl class="booking-card__rows">
+          {
+            SUITE_DETAIL.booking.rows.map((row) => (
+              <div>
+                <dt>{row.label}</dt>
+                <dd>{row.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <a class="btn btn--accent btn--block" href={reserveHref}>{SUITE_DETAIL.booking.reserve(suite.name)}</a>
+        <p class="booking-card__note">{SUITE_DETAIL.booking.note}</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="suite-related" data-tone="light">
+    <div class="container">
+      <h2 class="display display-xs" data-reveal>{SUITE_DETAIL.relatedTitle}</h2>
+      <ul class="suite-related__list">
+        {
+          related.map((item, index) => (
+            <li data-reveal style={`--reveal-delay: ${index * 0.1}s`}>
+              <a class="related-card" href={`/suites/${item.slug}`}>
+                <div class="media related-card__media">
+                  <img src={item.image.src} alt={item.image.alt} width="110" height="130" loading="lazy" decoding="async" />
+                </div>
+                <div class="related-card__body">
+                  <h3 class="related-card__name">{item.name}</h3>
+                  <span class="chip">
+                    <Icon name="tag" />
+                    {UI_LABELS.perNightLong(formatPrice(item.price))}
+                  </span>
+                  <span class="related-card__link">
+                    {SUITE_DETAIL.relatedLink}
+                    <Icon name="arrow-right" size={14} />
+                  </span>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import { LOCALE } from "@/lib/format";
+
+  // Fechas de ejemplo de la tarjeta: llegada sugerida (hoy + antelación) y salida tras N noches.
+  const format = new Intl.DateTimeFormat(LOCALE, { weekday: "short", day: "numeric", month: "short" });
+  for (const el of document.querySelectorAll<HTMLElement>("[data-booking-date]")) {
+    const lead = Number(el.closest<HTMLElement>("[data-lead]")?.dataset.lead) || 0;
+    const date = new Date();
+    date.setDate(date.getDate() + lead + Number(el.dataset.bookingDate));
+    const text = format.format(date);
+    el.textContent = text.charAt(0).toUpperCase() + text.slice(1);
+  }
+</script>
+
+<style>
+  .suite-hero {
+    padding: 140px 0 120px;
+  }
+
+  .suite-hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 641px);
+    gap: 60px;
+    align-items: center;
+  }
+
+  .suite-hero__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
+  }
+
+  .suite-hero__summary {
+    max-width: 520px;
+    font-size: 18px;
+    line-height: 1.55;
+    color: rgb(42 29 20 / 0.78);
+  }
+
+  .suite-hero__facts {
+    display: flex;
+    gap: 0;
+  }
+
+  .suite-hero__facts div {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+    padding: 0 24px;
+    border-left: 1px solid var(--color-line);
+  }
+
+  .suite-hero__facts div:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .suite-hero__facts dd {
+    font-family: var(--font-display);
+    font-size: 34px;
+    line-height: 1.1;
+  }
+
+  .suite-hero__facts dt {
+    font-size: 10px;
+    color: var(--color-subtle);
+  }
+
+  .suite-hero__actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .suite-hero__price {
+    font-size: 18px;
+  }
+
+  .suite-hero__price span {
+    display: block;
+    font-size: 10px;
+    color: var(--color-subtle);
+  }
+
+  .suite-hero__visual {
+    position: relative;
+  }
+
+  .suite-hero__arch {
+    aspect-ratio: 641 / 860;
+  }
+
+  .suite-hero__arch img {
+    position: absolute;
+    inset: -6% 0;
+    height: 112%;
+  }
+
+  .suite-hero__inset {
+    position: absolute;
+    left: -100px;
+    bottom: 70px;
+    width: 230px;
+    height: 230px;
+    border: 6px solid var(--color-bg);
+    border-radius: 50%;
+  }
+
+  .suite-gallery {
+    padding-bottom: 120px;
+  }
+
+  .suite-gallery__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .suite-gallery__item {
+    display: block;
+    width: 100%;
+    aspect-ratio: 443 / 500;
+    border-radius: 20px;
+    cursor: zoom-in;
+  }
+
+  .suite-gallery__item img {
+    transition: transform 1s var(--ease-out);
+  }
+
+  .suite-gallery__item:hover img {
+    transform: scale(1.04);
+  }
+
+  .suite-gallery__hint {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 24px;
+    font-size: 13px;
+    color: rgb(42 29 20 / 0.6);
+  }
+
+  .suite-light {
+    padding: 120px 0;
+    background: var(--color-sand-deep);
+  }
+
+  .suite-light__line {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
+    margin-top: 72px;
+    padding-top: 34px;
+    border-top: 1px solid rgb(200 100 44 / 0.4);
+  }
+
+  .suite-light__line li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .suite-light__dot {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--color-accent);
+    border-radius: 50%;
+    background: var(--color-sand-deep);
+  }
+
+  .suite-light__dot.is-first {
+    background: var(--color-accent);
+  }
+
+  .suite-light__time {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+  }
+
+  .suite-light__title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .suite-light__text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  .suite-house {
+    padding: 120px 0;
+  }
+
+  .suite-house__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 460px;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .suite-house__amenities {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 40px;
+    margin-top: 48px;
+  }
+
+  .suite-house__amenities li {
+    display: flex;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--color-line);
+    font-size: 16px;
+  }
+
+  .suite-house__amenities li::before {
+    content: "";
+    width: 12px;
+    height: 1px;
+    margin-top: 10px;
+    background: var(--color-accent);
+  }
+
+  .booking-card {
+    position: sticky;
+    top: 110px;
+    padding: 32px 28px;
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .booking-card__from {
+    font-size: 10px;
+    color: var(--color-subtle);
+  }
+
+  .booking-card__price {
+    margin-bottom: 24px;
+    font-family: var(--font-display);
+    font-size: 40px;
+    line-height: 1.2;
+  }
+
+  .booking-card__dates,
+  .booking-card__guests {
+    display: grid;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+  }
+
+  .booking-card__dates {
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 10px;
+  }
+
+  .booking-card__dates div,
+  .booking-card__guests {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 18px;
+  }
+
+  .booking-card__dates div + div {
+    border-left: 1px solid var(--color-line);
+  }
+
+  .booking-card span {
+    font-size: 10px;
+    color: var(--color-subtle);
+  }
+
+  .booking-card strong {
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .booking-card__rows {
+    margin: 18px 0 24px;
+  }
+
+  .booking-card__rows div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 8px 0;
+    font-size: 15px;
+  }
+
+  .booking-card__rows dt {
+    color: var(--color-muted);
+  }
+
+  .booking-card__note {
+    margin-top: 14px;
+    font-size: 13px;
+    color: rgb(42 29 20 / 0.6);
+  }
+
+  .suite-related {
+    padding: 120px 0 150px;
+    background: var(--color-sand-deep);
+  }
+
+  .suite-related__list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 56px;
+  }
+
+  .related-card {
+    display: flex;
+    gap: 20px;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    background: rgb(245 237 225 / 0.85);
+    transition: background-color 0.3s var(--ease-out);
+  }
+
+  .related-card:hover {
+    background: var(--color-surface);
+  }
+
+  .related-card__media {
+    flex: none;
+    width: 110px;
+    height: 130px;
+    border-radius: 60px 60px 8px 8px;
+  }
+
+  .related-card__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding-top: 6px;
+  }
+
+  .related-card__name {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.15;
+  }
+
+  .related-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 1100px) {
+    .suite-related__list {
+      grid-template-columns: 1fr;
+    }
+
+    .suite-house__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .booking-card {
+      position: static;
+      max-width: 460px;
+    }
+  }
+
+  @media (max-width: 999px) {
+    .suite-hero__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .suite-hero__visual {
+      width: 100%;
+      max-width: 560px;
+      margin-left: auto;
+    }
+
+    .suite-hero__inset {
+      left: -20px;
+      width: 150px;
+      height: 150px;
+    }
+
+    .suite-light__line {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      padding: 0 0 0 28px;
+      border-top: 0;
+      border-left: 1px solid rgb(200 100 44 / 0.4);
+    }
+
+    .suite-light__dot {
+      top: 4px;
+      left: -35px;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .suite-hero {
+      padding: 110px 0 80px;
+    }
+
+    .suite-hero__facts div {
+      padding: 0 14px;
+    }
+
+    .suite-hero__facts dd {
+      font-size: 26px;
+    }
+
+    .suite-gallery__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .suite-house__amenities {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

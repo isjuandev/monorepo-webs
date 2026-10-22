@@ -1,0 +1,317 @@
+---
+import Icon from "@/components/Icon.astro";
+import StayPlannerIsland from "@/components/planner/StayPlannerIsland.astro";
+import SplitHeading from "@/components/SplitHeading.astro";
+import { siteConfig } from "@/config/site";
+import { PLAN } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const { hero, travel, contact } = PLAN;
+const mapsHref = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(siteConfig.contact.mapsDestination)}`;
+const contacts = [
+  {
+    label: contact.write,
+    value: siteConfig.contact.email,
+    href: `mailto:${siteConfig.contact.email}`,
+  },
+  { label: contact.call, value: siteConfig.contact.phone, href: siteConfig.contact.phoneHref },
+  {
+    label: contact.message,
+    value: `${contact.whatsapp}, ${siteConfig.contact.whatsappHours}`,
+    href: `https://wa.me/${siteConfig.contact.whatsapp}`,
+  },
+  {
+    label: contact.press,
+    value: siteConfig.contact.pressEmail,
+    href: `mailto:${siteConfig.contact.pressEmail}`,
+  },
+];
+---
+
+<BaseLayout page={PLAN.meta.seoTitle} description={PLAN.meta.description}>
+  <section class="plan" data-tone="light">
+    <div class="container">
+      <div class="plan__intro">
+        <h1 class="display display-xl display--inline">
+          <span data-load style="--load-delay: 0.15s">{hero.title.lead}</span>{" "}
+          <span class="accent" data-load style="--load-delay: 0.3s">{hero.title.accent}</span>
+        </h1>
+        <p class="plan__text" data-load style="--load-delay: 0.45s">{hero.text}</p>
+      </div>
+      <StayPlannerIsland variant="full" />
+    </div>
+  </section>
+
+  <section class="travel" data-tone="light">
+    <div class="container travel__inner">
+      <div class="travel__copy">
+        <SplitHeading title={travel.title} size="s" />
+        <ul class="travel__modes">
+          {
+            travel.modes.map((mode, index) => (
+              <li data-reveal style={`--reveal-delay: ${index * 0.08}s`}>
+                <span class="chip">
+                  <Icon name={mode.icon} />
+                  {mode.label}
+                </span>
+                <h3 class="travel__title">{mode.title}</h3>
+                <p class="travel__text">{mode.text}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <a class="travel__map" href={mapsHref} target="_blank" rel="noopener noreferrer" aria-label={travel.map.label} data-reveal>
+        <span class="chip-row travel__chips">
+          {
+            travel.map.chips.map((chip) => (
+              <span class="chip">
+                <Icon name={chip.icon} />
+                {chip.label}
+              </span>
+            ))
+          }
+        </span>
+        <svg viewBox="0 0 640 420" aria-hidden="true" class="travel__svg">
+          <path d="M40 340 C 150 330, 190 250, 280 240 S 430 150, 520 120" class="travel__route"></path>
+          <path d="M420 300 L 520 120" class="travel__flight"></path>
+          <circle cx="40" cy="340" r="6" class="travel__point"></circle>
+          <circle cx="420" cy="300" r="5" class="travel__point travel__point--hollow"></circle>
+          <circle cx="520" cy="120" r="34" class="travel__glow"></circle>
+          <circle cx="520" cy="120" r="9" class="travel__retreat"></circle>
+          <text x="40" y="372" class="travel__label">{travel.map.city}</text>
+          <text x="420" y="330" class="travel__label" text-anchor="middle">{travel.map.airstrip}</text>
+          <text x="520" y="84" class="travel__label travel__label--strong" text-anchor="middle">{siteConfig.name}</text>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <section class="contact-strip" data-tone="light">
+    <ul class="container contact-strip__grid">
+      {
+        contacts.map((item) => (
+          <li>
+            <a href={item.href} target={item.href.startsWith("http") ? "_blank" : undefined} rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}>
+              <span>{item.label}</span>
+              {item.value}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .plan {
+    padding: 190px 0 130px;
+  }
+
+  .plan__intro {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    margin-bottom: 88px;
+  }
+
+  .plan__text {
+    font-size: 17px;
+    color: var(--color-muted);
+  }
+
+  .travel {
+    padding: 120px 0;
+    background: var(--color-sand-deep);
+  }
+
+  .travel__inner {
+    display: grid;
+    grid-template-columns: 520fr 760fr;
+    gap: 80px;
+    align-items: stretch;
+  }
+
+  .travel__modes {
+    margin-top: 48px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .travel__modes li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 22px 0 26px;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .travel__title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .travel__text {
+    font-size: 15px;
+    color: var(--color-muted);
+  }
+
+  .travel__map {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 520px;
+    padding: 70px 32px 32px;
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(circle at 80% 25%, rgb(232 135 80 / 0.18), transparent 45%),
+      var(--color-bg);
+    transition: box-shadow 0.4s var(--ease-out);
+  }
+
+  .travel__map:hover {
+    box-shadow: var(--shadow-card);
+  }
+
+  .travel__chips {
+    position: absolute;
+    top: 28px;
+    right: 28px;
+  }
+
+  .travel__svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .travel__route {
+    fill: none;
+    stroke: var(--color-text);
+    stroke-width: 1.5;
+    stroke-dasharray: 3 7;
+    stroke-linecap: round;
+  }
+
+  .travel__flight {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 1.2;
+    stroke-dasharray: 1 5;
+    stroke-linecap: round;
+  }
+
+  .travel__point {
+    fill: var(--color-text);
+  }
+
+  .travel__point--hollow {
+    fill: var(--color-bg);
+    stroke: var(--color-accent);
+  }
+
+  .travel__glow {
+    fill: rgb(200 100 44 / 0.15);
+  }
+
+  .travel__retreat {
+    fill: var(--color-accent);
+  }
+
+  .travel__label {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    fill: var(--color-muted);
+  }
+
+  .travel__label--strong {
+    font-family: var(--font-display);
+    font-size: 22px;
+    fill: var(--color-text);
+  }
+
+  .contact-strip {
+    padding: 64px 0 96px;
+  }
+
+  .contact-strip__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .contact-strip__grid li {
+    padding: 0 24px;
+    border-left: 1px solid var(--color-line);
+  }
+
+  .contact-strip__grid li:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .contact-strip__grid a {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-size: 20px;
+    overflow-wrap: anywhere;
+    transition: color 0.3s var(--ease-out);
+  }
+
+  .contact-strip__grid a:hover {
+    color: var(--color-accent);
+  }
+
+  .contact-strip__grid span {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    color: var(--color-subtle);
+  }
+
+  @media (max-width: 999px) {
+    .travel__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-strip__grid {
+      grid-template-columns: 1fr 1fr;
+      row-gap: 32px;
+    }
+
+    .contact-strip__grid li:nth-child(3) {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .plan {
+      padding: 130px 0 90px;
+    }
+
+    .plan__intro {
+      margin-bottom: 56px;
+    }
+
+    .travel {
+      padding: 100px 0;
+    }
+
+    .travel__map {
+      min-height: 0;
+      padding: 76px 16px 24px;
+    }
+
+    .contact-strip__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .contact-strip__grid li {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+</style>

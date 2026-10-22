@@ -1,0 +1,58 @@
+---
+import Icon from "@/components/Icon.astro";
+import { type Article, JOURNAL } from "@/data/content";
+
+export interface Props {
+  article: Article;
+  headingLevel?: "h2" | "h3";
+}
+
+/** Tarjeta del diario: foto apaisada, categoría y minutos en chips de acento, y título. */
+const { article, headingLevel: Heading = "h3" } = Astro.props;
+---
+
+<a class="article-card" href={`/journal/${article.slug}`}>
+  <div class="media article-card__media">
+    <img src={article.cover.src} alt={article.cover.alt} width="424" height="300" loading="lazy" decoding="async" />
+  </div>
+  <div class="chip-row">
+    <span class="chip chip--accent">{article.category}</span>
+    <span class="chip chip--accent"><Icon name="clock" />{JOURNAL.minutes(article.minutes)}</span>
+  </div>
+  <Heading class="article-card__title">{article.title}</Heading>
+</a>
+
+<style>
+  .article-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .article-card__media {
+    aspect-ratio: 424 / 300;
+    margin-bottom: 4px;
+    border-radius: var(--radius-sm);
+  }
+
+  .article-card__media img {
+    transition: transform 1s var(--ease-out);
+  }
+
+  .article-card:hover .article-card__media img {
+    transform: scale(1.04);
+  }
+
+  .article-card__title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.2;
+    text-wrap: balance;
+    transition: color 0.3s var(--ease-out);
+  }
+
+  .article-card:hover .article-card__title {
+    color: var(--color-accent);
+  }
+</style>

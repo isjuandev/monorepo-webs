@@ -1,0 +1,261 @@
+---
+import type { GetStaticPaths } from "astro";
+import ArticleCard from "@/components/ArticleCard.astro";
+import Icon from "@/components/Icon.astro";
+import { siteConfig } from "@/config/site";
+import { ARTICLES, type Article, FOOTER, JOURNAL, LONGEVITY } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { formatDate } from "@/lib/format";
+
+export const getStaticPaths = (() =>
+  ARTICLES.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }))) satisfies GetStaticPaths;
+
+export interface Props {
+  article: Article;
+}
+
+const { article } = Astro.props;
+const author = LONGEVITY.team[article.author];
+const index = ARTICLES.findIndex((item) => item.slug === article.slug);
+const more = [1, 2, 3]
+  .map((offset) => ARTICLES[(index + offset) % ARTICLES.length])
+  .filter((item): item is Article => Boolean(item) && item?.slug !== article.slug);
+const url = new URL(`/journal/${article.slug}`, siteConfig.url).href;
+const shareMail = `mailto:?subject=${encodeURIComponent(JOURNAL.shareSubject)}&body=${encodeURIComponent(`${article.title} — ${url}`)}`;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: article.title,
+  description: article.excerpt,
+  datePublished: article.date,
+  image: new URL(article.cover.src, siteConfig.url).href,
+  author: author ? { "@type": "Person", name: author.name } : undefined,
+  publisher: { "@type": "Organization", name: siteConfig.name },
+  mainEntityOfPage: url,
+};
+---
+
+<BaseLayout page={article.title} description={article.excerpt} ogImage={article.cover.src} jsonLd={jsonLd}>
+  <article class="article" data-tone="light">
+    <header class="container article__header">
+      <div class="chip-row" data-load style="--load-delay: 0.1s">
+        <span class="chip chip--accent">{article.category}</span>
+        <span class="chip chip--accent"><Icon name="clock" />{JOURNAL.minutesRead(article.minutes)}</span>
+        <span class="chip chip--accent"><time datetime={article.date}>{formatDate(article.date)}</time></span>
+      </div>
+      <h1 class="display display-l article__title" data-load style="--load-delay: 0.2s">{article.title}</h1>
+      {
+        author && (
+          <div class="byline" data-load style="--load-delay: 0.32s">
+            <img src={author.image.src} alt={author.image.alt} width="40" height="40" />
+            <div>
+              <p class="byline__name">{author.name}</p>
+              <p class="byline__meta">{author.role}</p>
+            </div>
+          </div>
+        )
+      }
+    </header>
+
+    <figure class="container article__cover" data-load style="--load-delay: 0.4s">
+      <div class="media article__cover-media">
+        <img src={article.cover.src} alt={article.cover.alt} width="1360" height="760" fetchpriority="high" decoding="async" />
+      </div>
+      <figcaption>{article.caption}</figcaption>
+    </figure>
+
+    <div class="article__body">
+      {
+        article.body.map((block) => {
+          if (block.type === "p") return <p data-reveal>{block.text}</p>;
+          if (block.type === "h2") return <h2 data-reveal>{block.text}</h2>;
+          if (block.type === "quote") return <blockquote data-reveal>{block.text}</blockquote>;
+          return (
+            <div class:list={["media", "article__image", { "article__image--tall": block.tall }]} data-reveal>
+              <img src={block.image.src} alt={block.image.alt} width="700" height={block.tall ? 930 : 400} loading="lazy" decoding="async" />
+            </div>
+          );
+        })
+      }
+      <div class="chip-row article__tags">
+        {article.tags.map((tag) => <span class="chip">{tag}</span>)}
+      </div>
+      <div class="article__share">
+        <span>{JOURNAL.share}</span>
+        <a href={shareMail}>{JOURNAL.shareEmail}</a>
+        <a href={siteConfig.socials.instagram} target="_blank" rel="noopener noreferrer">{FOOTER.instagram}</a>
+      </div>
+    </div>
+  </article>
+
+  <section class="keep-reading" data-tone="light">
+    <div class="container">
+      <h2 class="display display-xs" data-reveal>{JOURNAL.keepReading}</h2>
+      <ul class="keep-reading__grid">
+        {
+          more.map((item, position) => (
+            <li data-reveal style={`--reveal-delay: ${position * 0.08}s`}>
+              <ArticleCard article={item} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .article {
+    padding: 160px 0 120px;
+  }
+
+  .article__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    text-align: center;
+  }
+
+  .article__title {
+    max-width: 1000px;
+  }
+
+  .byline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+  }
+
+  .byline img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .byline__name {
+    font-size: 14px;
+  }
+
+  .byline__meta {
+    font-size: 11px;
+    color: var(--color-subtle);
+  }
+
+  .article__cover {
+    margin-top: 48px;
+  }
+
+  .article__cover-media {
+    aspect-ratio: 1360 / 760;
+    border-radius: var(--radius-md);
+  }
+
+  .article__cover figcaption {
+    margin-top: 14px;
+    font-size: 11px;
+    text-align: center;
+    color: var(--color-subtle);
+  }
+
+  .article__body {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    max-width: calc(700px + var(--gutter) * 2);
+    margin: 72px auto 0;
+    padding: 0 var(--gutter);
+  }
+
+  .article__body p {
+    font-size: 19px;
+    line-height: 1.6;
+  }
+
+  .article__body h2 {
+    margin-top: 20px;
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 400;
+    line-height: 1.15;
+  }
+
+  .article__body blockquote {
+    padding: 4px 0 4px 32px;
+    border-left: 2px solid var(--color-accent);
+    font-size: 16px;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--color-subtle);
+  }
+
+  .article__image {
+    aspect-ratio: 700 / 400;
+    border-radius: var(--radius-sm);
+  }
+
+  .article__image--tall {
+    aspect-ratio: 700 / 930;
+  }
+
+  .article__tags {
+    margin-top: 20px;
+  }
+
+  .article__share {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 13px;
+  }
+
+  .article__share span {
+    font-size: 10px;
+    color: var(--color-subtle);
+  }
+
+  .article__share a:hover {
+    color: var(--color-accent);
+  }
+
+  .keep-reading {
+    padding: 110px 0 150px;
+    background: var(--color-sand-deep);
+  }
+
+  .keep-reading__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 44px;
+    margin-top: 56px;
+  }
+
+  @media (max-width: 999px) {
+    .keep-reading__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .article {
+      padding: 130px 0 80px;
+    }
+
+    .article__body p {
+      font-size: 17px;
+    }
+
+    .article__body h2 {
+      font-size: 32px;
+    }
+
+    .keep-reading__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

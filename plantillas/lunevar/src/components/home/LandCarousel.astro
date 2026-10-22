@@ -1,0 +1,145 @@
+---
+import Icon from "@/components/Icon.astro";
+import SplitHeading from "@/components/SplitHeading.astro";
+import { EXPERIENCES, HOME, UI_LABELS } from "@/data/content";
+
+/**
+ * "La tierra es el programa": carril horizontal arrastrable de experiencias numeradas que se sale
+ * por la derecha de la pantalla, sobre un degradado de la hora dorada.
+ */
+const { land } = HOME;
+---
+
+<section class="land" data-tone="light">
+  <div class="container land__header">
+    <SplitHeading title={land.title} size="l" />
+    <p class="lede" data-reveal>{land.text}</p>
+  </div>
+  <div class="land__track" data-drag-scroll role="region" aria-label={UI_LABELS.carouselLabel} tabindex="0">
+    <ul class="land__list">
+      {
+        EXPERIENCES.map((experience, index) => (
+          <li class="experience" data-reveal style={`--reveal-delay: ${Math.min(index, 3) * 0.08}s`}>
+            <div class="media experience__media">
+              <img src={experience.image.src} alt={experience.image.alt} width="316" height="460" loading="lazy" decoding="async" draggable="false" />
+            </div>
+            <h3 class="experience__title">
+              <span class="experience__number">{String(index + 1).padStart(2, "0")}</span>
+              {experience.name}
+            </h3>
+            <div class="chip-row">
+              <span class="chip"><Icon name="clock" />{experience.duration}</span>
+              <span class="chip"><Icon name="sunrise" />{experience.moment}</span>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<script>
+  import "@/scripts/drag-scroll";
+</script>
+
+<style>
+  .land {
+    padding: 120px 0 110px;
+    background: linear-gradient(180deg, var(--color-bg) 0%, #f0dcc2 45%, #e8c39d 100%);
+  }
+
+  .land__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin-bottom: 80px;
+  }
+
+  .land__header .lede {
+    max-width: 400px;
+  }
+
+  .land__track {
+    --track-start: max(var(--gutter), calc((100vw - var(--max-width)) / 2));
+    overflow-x: auto;
+    padding-left: var(--track-start);
+    scroll-padding-left: var(--track-start);
+    cursor: grab;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+
+  .land__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .land__track:global(.is-dragging) {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    user-select: none;
+  }
+
+  .land__list {
+    display: flex;
+    gap: 32px;
+    width: max-content;
+    padding-right: var(--gutter);
+  }
+
+  .experience {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: clamp(260px, 22vw, 316px);
+    scroll-snap-align: start;
+  }
+
+  .experience__media {
+    aspect-ratio: 316 / 460;
+    border-radius: 20px;
+  }
+
+  .experience__media img {
+    transition: transform 1.2s var(--ease-out);
+  }
+
+  .experience:hover .experience__media img {
+    transform: scale(1.04);
+  }
+
+  .experience__title {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  .experience__number {
+    font-size: 18px;
+    font-style: italic;
+    color: var(--color-accent-deep);
+  }
+
+  @media (max-width: 809px) {
+    .land {
+      padding: 100px 0;
+    }
+
+    .land__header {
+      flex-direction: column;
+      gap: 28px;
+      margin-bottom: 48px;
+    }
+
+    .land__list {
+      gap: 16px;
+    }
+
+    .experience {
+      width: 72vw;
+    }
+  }
+</style>

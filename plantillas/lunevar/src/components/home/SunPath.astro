@@ -1,0 +1,193 @@
+---
+import Icon from "@/components/Icon.astro";
+import SplitHeading from "@/components/SplitHeading.astro";
+import SunArc from "@/components/SunArc.astro";
+import { HOME, RITUALS, SUN } from "@/data/content";
+import { sunProgress, toMinutes } from "@/lib/sun";
+
+/**
+ * "Un día, medido por el sol": columna izquierda fija con el arco; a la derecha, los rituales entre
+ * el amanecer y el atardecer. Al hacer scroll, el sol recorre el arco hasta la hora de la tarjeta
+ * que pasa por el centro, que se vuelve sólida (scripts/sun-arc.ts).
+ */
+const rituals = RITUALS.filter(
+  (ritual) =>
+    toMinutes(ritual.time) >= toMinutes(SUN.sunrise) &&
+    toMinutes(ritual.time) <= toMinutes(SUN.sunset)
+);
+---
+
+<section class="sun-path" data-tone="light" data-arc-scope>
+  <div class="container sun-path__inner">
+    <div class="sun-path__sticky">
+      <div class="sun-path__copy">
+        <SplitHeading title={HOME.sunPath.title} size="s" />
+        <p class="lede" data-reveal>{HOME.sunPath.text}</p>
+      </div>
+      <SunArc marks={rituals.map((ritual) => ritual.time)} driver="cards" class="sun-path__arc" />
+    </div>
+    <ol class="sun-path__rituals">
+      {
+        rituals.map((ritual) => (
+          <li class="ritual-card" data-arc-step={sunProgress(ritual.time, SUN.sunrise, SUN.sunset).toFixed(4)}>
+            <div class="media ritual-card__media">
+              <img src={ritual.image.src} alt={ritual.image.alt} width="150" height="170" loading="lazy" decoding="async" />
+            </div>
+            <div class="ritual-card__body">
+              <p class="ritual-card__time">{ritual.time}</p>
+              <h3 class="ritual-card__title">{ritual.title}</h3>
+              <p class="ritual-card__text">{ritual.text}</p>
+              <div class="chip-row">
+                {ritual.chips.map((chip) => (
+                  <span class="chip">
+                    <Icon name={chip.icon} />
+                    {chip.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .sun-path {
+    background: linear-gradient(180deg, var(--color-sand) 0%, #f3e9dc 100%);
+  }
+
+  .sun-path__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 760fr) minmax(0, 600fr);
+  }
+
+  .sun-path__sticky {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+    min-height: 720px;
+    padding: 140px 40px 20px 0;
+  }
+
+  .sun-path__copy {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .sun-path__copy .lede {
+    max-width: 420px;
+  }
+
+  .sun-path__sticky :global(.sun-path__arc) {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  .sun-path__rituals {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 440px 0 120px;
+  }
+
+  .ritual-card {
+    display: flex;
+    gap: 24px;
+    padding: 20px 28px 20px 20px;
+    border-radius: var(--radius-md);
+    background: rgb(251 246 238 / 0.5);
+    transition:
+      background-color 0.5s var(--ease-out),
+      box-shadow 0.5s var(--ease-out);
+  }
+
+  .ritual-card:global(.is-active) {
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .ritual-card__media {
+    flex: none;
+    width: 150px;
+    height: 170px;
+    border-radius: var(--radius-sm);
+  }
+
+  .ritual-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 6px 0;
+  }
+
+  .ritual-card__time {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--color-subtle);
+  }
+
+  .ritual-card__title {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.003em;
+  }
+
+  .ritual-card__text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: rgb(42 29 20 / 0.72);
+  }
+
+  @media (max-width: 999px) {
+    .sun-path__inner {
+      display: block;
+    }
+
+    .sun-path__sticky {
+      position: static;
+      height: auto;
+      min-height: 0;
+      padding: 110px 0 0;
+    }
+
+    .sun-path__sticky :global(.sun-path__arc) {
+      margin: 72px 0 48px;
+      padding: 0 24px;
+    }
+
+    .sun-path__rituals {
+      gap: 24px;
+      padding: 0 0 100px;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .ritual-card {
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .ritual-card__media {
+      width: 112px;
+      height: auto;
+      min-height: 150px;
+    }
+
+    .ritual-card__title {
+      font-size: 30px;
+    }
+
+    .ritual-card .chip-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

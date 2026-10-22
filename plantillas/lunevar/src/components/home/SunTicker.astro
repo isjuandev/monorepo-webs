@@ -1,0 +1,67 @@
+---
+import Icon from "@/components/Icon.astro";
+import { HOME } from "@/data/content";
+
+/** Cinta "Amanecer 05:48 ☼ Mediodía solar…": marquesina infinita en cursiva sobre fondo tierra. */
+const items = HOME.ticker;
+---
+
+<div class="ticker" data-tone="dark">
+  <p class="visually-hidden">{items.join(" · ")}</p>
+  <div class="ticker__track" aria-hidden="true">
+    {
+      [0, 1].map(() => (
+        <ul class="ticker__group">
+          {items.map((item) => (
+            <li>
+              {item}
+              <Icon name="sun" size={22} class="ticker__sun" />
+            </li>
+          ))}
+        </ul>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .ticker {
+    padding: 22px 0;
+    overflow: hidden;
+    background: var(--color-primary);
+    color: var(--color-on-dark);
+  }
+
+  .ticker__track {
+    display: flex;
+    width: max-content;
+    animation: ticker 42s linear infinite;
+  }
+
+  .ticker__group {
+    display: flex;
+    flex: none;
+  }
+
+  .ticker__group li {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding-right: 40px;
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-style: italic;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .ticker :global(.ticker__sun) {
+    color: var(--color-accent);
+  }
+
+  @keyframes ticker {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+</style>
