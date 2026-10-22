@@ -2,7 +2,7 @@
 import { HOME } from "@/data/content";
 
 /**
- * "Stone. Wood. Open space.": escenario de fotos fijo (sticky, top 96 px) a la izquierda y tres
+ * "Stone. Wood. Open space.": escenario de fotos fijo (sticky, top 48 px) a la izquierda y tres
  * textos que pasan a la derecha. Cada foto entra con fundido y zoom suaves (CSS) cuando el borde
  * superior de su texto cruza el 62 % del viewport; la lógica está en `scripts/motion.ts`.
  * En mobile cada paso muestra su foto encima del texto, sin escenario fijo.
@@ -22,7 +22,7 @@ const steps = HOME.materials;
               src={step.image.src}
               alt=""
               width="672"
-              height="630"
+              height="902"
               loading="eager"
               decoding="async"
             />
@@ -67,8 +67,8 @@ const steps = HOME.materials;
 
   .materials__stage {
     position: sticky;
-    top: 96px;
-    height: 630px;
+    top: 48px;
+    height: 902px;
     overflow: hidden;
     border-radius: var(--radius-md);
     background: var(--color-primary);
@@ -133,7 +133,7 @@ const steps = HOME.materials;
     }
 
     .materials__stage {
-      height: 520px;
+      height: 902px;
     }
   }
 
