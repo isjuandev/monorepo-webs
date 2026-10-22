@@ -16,7 +16,6 @@
       "!**/playwright-report",
       "!**/test-results",
       "!**/docs/referencias",
-      "!**/.claude/worktrees",
       "!**/*.svg"
     ]
   },
