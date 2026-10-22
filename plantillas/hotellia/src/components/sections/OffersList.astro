@@ -1,6 +1,6 @@
 ---
 import SectionIntro from "@/components/SectionIntro.astro";
-import { OFFERS, OFFERS_INTRO } from "@/data/content";
+import { OFFERS, OFFERS_INTRO, UI_LABELS } from "@/data/content";
 ---
 
 <section class="section offers">
@@ -16,7 +16,7 @@ import { OFFERS, OFFERS_INTRO } from "@/data/content";
                 <p class="t-body">{offer.summary}</p>
               </div>
               <a class="pill pill--dark" href={`/offers/${offer.slug}`}>
-                Read More<span class="visually-hidden">: {offer.title}</span>
+                {UI_LABELS.readMore}<span class="visually-hidden">: {offer.title}</span>
               </a>
             </div>
             <div class="offer-card__media">

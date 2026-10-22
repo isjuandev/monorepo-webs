@@ -55,9 +55,9 @@ monorepo-webs/
 │   ├── README.md                   # Catálogo generado (pnpm plantilla:lista --write)
 │   ├── _base/                      # Esqueleto mínimo: punto de partida de plantilla:clonar
 │   ├── asterre/                    # Alojamiento boutique en español (por defecto para moteles)
-│   ├── hotellia/                   # Hotel boutique en inglés (lenis)
-│   ├── pinevalley/                 # Villa de una página en inglés (lenis)
-│   └── selvra/                     # Retiro boutique en inglés
+│   ├── hotellia/                   # Hotel boutique (lenis)
+│   ├── pinevalley/                 # Villa de una página (lenis)
+│   └── selvra/                     # Retiro boutique
 ├── clientes/                       # Un sitio por cliente real
 │   ├── README.md
 │   └── la-guaca/                   # Motel La Guaca (desde asterre)

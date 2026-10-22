@@ -7,18 +7,25 @@ import { RESERVE_PAGE, UI_LABELS } from "@/data/content";
 <section class="section reserve">
   <div class="reserve__wrapper">
     <SectionIntro {...RESERVE_PAGE.intro} textWidth={600} />
-    <form class="reserve__form" data-reserve-form data-email={siteConfig.contact.email} novalidate>
+    <form
+      class="reserve__form"
+      data-reserve-form
+      data-email={siteConfig.contact.email}
+      data-subject={UI_LABELS.form.subject}
+      data-sent={UI_LABELS.form.sent}
+      novalidate
+    >
       <div class="reserve__row">
         <label class="field">
           <span class="field__label t-small">{UI_LABELS.form.firstName}</span>
           <span class="field__box">
-            <input name="First Name" type="text" placeholder={UI_LABELS.form.firstNamePlaceholder} required autocomplete="given-name" />
+            <input name={UI_LABELS.form.firstName} type="text" placeholder={UI_LABELS.form.firstNamePlaceholder} required autocomplete="given-name" />
           </span>
         </label>
         <label class="field">
           <span class="field__label t-small">{UI_LABELS.form.lastName}</span>
           <span class="field__box">
-            <input name="Last Name" type="text" placeholder={UI_LABELS.form.lastNamePlaceholder} required autocomplete="family-name" />
+            <input name={UI_LABELS.form.lastName} type="text" placeholder={UI_LABELS.form.lastNamePlaceholder} required autocomplete="family-name" />
           </span>
         </label>
       </div>
@@ -26,20 +33,20 @@ import { RESERVE_PAGE, UI_LABELS } from "@/data/content";
         <label class="field">
           <span class="field__label t-small">{UI_LABELS.form.email}</span>
           <span class="field__box">
-            <input name="Email" type="email" placeholder={UI_LABELS.form.emailPlaceholder} required autocomplete="email" />
+            <input name={UI_LABELS.form.email} type="email" placeholder={UI_LABELS.form.emailPlaceholder} required autocomplete="email" />
           </span>
         </label>
         <label class="field">
           <span class="field__label t-small">{UI_LABELS.form.phone}</span>
           <span class="field__box">
-            <input name="Phone" type="tel" placeholder={UI_LABELS.form.phonePlaceholder} required autocomplete="tel" />
+            <input name={UI_LABELS.form.phone} type="tel" placeholder={UI_LABELS.form.phonePlaceholder} required autocomplete="tel" />
           </span>
         </label>
       </div>
       <label class="field">
         <span class="field__label t-small">{UI_LABELS.form.roomType}</span>
         <span class="field__box field__box--select">
-          <select name="Room Type" required>
+          <select name={UI_LABELS.form.roomType} required>
             <option value="" disabled selected>{UI_LABELS.form.select}</option>
             {RESERVE_PAGE.roomOptions.map((option) => <option value={option}>{option}</option>)}
           </select>
@@ -49,13 +56,13 @@ import { RESERVE_PAGE, UI_LABELS } from "@/data/content";
         <label class="field">
           <span class="field__label t-small">{UI_LABELS.form.checkIn}</span>
           <span class="field__box field__box--date">
-            <input name="Check in" type="date" required data-empty />
+            <input name={UI_LABELS.form.checkIn} type="date" required data-empty />
           </span>
         </label>
         <label class="field">
           <span class="field__label t-small">{UI_LABELS.form.checkOut}</span>
           <span class="field__box field__box--date">
-            <input name="Check out" type="date" required data-empty />
+            <input name={UI_LABELS.form.checkOut} type="date" required data-empty />
           </span>
         </label>
       </div>
@@ -213,9 +220,9 @@ import { RESERVE_PAGE, UI_LABELS } from "@/data/content";
       }
       const lines = [...new FormData(form).entries()].map(([key, value]) => `${key}: ${String(value)}`);
       const email = form.dataset.email ?? "";
-      const subject = encodeURIComponent("Reservation request");
+      const subject = encodeURIComponent(form.dataset.subject ?? "");
       window.location.href = `mailto:${email}?subject=${subject}&body=${encodeURIComponent(lines.join("\n"))}`;
-      if (status) status.textContent = "Thank you! Your email app will open to send the request.";
+      if (status) status.textContent = form.dataset.sent ?? "";
     });
   }
 </script>

@@ -16,9 +16,9 @@ Generado con `pnpm plantilla:lista --write` a partir de cada `plantilla.json` y 
 | :-- | :-- | :-- | :-- | :-- | :-- |
 | `_base` | es | — | 1: `/` | — | Esqueleto mínimo (inicio y 404): punto de partida de plantilla:clonar, no para clientes. |
 | `asterre` (por defecto) | es | motel, hotel, retiro | 8: `/` `/contact` `/experience` `/privacy-policy` `/retreat` `/rooms` `/rooms/[slug]` `/terms-of-use` | [ver](https://casa-serena-template.nexobite.com) | Alojamiento boutique en español (motel, hotel o retiro): inicio, habitaciones con detalle, retiro, experiencias, contacto, legales y botón flotante de WhatsApp. Plantilla por defecto de clientes nuevos. |
-| `hotellia` | en | hotel | 11: `/` `/bar-menu` `/gallery` `/offers/[slug]` `/privacy` `/reserve` `/restaurant-menu` `/rooms` `/rooms/[slug]` `/terms` `/wine-dine` | [ver](https://hotellia-template.nexobite.com) | Hotel boutique en inglés: habitaciones, ofertas, restaurante y menús, galería y reservas (smooth-scroll con lenis). |
-| `pinevalley` | en | villa, casa-de-campo | 1: `/` | [ver](https://pinevalley-template.nexobite.com) | Villa o casa de campo en inglés, landing de una página: galería con visor, carrusel, reseñas, mapa y FAQ (lenis). |
-| `selvra` | en | retiro, glamping | 9: `/` `/demo` `/enquire` `/experiences` `/experiences/[slug]` `/place` `/privacy` `/stays` `/stays/[slug]` | — | Retiro boutique en inglés: estancias y experiencias con detalle, lugar, solicitud de reserva y privacidad. |
+| `hotellia` | es | hotel | 11: `/` `/bar-menu` `/gallery` `/offers/[slug]` `/privacy` `/reserve` `/restaurant-menu` `/rooms` `/rooms/[slug]` `/terms` `/wine-dine` | [ver](https://hotellia-template.nexobite.com) | Hotel boutique: habitaciones, ofertas, restaurante y menús, galería y reservas (smooth-scroll con lenis). |
+| `pinevalley` | es | villa, casa-de-campo | 1: `/` | [ver](https://pinevalley-template.nexobite.com) | Villa o casa de campo, landing de una página: galería con visor, carrusel, reseñas, mapa y FAQ (lenis). |
+| `selvra` | es | retiro, glamping | 9: `/` `/demo` `/enquire` `/experiences` `/experiences/[slug]` `/place` `/privacy` `/stays` `/stays/[slug]` | — | Retiro boutique: estancias y experiencias con detalle, lugar, solicitud de reserva y privacidad. |
 
 <!-- catalogo:fin -->
 

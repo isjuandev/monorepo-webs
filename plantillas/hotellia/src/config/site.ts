@@ -23,10 +23,10 @@ export const siteConfig: ClientSiteConfig = {
   name: "Hotellia",
   domain: CLIENT_DOMAIN,
   url: normalizeSiteUrl(CLIENT_DOMAIN),
-  title: "Hotellia - A Boutique Hotel Responsive Template",
+  title: "Hotellia - Plantilla responsive para hoteles boutique",
   description:
-    "Hotellia is a clean, minimal website template crafted for boutique hotels, luxury resorts, and serene hospitality experiences.",
-  locale: "en_US",
+    "Hotellia es una plantilla web limpia y minimalista, pensada para hoteles boutique, resorts de lujo y experiencias de hospitalidad serena.",
+  locale: "es_CO",
   ogImage: "/images/og-image.png",
   contact: {
     phone: "022 5259-5200",
@@ -47,22 +47,22 @@ export function pageTitle(page?: string): string {
 }
 
 export const MENU_LINKS = [
-  { label: "Rooms", href: "/rooms" },
-  { label: "Wine & Dine", href: "/wine-dine" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Reserve", href: "/reserve" },
+  { label: "Habitaciones", href: "/rooms" },
+  { label: "Vinos y cenas", href: "/wine-dine" },
+  { label: "Galería", href: "/gallery" },
+  { label: "Reservar", href: "/reserve" },
 ];
 
 export const FOOTER_PRIMARY_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Rooms", href: "/rooms" },
-  { label: "Wine & Dine", href: "/wine-dine" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Reserve", href: "/reserve" },
+  { label: "Inicio", href: "/" },
+  { label: "Habitaciones", href: "/rooms" },
+  { label: "Vinos y cenas", href: "/wine-dine" },
+  { label: "Galería", href: "/gallery" },
+  { label: "Reservar", href: "/reserve" },
 ];
 
 export const FOOTER_SECONDARY_LINKS = [
-  { label: "Privacy Policy", href: "/privacy" },
-  { label: "Terms & Conditions", href: "/terms" },
+  { label: "Política de privacidad", href: "/privacy" },
+  { label: "Términos y condiciones", href: "/terms" },
   { label: "404", href: "/404" },
 ];

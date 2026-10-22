@@ -1,7 +1,7 @@
 {
   "nombre": "Pine Valley",
-  "descripcion": "Villa o casa de campo en inglés, landing de una página: galería con visor, carrusel, reseñas, mapa y FAQ (lenis).",
-  "idioma": "en",
+  "descripcion": "Villa o casa de campo, landing de una página: galería con visor, carrusel, reseñas, mapa y FAQ (lenis).",
+  "idioma": "es",
   "negocio": ["villa", "casa-de-campo"],
   "origen": "https://pinevalley.framer.website",
   "demo": "https://pinevalley-template.nexobite.com",
@@ -9,9 +9,9 @@
   "placeholders": [
     "+1 (555) 123-4567",
     "+15551234567",
-    "hello@example.com",
-    "123 Example Road",
-    "Your City, Region",
+    "hola@ejemplo.com",
+    "Calle Ejemplo 123",
+    "Tu ciudad, Región",
     "Aspen, Colorado",
     "Aspen%2C%20Colorado"
   ]

@@ -36,17 +36,17 @@ export const siteConfig: ClientSiteConfig = {
   logoText: "PINE VALLEY",
   domain: CLIENT_DOMAIN,
   url: normalizeSiteUrl(CLIENT_DOMAIN),
-  title: "Pine Valley — A Modern Escape Into Luxury",
+  title: "Pine Valley — Una escapada moderna al lujo",
   description:
-    "Discover a thoughtfully designed retreat where contemporary architecture meets nature, creating the perfect destination to relax, reconnect, and unwind.",
-  locale: "en_US",
+    "Descubre un refugio diseñado con cuidado, donde la arquitectura contemporánea se encuentra con la naturaleza: el destino perfecto para relajarte, reconectar y desconectar.",
+  locale: "es_CO",
   ogImage: "/images/og-image.jpg",
   contact: {
     phone: "+1 (555) 123-4567",
     phoneHref: "tel:+15551234567",
-    email: "hello@example.com",
-    address: "123 Example Road, Your City, ST 00000, Country",
-    area: "Your City, Region",
+    email: "hola@ejemplo.com",
+    address: "Calle Ejemplo 123, Tu ciudad, Región 00000, País",
+    area: "Tu ciudad, Región",
     mapQuery: "Aspen, Colorado",
     mapsUrl: "https://maps.google.com/?q=Aspen%2C%20Colorado",
   },
@@ -68,17 +68,17 @@ export function pageTitle(page?: string): string {
 
 /** Anclas de la landing (deben coincidir con los `id` de las secciones). */
 export const MENU_LINKS: NavLink[] = [
-  { label: "Home", href: "/#home" },
-  { label: "Gallery", href: "/#gallery" },
-  { label: "Amenities", href: "/#amenities" },
-  { label: "Rooms", href: "/#rooms" },
-  { label: "Reviews", href: "/#reviews" },
-  { label: "Booking", href: "/#booking" },
+  { label: "Inicio", href: "/#home" },
+  { label: "Galería", href: "/#gallery" },
+  { label: "Comodidades", href: "/#amenities" },
+  { label: "Habitaciones", href: "/#rooms" },
+  { label: "Opiniones", href: "/#reviews" },
+  { label: "Reservas", href: "/#booking" },
 ];
 
 export const FOOTER_LINKS: NavLink[] = [
-  { label: "Home", href: "/#home" },
-  { label: "Gallery", href: "/#gallery" },
-  { label: "Amenities", href: "/#amenities" },
-  { label: "Booking", href: "/#booking" },
+  { label: "Inicio", href: "/#home" },
+  { label: "Galería", href: "/#gallery" },
+  { label: "Comodidades", href: "/#amenities" },
+  { label: "Reservas", href: "/#booking" },
 ];

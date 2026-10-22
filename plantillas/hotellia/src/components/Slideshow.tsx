@@ -86,7 +86,10 @@ export function Slideshow({ slides, prevIcon, nextIcon }: SlideshowProps) {
           <img src={nextIcon} alt="" width={40} height={40} />
         </button>
       </div>
-      <p class="visually-hidden" aria-live="polite">{`Slide ${current + 1} of ${count}`}</p>
+      <p
+        class="visually-hidden"
+        aria-live="polite"
+      >{`${UI_LABELS.slideCounter} ${current + 1} de ${count}`}</p>
     </section>
   );
 }

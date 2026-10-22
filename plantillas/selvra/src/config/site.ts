@@ -29,18 +29,18 @@ export const siteConfig: ClientSiteConfig = {
   name: "Arvenna Retreat",
   domain: CLIENT_DOMAIN,
   url: normalizeSiteUrl(CLIENT_DOMAIN),
-  title: "Arvenna Retreat — Unhurried stays above the lake",
+  title: "Arvenna Retreat — Estancias tranquilas sobre el lago",
   description:
-    "Three quiet stays in stone and oak, a handful of unhurried experiences and a landscape that sets the pace. A sample retreat website.",
-  locale: "en_US",
+    "Tres estancias silenciosas de piedra y roble, un puñado de experiencias pausadas y un paisaje que marca el ritmo. Un sitio de retiro de ejemplo.",
+  locale: "es_CO",
   ogImage: "/images/og-image.jpg",
   logoText: "ARVENNA",
-  footerTagline: "ARVENNA / HILLSIDE RETREAT",
+  footerTagline: "ARVENNA / RETIRO EN LA LADERA",
   contact: {
     phone: "+57 300 000 0000",
     phoneHref: "tel:+573000000000",
     email: "reservas@example.com",
-    address: "Retreat address",
+    address: "Dirección del retiro",
   },
   themeColor: "#202923",
   preloadFonts: ["/fonts/bespoke-serif-400.woff2", "/fonts/manrope-400.woff2"],
@@ -52,14 +52,14 @@ export function pageTitle(page?: string): string {
 }
 
 export const MENU_LINKS: NavLink[] = [
-  { label: "Stays", href: "/stays" },
-  { label: "Experiences", href: "/experiences" },
-  { label: "The place", href: "/place" },
-  { label: "Enquire", href: "/enquire" },
+  { label: "Estancias", href: "/stays" },
+  { label: "Experiencias", href: "/experiences" },
+  { label: "El lugar", href: "/place" },
+  { label: "Solicitud", href: "/enquire" },
 ];
 
 export const FOOTER_LINKS: NavLink[] = [
   ...MENU_LINKS,
-  { label: "About & legal", href: "/demo" },
-  { label: "Privacy", href: "/privacy" },
+  { label: "Acerca de y legal", href: "/demo" },
+  { label: "Privacidad", href: "/privacy" },
 ];
