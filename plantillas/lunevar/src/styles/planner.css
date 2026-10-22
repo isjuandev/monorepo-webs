@@ -1,0 +1,676 @@
+/* Islas de reserva (StayPlanner, ReserveBar y Calendar): Preact no recibe estilos con ámbito de Astro. */
+
+/* Calendario */
+.calendar__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.calendar__title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1.2;
+}
+
+.calendar__nav {
+  display: flex;
+  gap: 8px;
+}
+
+.calendar__arrow {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
+  transition: border-color 0.3s var(--ease-out);
+}
+
+.calendar__arrow svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+.calendar__arrow:hover:not(:disabled) {
+  border-color: var(--color-primary);
+}
+
+.calendar__arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 6px;
+}
+
+.calendar__weekday {
+  padding-bottom: 8px;
+  font-size: 10px;
+  text-align: center;
+  color: var(--color-subtle);
+}
+
+.calendar__day {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 34px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.calendar__day > span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  transition: background-color 0.25s var(--ease-out);
+}
+
+.calendar__day:hover:not(:disabled) > span {
+  background: rgb(200 100 44 / 0.12);
+}
+
+.calendar__day.in-range,
+.calendar__day.has-range::before,
+.calendar__day.is-end::before {
+  background: rgb(220 170 125 / 0.32);
+}
+
+.calendar__day.has-range::before,
+.calendar__day.is-end::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.calendar__day.has-range::before {
+  left: 50%;
+}
+
+.calendar__day.is-end::before {
+  right: 50%;
+}
+
+.calendar__day.is-start > span,
+.calendar__day.is-end > span {
+  background: var(--color-accent);
+  color: var(--color-surface);
+  font-weight: 600;
+}
+
+.calendar__day:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.calendar__day.is-booked > span {
+  text-decoration: line-through;
+}
+
+.calendar__moon {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  z-index: 1;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  transform: translateX(-50%);
+}
+
+/* Filas de resumen (llegada, salida, casa…) */
+.planner-rows > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 50px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-line);
+  font-size: 15px;
+}
+
+.planner-rows dt {
+  color: var(--color-muted);
+}
+
+.planner-rows dd {
+  text-align: right;
+}
+
+.planner-rows--dark > div {
+  border-color: rgb(245 237 225 / 0.14);
+  font-size: 14px;
+}
+
+.planner-rows--dark dt {
+  color: rgb(245 237 225 / 0.65);
+}
+
+.planner-rows__chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.planner-total {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 0 24px;
+}
+
+.planner-total span {
+  font-size: 15px;
+  color: var(--color-muted);
+}
+
+.planner-total strong {
+  font-family: var(--font-display);
+  font-size: 45px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.planner-total--dark {
+  padding: 40px 0 24px;
+}
+
+.planner-total--dark span {
+  color: rgb(245 237 225 / 0.65);
+}
+
+.planner-total--dark strong {
+  font-size: 50px;
+}
+
+/* Tarjeta compacta de la portada */
+.planner-card {
+  display: grid;
+  grid-template-columns: 501fr 460fr;
+  max-width: 962px;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow: var(--shadow-float);
+}
+
+.planner-card__calendar {
+  padding: 36px 40px;
+}
+
+.planner-card__legend {
+  margin-top: 24px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-muted);
+}
+
+.planner-card__summary {
+  padding: 36px 40px;
+  border-left: 1px solid var(--color-line);
+}
+
+.planner-card__eyebrow {
+  margin-bottom: 8px;
+  font-size: 11px;
+  color: var(--color-subtle);
+}
+
+.planner-card__note {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+/* Planificador completo */
+.planner {
+  display: grid;
+  grid-template-columns: minmax(0, 860px) minmax(320px, 400px);
+  justify-content: space-between;
+  gap: 32px;
+  align-items: start;
+}
+
+.planner__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}
+
+.planner__step {
+  min-width: 0;
+  border: 0;
+}
+
+.planner__heading {
+  margin-bottom: 24px;
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.planner__calendar {
+  padding: 24px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.planner__legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.planner__moon {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-text);
+}
+
+.planner__legend-gap {
+  margin-left: 24px;
+}
+
+.planner__houses {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.house-option {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 12px;
+  padding: 8px 8px 16px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: border-color 0.3s var(--ease-out);
+}
+
+.house-option input,
+.program-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.house-option img {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 180px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.house-option__name {
+  padding-left: 8px;
+  font-family: var(--font-display);
+  font-size: 22px;
+}
+
+.house-option__price {
+  grid-row: 3;
+  padding-left: 8px;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.house-option__radio {
+  grid-row: 2 / 4;
+  grid-column: 2;
+  align-self: center;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  border: 1px solid rgb(42 29 20 / 0.35);
+  border-radius: 50%;
+}
+
+.house-option:has(input:checked) {
+  border-color: var(--color-accent);
+}
+
+.house-option:has(input:checked) .house-option__radio {
+  border-color: var(--color-accent);
+  background: radial-gradient(circle, var(--color-accent) 0 4px, transparent 5px);
+}
+
+.house-option:has(input:focus-visible),
+.program-option:has(input:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.planner__programs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.program-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 42px;
+  padding: 4px 4px 4px 16px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s var(--ease-out),
+    color 0.3s var(--ease-out);
+}
+
+.program-option:first-child {
+  padding-right: 18px;
+}
+
+.program-option__name,
+.program-option__nights {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-chip);
+}
+
+.program-option__name {
+  margin-left: -12px;
+}
+
+.program-option:has(input:checked) {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+}
+
+.program-option:has(input:checked) .program-option__name,
+.program-option:has(input:checked) .program-option__nights {
+  background: rgb(245 237 225 / 0.12);
+}
+
+.planner__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.field:focus-within {
+  border-color: var(--color-accent);
+}
+
+.field > span {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 0;
+  background: none;
+  font-size: 15px;
+  outline: none;
+  resize: vertical;
+}
+
+.field select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.field--select > svg {
+  position: absolute;
+  right: 16px;
+  bottom: 18px;
+  pointer-events: none;
+}
+
+.field--wide {
+  grid-column: 1 / -1;
+}
+
+.field ::placeholder {
+  color: rgb(42 29 20 / 0.45);
+}
+
+.planner__summary {
+  position: sticky;
+  top: 110px;
+  padding: 32px 28px;
+  border-radius: 28px;
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+}
+
+.planner__title {
+  margin-bottom: 24px;
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.planner__note {
+  margin-top: 18px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgb(245 237 225 / 0.6);
+}
+
+/* Barra de reserva de la mesa larga */
+.reserve {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.reserve__bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 8px 8px 8px 24px;
+  border: 1px solid rgb(245 237 225 / 0.2);
+  border-radius: var(--radius-pill);
+  background: rgb(245 237 225 / 0.08);
+  color: var(--color-on-dark);
+}
+
+.reserve__field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-right: 18px;
+  border-right: 1px solid rgb(245 237 225 / 0.18);
+}
+
+.reserve__label {
+  font-size: 10px;
+  color: rgb(245 237 225 / 0.65);
+}
+
+.reserve__date {
+  min-width: 132px;
+  font-size: 15px;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.reserve__select {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.reserve__select select {
+  min-width: 70px;
+  padding-right: 22px;
+  border: 0;
+  background: none;
+  font-size: 15px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.reserve__select select option {
+  color: var(--color-text);
+}
+
+.reserve__select svg {
+  position: absolute;
+  right: 0;
+  pointer-events: none;
+}
+
+.reserve__cta {
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: var(--radius-pill);
+  background: var(--color-on-dark);
+  color: var(--color-primary);
+  font-size: 15px;
+  transition: background-color 0.3s var(--ease-out);
+}
+
+.reserve__cta:hover {
+  background: #fff;
+}
+
+.reserve__popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  z-index: 5;
+  width: 300px;
+  padding: 18px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-float);
+  animation: popover-in 0.3s var(--ease-out);
+}
+
+.reserve__popover .calendar__title {
+  font-size: 20px;
+}
+
+.reserve__status {
+  min-height: 20px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: rgb(245 237 225 / 0.75);
+}
+
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@media (max-width: 999px) {
+  .planner {
+    grid-template-columns: 1fr;
+  }
+
+  .planner__summary {
+    position: static;
+  }
+
+  .planner-card {
+    grid-template-columns: 1fr;
+  }
+
+  .planner-card__summary {
+    border-left: 0;
+    border-top: 1px solid var(--color-line);
+  }
+}
+
+@media (max-width: 809px) {
+  .planner-card__calendar,
+  .planner-card__summary {
+    padding: 24px 20px;
+  }
+
+  .planner__houses,
+  .planner__fields {
+    grid-template-columns: 1fr;
+  }
+
+  .planner__calendar {
+    padding: 16px 12px;
+  }
+
+  .planner__title {
+    font-size: 32px;
+  }
+
+  .planner-total strong {
+    font-size: 38px;
+  }
+
+  .reserve__bar {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .reserve__field {
+    padding-right: 12px;
+  }
+
+  .reserve__field:nth-child(3) {
+    border-right: 0;
+  }
+
+  .reserve__cta {
+    width: 100%;
+  }
+}

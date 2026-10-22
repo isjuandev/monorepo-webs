@@ -1,0 +1,160 @@
+---
+import Icon from "@/components/Icon.astro";
+import { type ImageAsset, UI_LABELS } from "@/data/content";
+
+export interface Props {
+  images: ImageAsset[];
+  id: string;
+}
+
+/**
+ * Visor de imágenes (`<dialog>` modal): se abre desde los botones `[data-lightbox-open="<id>"]`
+ * con su índice, navega con flechas (botones y teclado), se cierra con Esc, el botón o un clic en el
+ * fondo, y devuelve el foco al disparador.
+ */
+const { images, id } = Astro.props;
+---
+
+<dialog class="lightbox" id={id} data-lightbox aria-label={UI_LABELS.gallery}>
+  <div class="lightbox__stage">
+    {
+      images.map((image, index) => (
+        <img
+          src={image.src}
+          alt={image.alt}
+          width="1200"
+          height="1600"
+          loading="lazy"
+          decoding="async"
+          data-lightbox-image={index}
+          hidden={index !== 0}
+        />
+      ))
+    }
+  </div>
+  <button type="button" class="lightbox__btn lightbox__close" aria-label={UI_LABELS.galleryClose} data-lightbox-close>
+    <Icon name="close" />
+  </button>
+  <button type="button" class="lightbox__btn lightbox__prev" aria-label={UI_LABELS.galleryPrev} data-lightbox-step="-1">
+    <Icon name="chevron-left" />
+  </button>
+  <button type="button" class="lightbox__btn lightbox__next" aria-label={UI_LABELS.galleryNext} data-lightbox-step="1">
+    <Icon name="chevron-right" />
+  </button>
+</dialog>
+
+<script>
+  for (const dialog of document.querySelectorAll<HTMLDialogElement>("[data-lightbox]")) {
+    const images = [...dialog.querySelectorAll<HTMLImageElement>("[data-lightbox-image]")];
+    let current = 0;
+    let trigger: HTMLElement | null = null;
+
+    const show = (index: number) => {
+      current = (index + images.length) % images.length;
+      images.forEach((image, i) => {
+        image.hidden = i !== current;
+      });
+    };
+
+    for (const opener of document.querySelectorAll<HTMLElement>(`[data-lightbox-open="${dialog.id}"]`)) {
+      opener.addEventListener("click", () => {
+        trigger = opener;
+        show(Number(opener.dataset.index) || 0);
+        dialog.showModal();
+      });
+    }
+    for (const button of dialog.querySelectorAll<HTMLElement>("[data-lightbox-step]")) {
+      button.addEventListener("click", () => show(current + Number(button.dataset.lightboxStep)));
+    }
+    dialog.querySelector("[data-lightbox-close]")?.addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+    dialog.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight") show(current + 1);
+      if (event.key === "ArrowLeft") show(current - 1);
+    });
+    dialog.addEventListener("close", () => trigger?.focus());
+  }
+</script>
+
+<style>
+  .lightbox {
+    width: 100vw;
+    max-width: none;
+    height: 100vh;
+    max-height: none;
+    margin: 0;
+    padding: 20px;
+    border: 0;
+    background: transparent;
+  }
+
+  .lightbox::backdrop {
+    background: rgb(42 29 20 / 0.92);
+    animation: fade-in 0.35s var(--ease-out);
+  }
+
+  .lightbox[open] {
+    display: grid;
+    place-items: center;
+    animation: fade-in 0.35s var(--ease-out);
+  }
+
+  .lightbox__stage {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .lightbox__stage img {
+    max-width: min(100%, 1100px);
+    max-height: calc(100vh - 40px);
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    pointer-events: auto;
+  }
+
+  .lightbox__btn {
+    position: fixed;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgb(245 237 225 / 0.14);
+    color: var(--color-on-dark);
+    transition: background-color 0.3s var(--ease-out);
+  }
+
+  .lightbox__btn:hover {
+    background: rgb(245 237 225 / 0.26);
+  }
+
+  .lightbox__close {
+    top: 24px;
+    right: 24px;
+  }
+
+  .lightbox__prev,
+  .lightbox__next {
+    top: 50%;
+    translate: 0 -50%;
+  }
+
+  .lightbox__prev {
+    left: 24px;
+  }
+
+  .lightbox__next {
+    right: 24px;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+</style>

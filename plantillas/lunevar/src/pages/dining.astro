@@ -1,0 +1,252 @@
+---
+import Icon from "@/components/Icon.astro";
+import PageHero from "@/components/PageHero.astro";
+import { ReserveBar } from "@/components/planner/ReserveBar";
+import SplitHeading from "@/components/SplitHeading.astro";
+import { siteConfig } from "@/config/site";
+import { DINING, UI_LABELS } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import "@/styles/planner.css";
+
+const { hero, tables, chef, menu, reserve } = DINING;
+const calendarLabels = {
+  weekdays: UI_LABELS.weekdays,
+  previousMonth: UI_LABELS.previousMonth,
+  nextMonth: UI_LABELS.nextMonth,
+  fullMoon: UI_LABELS.fullMoon,
+  booked: UI_LABELS.booked,
+};
+---
+
+<BaseLayout page={DINING.meta.seoTitle} description={DINING.meta.description} headerTone="dark" ogImage={hero.image.src}>
+  <PageHero title={hero.title} image={hero.image} size="tall" />
+
+  <section class="tables" data-tone="light">
+    <div class="container">
+      <SplitHeading title={tables.title} size="l" />
+      <ul class="tables__grid">
+        {
+          tables.items.map((table, index) => (
+            <li class="table-card" data-reveal style={`--reveal-delay: ${index * 0.1}s`}>
+              <div class="media media--arch table-card__media">
+                <img src={table.image.src} alt={table.image.alt} width="424" height="520" loading="lazy" decoding="async" />
+              </div>
+              <div class="chip-row">
+                <span class="chip chip--accent"><Icon name="clock" />{table.hours}</span>
+                {table.note && <span class="chip chip--accent"><Icon name="users" />{table.note}</span>}
+              </div>
+              <h3 class="table-card__name">{table.name}</h3>
+              <p class="table-card__text">{table.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="chef" data-tone="light">
+    <div class="container chef__inner">
+      <div class="media chef__media" data-reveal>
+        <img src={chef.image.src} alt={chef.image.alt} width="600" height="760" loading="lazy" decoding="async" data-parallax="-0.05" />
+      </div>
+      <figure class="chef__copy" data-reveal>
+        <blockquote class="display display-m chef__quote">
+          <span>{chef.quote[0]}</span>
+          <span class="accent">{chef.quote[1]}</span>
+        </blockquote>
+        <p class="chef__text">{chef.text}</p>
+        <figcaption class="chef__signature">{chef.signature}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="menu" data-tone="dark">
+    <div class="container menu__inner">
+      <div class="chip-row menu__chips" data-reveal>
+        {
+          menu.chips.map((chip) => (
+            <span class="chip chip--glow">
+              <Icon name={chip.icon} />
+              {chip.label}
+            </span>
+          ))
+        }
+      </div>
+      <h2 class="display display-s accent menu__title" data-reveal>{menu.title}</h2>
+      <ol class="menu__courses">
+        {
+          menu.courses.map((course, index) => (
+            <li data-reveal style={`--reveal-delay: ${index * 0.08}s`}>
+              <span class="menu__numeral">{course.numeral}</span>
+              <h3 class="menu__name">{course.name}</h3>
+              <p class="menu__detail">{course.detail}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <div data-reveal>
+        <ReserveBar client:visible labels={reserve} calendar={calendarLabels} contactEmail={siteConfig.contact.email} />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .tables {
+    padding: 140px 0 150px;
+  }
+
+  .tables__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 80px;
+  }
+
+  .table-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .table-card__media {
+    width: 100%;
+    aspect-ratio: 424 / 460;
+    margin-bottom: 8px;
+  }
+
+  .table-card__name {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.15;
+  }
+
+  .table-card__text {
+    max-width: 340px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  .chef {
+    padding: 120px 0;
+    background: var(--color-sand);
+  }
+
+  .chef__inner {
+    display: grid;
+    grid-template-columns: 600fr 680fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .chef__media {
+    aspect-ratio: 600 / 760;
+    border-radius: var(--radius-md);
+  }
+
+  .chef__media img {
+    position: absolute;
+    inset: -5% 0;
+    height: 110%;
+  }
+
+  .chef__copy {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .chef__quote {
+    font-size: clamp(40px, 4vw, 58px);
+  }
+
+  .chef__text {
+    max-width: 560px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+
+  .chef__signature {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-style: italic;
+  }
+
+  .menu {
+    padding: 120px 0 140px;
+    background: linear-gradient(180deg, #b8653a 0%, #7d3f2c 45%, #3a2229 80%, var(--color-plum) 100%);
+    color: var(--color-cream);
+  }
+
+  .menu__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .menu__chips {
+    justify-content: center;
+  }
+
+  .menu__title {
+    margin: 22px 0 64px;
+  }
+
+  .menu__courses {
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+    margin-bottom: 72px;
+  }
+
+  .menu__numeral {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-style: italic;
+    color: var(--color-glow);
+  }
+
+  .menu__name {
+    margin: 4px 0 6px;
+    font-family: var(--font-display);
+    font-size: clamp(30px, 2.65vw, 38px);
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .menu__detail {
+    font-size: 14px;
+    color: rgb(243 231 214 / 0.7);
+  }
+
+  @media (max-width: 999px) {
+    .tables__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .chef__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .chef__media {
+      max-width: 480px;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .tables,
+    .chef,
+    .menu {
+      padding: 100px 0;
+    }
+
+    .tables__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

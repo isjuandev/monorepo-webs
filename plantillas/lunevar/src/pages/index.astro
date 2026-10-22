@@ -1,18 +1,30 @@
 ---
-import { Button } from "@repo/ui";
-import Section from "@repo/ui/astro/Section.astro";
-import { siteConfig } from "@/config/site";
+import AfterDark from "@/components/home/AfterDark.astro";
+import GuestNotes from "@/components/home/GuestNotes.astro";
+import HomeHero from "@/components/home/HomeHero.astro";
+import LandCarousel from "@/components/home/LandCarousel.astro";
+import Manifesto from "@/components/home/Manifesto.astro";
+import PlanTeaser from "@/components/home/PlanTeaser.astro";
+import Programs from "@/components/home/Programs.astro";
+import SuitesPreview from "@/components/home/SuitesPreview.astro";
+import SunPath from "@/components/home/SunPath.astro";
+import SunTicker from "@/components/home/SunTicker.astro";
+import Supper from "@/components/home/Supper.astro";
+import ThermalHouse from "@/components/home/ThermalHouse.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
-<BaseLayout>
-  <Section>
-    <h1>{siteConfig.name}</h1>
-    <p>{siteConfig.description}</p>
-    <div style="margin-top: 1.5rem;">
-      <Button client:load variant="primary">
-        Contáctanos
-      </Button>
-    </div>
-  </Section>
+<BaseLayout headerTone="dark">
+  <HomeHero />
+  <Manifesto />
+  <SunPath />
+  <SuitesPreview />
+  <SunTicker />
+  <ThermalHouse />
+  <Programs />
+  <LandCarousel />
+  <Supper />
+  <AfterDark />
+  <GuestNotes />
+  <PlanTeaser />
 </BaseLayout>

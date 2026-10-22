@@ -25,8 +25,6 @@
     "/suites/star-loft"
   ],
   "localeRoutes": [],
-  "sitemaps": [
-    "https://extraordinary-wombat-796551.framer.app/sitemap.xml"
-  ],
+  "sitemaps": ["https://extraordinary-wombat-796551.framer.app/sitemap.xml"],
   "reachable": true
 }

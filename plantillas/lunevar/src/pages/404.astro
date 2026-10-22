@@ -1,12 +1,45 @@
 ---
-import Section from "@repo/ui/astro/Section.astro";
+import Icon from "@/components/Icon.astro";
+import SplitHeading from "@/components/SplitHeading.astro";
+import { NOT_FOUND } from "@/data/content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="Página no encontrada" noindex>
-  <Section>
-    <h1>Página no encontrada</h1>
-    <p>La página que buscas no existe o fue movida.</p>
-    <p><a href="/">Volver al inicio</a></p>
-  </Section>
+<BaseLayout page={NOT_FOUND.meta.seoTitle} description={NOT_FOUND.meta.description} noindex>
+  <section class="not-found" data-tone="light">
+    <div class="container not-found__inner">
+      <p class="not-found__kicker">{NOT_FOUND.kicker}</p>
+      <SplitHeading title={NOT_FOUND.title} as="h1" size="l" reveal={false} />
+      <p class="lede">{NOT_FOUND.text}</p>
+      <a class="btn btn--dark" href={NOT_FOUND.button.href}>
+        {NOT_FOUND.button.label}
+        <Icon name="arrow-right" />
+      </a>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .not-found {
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    padding: 160px 0 120px;
+    background: radial-gradient(circle at 50% 110%, rgb(232 135 80 / 0.35), transparent 55%), var(--color-bg);
+  }
+
+  .not-found__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    text-align: center;
+  }
+
+  .not-found__kicker {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-style: italic;
+    color: var(--color-accent);
+  }
+</style>

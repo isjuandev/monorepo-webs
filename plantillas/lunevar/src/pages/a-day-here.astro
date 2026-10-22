@@ -1,0 +1,425 @@
+---
+import Icon from "@/components/Icon.astro";
+import SplitHeading from "@/components/SplitHeading.astro";
+import SunArc from "@/components/SunArc.astro";
+import { DAY_PAGE, EXPERIENCES, RITUALS, SUN, UI_LABELS } from "@/data/content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { toMinutes } from "@/lib/sun";
+
+const { hero, experiences } = DAY_PAGE;
+const sunset = toMinutes(SUN.sunset);
+---
+
+<BaseLayout page={DAY_PAGE.meta.seoTitle} description={DAY_PAGE.meta.description}>
+  <section class="day-scene" data-tone="light" data-arc-scene>
+    <div class="day-scene__sticky">
+      <SunArc marks={hero.marks} driver="section" variant="dome" class="day-scene__arc" />
+      <div class="container day-scene__copy">
+        <h1 class="display display-xl">
+          <span data-load style="--load-delay: 0.15s">{hero.title.lead}</span>
+          <span class="accent" data-load style="--load-delay: 0.3s">{hero.title.accent}</span>
+        </h1>
+        <p class="day-scene__text" data-load style="--load-delay: 0.45s">{hero.text}</p>
+        <p class="day-scene__scroll" data-load style="--load-delay: 0.6s">{hero.scroll}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="day-line" data-tone="light">
+    <ol class="container day-line__list">
+      {
+        RITUALS.map((ritual) => (
+          <li class:list={["day-item", { "day-item--night": toMinutes(ritual.time) > sunset }]} data-tone={toMinutes(ritual.time) > sunset ? "dark" : "light"} data-day-item>
+            <h2 class="day-item__time" data-reveal>{ritual.time}</h2>
+            <span class="day-item__dot" aria-hidden="true" />
+            <div class="media day-item__media" data-reveal>
+              <img src={ritual.image.src} alt={ritual.image.alt} width="380" height="300" loading="lazy" decoding="async" />
+            </div>
+            <div class="day-item__copy" data-reveal style="--reveal-delay: 0.1s">
+              <div class="chip-row">
+                {ritual.chips.map((chip) => (
+                  <span class="chip chip--accent">
+                    <Icon name={chip.icon} />
+                    {chip.label}
+                  </span>
+                ))}
+              </div>
+              <h3 class="day-item__title">{ritual.title}</h3>
+              <p class="day-item__text">{ritual.text}</p>
+              <button type="button" class="day-item__add" aria-pressed="false" data-add-day data-added={UI_LABELS.addedToDay} data-add={UI_LABELS.addToDay}>
+                <span data-add-label>{UI_LABELS.addToDay}</span>
+                <Icon name="plus" size={14} class="day-item__plus" />
+                <Icon name="check" size={14} class="day-item__check" />
+              </button>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="day-ways" data-tone="dark" data-filter-scope>
+    <div class="container">
+      <div class="day-ways__header">
+        <SplitHeading title={experiences.title} size="s" />
+        <div class="filter-bar" data-filter-group role="group" aria-label={UI_LABELS.filterLabel} data-reveal>
+          {
+            experiences.filters.map((filter, index) => (
+              <button type="button" class="filter-btn" data-filter={filter.value} aria-pressed={index === 0 ? "true" : "false"}>
+                {filter.label}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+      <ul class="day-ways__grid">
+        {
+          EXPERIENCES.map((experience, index) => (
+            <li class="way-card" data-filter-item data-tags={experience.phase} data-reveal style={`--reveal-delay: ${(index % 3) * 0.08}s`}>
+              <div class="media way-card__media">
+                <img src={experience.image.src} alt={experience.image.alt} width="440" height="330" loading="lazy" decoding="async" />
+              </div>
+              <div class="chip-row">
+                <span class="chip"><Icon name="sunrise" />{experience.moment}</span>
+                <span class="chip"><Icon name="clock" />{experience.duration}</span>
+              </div>
+              <h3 class="way-card__title">{experience.name}</h3>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="day-ways__empty" data-filter-empty hidden>{experiences.empty}</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import "@/scripts/filters";
+
+  // "Añadir a mi día": alterna el estado de cada ritual (sin persistencia, como en la fuente).
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-add-day]")) {
+    button.addEventListener("click", () => {
+      const added = button.getAttribute("aria-pressed") !== "true";
+      button.setAttribute("aria-pressed", String(added));
+      const label = button.querySelector("[data-add-label]");
+      if (label) label.textContent = (added ? button.dataset.added : button.dataset.add) ?? "";
+    });
+  }
+
+  // El punto de cada hora se rellena al cruzar el centro de la pantalla.
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const passed = entry.isIntersecting || entry.boundingClientRect.top < 0;
+        entry.target.classList.toggle("is-passed", passed);
+      }
+    },
+    { rootMargin: "0px 0px -50% 0px" }
+  );
+  for (const item of document.querySelectorAll("[data-day-item]")) observer.observe(item);
+</script>
+
+<style>
+  .day-scene {
+    height: 170vh;
+    background: linear-gradient(180deg, #f0d4b4 0%, #efcaa4 60%, #efd9c2 100%);
+  }
+
+  .day-scene__sticky {
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    min-height: 640px;
+    overflow: hidden;
+  }
+
+  .day-scene :global(.day-scene__arc) {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: max(40px, calc(100vh - 770px));
+  }
+
+  .day-scene__copy {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding-top: 40px;
+    text-align: center;
+  }
+
+  .day-scene__text {
+    font-size: 17px;
+    color: var(--color-muted);
+  }
+
+  .day-scene__scroll {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-size: 10px;
+    color: var(--color-muted);
+  }
+
+  .day-scene__scroll::after {
+    content: "";
+    width: 1px;
+    height: 40px;
+    background: currentColor;
+    animation: scroll-cue 2.4s var(--ease-out) infinite;
+    transform-origin: top;
+  }
+
+  .day-line {
+    padding: 120px 0 160px;
+    background: linear-gradient(
+      180deg,
+      #efd9c2 0%,
+      var(--color-bg) 12%,
+      #f1e2cf 40%,
+      #e8b98d 62%,
+      #b8653a 72%,
+      #4a2a26 84%,
+      var(--color-night) 96%
+    );
+  }
+
+  .day-line__list {
+    position: relative;
+  }
+
+  .day-line__list::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--gutter) + 528px);
+    width: 1px;
+    background: rgb(42 29 20 / 0.3);
+  }
+
+  .day-item {
+    display: grid;
+    grid-template-columns: 460px 56px 380px minmax(0, 1fr);
+    gap: 0 40px;
+    align-items: start;
+    padding: 60px 0;
+  }
+
+  .day-item__time {
+    font-family: var(--font-display);
+    font-size: clamp(56px, 6.75vw, 97px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    padding-top: 6px;
+  }
+
+  .day-item__dot {
+    justify-self: center;
+    width: 18px;
+    height: 18px;
+    margin-top: 80px;
+    border: 1px solid var(--color-accent);
+    border-radius: 50%;
+    background: var(--color-bg);
+    transition: background-color 0.4s var(--ease-out);
+  }
+
+  .day-item:global(.is-passed) .day-item__dot {
+    background: var(--color-accent);
+  }
+
+  .day-item__media {
+    aspect-ratio: 380 / 300;
+    border-radius: 20px;
+  }
+
+  .day-item__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .day-item__title {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.15;
+  }
+
+  .day-item__text {
+    max-width: 330px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: rgb(42 29 20 / 0.72);
+  }
+
+  .day-item__add {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 14px;
+    transition: color 0.3s var(--ease-out);
+  }
+
+  .day-item__add[aria-pressed="true"] {
+    color: var(--color-accent);
+  }
+
+  .day-item :global(.day-item__check),
+  .day-item__add[aria-pressed="true"] :global(.day-item__plus) {
+    display: none;
+  }
+
+  .day-item__add[aria-pressed="true"] :global(.day-item__check) {
+    display: block;
+  }
+
+  .day-item--night {
+    color: var(--color-cream);
+  }
+
+  .day-item--night .day-item__text {
+    color: rgb(243 231 214 / 0.72);
+  }
+
+  .day-item--night .chip {
+    border-color: rgb(243 231 214 / 0.2);
+    background: rgb(243 231 214 / 0.06);
+    color: rgb(243 231 214 / 0.9);
+  }
+
+  .day-item--night .day-item__dot {
+    background: var(--color-night);
+    border-color: rgb(243 231 214 / 0.6);
+  }
+
+  .day-item--night:global(.is-passed) .day-item__dot {
+    background: rgb(243 231 214 / 0.8);
+  }
+
+  .day-ways {
+    padding: 140px 0 150px;
+    background: var(--color-night);
+    color: var(--color-cream);
+  }
+
+  .day-ways__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 48px;
+  }
+
+  .day-ways__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px 20px;
+  }
+
+  .way-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .way-card__media {
+    aspect-ratio: 440 / 330;
+    border-radius: 20px;
+  }
+
+  .way-card__title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  .day-ways__empty {
+    color: rgb(243 231 214 / 0.7);
+  }
+
+  @keyframes scroll-cue {
+    0% {
+      transform: scaleY(0);
+      opacity: 1;
+    }
+
+    70% {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+
+    100% {
+      transform: scaleY(1);
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 1200px) {
+    .day-item {
+      grid-template-columns: 300px 56px 320px minmax(0, 1fr);
+      gap: 0 24px;
+    }
+
+    .day-line__list::before {
+      left: calc(var(--gutter) + 352px);
+    }
+  }
+
+  @media (max-width: 999px) {
+    .day-line__list::before {
+      left: calc(var(--gutter) + 8px);
+    }
+
+    .day-item {
+      grid-template-columns: 18px minmax(0, 1fr);
+      gap: 20px 24px;
+      padding: 40px 0;
+    }
+
+    .day-item__dot {
+      grid-row: 1;
+      grid-column: 1;
+      margin-top: 22px;
+    }
+
+    .day-item__time,
+    .day-item__media,
+    .day-item__copy {
+      grid-column: 2;
+    }
+
+    .day-item__media {
+      max-width: 520px;
+    }
+
+    .day-ways__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .day-scene {
+      height: 150vh;
+    }
+
+    .day-ways__header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .day-ways__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

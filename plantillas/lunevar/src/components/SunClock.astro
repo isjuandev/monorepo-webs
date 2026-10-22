@@ -1,0 +1,106 @@
+---
+import { SUN, UI_LABELS } from "@/data/content";
+import { arcPath } from "@/lib/sun";
+
+/**
+ * Reloj de la cabecera: hora local del visitante, momento del día y un mini arco con la posición
+ * del sol entre el amanecer y el atardecer de `SUN` (lo actualiza scripts/sun-clock.ts).
+ */
+---
+
+<div
+  class="sun-clock"
+  role="timer"
+  aria-label={UI_LABELS.clockLabel}
+  data-sun-clock
+  data-sunrise={SUN.sunrise}
+  data-sunset={SUN.sunset}
+  data-phases={JSON.stringify(UI_LABELS.phases)}
+>
+  <svg class="sun-clock__arc" viewBox="0 0 32 16" aria-hidden="true">
+    <path d={arcPath(16, 15, 13)} class="sun-clock__track"></path>
+    <path d={arcPath(16, 15, 13)} class="sun-clock__fill" pathLength="1" data-dial-fill></path>
+    <line x1="0" y1="15.25" x2="32" y2="15.25" class="sun-clock__horizon"></line>
+    <circle r="2" cx="3" cy="15" class="sun-clock__sun" data-dial-sun></circle>
+  </svg>
+  <span class="sun-clock__time" data-clock-time>--:--</span>
+  <span class="sun-clock__sep" aria-hidden="true"></span>
+  <span class="sun-clock__phase" data-clock-phase>&nbsp;</span>
+</div>
+
+<style>
+  .sun-clock {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 34px;
+    padding: 0 14px;
+    border-radius: var(--radius-pill);
+    background: rgb(42 29 20 / 0.06);
+  }
+
+  :global([data-tone="dark"]) .sun-clock {
+    background: rgb(245 237 225 / 0.12);
+  }
+
+  .sun-clock__arc {
+    width: 32px;
+    height: 16px;
+    overflow: visible;
+  }
+
+  .sun-clock__track {
+    fill: none;
+    stroke: currentColor;
+    stroke-opacity: 0.35;
+    stroke-width: 0.8;
+    stroke-dasharray: 1 1.6;
+  }
+
+  .sun-clock__fill {
+    fill: none;
+    stroke: var(--color-glow);
+    stroke-width: 1;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  .sun-clock__horizon {
+    stroke: currentColor;
+    stroke-opacity: 0.35;
+    stroke-width: 0.5;
+  }
+
+  .sun-clock__sun {
+    fill: var(--color-glow);
+  }
+
+  .sun-clock__time {
+    min-width: 44px;
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 300;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sun-clock__sep {
+    width: 1px;
+    height: 12px;
+    background: currentColor;
+    opacity: 0.35;
+  }
+
+  .sun-clock__phase {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    opacity: 0.72;
+  }
+
+  @media (max-width: 999px) {
+    .sun-clock__sep,
+    .sun-clock__phase {
+      display: none;
+    }
+  }
+</style>

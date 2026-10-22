@@ -1,0 +1,170 @@
+---
+import Icon from "@/components/Icon.astro";
+import { HOME } from "@/data/content";
+
+/**
+ * "La cena, entre velas y brasas": la foto entra con una cortina que se abre (clip-path) y después
+ * se acerca muy despacio (Ken Burns, 18 s en vaivén). El fondo pasa del ocaso al morado de la noche.
+ */
+const { supper } = HOME;
+const numerals = ["I", "II", "III", "IV", "V"];
+const [lead, ...accents] = supper.title;
+---
+
+<section class="supper" data-tone="dark">
+  <div class="container supper__inner">
+    <div class="supper__media" data-reveal>
+      <img src={supper.image.src} alt={supper.image.alt} width="1600" height="1066" loading="lazy" decoding="async" />
+    </div>
+    <div class="supper__copy">
+      <h2 class="display display-m" data-reveal>
+        <span>{lead}</span>
+        {accents.map((line) => <span class="accent">{line}</span>)}
+      </h2>
+      <p class="lede" data-reveal>{supper.text}</p>
+      <div class="supper__menu" data-reveal>
+        <div class="chip-row">
+          {
+            supper.chips.map((chip) => (
+              <span class="chip chip--glow">
+                <Icon name={chip.icon} />
+                {chip.label}
+              </span>
+            ))
+          }
+        </div>
+        <ol class="supper__courses">
+          {
+            supper.courses.map((course, index) => (
+              <li>
+                <span>{numerals[index]}</span>
+                {course}
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+      <a class="btn btn--light supper__cta" href={supper.cta.href} data-reveal>
+        {supper.cta.label}
+        <Icon name="arrow-right" />
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .supper {
+    padding: 150px 0;
+    background: linear-gradient(180deg, #e8c39d 0%, #c97a45 22%, #9a4c2c 48%, #4c2b26 78%, var(--color-plum) 100%);
+    color: var(--color-cream);
+  }
+
+  .supper__inner {
+    display: grid;
+    grid-template-columns: 820fr 440fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .supper__media {
+    aspect-ratio: 820 / 780;
+    margin-left: 20px;
+    overflow: hidden;
+    border-radius: 28px;
+    clip-path: inset(0 0 0 0 round 28px);
+  }
+
+  :global(.js) .supper__media[data-reveal] {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(18% 8% 18% 8% round 28px);
+    transition: clip-path 1.4s var(--ease-out);
+  }
+
+  :global(.js) .supper__media[data-reveal]:global(.is-visible) {
+    clip-path: inset(0 0 0 0 round 28px);
+  }
+
+  .supper__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: ken-burns 18s ease-in-out infinite alternate;
+  }
+
+  .supper__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 36px;
+  }
+
+  .supper__copy .display span:first-child {
+    color: var(--color-cream);
+  }
+
+  .supper__copy .lede {
+    color: rgb(247 233 216 / 0.82);
+  }
+
+  .supper__menu {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .supper__courses li {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    padding: 16px 0;
+    border-top: 1px solid rgb(247 233 216 / 0.18);
+    font-size: 16px;
+    line-height: 1.4;
+    color: rgb(247 233 216 / 0.92);
+  }
+
+  .supper__courses li:first-child {
+    margin-top: 10px;
+  }
+
+  .supper__courses span {
+    width: 32px;
+    flex: none;
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-style: italic;
+    color: var(--color-glow);
+  }
+
+  @keyframes ken-burns {
+    from {
+      transform: scale(1);
+    }
+
+    to {
+      transform: scale(1.08) translate(-1%, -1%);
+    }
+  }
+
+  @media (max-width: 999px) {
+    .supper__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .supper__media {
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 809px) {
+    .supper {
+      padding: 100px 0;
+    }
+
+    .supper__cta {
+      white-space: normal;
+    }
+  }
+</style>
