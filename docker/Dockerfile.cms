@@ -1,0 +1,128 @@
+# Imagen del CMS interno (@apps/cms). Distinta de docker/Dockerfile (sitios estáticos con Nginx):
+# aquí corre un servidor Node que además necesita git, gh, la CLI de claude y Chromium (QA).
+# Todas las versiones están fijadas; para actualizar una, cambia su ARG y reconstruye.
+#
+# Build (desde la raíz del repo):
+#   docker build -f docker/Dockerfile.cms -t cms .
+#
+# Hecha para Coolify: Build Pack Dockerfile, ruta /docker/Dockerfile.cms, Base Directory /.
+# Variables y volúmenes: ver apps/cms/README.md (sección "Despliegue en Coolify").
+# Versión concreta de Node 22 (tag existente en Docker Hub), la misma en todas las etapas
+ARG NODE_IMAGE=node:22.23.5-bookworm-slim
+
+# Base común (Debian y no Alpine: Playwright y gh lo necesitan) con pnpm vía corepack
+FROM ${NODE_IMAGE} AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+ENV COREPACK_HOME=/opt/corepack
+RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+
+# Etapa 1: podar el monorepo solo para @apps/cms (y sus dependencias de workspace)
+FROM base AS pruner
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY packages ./packages
+COPY apps ./apps
+
+RUN pnpm dlx turbo@2.11.7 prune @apps/cms --docker
+
+# Etapa 2: instalar con lockfile congelado y compilar el CMS
+FROM base AS builder
+WORKDIR /app
+
+COPY --from=pruner /app/out/json/ .
+RUN pnpm install --frozen-lockfile
+
+COPY --from=pruner /app/out/full/ .
+# scripts/ no es un workspace, así que turbo prune no lo incluye; @repo/cms-core importa
+# ../../../scripts/lib/{paths,brief,assets}.mjs y Vite los empaqueta en el bundle.
+COPY scripts ./scripts
+RUN pnpm --filter @apps/cms build
+
+# Etapa 3: runtime con las herramientas que usa el pipeline
+FROM ${NODE_IMAGE} AS runner
+
+# Versiones fijadas. PLAYWRIGHT_VERSION debe coincidir con @playwright/test de pnpm-lock.yaml.
+ARG PNPM_VERSION=9.15.0
+ARG CLAUDE_CODE_VERSION=2.1.325
+ARG PLAYWRIGHT_VERSION=1.64.0
+ARG GH_VERSION=2.104.0
+# SHA-256 del keyring oficial de cli.github.com/packages/githubcli-archive-keyring.gpg
+ARG GH_KEYRING_SHA256=6084d5d7bd8e288441e0e94fc6275570895da18e6751f70f057485dc2d1a811b
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+# pnpm 9.15 no lee PNPM_STORE_DIR: el almacén se fija con npm_config_store_dir. Al estar en otro
+# volumen que el clon, pnpm copia los paquetes en vez de usar hardlinks.
+ENV npm_config_store_dir=/data/pnpm-store
+# La CLI de claude no se actualiza sola: la versión es la fijada arriba
+ENV DISABLE_AUTOUPDATER=1
+# pnpm queda preparado en una ruta legible por el usuario cms; en ejecución no se descarga nada
+ENV COREPACK_HOME=/opt/corepack
+ENV HOST=0.0.0.0
+ENV PORT=4321
+ENV CMS_REPO_DIR=/data/repo
+ENV NODE_ENV=production
+
+# Herramientas del sistema: git y certificados; curl solo para añadir el repositorio apt de gh
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends git ca-certificates curl \
+ && rm -rf /var/lib/apt/lists/*
+
+# gh desde el repositorio apt oficial (https://github.com/cli/cli/blob/trunk/docs/install_linux.md),
+# con su keyring verificado por hash y la versión fijada
+RUN mkdir -p -m 755 /etc/apt/keyrings \
+ && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+      -o /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+ && echo "${GH_KEYRING_SHA256}  /etc/apt/keyrings/githubcli-archive-keyring.gpg" | sha256sum -c - \
+ && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+ && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
+      > /etc/apt/sources.list.d/github-cli.list \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends "gh=${GH_VERSION}" \
+ && apt-get purge -y curl && apt-get autoremove -y \
+ && rm -rf /var/lib/apt/lists/*
+
+# pnpm (corepack) y CLI de claude, solo con pnpm (nunca npm)
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate \
+ && chmod -R a+rX /opt/corepack \
+ && pnpm add -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+
+# Desde aquí (ejecución) corepack no descarga nada: pnpm ya está en /opt/corepack
+ENV COREPACK_ENABLE_NETWORK=0
+
+# Chromium de Playwright (QA visual) con sus dependencias del sistema, en una ruta compartida
+RUN pnpm dlx "playwright@${PLAYWRIGHT_VERSION}" install --with-deps chromium \
+ && chmod -R a+rX /ms-playwright \
+ && rm -rf /var/lib/apt/lists/*
+
+# Usuario sin privilegios. Los directorios de /data se crean con su dueño para que los volúmenes
+# con nombre de Coolify (que heredan el contenido de la imagen al crearse) queden escribibles.
+# Los volúmenes /data/repo/recursos y /data/repo/.pipeline se montan DENTRO del clon a propósito:
+# ROOT_DIR/recursos y ROOT_DIR/.pipeline (scripts/lib/paths.mjs) caen así en volúmenes propios.
+RUN groupadd --gid 10001 cms \
+ && useradd --uid 10001 --gid cms --create-home --shell /usr/sbin/nologin cms \
+ && mkdir -p /data/repo/recursos /data/repo/.pipeline /data/pnpm-store \
+ && chown -R cms:cms /data /home/cms
+
+WORKDIR /app
+# El /app podado con su node_modules (lo más robusto: sharp y demás ya resueltos)
+COPY --from=builder --chown=cms:cms /app /app
+COPY docker/cms-entrypoint.sh /usr/local/bin/cms-entrypoint.sh
+RUN chmod 755 /usr/local/bin/cms-entrypoint.sh
+
+USER cms
+ENV HOME=/home/cms
+
+# Los volúmenes (/data/repo, /data/repo/recursos, /data/repo/.pipeline y /data/pnpm-store) los
+# declara la app de Coolify; no se usa VOLUME para no crear volúmenes anónimos.
+EXPOSE 4321
+
+# start-period largo: el primer arranque clona el monorepo antes de levantar el servidor y puede
+# tardar minutos; durante ese plazo los fallos no cuentan como unhealthy.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=300s --retries=3 \
+  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||4321)+'/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+
+ENTRYPOINT ["/usr/local/bin/cms-entrypoint.sh"]

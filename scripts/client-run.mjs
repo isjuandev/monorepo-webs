@@ -281,7 +281,7 @@ function buildPrBody({ slug, brief, state, allowPending }) {
     `| Build Variables | \`SITE_FOLDER=${slug}\` · \`SITE_URL=https://${brief.domain}\` |`,
     `| Dominio | \`https://${brief.domain}\` |`,
     "| Puerto · Health check | `80` · `/healthz` |",
-    `| Watch Paths | \`${siteRel}/**\` \`packages/**\` \`docker/**\` \`pnpm-lock.yaml\` \`package.json\` \`turbo.json\` |`,
+    `| Watch Paths | \`${siteRel}/**\` \`packages/**\` \`docker/Dockerfile\` \`docker/nginx.conf\` \`pnpm-lock.yaml\` \`package.json\` \`turbo.json\` |`,
     "",
     `- [ ] DNS: registro \`A\` de \`${brief.domain}\` al IP del VPS (y \`www\` si aplica)`,
     `- [ ] Tras el primer despliegue: \`https://${brief.domain}/healthz\`, \`/robots.txt\` y \`/sitemap-index.xml\` responden`,
