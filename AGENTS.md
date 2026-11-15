@@ -56,6 +56,7 @@ monorepo-webs/
 │   ├── _base/                      # Esqueleto mínimo: punto de partida de plantilla:clonar
 │   ├── asterre/                    # Alojamiento boutique en español (por defecto para moteles)
 │   ├── hotellia/                   # Hotel boutique (lenis)
+│   ├── lunevar/                    # Retiro de longevidad con planificador y diario (20 rutas)
 │   ├── pinevalley/                 # Villa de una página (lenis)
 │   └── selvra/                     # Retiro boutique
 ├── clientes/                       # Un sitio por cliente real
