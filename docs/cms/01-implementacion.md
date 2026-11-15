@@ -1,6 +1,6 @@
 # CMS interno de la fábrica: documentación de implementación
 
-> Estado: **propuesta para implementar** (no hay código escrito), revisada contra el código del repositorio el 2026-11-15. Este documento especifica qué construir, en qué orden y con qué criterios de aceptación. Las reglas generales siguen en [AGENTS.md](../../AGENTS.md).
+> Estado: **propuesta para implementar** (no hay código escrito), revisada contra el código del repositorio el 2026-11-15; decisiones abiertas resueltas. Este documento especifica qué construir, en qué orden y con qué criterios de aceptación. Las reglas generales siguen en [AGENTS.md](../../AGENTS.md).
 
 ## 1. Objetivo y alcance
 
@@ -18,6 +18,13 @@ Una plataforma web interna, alojada en nuestro servidor (Coolify) y usada por un
 | 3 | Se aprueba un backend Node dentro del stack: **Astro con `output: "server"` + `@astrojs/node` + Preact**. Sin librerías nuevas salvo autorización expresa. |
 | 4 | El `.md` se **extiende** a partir del actual `brief.md`; no se crea un formato paralelo. |
 | 5 | Este entregable es solo documentación: no se implementa todavía. |
+| 6 | **Vista previa por subdominio.** Hay DNS en Cloudflare: cada borrador o cliente en preparación se sirve en `<slug>.nexobite.com` (p. ej. `la-guaca.nexobite.com`, §12.4), antes de pasar al dominio real. |
+| 7 | **Publicación por PR** por defecto; el commit directo a `main` queda como opción por entorno (§8.3). |
+| 8 | **Acceso solo con login** (sin VPN ni restricción por IP). Por eso las medidas de §11.1 (límite de intentos, cookies, CSP) son obligatorias, no opcionales. |
+| 9 | **Credencial de GitHub: token de alcance limitado** (fine-grained, solo este repositorio: contenido y pull requests), porque el flujo por defecto abre PR con `gh`. Una clave de despliegue sola no basta. |
+| 10 | **IA opcional** para redactar solo campos vacíos y `redactable`, con tope de gasto (Fase 6). Sin ella, el contenido editorial se escribe a mano o se importa con `contenido.md`. |
+| 11 | **Cambios de diseño solo por CLI.** El CMS edita datos, marca y activos; nunca da al agente alcance sobre componentes. |
+| 12 | **SVG rechazado** desde la web (se pide PNG); **HEIC no se ofrece** en el día 1 (se pide JPG) hasta comprobar `sharp` en la imagen Docker. |
 
 ### Fuera de alcance (de momento)
 
@@ -194,7 +201,7 @@ Se mantiene la gramática actual y se formaliza para que sea **parseable sin LLM
 
 - Formatos aceptados: JPG, PNG, WebP, AVIF y TIFF (los que hoy procesa `optimize-assets`); PDF y documentos solo para el intake.
   - **HEIC:** hoy no se procesa (no está en `RASTER_EXTENSIONS`) y el `sharp` precompilado normalmente no decodifica HEIC/HEVC. No se ofrece en la web hasta comprobar el soporte en la imagen Docker; mientras tanto se rechaza con un mensaje que pide exportar a JPG.
-  - **SVG:** hoy se copia tal cual a `public/images/` (sin recodificar). Desde la web, un SVG puede llevar scripts: se **sanea** (sin `<script>`, manejadores `on*`, `<foreignObject>` ni referencias externas) o se rechaza y se pide PNG. La misma regla se aplica en `optimize-assets`.
+  - **SVG:** hoy se copia tal cual a `public/images/` (sin recodificar). Un SVG puede llevar scripts, así que **desde la web se rechaza** con un mensaje que pide PNG (decisión 12). Sanearlo (sin `<script>`, manejadores `on*`, `<foreignObject>` ni referencias externas) queda como mejora futura. `optimize-assets` debe aplicar la misma regla a los SVG que lleguen por la web; los logos SVG vía CLI siguen siendo material revisado por una persona.
 - Límite de tamaño por archivo y por subida (configurable), conteo máximo por lote.
 - Detección de duplicados por hash (como `recursosLeftovers`) y de **restos de plantilla**. **Cambio de regla:** hoy las imágenes idénticas a la plantilla son solo un aviso en `cliente:check` (no fallan ni con `--strict`); pasan a ser error en `--strict` y bloquean la publicación.
 - La optimización debe ser la **misma función** que usa `cliente:activos` (se extrae de `optimize-assets.mjs`), para que CLI y web den el mismo resultado.
@@ -229,7 +236,7 @@ Se mantiene la gramática actual y se formaliza para que sea **parseable sin LLM
 
 ### 8.3 Publicación
 
-- Modo configurable por entorno: **PR** (por defecto) o **commit directo a `main`** (como ya se trabaja en este repo). En modo directo, la compuerta de calidad es obligatoria y el autor del commit es la persona que publica.
+- Modo configurable por entorno: **PR** (por defecto, decisión 7) o **commit directo a `main`** (como ya se trabaja en este repo). En modo directo, la compuerta de calidad es obligatoria y el autor del commit es la persona que publica. Abrir el PR requiere el token de GitHub de alcance limitado (decisión 9).
 - Tras el merge, Coolify despliega el cliente (webhook). Una fase posterior puede usar la API/MCP de Coolify para crear la app y mostrar la ficha de despliegue.
 
 ## 9. Backend
@@ -280,15 +287,15 @@ Requisitos: accesible (teclado y etiquetas), usable en móvil para revisar, text
 
 El CMS ejecuta un agente con permisos de escritura y tiene credenciales de Git: es un objetivo de mayor riesgo que los sitios.
 
-1. **Acceso:** inicio de sesión propio con **2 usuarios definidos por variables de entorno**, contraseñas con hash `scrypt` (módulo nativo de Node) y cookie de sesión firmada, `HttpOnly`, `Secure`, `SameSite=Strict`. Protección CSRF en operaciones que cambian estado, límite de intentos y bloqueo temporal. Recomendado además: restringir por red (VPN o IP) o capa de acceso del proxy.
+1. **Acceso:** inicio de sesión propio con **2 usuarios definidos por variables de entorno**, contraseñas con hash `scrypt` (módulo nativo de Node) y cookie de sesión firmada, `HttpOnly`, `Secure`, `SameSite=Strict`. Protección CSRF en operaciones que cambian estado, límite de intentos y bloqueo temporal. Sin restricción por red (decisión 8), el login es la única barrera: contraseñas largas, bloqueo por intentos fallidos y sesiones con caducidad corta. Una capa de acceso en el proxy (Cloudflare Access o IP) queda como mejora opcional.
 2. **Secretos fuera del agente:** `runClaude` hoy hereda `process.env`. En el CMS el agente debe recibir un entorno **mínimo** (solo la clave de Anthropic necesaria), **sin** `GH_TOKEN` ni claves SSH. Git, push y PR los hace siempre el orquestador, como ya ocurre.
 3. **Aislamiento real del agente:** quitar `git`/`gh` de la lista no basta. Hoy `AGENT_ALLOWED_TOOLS` incluye `Bash(pnpm:*)` y `Bash(node scripts/:*)`, y `pnpm exec`, `pnpm dlx` o un script de `package.json` permiten ejecutar cualquier comando. En el CMS:
    - el agente corre en un proceso aislado (contenedor o usuario del sistema propio) que **no puede leer** las credenciales del orquestador (`~/.config/gh`, claves SSH, variables de Coolify) y sin red de salida salvo la API de Anthropic;
    - `pnpm` se limita a subcomandos concretos (`pnpm --filter <sitio> build|check`, `pnpm lint`), sin `exec`, `dlx` ni `install` de paquetes nuevos;
    - el trabajo sucede en el worktree del trabajo (§9.2), no en el clon principal.
 4. **Inyección por material del cliente:** PDFs, chats exportados y documentos son contenido no confiable que el agente lee. Mitigaciones: el aislamiento del punto 3, guardia de alcance (`scopeViolations`) obligatoria, y revisión humana del diff antes de publicar.
-5. **Subidas:** validar tipo real (no solo extensión), tamaño, cantidad; nombres saneados (kebab-case); rechazar rutas con `..`; procesar las imágenes rasterizadas siempre re-codificando con `sharp` (descarta metadatos y payloads incrustados); sanear o rechazar SVG (§7.3), que hoy se copian sin procesar.
-6. **Rutas y slugs:** todo slug debe cumplir `KEBAB_CASE_REGEX` y resolverse **dentro** de `plantillas/`, `clientes/` o `recursos/`; nunca construir rutas con entradas sin validar.
+5. **Subidas:** validar tipo real (no solo extensión), tamaño, cantidad; nombres saneados (kebab-case); rechazar rutas con `..`; procesar las imágenes rasterizadas siempre re-codificando con `sharp` (descarta metadatos y payloads incrustados); rechazar SVG desde la web (§7.3), que hoy se copian sin procesar.
+6. **Rutas y slugs:** todo slug debe cumplir `KEBAB_CASE_REGEX`, no estar en la lista de **subdominios reservados** (`cms`, `www`, `mail`, `api`, `admin`, `coolify`…, porque el slug pasa a ser un subdominio de `nexobite.com`, §12.4) y resolverse **dentro** de `plantillas/`, `clientes/` o `recursos/`; nunca construir rutas con entradas sin validar.
 7. **Auditoría:** cada commit lleva como autor a la persona que lo origina (`git commit --author` o `-c user.name/-c user.email` por trabajo; hoy se usa la configuración de git de la máquina); el historial de git es el registro. El trailer del agente y el repositorio de la ficha de Coolify (hoy escritos a fuego en `client-run.mjs`) pasan a configurarse. Los trabajos guardan usuario, hora, costo y resultado.
 8. **Cabeceras y transporte:** HTTPS, CSP estricta, `X-Frame-Options` salvo para la vista previa propia, sin indexación (`noindex`).
 9. **Cero secretos en Git** (AGENTS §5.1): claves solo como variables de entorno de Coolify.
@@ -301,13 +308,13 @@ Node 22 + pnpm 9.15, `git`, `gh`, la CLI de `claude`, dependencias del sistema p
 
 ### 12.2 Aplicación en Coolify
 
-- Una app, con dominio interno propio y HTTPS.
+- Una app, con dominio propio (`cms.nexobite.com`) y HTTPS. La cookie de sesión **no** lleva atributo `Domain`, para que no viaje a las vistas previas `*.nexobite.com`.
 - **Volúmenes persistentes:**
   - `/data/repo`: clon del monorepo.
   - `/data/recursos`: material de clientes (ignorado por Git: **es el único lugar donde viven los originales**, así que debe tener respaldo).
   - `/data/.pipeline`: estado y logs.
   - almacén de pnpm (caché).
-- **Variables de entorno (ejemplos de nombre, sin valores):** clave de Anthropic, credencial de GitHub con permisos mínimos (clave de despliegue o token de alcance limitado), secreto de sesión, usuarios y hashes, URL del repo, modo de publicación (PR o directo), límites de subida y de gasto.
+- **Variables de entorno (ejemplos de nombre, sin valores):** clave de Anthropic, token de GitHub fine-grained limitado a este repositorio (contenido y pull requests), solo en el orquestador y nunca en el entorno del agente, secreto de sesión, usuarios y hashes, URL del repo, modo de publicación (PR o directo), límites de subida y de gasto.
 - Salud: `/healthz`. Arranque: sincroniza el clon (`git fetch`) y valida que las herramientas existan (`git`, `pnpm`, `claude`, `gh`).
 
 ### 12.3 Respaldo y recuperación
@@ -319,9 +326,9 @@ Node 22 + pnpm 9.15, `git`, `gh`, la CLI de `claude`, dependencias del sistema p
 
 El problema: los sitios usan rutas absolutas (`/images/...`), así que no funcionan bajo un subdirectorio.
 
-- **Recomendado:** compilar el borrador a `dist/` y servirlo enrutando por **subdominio** (`<slug>.<dominio-preview>`), lo que requiere DNS comodín. `scripts/lib/static-server.mjs` sirve un único `dist` por proceso (fijado al arrancar); hay que extraer su resolución de rutas a una función que elija el `dist` según la cabecera `Host`, para servir todos los borradores con un solo proceso.
+- **Decidido (decisión 6):** compilar el borrador a `dist/` y servirlo enrutando por **subdominio directo de `nexobite.com`**: `<slug>.nexobite.com` (p. ej. `la-guaca.nexobite.com`). En Cloudflare se crea un registro comodín `*.nexobite.com` apuntando al servidor, o un registro por cliente (más control, sin exponer slugs no creados). Los registros explícitos (`cms`, `www`, correo…) tienen prioridad sobre el comodín, y los slugs reservados se bloquean (§11.6). El certificado lo cubre Cloudflare (Universal SSL cubre un nivel de subdominio) o, si el tráfico va sin proxy, un certificado comodín de Coolify por desafío DNS. `scripts/lib/static-server.mjs` sirve un único `dist` por proceso (fijado al arrancar); hay que extraer su resolución de rutas a una función que elija el `dist` según la cabecera `Host`, para servir todos los borradores con un solo proceso.
 - Cada vista previa exige un build de Astro del sitio: se lanza al pedir la vista previa o al publicar, no en cada guardado.
-- **Alternativa sin DNS comodín:** capturas de `cliente:qa` por ruta (menos interactivas).
+- Las vistas previas llevan `noindex` y, al ser accesibles solo con el enlace, conviene protegerlas con la misma sesión del CMS o con un acceso de Cloudflare.
 - No exponer `astro dev` de los sitios al exterior.
 
 ## 13. Cambios en el código existente
@@ -332,7 +339,7 @@ El problema: los sitios usan rutas absolutas (`/images/...`), así que no funcio
 4. `client-run.mjs`: separar el paso `agent` en **volcado determinista** + **IA opcional**; aceptar un entorno mínimo para el agente; hacer configurables el repositorio de la ficha de Coolify, el trailer y el autor de los commits.
 5. `lib/pipeline.mjs`: `runClaude` con `env` explícito y lista de herramientas restringida para el CMS (§11.3); funciones de git que reciban el `cwd` del worktree en lugar de `ROOT_DIR` fijo.
 6. `customize-check.mjs`: leer `CLIENT_DOMAIN` desde `site.json` (los JSON ya se revisan) y convertir las imágenes idénticas a la plantilla en error con `--strict`. `plantilla:probe`: exigir que los restos estén solo en los JSON y en `theme.css`.
-7. `optimize-assets.mjs`: sanear SVG; decidir el soporte de HEIC (§7.3).
+7. `optimize-assets.mjs`: rechazar SVG que llegue por la web; HEIC no soportado hasta comprobar `sharp` (§7.3).
 8. `template-clone.mjs`: la plantilla nueva debe nacer con su `plantilla.schema.json` y su contenido en JSON (la skill `clone-website` y el prompt se actualizan).
 9. `verify-isolation.mjs`: regla nueva que prohíbe a los sitios depender de `@apps/*` o `@repo/cms-core`, o importar desde `apps/`; y que cada cliente migrado tenga `cliente.schema.json` válido.
 10. `lib/static-server.mjs`: resolución de rutas reutilizable y selección del `dist` por `Host` (§12.4).
@@ -368,7 +375,7 @@ Orden de riesgo: la **Fase 1a** valida el supuesto más costoso (contenido como 
 - **Guías:** `02-crear-plantilla.md` (esquema obligatorio), `03-desplegar.md` (las Watch Paths no incluyen `apps/**`), nueva guía de uso del CMS y runbook de operación (respaldo, rotación de claves, alta de usuario).
 - **`CUSTOMIZE.md`** de cada plantilla: indicar que se edita por web o por los JSON.
 
-## 17. Riesgos y decisiones abiertas
+## 17. Riesgos
 
 | Riesgo | Mitigación |
 | :-- | :-- |
@@ -378,19 +385,9 @@ Orden de riesgo: la **Fase 1a** valida el supuesto más costoso (contenido como 
 | `lunevar` es muy grande y tiene lógica propia | Migrarla al final; permitir "campos avanzados" no editables que se mantienen en código. |
 | Agente con acceso a material no confiable y credenciales; `Bash(pnpm:*)` permite ejecutar cualquier cosa | Proceso aislado sin acceso a credenciales ni red, `pnpm` restringido, guardia de alcance y revisión del diff (§11). |
 | Un cambio en el CMS redespliega todos los clientes | `cms-core` fuera de `packages/` (§3.1). |
-| SVG con scripts y HEIC no soportado | Saneado o rechazo de SVG; HEIC solo tras comprobar `sharp` en la imagen (§7.3). |
+| SVG con scripts y HEIC no soportado | SVG rechazado desde la web; HEIC solo tras comprobar `sharp` en la imagen (§7.3). |
+| Solo login como barrera de acceso | Límite de intentos, sesiones cortas, CSP y, si hace falta, Cloudflare Access (§11.1). |
 | Costo del agente | IA opcional y acotada, tope por trabajo, costo visible. |
 | Pérdida de originales (`recursos/` no está en Git) | Respaldo del volumen y subida a la rama del cliente por el pipeline. |
-| Vista previa sin DNS comodín | Alternativa de capturas; decidir antes de la Fase 4. |
 | Imagen Docker pesada (Chromium + claude + gh) | Aceptable para un solo servicio; separar el QA en un contenedor aparte si crece. |
 | Trabajos paralelos sobre un solo clon | `git worktree` por trabajo o cola serializada. |
-
-### Decisiones abiertas
-
-1. ¿Hay DNS comodín disponible para las vistas previas por subdominio?
-2. ¿Modo de publicación por defecto: PR o commit directo a `main`?
-3. ¿Acceso por VPN/IP además del login, o solo login?
-4. ¿Credencial de GitHub como clave de despliegue (un repo) o token de alcance limitado?
-5. ¿Se mantiene el paso de IA para textos vacíos o el CMS solo hace volcado determinista? Sin IA, el contenido editorial de un cliente nuevo exige `contenido.md` o escribirlo a mano.
-6. ¿Los cambios de diseño de un cliente (como los de la-guaca) siguen haciéndose solo por CLI, o el CMS debe permitir lanzarlos como tarea del agente?
-7. ¿SVG desde la web: se sanea o se exige PNG? ¿Se necesita HEIC (fotos de iPhone) desde el primer día?
