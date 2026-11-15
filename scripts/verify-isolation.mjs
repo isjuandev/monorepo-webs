@@ -5,6 +5,7 @@ import path from "node:path";
 import { CLIENTES_DIR, listSiteFolders, PLANTILLAS_DIR, ROOT_DIR } from "./lib/paths.mjs";
 
 const PACKAGES_DIR = path.join(ROOT_DIR, "packages");
+const APPS_DIR = path.join(ROOT_DIR, "apps");
 
 const SOURCE_EXTENSIONS = new Set([".astro", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".css"]);
 const FORBIDDEN_LOCKFILES = ["package-lock.json", "yarn.lock", "bun.lockb"];
@@ -12,6 +13,22 @@ const FORBIDDEN_DEPS = ["react", "react-dom"];
 const SITE_SCOPES = ["@plantillas/", "@clientes/", "@sites/"];
 const SITE_ROOTS = [PLANTILLAS_DIR, CLIENTES_DIR];
 const isSitePackage = (name) => SITE_SCOPES.some((scope) => name.startsWith(scope));
+const isCmsPackage = (name) =>
+  name.startsWith("@apps/") || name === "@repo/cms-core" || name.startsWith("@repo/cms-core/");
+
+/**
+ * Indica si un import apunta al CMS (apps/): paquete del CMS o ruta dentro de apps/
+ * @param {string} spec
+ * @param {string} filePath
+ * @returns {boolean}
+ */
+const isCmsImport = (spec, filePath) => {
+  if (isCmsPackage(spec)) return true;
+  if (spec.startsWith(".")) {
+    return path.resolve(path.dirname(filePath), spec).startsWith(`${APPS_DIR}${path.sep}`);
+  }
+  return /(^|\/)apps\//.test(spec);
+};
 
 /**
  * Recorre recursivamente un directorio devolviendo rutas de archivos
@@ -107,6 +124,11 @@ for (const pkgSlug of packageSlugs) {
       if (isSitePackage(dep)) {
         errors.push(`packages/${pkgSlug}/package.json no puede depender de un sitio (${dep}).`);
       }
+      if (isCmsPackage(dep)) {
+        errors.push(
+          `packages/${pkgSlug}/package.json depende de ${dep}: los sitios y packages/ no pueden depender del CMS (apps/).`
+        );
+      }
       if (FORBIDDEN_DEPS.includes(dep)) {
         errors.push(`packages/${pkgSlug}/package.json contiene dependencia prohibida: ${dep}.`);
       }
@@ -120,6 +142,11 @@ for (const pkgSlug of packageSlugs) {
     for (const spec of extractImports(content)) {
       if (isSitePackage(spec) || /(^|\/)(plantillas|clientes|sites)\//.test(spec)) {
         errors.push(`${relPath}: Paquete compartido importa desde un sitio ("${spec}").`);
+      }
+      if (isCmsImport(spec, filePath)) {
+        errors.push(
+          `${relPath}: Paquete compartido importa del CMS ("${spec}"): los sitios y packages/ no pueden depender del CMS (apps/).`
+        );
       }
     }
   }
@@ -173,6 +200,11 @@ for (const site of sites) {
     if (isSitePackage(dep)) {
       errors.push(`${site.rel}/package.json: Prohibido depender de otro sitio (${dep}).`);
     }
+    if (isCmsPackage(dep)) {
+      errors.push(
+        `${site.rel}/package.json depende de ${dep}: los sitios y packages/ no pueden depender del CMS (apps/).`
+      );
+    }
     if (FORBIDDEN_DEPS.includes(dep)) {
       errors.push(`${site.rel}/package.json: Dependencia prohibida detectada (${dep}).`);
     }
@@ -197,6 +229,11 @@ for (const site of sites) {
     for (const spec of extractImports(content)) {
       if (isSitePackage(spec) && spec !== expectedPkgName) {
         errors.push(`${relPath}: Importación cruzada prohibida hacia otro sitio ("${spec}").`);
+      }
+      if (isCmsImport(spec, filePath)) {
+        errors.push(
+          `${relPath}: Importa del CMS ("${spec}"): los sitios y packages/ no pueden depender del CMS (apps/).`
+        );
       }
       if (spec.startsWith("../")) {
         const resolvedTarget = path.resolve(path.dirname(filePath), spec);
