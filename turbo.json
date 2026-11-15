@@ -19,6 +19,30 @@
     "check": {
       "dependsOn": ["^check"]
     },
+    "test": {
+      "outputs": []
+    },
+    "@apps/cms#test": {
+      "inputs": ["$TURBO_DEFAULT$", "../../scripts/lib/**", "../cms-core/src/**"],
+      "outputs": []
+    },
+    "@apps/cms#build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env*",
+        "!docs/**",
+        "!cliente.json",
+        "!plantilla.json",
+        "../../scripts/lib/**",
+        "../cms-core/src/**"
+      ],
+      "outputs": ["dist/**", ".astro/**"]
+    },
+    "@repo/cms-core#check": {
+      "dependsOn": ["^check"],
+      "inputs": ["$TURBO_DEFAULT$", "../../scripts/lib/**"]
+    },
     "clean": {
       "cache": false
     }

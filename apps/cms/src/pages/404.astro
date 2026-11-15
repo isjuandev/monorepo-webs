@@ -1,0 +1,11 @@
+---
+import { LABELS } from "@/data/labels";
+import CmsLayout from "@/layouts/CmsLayout.astro";
+
+Astro.response.status = 404;
+---
+
+<CmsLayout title={LABELS.notFound.title}>
+  <h1>{LABELS.notFound.heading}</h1>
+  <p><a href="/">{LABELS.notFound.back}</a></p>
+</CmsLayout>

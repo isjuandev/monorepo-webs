@@ -43,6 +43,9 @@ jobs:
       - name: Run TypeScript and Astro diagnostics
         run: pnpm check
 
+      - name: Run unit tests
+        run: pnpm test
+
       - name: Build all workspaces, templates and client sites
         run: pnpm build
 

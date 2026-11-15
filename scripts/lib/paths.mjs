@@ -2,7 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+// CMS_REPO_DIR fija la raíz cuando el código va empaquetado (el CMS opera sobre su clon del repo)
+export const ROOT_DIR = process.env.CMS_REPO_DIR
+  ? path.resolve(process.env.CMS_REPO_DIR)
+  : path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 export const PLANTILLAS_DIR = path.join(ROOT_DIR, "plantillas");
 export const CLIENTES_DIR = path.join(ROOT_DIR, "clientes");
 export const RECURSOS_DIR = path.join(ROOT_DIR, "recursos");

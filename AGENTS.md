@@ -246,7 +246,8 @@ Comando de alto nivel: **`/nuevo-cliente <slug>`** ([`.claude/commands/nuevo-cli
 | Comando | Qué hace |
 | :-- | :-- |
 | `pnpm install` | Instala dependencias (en CI: `--frozen-lockfile`) |
-| `pnpm verify` | `verify:isolation` + `lint` + `check` + `build` (igual que CI y el hook `pre-push`) |
+| `pnpm verify` | `verify:isolation` + `lint` + `check` + `test` + `build` (igual que CI y el hook `pre-push`) |
+| `pnpm test` | Pruebas unitarias con `node:test` de los workspaces que las tengan (hoy `apps/cms`), vía Turborepo |
 | `pnpm cliente:recursos <slug>` | Crea `recursos/<slug>/` con el esqueleto y la bandeja `entrada/` |
 | `pnpm cliente:crear <slug>` | Pipeline completo hasta el PR (`--dry-run`, `--intake-only`, `--resume`, `--from-step`, `--allow-pending`, `--no-pr`) |
 | `pnpm cliente:intake <slug> --prepare\|--apply\|--status` | Pasos sueltos del intake (depuración) |

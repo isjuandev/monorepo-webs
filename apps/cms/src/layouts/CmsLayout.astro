@@ -1,0 +1,28 @@
+---
+import { LABELS } from "@/data/labels";
+import "@/styles/cms.css";
+
+export interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+const session = Astro.locals.session;
+---
+
+<!doctype html>
+<html lang={LABELS.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    {session && <meta name="csrf-token" content={session.csrfToken} />}
+    <link rel="icon" href="data:," />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>

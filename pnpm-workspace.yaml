@@ -2,3 +2,4 @@ packages:
   - "plantillas/*"
   - "clientes/*"
   - "packages/*"
+  - "apps/*"

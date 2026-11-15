@@ -1,0 +1,16 @@
+---
+import { LABELS } from "@/data/labels";
+import CmsLayout from "@/layouts/CmsLayout.astro";
+
+const session = Astro.locals.session;
+if (!session) return Astro.redirect("/login", 303);
+---
+
+<CmsLayout title={LABELS.title}>
+  <h1>{LABELS.heading}</h1>
+  <p>{LABELS.home.signedInAs.replace("{usuario}", session.username)}</p>
+  <form method="post" action="/api/sesion/cerrar">
+    <input type="hidden" name="_csrf" value={session.csrfToken} />
+    <button type="submit" aria-label={LABELS.home.logoutAria}>{LABELS.home.logout}</button>
+  </form>
+</CmsLayout>

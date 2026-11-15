@@ -41,7 +41,8 @@ docker run --rm -p 8080:80 web-<slug>   # http://localhost:8080  y /healthz
    ```
    clientes/<slug-cliente>/**
    packages/**
-   docker/**
+   docker/Dockerfile
+   docker/nginx.conf
    pnpm-lock.yaml
    package.json
    turbo.json
@@ -73,9 +74,17 @@ El PR que abre `pnpm cliente:crear <slug>` trae una **ficha de Coolify** con est
 
 Lo único recomendable en esas apps es poner los **Watch Paths** de la sección 2 (`clientes/<slug>/**` o `plantillas/<slug>/**`). Si no los tienen, cada push a `main` redespliega todas las apps del repositorio.
 
+> **Cambio manual en las apps ya creadas:** si alguna tiene `docker/**` en sus Watch Paths, sustitúyelo a mano por `docker/Dockerfile` y `docker/nginx.conf`. La imagen del CMS vive también en `docker/` (`docker/Dockerfile.cms`, `docker/cms-entrypoint.sh`) y con `docker/**` cada cambio en ella redesplegaría todos los sitios.
+
 | App de Coolify | Carpeta | Watch Paths propios |
 | :-- | :-- | :-- |
 | `cliente/la-guaca` | `clientes/la-guaca` | `clientes/la-guaca/**` |
 | `casa-serena-template-#1` | `plantillas/asterre` | `plantillas/asterre/**` |
 | `hotellia-template-#2` | `plantillas/hotellia` | `plantillas/hotellia/**` |
 | `pinevalley-template-#3` | `plantillas/pinevalley` | `plantillas/pinevalley/**` |
+
+## 6. CMS interno
+
+El CMS (`apps/cms`) no se despliega como los sitios: tiene su propia imagen (`docker/Dockerfile.cms`), su dominio y sus volúmenes. La ficha completa (variables, volúmenes, Watch Paths y cabeceras del proxy) está en [`apps/cms/README.md`](../../apps/cms/README.md#despliegue-en-coolify-sin-desplegar-todavía).
+
+Las Watch Paths de las apps de los clientes y de las plantillas **no** deben incluir `apps/**` ni `docker/**` (solo `docker/Dockerfile` y `docker/nginx.conf`): un cambio en el CMS o en su imagen no debe redesplegar ningún sitio.

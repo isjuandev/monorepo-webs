@@ -1,0 +1,56 @@
+---
+import { LABELS } from "@/data/labels";
+import CmsLayout from "@/layouts/CmsLayout.astro";
+import { LOGIN_CSRF_COOKIE, LOGIN_CSRF_COOKIE_OPTIONS } from "@/lib/http/cookies.ts";
+import { issueLoginCsrf, reuseLoginCsrf } from "@/lib/security/csrf.ts";
+import { getRuntime } from "@/lib/security/runtime.ts";
+
+if (Astro.locals.session) return Astro.redirect("/", 303);
+
+const state = getRuntime();
+if (!state.ok) return new Response(LABELS.errors.unavailable, { status: 503 });
+
+// Se reutiliza la cookie vigente (con margen) para que otra pestaña o petición no pise la del
+// formulario ya cargado; solo se emite una nueva si falta, es inválida o está por caducar.
+const { sessionSecret } = state.runtime.config;
+const existing = Astro.cookies.get(LOGIN_CSRF_COOKIE)?.value ?? "";
+let formToken = existing ? reuseLoginCsrf(existing, sessionSecret) : null;
+if (formToken === null) {
+  const issued = issueLoginCsrf(sessionSecret);
+  formToken = issued.formToken;
+  Astro.cookies.set(LOGIN_CSRF_COOKIE, issued.cookieValue, LOGIN_CSRF_COOKIE_OPTIONS);
+}
+
+// Solo se muestran mensajes conocidos; nunca se refleja el valor recibido.
+const error = Astro.url.searchParams.get("error");
+const minutes = Math.min(Math.max(Number(Astro.url.searchParams.get("min")) || 1, 1), 999);
+let message: string | null = null;
+if (error === "credenciales") message = LABELS.login.errors.credenciales;
+else if (error === "csrf") message = LABELS.login.errors.csrf;
+else if (error === "bloqueado") {
+  message = LABELS.login.errors.bloqueado.replace("{min}", String(minutes));
+}
+---
+
+<CmsLayout title={LABELS.login.title}>
+  <h1>{LABELS.login.heading}</h1>
+  {message && <p class="error" role="alert">{message}</p>}
+  <form method="post" action="/api/sesion/iniciar">
+    <input type="hidden" name="_csrf" value={formToken} />
+    <label>
+      {LABELS.login.username}
+      <input type="text" name="username" autocomplete="username" required maxlength="100" />
+    </label>
+    <label>
+      {LABELS.login.password}
+      <input
+        type="password"
+        name="password"
+        autocomplete="current-password"
+        required
+        maxlength="1024"
+      />
+    </label>
+    <button type="submit">{LABELS.login.submit}</button>
+  </form>
+</CmsLayout>
