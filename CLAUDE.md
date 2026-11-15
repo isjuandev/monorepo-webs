@@ -5,7 +5,7 @@ Lee y sigue todas las instrucciones definidas en [AGENTS.md](./AGENTS.md).
 ## Resumen rápido para Claude Code
 
 - Solo `pnpm` (nunca `npm`, `npx`, `yarn` ni `bun`); sin `react`/`react-dom`, solo Preact.
-- Sitios en dos carpetas: `plantillas/` (`_base`, `asterre` (por defecto), `hotellia`, `pinevalley`, `selvra`, cada una con `plantilla.json`) y `clientes/` (`la-guaca`, cada uno con `cliente.json`). Los slugs son únicos entre ambas. Nunca importes código entre sitios ni uses un cliente como plantilla.
+- Sitios en dos carpetas: `plantillas/` (`_base`, `asterre` (por defecto), `hotellia`, `lunevar`, `pinevalley`, `selvra`, cada una con `plantilla.json`) y `clientes/` (`la-guaca`, cada uno con `cliente.json`). Los slugs son únicos entre ambas. Nunca importes código entre sitios ni uses un cliente como plantilla.
 - **Cliente nuevo:** `pnpm cliente:recursos <slug>`, dejar el material en `recursos/<slug>/entrada/` y `/nuevo-cliente <slug>`. El pipeline `pnpm cliente:crear <slug>` hace intake → PR. Plantilla nueva: `pnpm plantilla:clonar <url> <slug>`. Si te invoca ese pipeline, no ejecutes git.
 - Antes de entregar cambios ejecuta `pnpm verify` (aislamiento + lint + check + build). Para QA visual y SEO: `pnpm cliente:qa <slug>` (todas las rutas, sirve también para plantillas).
 - Skills en `.agents/skills/` y comandos slash en `.claude/commands/`: `/nuevo-cliente`, `/clone-website`, `/visual-qa`, `/review-monorepo`, `/seo-audit`, `/deploy-client`, `/codebase-context`, `/motel-copywriting`. La skill `recursos-intake` la usa el pipeline.
