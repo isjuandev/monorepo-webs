@@ -1,0 +1,75 @@
+:root {
+  --color-bg: #f6f6f4;
+  --color-surface: #ffffff;
+  --color-text: #1b1b1b;
+  --color-muted: #5c5c5c;
+  --color-primary: #1f4d3a;
+  --color-primary-text: #ffffff;
+  --color-error: #a11a1a;
+  --color-border: #cfcfca;
+  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --radius-md: 8px;
+  --max-width: 28rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+main {
+  width: 100%;
+  max-width: var(--max-width);
+  padding: 2rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+h1 {
+  margin: 0 0 1.25rem;
+  font-size: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+input {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font: inherit;
+  color: var(--color-text);
+}
+
+button {
+  padding: 0.6rem 1.1rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.error {
+  margin: 0 0 1rem;
+  color: var(--color-error);
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@apps/cms",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "node ./dist/server/entry.mjs",
+    "check": "astro check",
+    "clean": "rm -rf dist .astro .turbo",
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test test/*.test.ts",
+    "hash-password": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/hash-password.ts"
+  },
+  "dependencies": {
+    "@astrojs/node": "^11.1.13",
+    "@astrojs/preact": "^6.0.6",
+    "@repo/cms-core": "workspace:*",
+    "astro": "^7.3.8",
+    "preact": "^11.0.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@repo/tsconfig": "workspace:*",
+    "typescript": "^5.7.0"
+  }
+}
